@@ -1,4 +1,5 @@
 [![Build Status](https://drone.infra.mythx.io/api/badges/ConsenSys/solc-typed-ast/status.svg)](https://drone.infra.mythx.io/ConsenSys/solc-typed-ast)
+[![Documentation](https://github.com/ConsenSys/solc-typed-ast/workflows/docs.yaml/badge.svg)](https://consensys.github.io/solc-typed-ast/)
 
 # solc-typed-ast
 
