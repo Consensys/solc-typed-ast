@@ -1,4 +1,5 @@
 [![Build Status](https://drone.infra.mythx.io/api/badges/ConsenSys/solc-typed-ast/status.svg)](https://drone.infra.mythx.io/ConsenSys/solc-typed-ast)
+[![Documentation](https://github.com/ConsenSys/solc-typed-ast/workflows/Build%20and%20release%20docs/badge.svg)](https://consensys.github.io/solc-typed-ast/)
 
 # solc-typed-ast
 
@@ -176,3 +177,13 @@ Install and link:
 npm install
 npm link
 ```
+
+## Project documentation and API reference
+
+The project documentation is contained in the `docs/` directory. It could be built via following command:
+
+```console
+npm run docs:refresh
+```
+
+It is also published here: https://consensys.github.io/solc-typed-ast/
