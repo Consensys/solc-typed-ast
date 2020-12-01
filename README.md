@@ -176,3 +176,13 @@ Install and link:
 npm install
 npm link
 ```
+
+## Project documentation and API reference
+
+The project documentation is contained in the `docs/` directory. It could be built via following command:
+
+```console
+npm run docs:refresh
+```
+
+It is also published here: https://consensys.github.io/solc-typed-ast/
