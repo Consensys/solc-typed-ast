@@ -1,0 +1,449 @@
+{
+    "contracts": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/node.sol": {
+            "Test": {
+                "evm": {}
+            }
+        }
+    },
+    "errors": [
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/node.sol:4:5: Warning: Function state mutability can be restricted to pure\n    function some() public {\n    ^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Function state mutability can be restricted to pure",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 148,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/node.sol",
+                "start": 45
+            },
+            "type": "Warning"
+        }
+    ],
+    "sources": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/node.sol": {
+            "ast": {
+                "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/node.sol",
+                "exportedSymbols": {
+                    "Test": [
+                        16
+                    ]
+                },
+                "id": 17,
+                "nodeType": "SourceUnit",
+                "nodes": [
+                    {
+                        "id": 1,
+                        "literals": [
+                            "solidity",
+                            ">",
+                            "0.0",
+                            ".0"
+                        ],
+                        "nodeType": "PragmaDirective",
+                        "src": "0:23:0"
+                    },
+                    {
+                        "baseContracts": [],
+                        "contractDependencies": [],
+                        "contractKind": "contract",
+                        "documentation": null,
+                        "fullyImplemented": true,
+                        "id": 16,
+                        "linearizedBaseContracts": [
+                            16
+                        ],
+                        "name": "Test",
+                        "nodeType": "ContractDefinition",
+                        "nodes": [
+                            {
+                                "body": {
+                                    "id": 14,
+                                    "nodeType": "Block",
+                                    "src": "68:80:0",
+                                    "statements": [
+                                        {
+                                            "condition": {
+                                                "argumentTypes": null,
+                                                "hexValue": "66616c7365",
+                                                "id": 4,
+                                                "isConstant": false,
+                                                "isLValue": false,
+                                                "isPure": true,
+                                                "kind": "bool",
+                                                "lValueRequested": false,
+                                                "nodeType": "Literal",
+                                                "src": "82:5:0",
+                                                "subdenomination": null,
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_bool",
+                                                    "typeString": "bool"
+                                                },
+                                                "value": "false"
+                                            },
+                                            "falseBody": null,
+                                            "id": 13,
+                                            "nodeType": "IfStatement",
+                                            "src": "78:64:0",
+                                            "trueBody": {
+                                                "id": 12,
+                                                "nodeType": "Block",
+                                                "src": "89:53:0",
+                                                "statements": [
+                                                    {
+                                                        "assignments": [
+                                                            6
+                                                        ],
+                                                        "declarations": [
+                                                            {
+                                                                "constant": false,
+                                                                "id": 6,
+                                                                "name": "a",
+                                                                "nodeType": "VariableDeclaration",
+                                                                "scope": 12,
+                                                                "src": "103:5:0",
+                                                                "stateVariable": false,
+                                                                "storageLocation": "default",
+                                                                "typeDescriptions": {
+                                                                    "typeIdentifier": "t_int256",
+                                                                    "typeString": "int256"
+                                                                },
+                                                                "typeName": {
+                                                                    "id": 5,
+                                                                    "name": "int",
+                                                                    "nodeType": "ElementaryTypeName",
+                                                                    "src": "103:3:0",
+                                                                    "typeDescriptions": {
+                                                                        "typeIdentifier": "t_int256",
+                                                                        "typeString": "int256"
+                                                                    }
+                                                                },
+                                                                "value": null,
+                                                                "visibility": "internal"
+                                                            }
+                                                        ],
+                                                        "id": 8,
+                                                        "initialValue": {
+                                                            "argumentTypes": null,
+                                                            "hexValue": "3135",
+                                                            "id": 7,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "kind": "number",
+                                                            "lValueRequested": false,
+                                                            "nodeType": "Literal",
+                                                            "src": "111:2:0",
+                                                            "subdenomination": null,
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_rational_15_by_1",
+                                                                "typeString": "int_const 15"
+                                                            },
+                                                            "value": "15"
+                                                        },
+                                                        "nodeType": "VariableDeclarationStatement",
+                                                        "src": "103:10:0"
+                                                    },
+                                                    {
+                                                        "expression": {
+                                                            "argumentTypes": null,
+                                                            "id": 10,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "nodeType": "UnaryOperation",
+                                                            "operator": "++",
+                                                            "prefix": false,
+                                                            "src": "128:3:0",
+                                                            "subExpression": {
+                                                                "argumentTypes": null,
+                                                                "id": 9,
+                                                                "name": "a",
+                                                                "nodeType": "Identifier",
+                                                                "overloadedDeclarations": [],
+                                                                "referencedDeclaration": 6,
+                                                                "src": "128:1:0",
+                                                                "typeDescriptions": {
+                                                                    "typeIdentifier": "t_int256",
+                                                                    "typeString": "int256"
+                                                                }
+                                                            },
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_int256",
+                                                                "typeString": "int256"
+                                                            }
+                                                        },
+                                                        "id": 11,
+                                                        "nodeType": "ExpressionStatement",
+                                                        "src": "128:3:0"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+                                "documentation": null,
+                                "id": 15,
+                                "implemented": true,
+                                "kind": "function",
+                                "modifiers": [],
+                                "name": "some",
+                                "nodeType": "FunctionDefinition",
+                                "parameters": {
+                                    "id": 2,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [],
+                                    "src": "58:2:0"
+                                },
+                                "returnParameters": {
+                                    "id": 3,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [],
+                                    "src": "68:0:0"
+                                },
+                                "scope": 16,
+                                "src": "45:103:0",
+                                "stateMutability": "nonpayable",
+                                "superFunction": null,
+                                "visibility": "public"
+                            }
+                        ],
+                        "scope": 17,
+                        "src": "25:125:0"
+                    }
+                ],
+                "src": "0:151:0"
+            },
+            "id": 0,
+            "legacyAST": {
+                "attributes": {
+                    "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/node.sol",
+                    "exportedSymbols": {
+                        "Test": [
+                            16
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "literals": [
+                                "solidity",
+                                ">",
+                                "0.0",
+                                ".0"
+                            ]
+                        },
+                        "id": 1,
+                        "name": "PragmaDirective",
+                        "src": "0:23:0"
+                    },
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                16
+                            ],
+                            "name": "Test",
+                            "scope": 17
+                        },
+                        "children": [
+                            {
+                                "attributes": {
+                                    "documentation": null,
+                                    "implemented": true,
+                                    "isConstructor": false,
+                                    "kind": "function",
+                                    "modifiers": [
+                                        null
+                                    ],
+                                    "name": "some",
+                                    "scope": 16,
+                                    "stateMutability": "nonpayable",
+                                    "superFunction": null,
+                                    "visibility": "public"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 2,
+                                        "name": "ParameterList",
+                                        "src": "58:2:0"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 3,
+                                        "name": "ParameterList",
+                                        "src": "68:0:0"
+                                    },
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "falseBody": null
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "hexvalue": "66616c7365",
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "lValueRequested": false,
+                                                            "subdenomination": null,
+                                                            "token": "bool",
+                                                            "type": "bool",
+                                                            "value": "false"
+                                                        },
+                                                        "id": 4,
+                                                        "name": "Literal",
+                                                        "src": "82:5:0"
+                                                    },
+                                                    {
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "assignments": [
+                                                                        6
+                                                                    ]
+                                                                },
+                                                                "children": [
+                                                                    {
+                                                                        "attributes": {
+                                                                            "constant": false,
+                                                                            "name": "a",
+                                                                            "scope": 12,
+                                                                            "stateVariable": false,
+                                                                            "storageLocation": "default",
+                                                                            "type": "int256",
+                                                                            "value": null,
+                                                                            "visibility": "internal"
+                                                                        },
+                                                                        "children": [
+                                                                            {
+                                                                                "attributes": {
+                                                                                    "name": "int",
+                                                                                    "type": "int256"
+                                                                                },
+                                                                                "id": 5,
+                                                                                "name": "ElementaryTypeName",
+                                                                                "src": "103:3:0"
+                                                                            }
+                                                                        ],
+                                                                        "id": 6,
+                                                                        "name": "VariableDeclaration",
+                                                                        "src": "103:5:0"
+                                                                    },
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "hexvalue": "3135",
+                                                                            "isConstant": false,
+                                                                            "isLValue": false,
+                                                                            "isPure": true,
+                                                                            "lValueRequested": false,
+                                                                            "subdenomination": null,
+                                                                            "token": "number",
+                                                                            "type": "int_const 15",
+                                                                            "value": "15"
+                                                                        },
+                                                                        "id": 7,
+                                                                        "name": "Literal",
+                                                                        "src": "111:2:0"
+                                                                    }
+                                                                ],
+                                                                "id": 8,
+                                                                "name": "VariableDeclarationStatement",
+                                                                "src": "103:10:0"
+                                                            },
+                                                            {
+                                                                "children": [
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "isConstant": false,
+                                                                            "isLValue": false,
+                                                                            "isPure": false,
+                                                                            "lValueRequested": false,
+                                                                            "operator": "++",
+                                                                            "prefix": false,
+                                                                            "type": "int256"
+                                                                        },
+                                                                        "children": [
+                                                                            {
+                                                                                "attributes": {
+                                                                                    "argumentTypes": null,
+                                                                                    "overloadedDeclarations": [
+                                                                                        null
+                                                                                    ],
+                                                                                    "referencedDeclaration": 6,
+                                                                                    "type": "int256",
+                                                                                    "value": "a"
+                                                                                },
+                                                                                "id": 9,
+                                                                                "name": "Identifier",
+                                                                                "src": "128:1:0"
+                                                                            }
+                                                                        ],
+                                                                        "id": 10,
+                                                                        "name": "UnaryOperation",
+                                                                        "src": "128:3:0"
+                                                                    }
+                                                                ],
+                                                                "id": 11,
+                                                                "name": "ExpressionStatement",
+                                                                "src": "128:3:0"
+                                                            }
+                                                        ],
+                                                        "id": 12,
+                                                        "name": "Block",
+                                                        "src": "89:53:0"
+                                                    }
+                                                ],
+                                                "id": 13,
+                                                "name": "IfStatement",
+                                                "src": "78:64:0"
+                                            }
+                                        ],
+                                        "id": 14,
+                                        "name": "Block",
+                                        "src": "68:80:0"
+                                    }
+                                ],
+                                "id": 15,
+                                "name": "FunctionDefinition",
+                                "src": "45:103:0"
+                            }
+                        ],
+                        "id": 16,
+                        "name": "ContractDefinition",
+                        "src": "25:125:0"
+                    }
+                ],
+                "id": 17,
+                "name": "SourceUnit",
+                "src": "0:151:0"
+            }
+        }
+    }
+}

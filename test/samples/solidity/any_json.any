@@ -1,0 +1,89 @@
+{
+    "errors": [
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/any.sol:1:1: Warning: Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.14;\"\ncontract Test {}\n^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.14;\"",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 17,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/any.sol",
+                "start": 0
+            },
+            "type": "Warning"
+        }
+    ],
+    "sources": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/any.sol": {
+            "ast": {
+                "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/any.sol",
+                "exportedSymbols": {
+                    "Test": [
+                        1
+                    ]
+                },
+                "id": 2,
+                "nodeType": "SourceUnit",
+                "nodes": [
+                    {
+                        "baseContracts": [],
+                        "contractDependencies": [],
+                        "contractKind": "contract",
+                        "documentation": null,
+                        "fullyImplemented": true,
+                        "id": 1,
+                        "linearizedBaseContracts": [
+                            1
+                        ],
+                        "name": "Test",
+                        "nodeType": "ContractDefinition",
+                        "nodes": [],
+                        "scope": 2,
+                        "src": "0:16:0"
+                    }
+                ],
+                "src": "0:17:0"
+            },
+            "id": 0,
+            "legacyAST": {
+                "attributes": {
+                    "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/any.sol",
+                    "exportedSymbols": {
+                        "Test": [
+                            1
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                1
+                            ],
+                            "name": "Test",
+                            "nodes": [
+                                null
+                            ],
+                            "scope": 2
+                        },
+                        "id": 1,
+                        "name": "ContractDefinition",
+                        "src": "0:16:0"
+                    }
+                ],
+                "id": 2,
+                "name": "SourceUnit",
+                "src": "0:17:0"
+            }
+        }
+    }
+}

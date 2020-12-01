@@ -1,0 +1,15 @@
+kind: pipeline
+name: default
+
+platform:
+    os: linux
+    arch: amd64
+
+steps:
+    - name: build_test
+      image: node:12
+      commands:
+          - npm install --unsafe-perm
+          - npm link --unsafe-perm
+          - npm run lint
+          - npm test

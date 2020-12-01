@@ -1,0 +1,101 @@
+SourceUnit #101 -> /test/samples/solidity/declarations/interface_060.sol
+|   PragmaDirective #1
+|   ContractDefinition #9 -> interface A [id: 92f1b5f]
+|   |   FunctionDefinition #8 -> doA(uint256) [selector: 092f1b5f]
+|   |   |   ParameterList #4
+|   |   |   |   VariableDeclaration #3 -> uint256 arg
+|   |   |   |   |   ElementaryTypeName #2
+|   |   |   ParameterList #7
+|   |   |   |   VariableDeclaration #6 -> uint256 ret
+|   |   |   |   |   ElementaryTypeName #5
+|   ContractDefinition #19 -> interface B [id: 4b981cb5]
+|   |   InheritanceSpecifier #11
+|   |   |   UserDefinedTypeName #10
+|   |   FunctionDefinition #18 -> doB(uint256) [selector: 4b981cb5]
+|   |   |   ParameterList #14
+|   |   |   |   VariableDeclaration #13 -> uint256 arg
+|   |   |   |   |   ElementaryTypeName #12
+|   |   |   ParameterList #17
+|   |   |   |   VariableDeclaration #16 -> uint256 ret
+|   |   |   |   |   ElementaryTypeName #15
+|   ContractDefinition #20 -> interface C [id: 00000000]
+|   ContractDefinition #100 -> contract Test
+|   |   InheritanceSpecifier #22
+|   |   |   UserDefinedTypeName #21
+|   |   VariableDeclaration #24 -> uint256 internal x
+|   |   |   ElementaryTypeName #23
+|   |   VariableDeclaration #26 -> uint256 public y [getter: y(), selector: a56dfe4a]
+|   |   |   ElementaryTypeName #25
+|   |   VariableDeclaration #30 -> mapping(address => uint256) public m [getter: m(address), selector: 97682884]
+|   |   |   Mapping #29
+|   |   |   |   ElementaryTypeName #27
+|   |   |   |   ElementaryTypeName #28
+|   |   VariableDeclaration #33 -> address[] public n [getter: n(uint256), selector: 2495b5fc]
+|   |   |   ArrayTypeName #32
+|   |   |   |   ElementaryTypeName #31
+|   |   FunctionDefinition #45 -> constructor
+|   |   |   ParameterList #36
+|   |   |   |   VariableDeclaration #35 -> uint256 v
+|   |   |   |   |   ElementaryTypeName #34
+|   |   |   ParameterList #37
+|   |   |   Block #44
+|   |   |   |   ExpressionStatement #43
+|   |   |   |   |   Assignment #42
+|   |   |   |   |   |   Identifier #38
+|   |   |   |   |   |   Assignment #41
+|   |   |   |   |   |   |   Identifier #39
+|   |   |   |   |   |   |   Identifier #40
+|   |   FunctionDefinition #60 -> doA(uint256) [selector: 092f1b5f]
+|   |   |   OverrideSpecifier #49
+|   |   |   ParameterList #48
+|   |   |   |   VariableDeclaration #47 -> uint256 a
+|   |   |   |   |   ElementaryTypeName #46
+|   |   |   ParameterList #52
+|   |   |   |   VariableDeclaration #51 -> uint256 r
+|   |   |   |   |   ElementaryTypeName #50
+|   |   |   Block #59
+|   |   |   |   ExpressionStatement #58
+|   |   |   |   |   Assignment #57
+|   |   |   |   |   |   Identifier #53
+|   |   |   |   |   |   BinaryOperation #56
+|   |   |   |   |   |   |   Identifier #54
+|   |   |   |   |   |   |   Literal #55
+|   |   FunctionDefinition #99 -> doB(uint256) [selector: 4b981cb5]
+|   |   |   OverrideSpecifier #64
+|   |   |   ParameterList #63
+|   |   |   |   VariableDeclaration #62 -> uint256 a
+|   |   |   |   |   ElementaryTypeName #61
+|   |   |   ParameterList #67
+|   |   |   |   VariableDeclaration #66 -> uint256
+|   |   |   |   |   ElementaryTypeName #65
+|   |   |   Block #98
+|   |   |   |   ExpressionStatement #70
+|   |   |   |   |   UnaryOperation #69
+|   |   |   |   |   |   Identifier #68
+|   |   |   |   VariableDeclarationStatement #78
+|   |   |   |   |   VariableDeclaration #72 -> uint256 upd
+|   |   |   |   |   |   ElementaryTypeName #71
+|   |   |   |   |   FunctionCall #77
+|   |   |   |   |   |   Identifier #73
+|   |   |   |   |   |   BinaryOperation #76
+|   |   |   |   |   |   |   Identifier #74
+|   |   |   |   |   |   |   Identifier #75
+|   |   |   |   VariableDeclarationStatement #83
+|   |   |   |   |   VariableDeclaration #80 -> address sender
+|   |   |   |   |   |   ElementaryTypeName #79
+|   |   |   |   |   MemberAccess #82
+|   |   |   |   |   |   Identifier #81
+|   |   |   |   ExpressionStatement #89
+|   |   |   |   |   Assignment #88
+|   |   |   |   |   |   IndexAccess #86
+|   |   |   |   |   |   |   Identifier #84
+|   |   |   |   |   |   |   Identifier #85
+|   |   |   |   |   |   Identifier #87
+|   |   |   |   ExpressionStatement #95
+|   |   |   |   |   FunctionCall #94
+|   |   |   |   |   |   MemberAccess #92
+|   |   |   |   |   |   |   Identifier #90
+|   |   |   |   |   |   Identifier #93
+|   |   |   |   Return #97
+|   |   |   |   |   Identifier #96
+

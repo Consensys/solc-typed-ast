@@ -1,0 +1,266 @@
+{
+    "contracts": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/pragma.sol": {
+            "Simple": {
+                "evm": {}
+            }
+        }
+    },
+    "errors": [
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/pragma.sol:6:5: Warning: Function state mutability can be restricted to pure\n    function test() public {}\n    ^-----------------------^\n",
+            "message": "Function state mutability can be restricted to pure",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 120,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/pragma.sol",
+                "start": 95
+            },
+            "type": "Warning"
+        }
+    ],
+    "sources": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/pragma.sol": {
+            "ast": {
+                "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/pragma.sol",
+                "exportedSymbols": {
+                    "Simple": [
+                        7
+                    ]
+                },
+                "id": 9,
+                "nodeType": "SourceUnit",
+                "nodes": [
+                    {
+                        "id": 1,
+                        "literals": [
+                            "solidity",
+                            ">=",
+                            "0.4",
+                            ".0",
+                            "<",
+                            "0.6",
+                            ".0",
+                            "<",
+                            "0.6",
+                            ".0"
+                        ],
+                        "nodeType": "PragmaDirective",
+                        "src": "0:39:0"
+                    },
+                    {
+                        "id": 2,
+                        "literals": [
+                            "solidity",
+                            ">=",
+                            "0.4",
+                            ".13"
+                        ],
+                        "nodeType": "PragmaDirective",
+                        "src": "46:25:0"
+                    },
+                    {
+                        "baseContracts": [],
+                        "contractDependencies": [],
+                        "contractKind": "contract",
+                        "documentation": null,
+                        "fullyImplemented": true,
+                        "id": 7,
+                        "linearizedBaseContracts": [
+                            7
+                        ],
+                        "name": "Simple",
+                        "nodeType": "ContractDefinition",
+                        "nodes": [
+                            {
+                                "body": {
+                                    "id": 5,
+                                    "nodeType": "Block",
+                                    "src": "118:2:0",
+                                    "statements": []
+                                },
+                                "documentation": null,
+                                "id": 6,
+                                "implemented": true,
+                                "kind": "function",
+                                "modifiers": [],
+                                "name": "test",
+                                "nodeType": "FunctionDefinition",
+                                "parameters": {
+                                    "id": 3,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [],
+                                    "src": "108:2:0"
+                                },
+                                "returnParameters": {
+                                    "id": 4,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [],
+                                    "src": "118:0:0"
+                                },
+                                "scope": 7,
+                                "src": "95:25:0",
+                                "stateMutability": "nonpayable",
+                                "superFunction": null,
+                                "visibility": "public"
+                            }
+                        ],
+                        "scope": 9,
+                        "src": "73:49:0"
+                    },
+                    {
+                        "id": 8,
+                        "literals": [
+                            "solidity",
+                            "<",
+                            "0.6",
+                            ".0"
+                        ],
+                        "nodeType": "PragmaDirective",
+                        "src": "124:23:0"
+                    }
+                ],
+                "src": "0:148:0"
+            },
+            "id": 0,
+            "legacyAST": {
+                "attributes": {
+                    "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/pragma.sol",
+                    "exportedSymbols": {
+                        "Simple": [
+                            7
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "literals": [
+                                "solidity",
+                                ">=",
+                                "0.4",
+                                ".0",
+                                "<",
+                                "0.6",
+                                ".0",
+                                "<",
+                                "0.6",
+                                ".0"
+                            ]
+                        },
+                        "id": 1,
+                        "name": "PragmaDirective",
+                        "src": "0:39:0"
+                    },
+                    {
+                        "attributes": {
+                            "literals": [
+                                "solidity",
+                                ">=",
+                                "0.4",
+                                ".13"
+                            ]
+                        },
+                        "id": 2,
+                        "name": "PragmaDirective",
+                        "src": "46:25:0"
+                    },
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                7
+                            ],
+                            "name": "Simple",
+                            "scope": 9
+                        },
+                        "children": [
+                            {
+                                "attributes": {
+                                    "documentation": null,
+                                    "implemented": true,
+                                    "isConstructor": false,
+                                    "kind": "function",
+                                    "modifiers": [
+                                        null
+                                    ],
+                                    "name": "test",
+                                    "scope": 7,
+                                    "stateMutability": "nonpayable",
+                                    "superFunction": null,
+                                    "visibility": "public"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 3,
+                                        "name": "ParameterList",
+                                        "src": "108:2:0"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 4,
+                                        "name": "ParameterList",
+                                        "src": "118:0:0"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "statements": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 5,
+                                        "name": "Block",
+                                        "src": "118:2:0"
+                                    }
+                                ],
+                                "id": 6,
+                                "name": "FunctionDefinition",
+                                "src": "95:25:0"
+                            }
+                        ],
+                        "id": 7,
+                        "name": "ContractDefinition",
+                        "src": "73:49:0"
+                    },
+                    {
+                        "attributes": {
+                            "literals": [
+                                "solidity",
+                                "<",
+                                "0.6",
+                                ".0"
+                            ]
+                        },
+                        "id": 8,
+                        "name": "PragmaDirective",
+                        "src": "124:23:0"
+                    }
+                ],
+                "id": 9,
+                "name": "SourceUnit",
+                "src": "0:148:0"
+            }
+        }
+    }
+}

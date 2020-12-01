@@ -1,0 +1,71 @@
+import { ASTNodeWithChildren } from "../../ast_node";
+import { SourceUnit } from "../meta/source_unit";
+import { ContractDefinition } from "./contract_definition";
+import { VariableDeclaration } from "./variable_declaration";
+
+export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
+    /**
+     * The name of the struct
+     */
+    name: string;
+
+    /**
+     * Canonical name (or qualified name), e.g. `DefiningContract.SomeStruct`
+     */
+    canonicalName: string;
+
+    /**
+     * Node id of scoped contract or source unit
+     */
+    scope: number;
+
+    /**
+     * Struct visibility
+     */
+    visibility: string;
+
+    constructor(
+        id: number,
+        src: string,
+        type: string,
+        name: string,
+        canonicalName: string,
+        scope: number,
+        visibility: string,
+        members: Iterable<VariableDeclaration>,
+        raw?: any
+    ) {
+        super(id, src, type, raw);
+
+        this.name = name;
+        this.canonicalName = canonicalName;
+        this.scope = scope;
+        this.visibility = visibility;
+
+        for (const member of members) {
+            this.appendChild(member);
+        }
+    }
+
+    /**
+     * Members of the struct
+     */
+    get vMembers(): VariableDeclaration[] {
+        return this.ownChildren as VariableDeclaration[];
+    }
+
+    /**
+     * Reference to its scoped contract or source unit
+     */
+    get vScope(): ContractDefinition | SourceUnit {
+        return this.requiredContext.locate(this.scope) as ContractDefinition | SourceUnit;
+    }
+
+    set vScope(value: ContractDefinition | SourceUnit) {
+        if (!this.requiredContext.contains(value)) {
+            throw new Error(`Node ${value.type}#${value.id} not belongs to a current context`);
+        }
+
+        this.scope = value.id;
+    }
+}

@@ -1,0 +1,1173 @@
+{
+    "contracts": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/assignment.sol:Test": {
+            "assembly": {
+                ".code": [
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "PUSH",
+                        "value": "60"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "PUSH",
+                        "value": "40"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "MSTORE"
+                    },
+                    {
+                        "begin": 28,
+                        "end": 29,
+                        "name": "PUSH",
+                        "value": "1"
+                    },
+                    {
+                        "begin": 20,
+                        "end": 29,
+                        "name": "PUSH",
+                        "value": "0"
+                    },
+                    {
+                        "begin": 20,
+                        "end": 29,
+                        "name": "SSTORE"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "CALLVALUE"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "ISZERO"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "PUSH [tag]",
+                        "value": "1"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "JUMPI"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "PUSH",
+                        "value": "0"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "DUP1"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "REVERT"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "tag",
+                        "value": "1"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "JUMPDEST"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "tag",
+                        "value": "2"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "JUMPDEST"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "PUSH #[$]",
+                        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "DUP1"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "PUSH [$]",
+                        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "PUSH",
+                        "value": "0"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "CODECOPY"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "PUSH",
+                        "value": "0"
+                    },
+                    {
+                        "begin": 0,
+                        "end": 232,
+                        "name": "RETURN"
+                    }
+                ],
+                ".data": {
+                    "0": {
+                        ".auxdata": "a165627a7a723058202d6ee9254fe6d22e816ba8e99c68527e987fb81fcfd18d5fa1e0d3f73e4cc2780029",
+                        ".code": [
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "PUSH",
+                                "value": "60"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "PUSH",
+                                "value": "40"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "MSTORE"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "PUSH",
+                                "value": "FFFFFFFF"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "PUSH",
+                                "value": "100000000000000000000000000000000000000000000000000000000"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "PUSH",
+                                "value": "0"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "CALLDATALOAD"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "DIV"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "AND"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "PUSH",
+                                "value": "C03EE3D3"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "DUP2"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "EQ"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "PUSH [tag]",
+                                "value": "2"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "JUMPI"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "tag",
+                                "value": "1"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "PUSH",
+                                "value": "0"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "DUP1"
+                            },
+                            {
+                                "begin": 0,
+                                "end": 232,
+                                "name": "REVERT"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "tag",
+                                "value": "2"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "CALLVALUE"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "ISZERO"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "PUSH [tag]",
+                                "value": "3"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "JUMPI"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "PUSH",
+                                "value": "0"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "DUP1"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "REVERT"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "tag",
+                                "value": "3"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "PUSH [tag]",
+                                "value": "4"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "PUSH [tag]",
+                                "value": "5"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "JUMP"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "tag",
+                                "value": "4"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "STOP"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "tag",
+                                "value": "5"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": -1,
+                                "end": -1,
+                                "name": "PUSH",
+                                "value": "13"
+                            },
+                            {
+                                "begin": -1,
+                                "end": -1,
+                                "name": "NOT"
+                            },
+                            {
+                                "begin": 110,
+                                "end": 111,
+                                "name": "PUSH",
+                                "value": "2"
+                            },
+                            {
+                                "begin": 121,
+                                "end": 128,
+                                "name": "DUP2"
+                            },
+                            {
+                                "begin": 138,
+                                "end": 144,
+                                "name": "tag",
+                                "value": "7"
+                            },
+                            {
+                                "begin": 138,
+                                "end": 144,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 138,
+                                "end": 144,
+                                "name": "SDIV"
+                            },
+                            {
+                                "begin": 138,
+                                "end": 144,
+                                "name": "SWAP1"
+                            },
+                            {
+                                "begin": -1,
+                                "end": -1,
+                                "name": "POP"
+                            },
+                            {
+                                "begin": 159,
+                                "end": 160,
+                                "name": "PUSH",
+                                "value": "5"
+                            },
+                            {
+                                "begin": 138,
+                                "end": 144,
+                                "name": "DUP2"
+                            },
+                            {
+                                "begin": 154,
+                                "end": 160,
+                                "name": "tag",
+                                "value": "8"
+                            },
+                            {
+                                "begin": 154,
+                                "end": 160,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": -1,
+                                "end": -1,
+                                "name": "POP"
+                            },
+                            {
+                                "begin": 217,
+                                "end": 223,
+                                "name": "PUSH",
+                                "value": "0"
+                            },
+                            {
+                                "begin": 217,
+                                "end": 223,
+                                "name": "SWAP2"
+                            },
+                            {
+                                "begin": -1,
+                                "end": -1,
+                                "name": "POP"
+                            },
+                            {
+                                "begin": -1,
+                                "end": -1,
+                                "name": "POP"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "tag",
+                                "value": "6"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "POP"
+                            },
+                            {
+                                "begin": 36,
+                                "end": 230,
+                                "name": "JUMP",
+                                "value": "[out]"
+                            }
+                        ]
+                    }
+                }
+            },
+            "bytecode": "606060405260016000553415601357600080fd5b5b6092806100226000396000f300606060405263ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663c03ee3d38114603c575b600080fd5b3415604657600080fd5b604c604e565b005b6013196002815b0590506005815b5060009150505b505600a165627a7a723058202d6ee9254fe6d22e816ba8e99c68527e987fb81fcfd18d5fa1e0d3f73e4cc2780029",
+            "functionHashes": {
+                "some()": "c03ee3d3"
+            },
+            "gasEstimates": {
+                "creation": [
+                    20083,
+                    29200
+                ],
+                "external": {
+                    "some()": 149
+                },
+                "internal": {}
+            },
+            "interface": "[{\"constant\":false,\"inputs\":[],\"name\":\"some\",\"outputs\":[],\"payable\":false,\"type\":\"function\"}]",
+            "metadata": "{\"compiler\":{\"version\":\"0.4.13+commit.0fb4cb1a\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[],\"name\":\"some\",\"outputs\":[],\"payable\":false,\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/assignment.sol\":\"Test\"},\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/assignment.sol\":{\"keccak256\":\"0x692fcca42d934fb6440a23014941317faae46580bc39b0d83bcbd22b11d29877\",\"urls\":[\"bzzr://f1ae91aaa3a9a08191f909890910e88ca7327524d00e826c8bee0bb64292193b\"]}},\"version\":1}",
+            "opcodes": "PUSH1 0x60 PUSH1 0x40 MSTORE PUSH1 0x1 PUSH1 0x0 SSTORE CALLVALUE ISZERO PUSH1 0x13 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST JUMPDEST PUSH1 0x92 DUP1 PUSH2 0x22 PUSH1 0x0 CODECOPY PUSH1 0x0 RETURN STOP PUSH1 0x60 PUSH1 0x40 MSTORE PUSH4 0xFFFFFFFF PUSH29 0x100000000000000000000000000000000000000000000000000000000 PUSH1 0x0 CALLDATALOAD DIV AND PUSH4 0xC03EE3D3 DUP2 EQ PUSH1 0x3C JUMPI JUMPDEST PUSH1 0x0 DUP1 REVERT JUMPDEST CALLVALUE ISZERO PUSH1 0x46 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST PUSH1 0x4C PUSH1 0x4E JUMP JUMPDEST STOP JUMPDEST PUSH1 0x13 NOT PUSH1 0x2 DUP2 JUMPDEST SDIV SWAP1 POP PUSH1 0x5 DUP2 JUMPDEST POP PUSH1 0x0 SWAP2 POP POP JUMPDEST POP JUMP STOP LOG1 PUSH6 0x627A7A723058 KECCAK256 0x2d PUSH15 0xE9254FE6D22E816BA8E99C68527E98 PUSH32 0xB81FCFD18D5FA1E0D3F73E4CC278002900000000000000000000000000000000 ",
+            "runtimeBytecode": "606060405263ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663c03ee3d38114603c575b600080fd5b3415604657600080fd5b604c604e565b005b6013196002815b0590506005815b5060009150505b505600a165627a7a723058202d6ee9254fe6d22e816ba8e99c68527e987fb81fcfd18d5fa1e0d3f73e4cc2780029",
+            "srcmap": "0:232:0:-;;;28:1;20:9;;0:232;;;;;;;;;;;;;;;",
+            "srcmapRuntime": "0:232:0:-;;;;;;;;;;;;;;;;;;36:194;;;;;;;;;;;;;;;-1:-1:-1;;110:1:0;121:7;138:6;;;-1:-1:-1;159:1:0;138:6;154;-1:-1:-1;217:6:0;;-1:-1:-1;;36:194:0;;:::o"
+        }
+    },
+    "errors": [
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/assignment.sol:1:1: Warning: Source file does not specify required compiler version!Consider adding \"pragma solidity ^0.4.13\ncontract Test {\n^\nSpanning multiple lines.\n"
+    ],
+    "sourceList": [
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/assignment.sol"
+    ],
+    "sources": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/assignment.sol": {
+            "AST": {
+                "attributes": {
+                    "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/assignment.sol",
+                    "exportedSymbols": {
+                        "Test": [
+                            48
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                48
+                            ],
+                            "name": "Test",
+                            "scope": 49
+                        },
+                        "children": [
+                            {
+                                "attributes": {
+                                    "constant": false,
+                                    "name": "a",
+                                    "scope": 48,
+                                    "stateVariable": true,
+                                    "storageLocation": "default",
+                                    "type": "int256",
+                                    "visibility": "internal"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "name": "int",
+                                            "type": "int256"
+                                        },
+                                        "id": 1,
+                                        "name": "ElementaryTypeName",
+                                        "src": "20:3:0"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "argumentTypes": null,
+                                            "hexvalue": "31",
+                                            "isConstant": false,
+                                            "isLValue": false,
+                                            "isPure": true,
+                                            "lValueRequested": false,
+                                            "subdenomination": null,
+                                            "token": "number",
+                                            "type": "int_const 1",
+                                            "value": "1"
+                                        },
+                                        "id": 2,
+                                        "name": "Literal",
+                                        "src": "28:1:0"
+                                    }
+                                ],
+                                "id": 3,
+                                "name": "VariableDeclaration",
+                                "src": "20:9:0"
+                            },
+                            {
+                                "attributes": {
+                                    "constant": false,
+                                    "implemented": true,
+                                    "isConstructor": false,
+                                    "modifiers": [
+                                        null
+                                    ],
+                                    "name": "some",
+                                    "payable": false,
+                                    "scope": 48,
+                                    "visibility": "public"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 4,
+                                        "name": "ParameterList",
+                                        "src": "49:2:0"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 5,
+                                        "name": "ParameterList",
+                                        "src": "59:0:0"
+                                    },
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "assignments": [
+                                                        7
+                                                    ]
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "b",
+                                                            "scope": 47,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "default",
+                                                            "type": "int256",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "name": "int",
+                                                                    "type": "int256"
+                                                                },
+                                                                "id": 6,
+                                                                "name": "ElementaryTypeName",
+                                                                "src": "69:3:0"
+                                                            }
+                                                        ],
+                                                        "id": 7,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "69:5:0"
+                                                    },
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "hexvalue": "30",
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "lValueRequested": false,
+                                                            "subdenomination": null,
+                                                            "token": "number",
+                                                            "type": "int_const 0",
+                                                            "value": "0"
+                                                        },
+                                                        "id": 8,
+                                                        "name": "Literal",
+                                                        "src": "77:1:0"
+                                                    }
+                                                ],
+                                                "id": 9,
+                                                "name": "VariableDeclarationStatement",
+                                                "src": "69:9:0"
+                                            },
+                                            {
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": "+=",
+                                                            "type": "int256"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 7,
+                                                                    "type": "int256",
+                                                                    "value": "b"
+                                                                },
+                                                                "id": 10,
+                                                                "name": "Identifier",
+                                                                "src": "89:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "31",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 1",
+                                                                    "value": "1"
+                                                                },
+                                                                "id": 11,
+                                                                "name": "Literal",
+                                                                "src": "94:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 12,
+                                                        "name": "Assignment",
+                                                        "src": "89:6:0"
+                                                    }
+                                                ],
+                                                "id": 13,
+                                                "name": "ExpressionStatement",
+                                                "src": "89:6:0"
+                                            },
+                                            {
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": "-=",
+                                                            "type": "int256"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 7,
+                                                                    "type": "int256",
+                                                                    "value": "b"
+                                                                },
+                                                                "id": 14,
+                                                                "name": "Identifier",
+                                                                "src": "105:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "32",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 2",
+                                                                    "value": "2"
+                                                                },
+                                                                "id": 15,
+                                                                "name": "Literal",
+                                                                "src": "110:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 16,
+                                                        "name": "Assignment",
+                                                        "src": "105:6:0"
+                                                    }
+                                                ],
+                                                "id": 17,
+                                                "name": "ExpressionStatement",
+                                                "src": "105:6:0"
+                                            },
+                                            {
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": "*=",
+                                                            "type": "int256"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 7,
+                                                                    "type": "int256",
+                                                                    "value": "b"
+                                                                },
+                                                                "id": 18,
+                                                                "name": "Identifier",
+                                                                "src": "121:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "3230",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 20",
+                                                                    "value": "20"
+                                                                },
+                                                                "id": 19,
+                                                                "name": "Literal",
+                                                                "src": "126:2:0"
+                                                            }
+                                                        ],
+                                                        "id": 20,
+                                                        "name": "Assignment",
+                                                        "src": "121:7:0"
+                                                    }
+                                                ],
+                                                "id": 21,
+                                                "name": "ExpressionStatement",
+                                                "src": "121:7:0"
+                                            },
+                                            {
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": "/=",
+                                                            "type": "int256"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 7,
+                                                                    "type": "int256",
+                                                                    "value": "b"
+                                                                },
+                                                                "id": 22,
+                                                                "name": "Identifier",
+                                                                "src": "138:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "32",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 2",
+                                                                    "value": "2"
+                                                                },
+                                                                "id": 23,
+                                                                "name": "Literal",
+                                                                "src": "143:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 24,
+                                                        "name": "Assignment",
+                                                        "src": "138:6:0"
+                                                    }
+                                                ],
+                                                "id": 25,
+                                                "name": "ExpressionStatement",
+                                                "src": "138:6:0"
+                                            },
+                                            {
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": "%=",
+                                                            "type": "int256"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 7,
+                                                                    "type": "int256",
+                                                                    "value": "b"
+                                                                },
+                                                                "id": 26,
+                                                                "name": "Identifier",
+                                                                "src": "154:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "35",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 5",
+                                                                    "value": "5"
+                                                                },
+                                                                "id": 27,
+                                                                "name": "Literal",
+                                                                "src": "159:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 28,
+                                                        "name": "Assignment",
+                                                        "src": "154:6:0"
+                                                    }
+                                                ],
+                                                "id": 29,
+                                                "name": "ExpressionStatement",
+                                                "src": "154:6:0"
+                                            },
+                                            {
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": "=",
+                                                            "type": "int256"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 7,
+                                                                    "type": "int256",
+                                                                    "value": "b"
+                                                                },
+                                                                "id": 30,
+                                                                "name": "Identifier",
+                                                                "src": "170:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "37",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 7",
+                                                                    "value": "7"
+                                                                },
+                                                                "id": 31,
+                                                                "name": "Literal",
+                                                                "src": "174:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 32,
+                                                        "name": "Assignment",
+                                                        "src": "170:5:0"
+                                                    }
+                                                ],
+                                                "id": 33,
+                                                "name": "ExpressionStatement",
+                                                "src": "170:5:0"
+                                            },
+                                            {
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": "&=",
+                                                            "type": "int256"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 7,
+                                                                    "type": "int256",
+                                                                    "value": "b"
+                                                                },
+                                                                "id": 34,
+                                                                "name": "Identifier",
+                                                                "src": "185:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "31",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 1",
+                                                                    "value": "1"
+                                                                },
+                                                                "id": 35,
+                                                                "name": "Literal",
+                                                                "src": "190:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 36,
+                                                        "name": "Assignment",
+                                                        "src": "185:6:0"
+                                                    }
+                                                ],
+                                                "id": 37,
+                                                "name": "ExpressionStatement",
+                                                "src": "185:6:0"
+                                            },
+                                            {
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": "|=",
+                                                            "type": "int256"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 7,
+                                                                    "type": "int256",
+                                                                    "value": "b"
+                                                                },
+                                                                "id": 38,
+                                                                "name": "Identifier",
+                                                                "src": "201:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "31",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 1",
+                                                                    "value": "1"
+                                                                },
+                                                                "id": 39,
+                                                                "name": "Literal",
+                                                                "src": "206:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 40,
+                                                        "name": "Assignment",
+                                                        "src": "201:6:0"
+                                                    }
+                                                ],
+                                                "id": 41,
+                                                "name": "ExpressionStatement",
+                                                "src": "201:6:0"
+                                            },
+                                            {
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": "^=",
+                                                            "type": "int256"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 7,
+                                                                    "type": "int256",
+                                                                    "value": "b"
+                                                                },
+                                                                "id": 42,
+                                                                "name": "Identifier",
+                                                                "src": "217:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "31",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 1",
+                                                                    "value": "1"
+                                                                },
+                                                                "id": 43,
+                                                                "name": "Literal",
+                                                                "src": "222:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 44,
+                                                        "name": "Assignment",
+                                                        "src": "217:6:0"
+                                                    }
+                                                ],
+                                                "id": 45,
+                                                "name": "ExpressionStatement",
+                                                "src": "217:6:0"
+                                            }
+                                        ],
+                                        "id": 46,
+                                        "name": "Block",
+                                        "src": "59:171:0"
+                                    }
+                                ],
+                                "id": 47,
+                                "name": "FunctionDefinition",
+                                "src": "36:194:0"
+                            }
+                        ],
+                        "id": 48,
+                        "name": "ContractDefinition",
+                        "src": "0:232:0"
+                    }
+                ],
+                "id": 49,
+                "name": "SourceUnit",
+                "src": "0:233:0"
+            }
+        }
+    }
+}

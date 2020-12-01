@@ -1,0 +1,1414 @@
+{
+    "contracts": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/while_0413.sol:TestWhile": {
+            "assembly": {
+                ".code": [
+                    {
+                        "begin": 26,
+                        "end": 332,
+                        "name": "PUSH",
+                        "value": "80"
+                    },
+                    {
+                        "begin": 26,
+                        "end": 332,
+                        "name": "PUSH",
+                        "value": "40"
+                    },
+                    {
+                        "begin": 26,
+                        "end": 332,
+                        "name": "MSTORE"
+                    },
+                    {
+                        "begin": 26,
+                        "end": 332,
+                        "name": "CALLVALUE"
+                    },
+                    {
+                        "begin": 8,
+                        "end": 17,
+                        "name": "DUP1"
+                    },
+                    {
+                        "begin": 5,
+                        "end": 7,
+                        "name": "ISZERO"
+                    },
+                    {
+                        "begin": 5,
+                        "end": 7,
+                        "name": "PUSH [tag]",
+                        "value": "1"
+                    },
+                    {
+                        "begin": 5,
+                        "end": 7,
+                        "name": "JUMPI"
+                    },
+                    {
+                        "begin": 30,
+                        "end": 31,
+                        "name": "PUSH",
+                        "value": "0"
+                    },
+                    {
+                        "begin": 27,
+                        "end": 28,
+                        "name": "DUP1"
+                    },
+                    {
+                        "begin": 20,
+                        "end": 32,
+                        "name": "REVERT"
+                    },
+                    {
+                        "begin": 5,
+                        "end": 7,
+                        "name": "tag",
+                        "value": "1"
+                    },
+                    {
+                        "begin": 5,
+                        "end": 7,
+                        "name": "JUMPDEST"
+                    },
+                    {
+                        "begin": 26,
+                        "end": 332,
+                        "name": "POP"
+                    },
+                    {
+                        "begin": 26,
+                        "end": 332,
+                        "name": "PUSH #[$]",
+                        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+                    },
+                    {
+                        "begin": 26,
+                        "end": 332,
+                        "name": "DUP1"
+                    },
+                    {
+                        "begin": 26,
+                        "end": 332,
+                        "name": "PUSH [$]",
+                        "value": "0000000000000000000000000000000000000000000000000000000000000000"
+                    },
+                    {
+                        "begin": 26,
+                        "end": 332,
+                        "name": "PUSH",
+                        "value": "0"
+                    },
+                    {
+                        "begin": 26,
+                        "end": 332,
+                        "name": "CODECOPY"
+                    },
+                    {
+                        "begin": 26,
+                        "end": 332,
+                        "name": "PUSH",
+                        "value": "0"
+                    },
+                    {
+                        "begin": 26,
+                        "end": 332,
+                        "name": "RETURN"
+                    }
+                ],
+                ".data": {
+                    "0": {
+                        ".auxdata": "a165627a7a723058209d1e6aed009fb2b7a82d7c82e4e5c0cc0fddee19144303820994652db4797bfc0029",
+                        ".code": [
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "PUSH",
+                                "value": "80"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "PUSH",
+                                "value": "40"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "MSTORE"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "PUSH",
+                                "value": "4"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "CALLDATASIZE"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "LT"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "PUSH [tag]",
+                                "value": "1"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "JUMPI"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "PUSH",
+                                "value": "FFFFFFFF"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "PUSH",
+                                "value": "100000000000000000000000000000000000000000000000000000000"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "PUSH",
+                                "value": "0"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "CALLDATALOAD"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "DIV"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "AND"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "PUSH",
+                                "value": "2B1F98C9"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "DUP2"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "EQ"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "PUSH [tag]",
+                                "value": "2"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "JUMPI"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "DUP1"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "PUSH",
+                                "value": "C323C534"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "EQ"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "PUSH [tag]",
+                                "value": "3"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "JUMPI"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "tag",
+                                "value": "1"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "PUSH",
+                                "value": "0"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "DUP1"
+                            },
+                            {
+                                "begin": 26,
+                                "end": 332,
+                                "name": "REVERT"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "tag",
+                                "value": "2"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "CALLVALUE"
+                            },
+                            {
+                                "begin": 8,
+                                "end": 17,
+                                "name": "DUP1"
+                            },
+                            {
+                                "begin": 5,
+                                "end": 7,
+                                "name": "ISZERO"
+                            },
+                            {
+                                "begin": 5,
+                                "end": 7,
+                                "name": "PUSH [tag]",
+                                "value": "4"
+                            },
+                            {
+                                "begin": 5,
+                                "end": 7,
+                                "name": "JUMPI"
+                            },
+                            {
+                                "begin": 30,
+                                "end": 31,
+                                "name": "PUSH",
+                                "value": "0"
+                            },
+                            {
+                                "begin": 27,
+                                "end": 28,
+                                "name": "DUP1"
+                            },
+                            {
+                                "begin": 20,
+                                "end": 32,
+                                "name": "REVERT"
+                            },
+                            {
+                                "begin": 5,
+                                "end": 7,
+                                "name": "tag",
+                                "value": "4"
+                            },
+                            {
+                                "begin": 5,
+                                "end": 7,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "POP"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "PUSH [tag]",
+                                "value": "5"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "PUSH [tag]",
+                                "value": "6"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "JUMP"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "tag",
+                                "value": "5"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "STOP"
+                            },
+                            {
+                                "begin": 51,
+                                "end": 166,
+                                "name": "tag",
+                                "value": "3"
+                            },
+                            {
+                                "begin": 51,
+                                "end": 166,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 51,
+                                "end": 166,
+                                "name": "CALLVALUE"
+                            },
+                            {
+                                "begin": 8,
+                                "end": 17,
+                                "name": "DUP1"
+                            },
+                            {
+                                "begin": 5,
+                                "end": 7,
+                                "name": "ISZERO"
+                            },
+                            {
+                                "begin": 5,
+                                "end": 7,
+                                "name": "PUSH [tag]",
+                                "value": "7"
+                            },
+                            {
+                                "begin": 5,
+                                "end": 7,
+                                "name": "JUMPI"
+                            },
+                            {
+                                "begin": 30,
+                                "end": 31,
+                                "name": "PUSH",
+                                "value": "0"
+                            },
+                            {
+                                "begin": 27,
+                                "end": 28,
+                                "name": "DUP1"
+                            },
+                            {
+                                "begin": 20,
+                                "end": 32,
+                                "name": "REVERT"
+                            },
+                            {
+                                "begin": 5,
+                                "end": 7,
+                                "name": "tag",
+                                "value": "7"
+                            },
+                            {
+                                "begin": 5,
+                                "end": 7,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 51,
+                                "end": 166,
+                                "name": "POP"
+                            },
+                            {
+                                "begin": 51,
+                                "end": 166,
+                                "name": "PUSH [tag]",
+                                "value": "5"
+                            },
+                            {
+                                "begin": 51,
+                                "end": 166,
+                                "name": "PUSH [tag]",
+                                "value": "9"
+                            },
+                            {
+                                "begin": 51,
+                                "end": 166,
+                                "name": "JUMP"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "tag",
+                                "value": "6"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 219,
+                                "end": 224,
+                                "name": "PUSH",
+                                "value": "0"
+                            },
+                            {
+                                "begin": 246,
+                                "end": 248,
+                                "name": "PUSH",
+                                "value": "A"
+                            },
+                            {
+                                "begin": 259,
+                                "end": 324,
+                                "name": "tag",
+                                "value": "11"
+                            },
+                            {
+                                "begin": 259,
+                                "end": 324,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 270,
+                                "end": 271,
+                                "name": "DUP1"
+                            },
+                            {
+                                "begin": 266,
+                                "end": 267,
+                                "name": "DUP3"
+                            },
+                            {
+                                "begin": 266,
+                                "end": 271,
+                                "name": "SLT"
+                            },
+                            {
+                                "begin": 259,
+                                "end": 324,
+                                "name": "ISZERO"
+                            },
+                            {
+                                "begin": 259,
+                                "end": 324,
+                                "name": "PUSH [tag]",
+                                "value": "12"
+                            },
+                            {
+                                "begin": 259,
+                                "end": 324,
+                                "name": "JUMPI"
+                            },
+                            {
+                                "begin": 292,
+                                "end": 293,
+                                "name": "PUSH",
+                                "value": "2"
+                            },
+                            {
+                                "begin": 287,
+                                "end": 293,
+                                "name": "SWAP2"
+                            },
+                            {
+                                "begin": 287,
+                                "end": 293,
+                                "name": "SWAP1"
+                            },
+                            {
+                                "begin": 287,
+                                "end": 293,
+                                "name": "SWAP2"
+                            },
+                            {
+                                "begin": 287,
+                                "end": 293,
+                                "name": "ADD"
+                            },
+                            {
+                                "begin": 287,
+                                "end": 293,
+                                "name": "SWAP1"
+                            },
+                            {
+                                "begin": -1,
+                                "end": -1,
+                                "name": "PUSH",
+                                "value": "0"
+                            },
+                            {
+                                "begin": -1,
+                                "end": -1,
+                                "name": "NOT"
+                            },
+                            {
+                                "begin": 307,
+                                "end": 313,
+                                "name": "ADD"
+                            },
+                            {
+                                "begin": 259,
+                                "end": 324,
+                                "name": "PUSH [tag]",
+                                "value": "11"
+                            },
+                            {
+                                "begin": 259,
+                                "end": 324,
+                                "name": "JUMP"
+                            },
+                            {
+                                "begin": 259,
+                                "end": 324,
+                                "name": "tag",
+                                "value": "12"
+                            },
+                            {
+                                "begin": 259,
+                                "end": 324,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "POP"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "POP"
+                            },
+                            {
+                                "begin": 176,
+                                "end": 330,
+                                "name": "JUMP",
+                                "value": "[out]"
+                            },
+                            {
+                                "begin": 51,
+                                "end": 166,
+                                "name": "tag",
+                                "value": "9"
+                            },
+                            {
+                                "begin": 51,
+                                "end": 166,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 99,
+                                "end": 104,
+                                "name": "PUSH",
+                                "value": "0"
+                            },
+                            {
+                                "begin": 126,
+                                "end": 128,
+                                "name": "PUSH",
+                                "value": "A"
+                            },
+                            {
+                                "begin": 139,
+                                "end": 159,
+                                "name": "tag",
+                                "value": "14"
+                            },
+                            {
+                                "begin": 139,
+                                "end": 159,
+                                "name": "JUMPDEST"
+                            },
+                            {
+                                "begin": 150,
+                                "end": 151,
+                                "name": "DUP1"
+                            },
+                            {
+                                "begin": 146,
+                                "end": 147,
+                                "name": "DUP3"
+                            },
+                            {
+                                "begin": 146,
+                                "end": 151,
+                                "name": "SLT"
+                            },
+                            {
+                                "begin": 139,
+                                "end": 159,
+                                "name": "ISZERO"
+                            },
+                            {
+                                "begin": 139,
+                                "end": 159,
+                                "name": "PUSH [tag]",
+                                "value": "12"
+                            },
+                            {
+                                "begin": 139,
+                                "end": 159,
+                                "name": "JUMPI"
+                            },
+                            {
+                                "begin": 158,
+                                "end": 159,
+                                "name": "PUSH",
+                                "value": "5"
+                            },
+                            {
+                                "begin": 153,
+                                "end": 159,
+                                "name": "DUP3"
+                            },
+                            {
+                                "begin": 153,
+                                "end": 159,
+                                "name": "ADD"
+                            },
+                            {
+                                "begin": 153,
+                                "end": 159,
+                                "name": "SWAP2"
+                            },
+                            {
+                                "begin": 153,
+                                "end": 159,
+                                "name": "POP"
+                            },
+                            {
+                                "begin": 139,
+                                "end": 159,
+                                "name": "PUSH [tag]",
+                                "value": "14"
+                            },
+                            {
+                                "begin": 139,
+                                "end": 159,
+                                "name": "JUMP"
+                            }
+                        ]
+                    }
+                }
+            },
+            "bytecode": "608060405234801561001057600080fd5b5060d48061001f6000396000f30060806040526004361060485763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416632b1f98c98114604d578063c323c534146061575b600080fd5b348015605857600080fd5b50605f6073565b005b348015606c57600080fd5b50605f6092565b6000600a5b80821215608e5760029190910190600019016078565b5050565b6000600a5b80821215608e5760058201915060975600a165627a7a723058209d1e6aed009fb2b7a82d7c82e4e5c0cc0fddee19144303820994652db4797bfc0029",
+            "functionHashes": {
+                "whileWithBlock()": "2b1f98c9",
+                "whileWithExpression()": "c323c534"
+            },
+            "gasEstimates": {
+                "creation": [
+                    93,
+                    42400
+                ],
+                "external": {
+                    "whileWithBlock()": null,
+                    "whileWithExpression()": null
+                },
+                "internal": {}
+            },
+            "interface": "[{\"constant\":false,\"inputs\":[],\"name\":\"whileWithBlock\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"whileWithExpression\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
+            "metadata": "{\"compiler\":{\"version\":\"0.4.26+commit.4563c3fc\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":false,\"inputs\":[],\"name\":\"whileWithBlock\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"whileWithExpression\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/while_0413.sol\":\"TestWhile\"},\"evmVersion\":\"byzantium\",\"libraries\":{},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/while_0413.sol\":{\"keccak256\":\"0x661b06e836d9beea3d9b898556e5013ac3947246fda4433425b4da46cdd9f0a4\",\"urls\":[\"bzzr://5b7fbb1871865e04497c07846af4a584bbdc2d8808f673e4cf11c684d131a441\"]}},\"version\":1}",
+            "opcodes": "PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH2 0x10 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH1 0xD4 DUP1 PUSH2 0x1F PUSH1 0x0 CODECOPY PUSH1 0x0 RETURN STOP PUSH1 0x80 PUSH1 0x40 MSTORE PUSH1 0x4 CALLDATASIZE LT PUSH1 0x48 JUMPI PUSH4 0xFFFFFFFF PUSH29 0x100000000000000000000000000000000000000000000000000000000 PUSH1 0x0 CALLDATALOAD DIV AND PUSH4 0x2B1F98C9 DUP2 EQ PUSH1 0x4D JUMPI DUP1 PUSH4 0xC323C534 EQ PUSH1 0x61 JUMPI JUMPDEST PUSH1 0x0 DUP1 REVERT JUMPDEST CALLVALUE DUP1 ISZERO PUSH1 0x58 JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH1 0x5F PUSH1 0x73 JUMP JUMPDEST STOP JUMPDEST CALLVALUE DUP1 ISZERO PUSH1 0x6C JUMPI PUSH1 0x0 DUP1 REVERT JUMPDEST POP PUSH1 0x5F PUSH1 0x92 JUMP JUMPDEST PUSH1 0x0 PUSH1 0xA JUMPDEST DUP1 DUP3 SLT ISZERO PUSH1 0x8E JUMPI PUSH1 0x2 SWAP2 SWAP1 SWAP2 ADD SWAP1 PUSH1 0x0 NOT ADD PUSH1 0x78 JUMP JUMPDEST POP POP JUMP JUMPDEST PUSH1 0x0 PUSH1 0xA JUMPDEST DUP1 DUP3 SLT ISZERO PUSH1 0x8E JUMPI PUSH1 0x5 DUP3 ADD SWAP2 POP PUSH1 0x97 JUMP STOP LOG1 PUSH6 0x627A7A723058 KECCAK256 SWAP14 0x1e PUSH11 0xED009FB2B7A82D7C82E4E5 0xc0 0xcc 0xf 0xdd 0xee NOT EQ NUMBER SUB DUP3 MULMOD SWAP5 PUSH6 0x2DB4797BFC00 0x29 ",
+            "runtimeBytecode": "60806040526004361060485763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416632b1f98c98114604d578063c323c534146061575b600080fd5b348015605857600080fd5b50605f6073565b005b348015606c57600080fd5b50605f6092565b6000600a5b80821215608e5760029190910190600019016078565b5050565b6000600a5b80821215608e5760058201915060975600a165627a7a723058209d1e6aed009fb2b7a82d7c82e4e5c0cc0fddee19144303820994652db4797bfc0029",
+            "srcmap": "26:306:0:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;26:306:0;;;;;;;",
+            "srcmapRuntime": "26:306:0:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;176:154;;8:9:-1;5:2;;;30:1;27;20:12;5:2;176:154:0;;;;;;51:115;;8:9:-1;5:2;;;30:1;27;20:12;5:2;51:115:0;;;;176:154;219:5;246:2;259:65;270:1;266;:5;259:65;;;292:1;287:6;;;;;-1:-1:-1;;307:6:0;259:65;;;176:154;;:::o;51:115::-;99:5;126:2;139:20;150:1;146;:5;139:20;;;158:1;153:6;;;;139:20;"
+        }
+    },
+    "errors": [
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/while_0413.sol:4:5: Warning: Function state mutability can be restricted to pure\n    function whileWithExpression() public {\n    ^ (Relevant source part starts here and spans across multiple lines).\n",
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/while_0413.sol:11:5: Warning: Function state mutability can be restricted to pure\n    function whileWithBlock() public {\n    ^ (Relevant source part starts here and spans across multiple lines).\n"
+    ],
+    "sourceList": [
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/while_0413.sol"
+    ],
+    "sources": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/while_0413.sol": {
+            "AST": {
+                "attributes": {
+                    "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/while_0413.sol",
+                    "exportedSymbols": {
+                        "TestWhile": [
+                            47
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "literals": [
+                                "solidity",
+                                "^",
+                                "0.4",
+                                ".13"
+                            ]
+                        },
+                        "id": 1,
+                        "name": "PragmaDirective",
+                        "src": "0:24:0"
+                    },
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                47
+                            ],
+                            "name": "TestWhile",
+                            "scope": 48
+                        },
+                        "children": [
+                            {
+                                "attributes": {
+                                    "constant": false,
+                                    "documentation": null,
+                                    "implemented": true,
+                                    "isConstructor": false,
+                                    "modifiers": [
+                                        null
+                                    ],
+                                    "name": "whileWithExpression",
+                                    "payable": false,
+                                    "scope": 47,
+                                    "stateMutability": "nonpayable",
+                                    "superFunction": null,
+                                    "visibility": "public"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 2,
+                                        "name": "ParameterList",
+                                        "src": "79:2:0"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 3,
+                                        "name": "ParameterList",
+                                        "src": "89:0:0"
+                                    },
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "assignments": [
+                                                        5
+                                                    ]
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "a",
+                                                            "scope": 21,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "default",
+                                                            "type": "int256",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "name": "int",
+                                                                    "type": "int256"
+                                                                },
+                                                                "id": 4,
+                                                                "name": "ElementaryTypeName",
+                                                                "src": "99:3:0"
+                                                            }
+                                                        ],
+                                                        "id": 5,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "99:5:0"
+                                                    },
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "hexvalue": "30",
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "lValueRequested": false,
+                                                            "subdenomination": null,
+                                                            "token": "number",
+                                                            "type": "int_const 0",
+                                                            "value": "0"
+                                                        },
+                                                        "id": 6,
+                                                        "name": "Literal",
+                                                        "src": "107:1:0"
+                                                    }
+                                                ],
+                                                "id": 7,
+                                                "name": "VariableDeclarationStatement",
+                                                "src": "99:9:0"
+                                            },
+                                            {
+                                                "attributes": {
+                                                    "assignments": [
+                                                        9
+                                                    ]
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "b",
+                                                            "scope": 21,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "default",
+                                                            "type": "int256",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "name": "int",
+                                                                    "type": "int256"
+                                                                },
+                                                                "id": 8,
+                                                                "name": "ElementaryTypeName",
+                                                                "src": "118:3:0"
+                                                            }
+                                                        ],
+                                                        "id": 9,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "118:5:0"
+                                                    },
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "hexvalue": "3130",
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "lValueRequested": false,
+                                                            "subdenomination": null,
+                                                            "token": "number",
+                                                            "type": "int_const 10",
+                                                            "value": "10"
+                                                        },
+                                                        "id": 10,
+                                                        "name": "Literal",
+                                                        "src": "126:2:0"
+                                                    }
+                                                ],
+                                                "id": 11,
+                                                "name": "VariableDeclarationStatement",
+                                                "src": "118:10:0"
+                                            },
+                                            {
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "commonType": {
+                                                                "typeIdentifier": "t_int256",
+                                                                "typeString": "int256"
+                                                            },
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": "<",
+                                                            "type": "bool"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 5,
+                                                                    "type": "int256",
+                                                                    "value": "a"
+                                                                },
+                                                                "id": 12,
+                                                                "name": "Identifier",
+                                                                "src": "146:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 9,
+                                                                    "type": "int256",
+                                                                    "value": "b"
+                                                                },
+                                                                "id": 13,
+                                                                "name": "Identifier",
+                                                                "src": "150:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 14,
+                                                        "name": "BinaryOperation",
+                                                        "src": "146:5:0"
+                                                    },
+                                                    {
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": false,
+                                                                    "lValueRequested": false,
+                                                                    "operator": "+=",
+                                                                    "type": "int256"
+                                                                },
+                                                                "children": [
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "overloadedDeclarations": [
+                                                                                null
+                                                                            ],
+                                                                            "referencedDeclaration": 5,
+                                                                            "type": "int256",
+                                                                            "value": "a"
+                                                                        },
+                                                                        "id": 15,
+                                                                        "name": "Identifier",
+                                                                        "src": "153:1:0"
+                                                                    },
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "hexvalue": "35",
+                                                                            "isConstant": false,
+                                                                            "isLValue": false,
+                                                                            "isPure": true,
+                                                                            "lValueRequested": false,
+                                                                            "subdenomination": null,
+                                                                            "token": "number",
+                                                                            "type": "int_const 5",
+                                                                            "value": "5"
+                                                                        },
+                                                                        "id": 16,
+                                                                        "name": "Literal",
+                                                                        "src": "158:1:0"
+                                                                    }
+                                                                ],
+                                                                "id": 17,
+                                                                "name": "Assignment",
+                                                                "src": "153:6:0"
+                                                            }
+                                                        ],
+                                                        "id": 18,
+                                                        "name": "ExpressionStatement",
+                                                        "src": "153:6:0"
+                                                    }
+                                                ],
+                                                "id": 19,
+                                                "name": "WhileStatement",
+                                                "src": "139:20:0"
+                                            }
+                                        ],
+                                        "id": 20,
+                                        "name": "Block",
+                                        "src": "89:77:0"
+                                    }
+                                ],
+                                "id": 21,
+                                "name": "FunctionDefinition",
+                                "src": "51:115:0"
+                            },
+                            {
+                                "attributes": {
+                                    "constant": false,
+                                    "documentation": null,
+                                    "implemented": true,
+                                    "isConstructor": false,
+                                    "modifiers": [
+                                        null
+                                    ],
+                                    "name": "whileWithBlock",
+                                    "payable": false,
+                                    "scope": 47,
+                                    "stateMutability": "nonpayable",
+                                    "superFunction": null,
+                                    "visibility": "public"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 22,
+                                        "name": "ParameterList",
+                                        "src": "199:2:0"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 23,
+                                        "name": "ParameterList",
+                                        "src": "209:0:0"
+                                    },
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "assignments": [
+                                                        25
+                                                    ]
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "a",
+                                                            "scope": 46,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "default",
+                                                            "type": "int256",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "name": "int",
+                                                                    "type": "int256"
+                                                                },
+                                                                "id": 24,
+                                                                "name": "ElementaryTypeName",
+                                                                "src": "219:3:0"
+                                                            }
+                                                        ],
+                                                        "id": 25,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "219:5:0"
+                                                    },
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "hexvalue": "30",
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "lValueRequested": false,
+                                                            "subdenomination": null,
+                                                            "token": "number",
+                                                            "type": "int_const 0",
+                                                            "value": "0"
+                                                        },
+                                                        "id": 26,
+                                                        "name": "Literal",
+                                                        "src": "227:1:0"
+                                                    }
+                                                ],
+                                                "id": 27,
+                                                "name": "VariableDeclarationStatement",
+                                                "src": "219:9:0"
+                                            },
+                                            {
+                                                "attributes": {
+                                                    "assignments": [
+                                                        29
+                                                    ]
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "b",
+                                                            "scope": 46,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "default",
+                                                            "type": "int256",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "name": "int",
+                                                                    "type": "int256"
+                                                                },
+                                                                "id": 28,
+                                                                "name": "ElementaryTypeName",
+                                                                "src": "238:3:0"
+                                                            }
+                                                        ],
+                                                        "id": 29,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "238:5:0"
+                                                    },
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "hexvalue": "3130",
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "lValueRequested": false,
+                                                            "subdenomination": null,
+                                                            "token": "number",
+                                                            "type": "int_const 10",
+                                                            "value": "10"
+                                                        },
+                                                        "id": 30,
+                                                        "name": "Literal",
+                                                        "src": "246:2:0"
+                                                    }
+                                                ],
+                                                "id": 31,
+                                                "name": "VariableDeclarationStatement",
+                                                "src": "238:10:0"
+                                            },
+                                            {
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "commonType": {
+                                                                "typeIdentifier": "t_int256",
+                                                                "typeString": "int256"
+                                                            },
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": "<",
+                                                            "type": "bool"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 25,
+                                                                    "type": "int256",
+                                                                    "value": "a"
+                                                                },
+                                                                "id": 32,
+                                                                "name": "Identifier",
+                                                                "src": "266:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 29,
+                                                                    "type": "int256",
+                                                                    "value": "b"
+                                                                },
+                                                                "id": 33,
+                                                                "name": "Identifier",
+                                                                "src": "270:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 34,
+                                                        "name": "BinaryOperation",
+                                                        "src": "266:5:0"
+                                                    },
+                                                    {
+                                                        "children": [
+                                                            {
+                                                                "children": [
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "isConstant": false,
+                                                                            "isLValue": false,
+                                                                            "isPure": false,
+                                                                            "lValueRequested": false,
+                                                                            "operator": "+=",
+                                                                            "type": "int256"
+                                                                        },
+                                                                        "children": [
+                                                                            {
+                                                                                "attributes": {
+                                                                                    "argumentTypes": null,
+                                                                                    "overloadedDeclarations": [
+                                                                                        null
+                                                                                    ],
+                                                                                    "referencedDeclaration": 25,
+                                                                                    "type": "int256",
+                                                                                    "value": "a"
+                                                                                },
+                                                                                "id": 35,
+                                                                                "name": "Identifier",
+                                                                                "src": "287:1:0"
+                                                                            },
+                                                                            {
+                                                                                "attributes": {
+                                                                                    "argumentTypes": null,
+                                                                                    "hexvalue": "32",
+                                                                                    "isConstant": false,
+                                                                                    "isLValue": false,
+                                                                                    "isPure": true,
+                                                                                    "lValueRequested": false,
+                                                                                    "subdenomination": null,
+                                                                                    "token": "number",
+                                                                                    "type": "int_const 2",
+                                                                                    "value": "2"
+                                                                                },
+                                                                                "id": 36,
+                                                                                "name": "Literal",
+                                                                                "src": "292:1:0"
+                                                                            }
+                                                                        ],
+                                                                        "id": 37,
+                                                                        "name": "Assignment",
+                                                                        "src": "287:6:0"
+                                                                    }
+                                                                ],
+                                                                "id": 38,
+                                                                "name": "ExpressionStatement",
+                                                                "src": "287:6:0"
+                                                            },
+                                                            {
+                                                                "children": [
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "isConstant": false,
+                                                                            "isLValue": false,
+                                                                            "isPure": false,
+                                                                            "lValueRequested": false,
+                                                                            "operator": "-=",
+                                                                            "type": "int256"
+                                                                        },
+                                                                        "children": [
+                                                                            {
+                                                                                "attributes": {
+                                                                                    "argumentTypes": null,
+                                                                                    "overloadedDeclarations": [
+                                                                                        null
+                                                                                    ],
+                                                                                    "referencedDeclaration": 29,
+                                                                                    "type": "int256",
+                                                                                    "value": "b"
+                                                                                },
+                                                                                "id": 39,
+                                                                                "name": "Identifier",
+                                                                                "src": "307:1:0"
+                                                                            },
+                                                                            {
+                                                                                "attributes": {
+                                                                                    "argumentTypes": null,
+                                                                                    "hexvalue": "31",
+                                                                                    "isConstant": false,
+                                                                                    "isLValue": false,
+                                                                                    "isPure": true,
+                                                                                    "lValueRequested": false,
+                                                                                    "subdenomination": null,
+                                                                                    "token": "number",
+                                                                                    "type": "int_const 1",
+                                                                                    "value": "1"
+                                                                                },
+                                                                                "id": 40,
+                                                                                "name": "Literal",
+                                                                                "src": "312:1:0"
+                                                                            }
+                                                                        ],
+                                                                        "id": 41,
+                                                                        "name": "Assignment",
+                                                                        "src": "307:6:0"
+                                                                    }
+                                                                ],
+                                                                "id": 42,
+                                                                "name": "ExpressionStatement",
+                                                                "src": "307:6:0"
+                                                            }
+                                                        ],
+                                                        "id": 43,
+                                                        "name": "Block",
+                                                        "src": "273:51:0"
+                                                    }
+                                                ],
+                                                "id": 44,
+                                                "name": "WhileStatement",
+                                                "src": "259:65:0"
+                                            }
+                                        ],
+                                        "id": 45,
+                                        "name": "Block",
+                                        "src": "209:121:0"
+                                    }
+                                ],
+                                "id": 46,
+                                "name": "FunctionDefinition",
+                                "src": "176:154:0"
+                            }
+                        ],
+                        "id": 47,
+                        "name": "ContractDefinition",
+                        "src": "26:306:0"
+                    }
+                ],
+                "id": 48,
+                "name": "SourceUnit",
+                "src": "0:332:0"
+            }
+        }
+    }
+}

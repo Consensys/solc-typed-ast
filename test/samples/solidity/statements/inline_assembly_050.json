@@ -1,0 +1,1106 @@
+{
+    "errors": [
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/inline_assembly_050.sol:4:5: Warning: Function state mutability can be restricted to pure\n    function singleOneLineAssembly(int x) public returns (int y) {\n    ^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Function state mutability can be restricted to pure",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 157,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/inline_assembly_050.sol",
+                "start": 53
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/inline_assembly_050.sol:8:5: Warning: Function state mutability can be restricted to pure\n    function singleMultilineAssembly(int x) public {\n    ^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Function state mutability can be restricted to pure",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 299,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/inline_assembly_050.sol",
+                "start": 163
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/inline_assembly_050.sol:16:5: Warning: Function state mutability can be restricted to pure\n    function multipleAssemblies(int x) public returns (int a, int b) {\n    ^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Function state mutability can be restricted to pure",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 617,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/inline_assembly_050.sol",
+                "start": 305
+            },
+            "type": "Warning"
+        }
+    ],
+    "sources": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/inline_assembly_050.sol": {
+            "ast": {
+                "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/inline_assembly_050.sol",
+                "exportedSymbols": {
+                    "TestAssembly": [
+                        35
+                    ]
+                },
+                "id": 36,
+                "nodeType": "SourceUnit",
+                "nodes": [
+                    {
+                        "id": 1,
+                        "literals": [
+                            "solidity",
+                            "^",
+                            "0.5",
+                            ".0"
+                        ],
+                        "nodeType": "PragmaDirective",
+                        "src": "0:23:0"
+                    },
+                    {
+                        "baseContracts": [],
+                        "contractDependencies": [],
+                        "contractKind": "contract",
+                        "documentation": null,
+                        "fullyImplemented": true,
+                        "id": 35,
+                        "linearizedBaseContracts": [
+                            35
+                        ],
+                        "name": "TestAssembly",
+                        "nodeType": "ContractDefinition",
+                        "nodes": [
+                            {
+                                "body": {
+                                    "id": 9,
+                                    "nodeType": "Block",
+                                    "src": "114:43:0",
+                                    "statements": [
+                                        {
+                                            "externalReferences": [
+                                                {
+                                                    "y": {
+                                                        "declaration": 6,
+                                                        "isOffset": false,
+                                                        "isSlot": false,
+                                                        "src": "135:1:0",
+                                                        "valueSize": 1
+                                                    }
+                                                },
+                                                {
+                                                    "x": {
+                                                        "declaration": 3,
+                                                        "isOffset": false,
+                                                        "isSlot": false,
+                                                        "src": "144:1:0",
+                                                        "valueSize": 1
+                                                    }
+                                                }
+                                            ],
+                                            "id": 8,
+                                            "nodeType": "InlineAssembly",
+                                            "operations": "{ y := add(x, 1) }",
+                                            "src": "124:27:0"
+                                        }
+                                    ]
+                                },
+                                "documentation": null,
+                                "id": 10,
+                                "implemented": true,
+                                "kind": "function",
+                                "modifiers": [],
+                                "name": "singleOneLineAssembly",
+                                "nodeType": "FunctionDefinition",
+                                "parameters": {
+                                    "id": 4,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [
+                                        {
+                                            "constant": false,
+                                            "id": 3,
+                                            "name": "x",
+                                            "nodeType": "VariableDeclaration",
+                                            "scope": 10,
+                                            "src": "84:5:0",
+                                            "stateVariable": false,
+                                            "storageLocation": "default",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_int256",
+                                                "typeString": "int256"
+                                            },
+                                            "typeName": {
+                                                "id": 2,
+                                                "name": "int",
+                                                "nodeType": "ElementaryTypeName",
+                                                "src": "84:3:0",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_int256",
+                                                    "typeString": "int256"
+                                                }
+                                            },
+                                            "value": null,
+                                            "visibility": "internal"
+                                        }
+                                    ],
+                                    "src": "83:7:0"
+                                },
+                                "returnParameters": {
+                                    "id": 7,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [
+                                        {
+                                            "constant": false,
+                                            "id": 6,
+                                            "name": "y",
+                                            "nodeType": "VariableDeclaration",
+                                            "scope": 10,
+                                            "src": "107:5:0",
+                                            "stateVariable": false,
+                                            "storageLocation": "default",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_int256",
+                                                "typeString": "int256"
+                                            },
+                                            "typeName": {
+                                                "id": 5,
+                                                "name": "int",
+                                                "nodeType": "ElementaryTypeName",
+                                                "src": "107:3:0",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_int256",
+                                                    "typeString": "int256"
+                                                }
+                                            },
+                                            "value": null,
+                                            "visibility": "internal"
+                                        }
+                                    ],
+                                    "src": "106:7:0"
+                                },
+                                "scope": 35,
+                                "src": "53:104:0",
+                                "stateMutability": "nonpayable",
+                                "superFunction": null,
+                                "visibility": "public"
+                            },
+                            {
+                                "body": {
+                                    "id": 16,
+                                    "nodeType": "Block",
+                                    "src": "210:89:0",
+                                    "statements": [
+                                        {
+                                            "externalReferences": [
+                                                {
+                                                    "x": {
+                                                        "declaration": 12,
+                                                        "isOffset": false,
+                                                        "isSlot": false,
+                                                        "src": "269:1:0",
+                                                        "valueSize": 1
+                                                    }
+                                                },
+                                                {
+                                                    "x": {
+                                                        "declaration": 12,
+                                                        "isOffset": false,
+                                                        "isSlot": false,
+                                                        "src": "281:1:0",
+                                                        "valueSize": 1
+                                                    }
+                                                }
+                                            ],
+                                            "id": 15,
+                                            "nodeType": "InlineAssembly",
+                                            "operations": "{\n    let y := 100\n    x := sub(y, x)\n}",
+                                            "src": "220:73:0"
+                                        }
+                                    ]
+                                },
+                                "documentation": null,
+                                "id": 17,
+                                "implemented": true,
+                                "kind": "function",
+                                "modifiers": [],
+                                "name": "singleMultilineAssembly",
+                                "nodeType": "FunctionDefinition",
+                                "parameters": {
+                                    "id": 13,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [
+                                        {
+                                            "constant": false,
+                                            "id": 12,
+                                            "name": "x",
+                                            "nodeType": "VariableDeclaration",
+                                            "scope": 17,
+                                            "src": "196:5:0",
+                                            "stateVariable": false,
+                                            "storageLocation": "default",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_int256",
+                                                "typeString": "int256"
+                                            },
+                                            "typeName": {
+                                                "id": 11,
+                                                "name": "int",
+                                                "nodeType": "ElementaryTypeName",
+                                                "src": "196:3:0",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_int256",
+                                                    "typeString": "int256"
+                                                }
+                                            },
+                                            "value": null,
+                                            "visibility": "internal"
+                                        }
+                                    ],
+                                    "src": "195:7:0"
+                                },
+                                "returnParameters": {
+                                    "id": 14,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [],
+                                    "src": "210:0:0"
+                                },
+                                "scope": 35,
+                                "src": "163:136:0",
+                                "stateMutability": "nonpayable",
+                                "superFunction": null,
+                                "visibility": "public"
+                            },
+                            {
+                                "body": {
+                                    "id": 33,
+                                    "nodeType": "Block",
+                                    "src": "370:247:0",
+                                    "statements": [
+                                        {
+                                            "condition": {
+                                                "argumentTypes": null,
+                                                "commonType": {
+                                                    "typeIdentifier": "t_int256",
+                                                    "typeString": "int256"
+                                                },
+                                                "id": 28,
+                                                "isConstant": false,
+                                                "isLValue": false,
+                                                "isPure": false,
+                                                "lValueRequested": false,
+                                                "leftExpression": {
+                                                    "argumentTypes": null,
+                                                    "id": 26,
+                                                    "name": "x",
+                                                    "nodeType": "Identifier",
+                                                    "overloadedDeclarations": [],
+                                                    "referencedDeclaration": 19,
+                                                    "src": "384:1:0",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_int256",
+                                                        "typeString": "int256"
+                                                    }
+                                                },
+                                                "nodeType": "BinaryOperation",
+                                                "operator": ">",
+                                                "rightExpression": {
+                                                    "argumentTypes": null,
+                                                    "hexValue": "30",
+                                                    "id": 27,
+                                                    "isConstant": false,
+                                                    "isLValue": false,
+                                                    "isPure": true,
+                                                    "kind": "number",
+                                                    "lValueRequested": false,
+                                                    "nodeType": "Literal",
+                                                    "src": "388:1:0",
+                                                    "subdenomination": null,
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_rational_0_by_1",
+                                                        "typeString": "int_const 0"
+                                                    },
+                                                    "value": "0"
+                                                },
+                                                "src": "384:5:0",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_bool",
+                                                    "typeString": "bool"
+                                                }
+                                            },
+                                            "falseBody": null,
+                                            "id": 31,
+                                            "nodeType": "IfStatement",
+                                            "src": "380:121:0",
+                                            "trueBody": {
+                                                "id": 30,
+                                                "nodeType": "Block",
+                                                "src": "391:110:0",
+                                                "statements": [
+                                                    {
+                                                        "externalReferences": [
+                                                            {
+                                                                "x": {
+                                                                    "declaration": 19,
+                                                                    "isOffset": false,
+                                                                    "isSlot": false,
+                                                                    "src": "432:1:0",
+                                                                    "valueSize": 1
+                                                                }
+                                                            },
+                                                            {
+                                                                "x": {
+                                                                    "declaration": 19,
+                                                                    "isOffset": false,
+                                                                    "isSlot": false,
+                                                                    "src": "463:1:0",
+                                                                    "valueSize": 1
+                                                                }
+                                                            },
+                                                            {
+                                                                "x": {
+                                                                    "declaration": 19,
+                                                                    "isOffset": false,
+                                                                    "isSlot": false,
+                                                                    "src": "441:1:0",
+                                                                    "valueSize": 1
+                                                                }
+                                                            },
+                                                            {
+                                                                "x": {
+                                                                    "declaration": 19,
+                                                                    "isOffset": false,
+                                                                    "isSlot": false,
+                                                                    "src": "475:1:0",
+                                                                    "valueSize": 1
+                                                                }
+                                                            }
+                                                        ],
+                                                        "id": 29,
+                                                        "nodeType": "InlineAssembly",
+                                                        "operations": "{\n    x := sub(x, 1)\n    x := add(1, x)\n}",
+                                                        "src": "405:86:0"
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "externalReferences": [
+                                                {
+                                                    "b": {
+                                                        "declaration": 24,
+                                                        "isOffset": false,
+                                                        "isSlot": false,
+                                                        "src": "587:1:0",
+                                                        "valueSize": 1
+                                                    }
+                                                },
+                                                {
+                                                    "a": {
+                                                        "declaration": 22,
+                                                        "isOffset": false,
+                                                        "isSlot": false,
+                                                        "src": "560:1:0",
+                                                        "valueSize": 1
+                                                    }
+                                                },
+                                                {
+                                                    "x": {
+                                                        "declaration": 19,
+                                                        "isOffset": false,
+                                                        "isSlot": false,
+                                                        "src": "569:1:0",
+                                                        "valueSize": 1
+                                                    }
+                                                },
+                                                {
+                                                    "x": {
+                                                        "declaration": 19,
+                                                        "isOffset": false,
+                                                        "isSlot": false,
+                                                        "src": "596:1:0",
+                                                        "valueSize": 1
+                                                    }
+                                                }
+                                            ],
+                                            "id": 32,
+                                            "nodeType": "InlineAssembly",
+                                            "operations": "{\n    let y := 200\n    a := add(x, y)\n    b := sub(x, y)\n}",
+                                            "src": "511:100:0"
+                                        }
+                                    ]
+                                },
+                                "documentation": null,
+                                "id": 34,
+                                "implemented": true,
+                                "kind": "function",
+                                "modifiers": [],
+                                "name": "multipleAssemblies",
+                                "nodeType": "FunctionDefinition",
+                                "parameters": {
+                                    "id": 20,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [
+                                        {
+                                            "constant": false,
+                                            "id": 19,
+                                            "name": "x",
+                                            "nodeType": "VariableDeclaration",
+                                            "scope": 34,
+                                            "src": "333:5:0",
+                                            "stateVariable": false,
+                                            "storageLocation": "default",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_int256",
+                                                "typeString": "int256"
+                                            },
+                                            "typeName": {
+                                                "id": 18,
+                                                "name": "int",
+                                                "nodeType": "ElementaryTypeName",
+                                                "src": "333:3:0",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_int256",
+                                                    "typeString": "int256"
+                                                }
+                                            },
+                                            "value": null,
+                                            "visibility": "internal"
+                                        }
+                                    ],
+                                    "src": "332:7:0"
+                                },
+                                "returnParameters": {
+                                    "id": 25,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [
+                                        {
+                                            "constant": false,
+                                            "id": 22,
+                                            "name": "a",
+                                            "nodeType": "VariableDeclaration",
+                                            "scope": 34,
+                                            "src": "356:5:0",
+                                            "stateVariable": false,
+                                            "storageLocation": "default",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_int256",
+                                                "typeString": "int256"
+                                            },
+                                            "typeName": {
+                                                "id": 21,
+                                                "name": "int",
+                                                "nodeType": "ElementaryTypeName",
+                                                "src": "356:3:0",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_int256",
+                                                    "typeString": "int256"
+                                                }
+                                            },
+                                            "value": null,
+                                            "visibility": "internal"
+                                        },
+                                        {
+                                            "constant": false,
+                                            "id": 24,
+                                            "name": "b",
+                                            "nodeType": "VariableDeclaration",
+                                            "scope": 34,
+                                            "src": "363:5:0",
+                                            "stateVariable": false,
+                                            "storageLocation": "default",
+                                            "typeDescriptions": {
+                                                "typeIdentifier": "t_int256",
+                                                "typeString": "int256"
+                                            },
+                                            "typeName": {
+                                                "id": 23,
+                                                "name": "int",
+                                                "nodeType": "ElementaryTypeName",
+                                                "src": "363:3:0",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_int256",
+                                                    "typeString": "int256"
+                                                }
+                                            },
+                                            "value": null,
+                                            "visibility": "internal"
+                                        }
+                                    ],
+                                    "src": "355:14:0"
+                                },
+                                "scope": 35,
+                                "src": "305:312:0",
+                                "stateMutability": "nonpayable",
+                                "superFunction": null,
+                                "visibility": "public"
+                            }
+                        ],
+                        "scope": 36,
+                        "src": "25:594:0"
+                    }
+                ],
+                "src": "0:620:0"
+            },
+            "id": 0,
+            "legacyAST": {
+                "attributes": {
+                    "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/statements/inline_assembly_050.sol",
+                    "exportedSymbols": {
+                        "TestAssembly": [
+                            35
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "literals": [
+                                "solidity",
+                                "^",
+                                "0.5",
+                                ".0"
+                            ]
+                        },
+                        "id": 1,
+                        "name": "PragmaDirective",
+                        "src": "0:23:0"
+                    },
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                35
+                            ],
+                            "name": "TestAssembly",
+                            "scope": 36
+                        },
+                        "children": [
+                            {
+                                "attributes": {
+                                    "documentation": null,
+                                    "implemented": true,
+                                    "isConstructor": false,
+                                    "kind": "function",
+                                    "modifiers": [
+                                        null
+                                    ],
+                                    "name": "singleOneLineAssembly",
+                                    "scope": 35,
+                                    "stateMutability": "nonpayable",
+                                    "superFunction": null,
+                                    "visibility": "public"
+                                },
+                                "children": [
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "constant": false,
+                                                    "name": "x",
+                                                    "scope": 10,
+                                                    "stateVariable": false,
+                                                    "storageLocation": "default",
+                                                    "type": "int256",
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "name": "int",
+                                                            "type": "int256"
+                                                        },
+                                                        "id": 2,
+                                                        "name": "ElementaryTypeName",
+                                                        "src": "84:3:0"
+                                                    }
+                                                ],
+                                                "id": 3,
+                                                "name": "VariableDeclaration",
+                                                "src": "84:5:0"
+                                            }
+                                        ],
+                                        "id": 4,
+                                        "name": "ParameterList",
+                                        "src": "83:7:0"
+                                    },
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "constant": false,
+                                                    "name": "y",
+                                                    "scope": 10,
+                                                    "stateVariable": false,
+                                                    "storageLocation": "default",
+                                                    "type": "int256",
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "name": "int",
+                                                            "type": "int256"
+                                                        },
+                                                        "id": 5,
+                                                        "name": "ElementaryTypeName",
+                                                        "src": "107:3:0"
+                                                    }
+                                                ],
+                                                "id": 6,
+                                                "name": "VariableDeclaration",
+                                                "src": "107:5:0"
+                                            }
+                                        ],
+                                        "id": 7,
+                                        "name": "ParameterList",
+                                        "src": "106:7:0"
+                                    },
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "externalReferences": [
+                                                        {
+                                                            "y": {
+                                                                "declaration": 6,
+                                                                "isOffset": false,
+                                                                "isSlot": false,
+                                                                "src": "135:1:0",
+                                                                "valueSize": 1
+                                                            }
+                                                        },
+                                                        {
+                                                            "x": {
+                                                                "declaration": 3,
+                                                                "isOffset": false,
+                                                                "isSlot": false,
+                                                                "src": "144:1:0",
+                                                                "valueSize": 1
+                                                            }
+                                                        }
+                                                    ],
+                                                    "operations": "{ y := add(x, 1) }"
+                                                },
+                                                "children": [],
+                                                "id": 8,
+                                                "name": "InlineAssembly",
+                                                "src": "124:27:0"
+                                            }
+                                        ],
+                                        "id": 9,
+                                        "name": "Block",
+                                        "src": "114:43:0"
+                                    }
+                                ],
+                                "id": 10,
+                                "name": "FunctionDefinition",
+                                "src": "53:104:0"
+                            },
+                            {
+                                "attributes": {
+                                    "documentation": null,
+                                    "implemented": true,
+                                    "isConstructor": false,
+                                    "kind": "function",
+                                    "modifiers": [
+                                        null
+                                    ],
+                                    "name": "singleMultilineAssembly",
+                                    "scope": 35,
+                                    "stateMutability": "nonpayable",
+                                    "superFunction": null,
+                                    "visibility": "public"
+                                },
+                                "children": [
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "constant": false,
+                                                    "name": "x",
+                                                    "scope": 17,
+                                                    "stateVariable": false,
+                                                    "storageLocation": "default",
+                                                    "type": "int256",
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "name": "int",
+                                                            "type": "int256"
+                                                        },
+                                                        "id": 11,
+                                                        "name": "ElementaryTypeName",
+                                                        "src": "196:3:0"
+                                                    }
+                                                ],
+                                                "id": 12,
+                                                "name": "VariableDeclaration",
+                                                "src": "196:5:0"
+                                            }
+                                        ],
+                                        "id": 13,
+                                        "name": "ParameterList",
+                                        "src": "195:7:0"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 14,
+                                        "name": "ParameterList",
+                                        "src": "210:0:0"
+                                    },
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "externalReferences": [
+                                                        {
+                                                            "x": {
+                                                                "declaration": 12,
+                                                                "isOffset": false,
+                                                                "isSlot": false,
+                                                                "src": "269:1:0",
+                                                                "valueSize": 1
+                                                            }
+                                                        },
+                                                        {
+                                                            "x": {
+                                                                "declaration": 12,
+                                                                "isOffset": false,
+                                                                "isSlot": false,
+                                                                "src": "281:1:0",
+                                                                "valueSize": 1
+                                                            }
+                                                        }
+                                                    ],
+                                                    "operations": "{\n    let y := 100\n    x := sub(y, x)\n}"
+                                                },
+                                                "children": [],
+                                                "id": 15,
+                                                "name": "InlineAssembly",
+                                                "src": "220:73:0"
+                                            }
+                                        ],
+                                        "id": 16,
+                                        "name": "Block",
+                                        "src": "210:89:0"
+                                    }
+                                ],
+                                "id": 17,
+                                "name": "FunctionDefinition",
+                                "src": "163:136:0"
+                            },
+                            {
+                                "attributes": {
+                                    "documentation": null,
+                                    "implemented": true,
+                                    "isConstructor": false,
+                                    "kind": "function",
+                                    "modifiers": [
+                                        null
+                                    ],
+                                    "name": "multipleAssemblies",
+                                    "scope": 35,
+                                    "stateMutability": "nonpayable",
+                                    "superFunction": null,
+                                    "visibility": "public"
+                                },
+                                "children": [
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "constant": false,
+                                                    "name": "x",
+                                                    "scope": 34,
+                                                    "stateVariable": false,
+                                                    "storageLocation": "default",
+                                                    "type": "int256",
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "name": "int",
+                                                            "type": "int256"
+                                                        },
+                                                        "id": 18,
+                                                        "name": "ElementaryTypeName",
+                                                        "src": "333:3:0"
+                                                    }
+                                                ],
+                                                "id": 19,
+                                                "name": "VariableDeclaration",
+                                                "src": "333:5:0"
+                                            }
+                                        ],
+                                        "id": 20,
+                                        "name": "ParameterList",
+                                        "src": "332:7:0"
+                                    },
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "constant": false,
+                                                    "name": "a",
+                                                    "scope": 34,
+                                                    "stateVariable": false,
+                                                    "storageLocation": "default",
+                                                    "type": "int256",
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "name": "int",
+                                                            "type": "int256"
+                                                        },
+                                                        "id": 21,
+                                                        "name": "ElementaryTypeName",
+                                                        "src": "356:3:0"
+                                                    }
+                                                ],
+                                                "id": 22,
+                                                "name": "VariableDeclaration",
+                                                "src": "356:5:0"
+                                            },
+                                            {
+                                                "attributes": {
+                                                    "constant": false,
+                                                    "name": "b",
+                                                    "scope": 34,
+                                                    "stateVariable": false,
+                                                    "storageLocation": "default",
+                                                    "type": "int256",
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "name": "int",
+                                                            "type": "int256"
+                                                        },
+                                                        "id": 23,
+                                                        "name": "ElementaryTypeName",
+                                                        "src": "363:3:0"
+                                                    }
+                                                ],
+                                                "id": 24,
+                                                "name": "VariableDeclaration",
+                                                "src": "363:5:0"
+                                            }
+                                        ],
+                                        "id": 25,
+                                        "name": "ParameterList",
+                                        "src": "355:14:0"
+                                    },
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "falseBody": null
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "commonType": {
+                                                                "typeIdentifier": "t_int256",
+                                                                "typeString": "int256"
+                                                            },
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": ">",
+                                                            "type": "bool"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "overloadedDeclarations": [
+                                                                        null
+                                                                    ],
+                                                                    "referencedDeclaration": 19,
+                                                                    "type": "int256",
+                                                                    "value": "x"
+                                                                },
+                                                                "id": 26,
+                                                                "name": "Identifier",
+                                                                "src": "384:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "30",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 0",
+                                                                    "value": "0"
+                                                                },
+                                                                "id": 27,
+                                                                "name": "Literal",
+                                                                "src": "388:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 28,
+                                                        "name": "BinaryOperation",
+                                                        "src": "384:5:0"
+                                                    },
+                                                    {
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "externalReferences": [
+                                                                        {
+                                                                            "x": {
+                                                                                "declaration": 19,
+                                                                                "isOffset": false,
+                                                                                "isSlot": false,
+                                                                                "src": "432:1:0",
+                                                                                "valueSize": 1
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "x": {
+                                                                                "declaration": 19,
+                                                                                "isOffset": false,
+                                                                                "isSlot": false,
+                                                                                "src": "463:1:0",
+                                                                                "valueSize": 1
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "x": {
+                                                                                "declaration": 19,
+                                                                                "isOffset": false,
+                                                                                "isSlot": false,
+                                                                                "src": "441:1:0",
+                                                                                "valueSize": 1
+                                                                            }
+                                                                        },
+                                                                        {
+                                                                            "x": {
+                                                                                "declaration": 19,
+                                                                                "isOffset": false,
+                                                                                "isSlot": false,
+                                                                                "src": "475:1:0",
+                                                                                "valueSize": 1
+                                                                            }
+                                                                        }
+                                                                    ],
+                                                                    "operations": "{\n    x := sub(x, 1)\n    x := add(1, x)\n}"
+                                                                },
+                                                                "children": [],
+                                                                "id": 29,
+                                                                "name": "InlineAssembly",
+                                                                "src": "405:86:0"
+                                                            }
+                                                        ],
+                                                        "id": 30,
+                                                        "name": "Block",
+                                                        "src": "391:110:0"
+                                                    }
+                                                ],
+                                                "id": 31,
+                                                "name": "IfStatement",
+                                                "src": "380:121:0"
+                                            },
+                                            {
+                                                "attributes": {
+                                                    "externalReferences": [
+                                                        {
+                                                            "b": {
+                                                                "declaration": 24,
+                                                                "isOffset": false,
+                                                                "isSlot": false,
+                                                                "src": "587:1:0",
+                                                                "valueSize": 1
+                                                            }
+                                                        },
+                                                        {
+                                                            "a": {
+                                                                "declaration": 22,
+                                                                "isOffset": false,
+                                                                "isSlot": false,
+                                                                "src": "560:1:0",
+                                                                "valueSize": 1
+                                                            }
+                                                        },
+                                                        {
+                                                            "x": {
+                                                                "declaration": 19,
+                                                                "isOffset": false,
+                                                                "isSlot": false,
+                                                                "src": "569:1:0",
+                                                                "valueSize": 1
+                                                            }
+                                                        },
+                                                        {
+                                                            "x": {
+                                                                "declaration": 19,
+                                                                "isOffset": false,
+                                                                "isSlot": false,
+                                                                "src": "596:1:0",
+                                                                "valueSize": 1
+                                                            }
+                                                        }
+                                                    ],
+                                                    "operations": "{\n    let y := 200\n    a := add(x, y)\n    b := sub(x, y)\n}"
+                                                },
+                                                "children": [],
+                                                "id": 32,
+                                                "name": "InlineAssembly",
+                                                "src": "511:100:0"
+                                            }
+                                        ],
+                                        "id": 33,
+                                        "name": "Block",
+                                        "src": "370:247:0"
+                                    }
+                                ],
+                                "id": 34,
+                                "name": "FunctionDefinition",
+                                "src": "305:312:0"
+                            }
+                        ],
+                        "id": 35,
+                        "name": "ContractDefinition",
+                        "src": "25:594:0"
+                    }
+                ],
+                "id": 36,
+                "name": "SourceUnit",
+                "src": "0:620:0"
+            }
+        }
+    }
+}

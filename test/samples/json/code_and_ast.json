@@ -1,0 +1,304 @@
+{
+    "errors": [
+        {
+            "component": "general",
+            "formattedMessage": "./test/sol_files/json_code/A.sol:1:1: Warning: Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.14;\"\ncontract A {\n^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.14;\"",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 31,
+                "file": "./test/sol_files/json_code/A.sol",
+                "start": 0
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "./test/sol_files/json_code/B.sol:1:1: Warning: Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.14;\"\nimport './A.sol';\n^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.14;\"",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 50,
+                "file": "./test/sol_files/json_code/B.sol",
+                "start": 0
+            },
+            "type": "Warning"
+        }
+    ],
+    "sources": {
+        "./test/sol_files/json_code/A.sol": {
+            "ast": {
+                "absolutePath": "./test/sol_files/json_code/A.sol",
+                "exportedSymbols": {
+                    "A": [
+                        8
+                    ]
+                },
+                "id": 9,
+                "nodeType": "SourceUnit",
+                "nodes": [
+                    {
+                        "baseContracts": [],
+                        "contractDependencies": [],
+                        "contractKind": "contract",
+                        "documentation": null,
+                        "fullyImplemented": true,
+                        "id": 8,
+                        "linearizedBaseContracts": [
+                            8
+                        ],
+                        "name": "A",
+                        "nodeType": "ContractDefinition",
+                        "nodes": [
+                            {
+                                "constant": false,
+                                "id": 7,
+                                "name": "test",
+                                "nodeType": "VariableDeclaration",
+                                "scope": 8,
+                                "src": "17:10:0",
+                                "stateVariable": true,
+                                "storageLocation": "default",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_uint8",
+                                    "typeString": "uint8"
+                                },
+                                "typeName": {
+                                    "id": 6,
+                                    "name": "uint8",
+                                    "nodeType": "ElementaryTypeName",
+                                    "src": "17:5:0",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint8",
+                                        "typeString": "uint8"
+                                    }
+                                },
+                                "value": null,
+                                "visibility": "internal"
+                            }
+                        ],
+                        "scope": 9,
+                        "src": "0:30:0"
+                    }
+                ],
+                "src": "0:31:0"
+            },
+            "id": 0,
+            "legacyAST": {
+                "attributes": {
+                    "absolutePath": "./test/sol_files/json_code/A.sol",
+                    "exportedSymbols": {
+                        "A": [
+                            8
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                8
+                            ],
+                            "name": "A",
+                            "scope": 9
+                        },
+                        "children": [
+                            {
+                                "attributes": {
+                                    "constant": false,
+                                    "name": "test",
+                                    "scope": 8,
+                                    "stateVariable": true,
+                                    "storageLocation": "default",
+                                    "type": "uint8",
+                                    "value": null,
+                                    "visibility": "internal"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "name": "uint8",
+                                            "type": "uint8"
+                                        },
+                                        "id": 6,
+                                        "name": "ElementaryTypeName",
+                                        "src": "17:5:0"
+                                    }
+                                ],
+                                "id": 7,
+                                "name": "VariableDeclaration",
+                                "src": "17:10:0"
+                            }
+                        ],
+                        "id": 8,
+                        "name": "ContractDefinition",
+                        "src": "0:30:0"
+                    }
+                ],
+                "id": 9,
+                "name": "SourceUnit",
+                "src": "0:31:0"
+            },
+            "source": "contract A {\n    uint8 test;\n}\n"
+        },
+        "./test/sol_files/json_code/B.sol": {
+            "ast": {
+                "absolutePath": "./test/sol_files/json_code/B.sol",
+                "exportedSymbols": {
+                    "B": [
+                        4
+                    ]
+                },
+                "id": 5,
+                "nodeType": "SourceUnit",
+                "nodes": [
+                    {
+                        "absolutePath": "./test/sol_files/json_code/A.sol",
+                        "file": "./A.sol",
+                        "id": 1,
+                        "nodeType": "ImportDirective",
+                        "scope": 5,
+                        "sourceUnit": 9,
+                        "src": "0:17:1",
+                        "symbolAliases": [],
+                        "unitAlias": ""
+                    },
+                    {
+                        "baseContracts": [],
+                        "contractDependencies": [],
+                        "contractKind": "contract",
+                        "documentation": null,
+                        "fullyImplemented": true,
+                        "id": 4,
+                        "linearizedBaseContracts": [
+                            4
+                        ],
+                        "name": "B",
+                        "nodeType": "ContractDefinition",
+                        "nodes": [
+                            {
+                                "constant": false,
+                                "id": 3,
+                                "name": "test",
+                                "nodeType": "VariableDeclaration",
+                                "scope": 4,
+                                "src": "36:10:1",
+                                "stateVariable": true,
+                                "storageLocation": "default",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_int16",
+                                    "typeString": "int16"
+                                },
+                                "typeName": {
+                                    "id": 2,
+                                    "name": "int16",
+                                    "nodeType": "ElementaryTypeName",
+                                    "src": "36:5:1",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_int16",
+                                        "typeString": "int16"
+                                    }
+                                },
+                                "value": null,
+                                "visibility": "internal"
+                            }
+                        ],
+                        "scope": 5,
+                        "src": "19:30:1"
+                    }
+                ],
+                "src": "0:50:1"
+            },
+            "id": 1,
+            "legacyAST": {
+                "attributes": {
+                    "absolutePath": "./test/sol_files/json_code/B.sol",
+                    "exportedSymbols": {
+                        "B": [
+                            4
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "SourceUnit": 9,
+                            "absolutePath": "./test/sol_files/json_code/A.sol",
+                            "file": "./A.sol",
+                            "scope": 5,
+                            "symbolAliases": [
+                                null
+                            ],
+                            "unitAlias": ""
+                        },
+                        "id": 1,
+                        "name": "ImportDirective",
+                        "src": "0:17:1"
+                    },
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                4
+                            ],
+                            "name": "B",
+                            "scope": 5
+                        },
+                        "children": [
+                            {
+                                "attributes": {
+                                    "constant": false,
+                                    "name": "test",
+                                    "scope": 4,
+                                    "stateVariable": true,
+                                    "storageLocation": "default",
+                                    "type": "int16",
+                                    "value": null,
+                                    "visibility": "internal"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "name": "int16",
+                                            "type": "int16"
+                                        },
+                                        "id": 2,
+                                        "name": "ElementaryTypeName",
+                                        "src": "36:5:1"
+                                    }
+                                ],
+                                "id": 3,
+                                "name": "VariableDeclaration",
+                                "src": "36:10:1"
+                            }
+                        ],
+                        "id": 4,
+                        "name": "ContractDefinition",
+                        "src": "19:30:1"
+                    }
+                ],
+                "id": 5,
+                "name": "SourceUnit",
+                "src": "0:50:1"
+            },
+            "source": "import './A.sol';\n\ncontract B {\n    int16 test;\n}\n"
+        }
+    }
+}

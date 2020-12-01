@@ -1,0 +1,830 @@
+{
+    "contracts": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/A.sol": {
+            "A": {
+                "evm": {}
+            }
+        },
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib/B.sol": {
+            "B": {
+                "evm": {}
+            }
+        },
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/C.sol": {
+            "C": {
+                "evm": {}
+            }
+        },
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/D.sol": {
+            "D": {
+                "evm": {}
+            }
+        }
+    },
+    "errors": [
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/D.sol:1:1: Warning: Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"\nimport '../A.sol';\n^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 49,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/D.sol",
+                "start": 0
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/C.sol:1:1: Warning: Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"\nimport './D.sol';\n^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 67,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/C.sol",
+                "start": 0
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib/B.sol:1:1: Warning: Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"\nimport '../lib2/C.sol';\n^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 54,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib/B.sol",
+                "start": 0
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/A.sol:1:1: Warning: Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"\nimport './lib/B.sol';\n^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 52,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/A.sol",
+                "start": 0
+            },
+            "type": "Warning"
+        }
+    ],
+    "sources": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/A.sol": {
+            "ast": {
+                "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/A.sol",
+                "exportedSymbols": {
+                    "A": [
+                        5
+                    ]
+                },
+                "id": 6,
+                "nodeType": "SourceUnit",
+                "nodes": [
+                    {
+                        "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib/B.sol",
+                        "file": "./lib/B.sol",
+                        "id": 1,
+                        "nodeType": "ImportDirective",
+                        "scope": 6,
+                        "sourceUnit": 12,
+                        "src": "0:21:0",
+                        "symbolAliases": [],
+                        "unitAlias": ""
+                    },
+                    {
+                        "baseContracts": [],
+                        "contractDependencies": [],
+                        "contractKind": "contract",
+                        "documentation": null,
+                        "fullyImplemented": true,
+                        "id": 5,
+                        "linearizedBaseContracts": [
+                            5
+                        ],
+                        "name": "A",
+                        "nodeType": "ContractDefinition",
+                        "nodes": [
+                            {
+                                "constant": false,
+                                "id": 4,
+                                "name": "a",
+                                "nodeType": "VariableDeclaration",
+                                "scope": 5,
+                                "src": "37:10:0",
+                                "stateVariable": true,
+                                "storageLocation": "default",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256"
+                                },
+                                "typeName": {
+                                    "id": 2,
+                                    "name": "uint",
+                                    "nodeType": "ElementaryTypeName",
+                                    "src": "37:4:0",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    }
+                                },
+                                "value": {
+                                    "argumentTypes": null,
+                                    "hexValue": "31",
+                                    "id": 3,
+                                    "isConstant": false,
+                                    "isLValue": false,
+                                    "isPure": true,
+                                    "kind": "number",
+                                    "lValueRequested": false,
+                                    "nodeType": "Literal",
+                                    "src": "46:1:0",
+                                    "subdenomination": null,
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_rational_1_by_1",
+                                        "typeString": "int_const 1"
+                                    },
+                                    "value": "1"
+                                },
+                                "visibility": "internal"
+                            }
+                        ],
+                        "scope": 6,
+                        "src": "23:28:0"
+                    }
+                ],
+                "src": "0:52:0"
+            },
+            "id": 0,
+            "legacyAST": {
+                "attributes": {
+                    "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/A.sol",
+                    "exportedSymbols": {
+                        "A": [
+                            5
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "SourceUnit": 12,
+                            "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib/B.sol",
+                            "file": "./lib/B.sol",
+                            "scope": 6,
+                            "symbolAliases": [
+                                null
+                            ],
+                            "unitAlias": ""
+                        },
+                        "id": 1,
+                        "name": "ImportDirective",
+                        "src": "0:21:0"
+                    },
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                5
+                            ],
+                            "name": "A",
+                            "scope": 6
+                        },
+                        "children": [
+                            {
+                                "attributes": {
+                                    "constant": false,
+                                    "name": "a",
+                                    "scope": 5,
+                                    "stateVariable": true,
+                                    "storageLocation": "default",
+                                    "type": "uint256",
+                                    "visibility": "internal"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "name": "uint",
+                                            "type": "uint256"
+                                        },
+                                        "id": 2,
+                                        "name": "ElementaryTypeName",
+                                        "src": "37:4:0"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "argumentTypes": null,
+                                            "hexvalue": "31",
+                                            "isConstant": false,
+                                            "isLValue": false,
+                                            "isPure": true,
+                                            "lValueRequested": false,
+                                            "subdenomination": null,
+                                            "token": "number",
+                                            "type": "int_const 1",
+                                            "value": "1"
+                                        },
+                                        "id": 3,
+                                        "name": "Literal",
+                                        "src": "46:1:0"
+                                    }
+                                ],
+                                "id": 4,
+                                "name": "VariableDeclaration",
+                                "src": "37:10:0"
+                            }
+                        ],
+                        "id": 5,
+                        "name": "ContractDefinition",
+                        "src": "23:28:0"
+                    }
+                ],
+                "id": 6,
+                "name": "SourceUnit",
+                "src": "0:52:0"
+            }
+        },
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib/B.sol": {
+            "ast": {
+                "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib/B.sol",
+                "exportedSymbols": {
+                    "B": [
+                        11
+                    ]
+                },
+                "id": 12,
+                "nodeType": "SourceUnit",
+                "nodes": [
+                    {
+                        "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/C.sol",
+                        "file": "../lib2/C.sol",
+                        "id": 7,
+                        "nodeType": "ImportDirective",
+                        "scope": 12,
+                        "sourceUnit": 19,
+                        "src": "0:23:1",
+                        "symbolAliases": [],
+                        "unitAlias": ""
+                    },
+                    {
+                        "baseContracts": [],
+                        "contractDependencies": [],
+                        "contractKind": "contract",
+                        "documentation": null,
+                        "fullyImplemented": true,
+                        "id": 11,
+                        "linearizedBaseContracts": [
+                            11
+                        ],
+                        "name": "B",
+                        "nodeType": "ContractDefinition",
+                        "nodes": [
+                            {
+                                "constant": false,
+                                "id": 10,
+                                "name": "b",
+                                "nodeType": "VariableDeclaration",
+                                "scope": 11,
+                                "src": "40:10:1",
+                                "stateVariable": true,
+                                "storageLocation": "default",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256"
+                                },
+                                "typeName": {
+                                    "id": 8,
+                                    "name": "uint",
+                                    "nodeType": "ElementaryTypeName",
+                                    "src": "40:4:1",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    }
+                                },
+                                "value": {
+                                    "argumentTypes": null,
+                                    "hexValue": "32",
+                                    "id": 9,
+                                    "isConstant": false,
+                                    "isLValue": false,
+                                    "isPure": true,
+                                    "kind": "number",
+                                    "lValueRequested": false,
+                                    "nodeType": "Literal",
+                                    "src": "49:1:1",
+                                    "subdenomination": null,
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_rational_2_by_1",
+                                        "typeString": "int_const 2"
+                                    },
+                                    "value": "2"
+                                },
+                                "visibility": "internal"
+                            }
+                        ],
+                        "scope": 12,
+                        "src": "25:28:1"
+                    }
+                ],
+                "src": "0:54:1"
+            },
+            "id": 1,
+            "legacyAST": {
+                "attributes": {
+                    "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib/B.sol",
+                    "exportedSymbols": {
+                        "B": [
+                            11
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "SourceUnit": 19,
+                            "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/C.sol",
+                            "file": "../lib2/C.sol",
+                            "scope": 12,
+                            "symbolAliases": [
+                                null
+                            ],
+                            "unitAlias": ""
+                        },
+                        "id": 7,
+                        "name": "ImportDirective",
+                        "src": "0:23:1"
+                    },
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                11
+                            ],
+                            "name": "B",
+                            "scope": 12
+                        },
+                        "children": [
+                            {
+                                "attributes": {
+                                    "constant": false,
+                                    "name": "b",
+                                    "scope": 11,
+                                    "stateVariable": true,
+                                    "storageLocation": "default",
+                                    "type": "uint256",
+                                    "visibility": "internal"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "name": "uint",
+                                            "type": "uint256"
+                                        },
+                                        "id": 8,
+                                        "name": "ElementaryTypeName",
+                                        "src": "40:4:1"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "argumentTypes": null,
+                                            "hexvalue": "32",
+                                            "isConstant": false,
+                                            "isLValue": false,
+                                            "isPure": true,
+                                            "lValueRequested": false,
+                                            "subdenomination": null,
+                                            "token": "number",
+                                            "type": "int_const 2",
+                                            "value": "2"
+                                        },
+                                        "id": 9,
+                                        "name": "Literal",
+                                        "src": "49:1:1"
+                                    }
+                                ],
+                                "id": 10,
+                                "name": "VariableDeclaration",
+                                "src": "40:10:1"
+                            }
+                        ],
+                        "id": 11,
+                        "name": "ContractDefinition",
+                        "src": "25:28:1"
+                    }
+                ],
+                "id": 12,
+                "name": "SourceUnit",
+                "src": "0:54:1"
+            }
+        },
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/C.sol": {
+            "ast": {
+                "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/C.sol",
+                "exportedSymbols": {
+                    "C": [
+                        18
+                    ]
+                },
+                "id": 19,
+                "nodeType": "SourceUnit",
+                "nodes": [
+                    {
+                        "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/D.sol",
+                        "file": "./D.sol",
+                        "id": 13,
+                        "nodeType": "ImportDirective",
+                        "scope": 19,
+                        "sourceUnit": 25,
+                        "src": "0:17:2",
+                        "symbolAliases": [],
+                        "unitAlias": ""
+                    },
+                    {
+                        "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/A.sol",
+                        "file": "../A.sol",
+                        "id": 14,
+                        "nodeType": "ImportDirective",
+                        "scope": 19,
+                        "sourceUnit": 6,
+                        "src": "18:18:2",
+                        "symbolAliases": [],
+                        "unitAlias": ""
+                    },
+                    {
+                        "baseContracts": [],
+                        "contractDependencies": [],
+                        "contractKind": "contract",
+                        "documentation": null,
+                        "fullyImplemented": true,
+                        "id": 18,
+                        "linearizedBaseContracts": [
+                            18
+                        ],
+                        "name": "C",
+                        "nodeType": "ContractDefinition",
+                        "nodes": [
+                            {
+                                "constant": false,
+                                "id": 17,
+                                "name": "c",
+                                "nodeType": "VariableDeclaration",
+                                "scope": 18,
+                                "src": "53:10:2",
+                                "stateVariable": true,
+                                "storageLocation": "default",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256"
+                                },
+                                "typeName": {
+                                    "id": 15,
+                                    "name": "uint",
+                                    "nodeType": "ElementaryTypeName",
+                                    "src": "53:4:2",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    }
+                                },
+                                "value": {
+                                    "argumentTypes": null,
+                                    "hexValue": "33",
+                                    "id": 16,
+                                    "isConstant": false,
+                                    "isLValue": false,
+                                    "isPure": true,
+                                    "kind": "number",
+                                    "lValueRequested": false,
+                                    "nodeType": "Literal",
+                                    "src": "62:1:2",
+                                    "subdenomination": null,
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_rational_3_by_1",
+                                        "typeString": "int_const 3"
+                                    },
+                                    "value": "3"
+                                },
+                                "visibility": "internal"
+                            }
+                        ],
+                        "scope": 19,
+                        "src": "38:28:2"
+                    }
+                ],
+                "src": "0:67:2"
+            },
+            "id": 2,
+            "legacyAST": {
+                "attributes": {
+                    "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/C.sol",
+                    "exportedSymbols": {
+                        "C": [
+                            18
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "SourceUnit": 25,
+                            "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/D.sol",
+                            "file": "./D.sol",
+                            "scope": 19,
+                            "symbolAliases": [
+                                null
+                            ],
+                            "unitAlias": ""
+                        },
+                        "id": 13,
+                        "name": "ImportDirective",
+                        "src": "0:17:2"
+                    },
+                    {
+                        "attributes": {
+                            "SourceUnit": 6,
+                            "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/A.sol",
+                            "file": "../A.sol",
+                            "scope": 19,
+                            "symbolAliases": [
+                                null
+                            ],
+                            "unitAlias": ""
+                        },
+                        "id": 14,
+                        "name": "ImportDirective",
+                        "src": "18:18:2"
+                    },
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                18
+                            ],
+                            "name": "C",
+                            "scope": 19
+                        },
+                        "children": [
+                            {
+                                "attributes": {
+                                    "constant": false,
+                                    "name": "c",
+                                    "scope": 18,
+                                    "stateVariable": true,
+                                    "storageLocation": "default",
+                                    "type": "uint256",
+                                    "visibility": "internal"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "name": "uint",
+                                            "type": "uint256"
+                                        },
+                                        "id": 15,
+                                        "name": "ElementaryTypeName",
+                                        "src": "53:4:2"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "argumentTypes": null,
+                                            "hexvalue": "33",
+                                            "isConstant": false,
+                                            "isLValue": false,
+                                            "isPure": true,
+                                            "lValueRequested": false,
+                                            "subdenomination": null,
+                                            "token": "number",
+                                            "type": "int_const 3",
+                                            "value": "3"
+                                        },
+                                        "id": 16,
+                                        "name": "Literal",
+                                        "src": "62:1:2"
+                                    }
+                                ],
+                                "id": 17,
+                                "name": "VariableDeclaration",
+                                "src": "53:10:2"
+                            }
+                        ],
+                        "id": 18,
+                        "name": "ContractDefinition",
+                        "src": "38:28:2"
+                    }
+                ],
+                "id": 19,
+                "name": "SourceUnit",
+                "src": "0:67:2"
+            }
+        },
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/D.sol": {
+            "ast": {
+                "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/D.sol",
+                "exportedSymbols": {
+                    "D": [
+                        24
+                    ]
+                },
+                "id": 25,
+                "nodeType": "SourceUnit",
+                "nodes": [
+                    {
+                        "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/A.sol",
+                        "file": "../A.sol",
+                        "id": 20,
+                        "nodeType": "ImportDirective",
+                        "scope": 25,
+                        "sourceUnit": 6,
+                        "src": "0:18:3",
+                        "symbolAliases": [],
+                        "unitAlias": ""
+                    },
+                    {
+                        "baseContracts": [],
+                        "contractDependencies": [],
+                        "contractKind": "contract",
+                        "documentation": null,
+                        "fullyImplemented": true,
+                        "id": 24,
+                        "linearizedBaseContracts": [
+                            24
+                        ],
+                        "name": "D",
+                        "nodeType": "ContractDefinition",
+                        "nodes": [
+                            {
+                                "constant": false,
+                                "id": 23,
+                                "name": "d",
+                                "nodeType": "VariableDeclaration",
+                                "scope": 24,
+                                "src": "35:10:3",
+                                "stateVariable": true,
+                                "storageLocation": "default",
+                                "typeDescriptions": {
+                                    "typeIdentifier": "t_uint256",
+                                    "typeString": "uint256"
+                                },
+                                "typeName": {
+                                    "id": 21,
+                                    "name": "uint",
+                                    "nodeType": "ElementaryTypeName",
+                                    "src": "35:4:3",
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_uint256",
+                                        "typeString": "uint256"
+                                    }
+                                },
+                                "value": {
+                                    "argumentTypes": null,
+                                    "hexValue": "33",
+                                    "id": 22,
+                                    "isConstant": false,
+                                    "isLValue": false,
+                                    "isPure": true,
+                                    "kind": "number",
+                                    "lValueRequested": false,
+                                    "nodeType": "Literal",
+                                    "src": "44:1:3",
+                                    "subdenomination": null,
+                                    "typeDescriptions": {
+                                        "typeIdentifier": "t_rational_3_by_1",
+                                        "typeString": "int_const 3"
+                                    },
+                                    "value": "3"
+                                },
+                                "visibility": "internal"
+                            }
+                        ],
+                        "scope": 25,
+                        "src": "20:28:3"
+                    }
+                ],
+                "src": "0:49:3"
+            },
+            "id": 3,
+            "legacyAST": {
+                "attributes": {
+                    "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/lib2/D.sol",
+                    "exportedSymbols": {
+                        "D": [
+                            24
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "SourceUnit": 6,
+                            "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/meta/imports/A.sol",
+                            "file": "../A.sol",
+                            "scope": 25,
+                            "symbolAliases": [
+                                null
+                            ],
+                            "unitAlias": ""
+                        },
+                        "id": 20,
+                        "name": "ImportDirective",
+                        "src": "0:18:3"
+                    },
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                24
+                            ],
+                            "name": "D",
+                            "scope": 25
+                        },
+                        "children": [
+                            {
+                                "attributes": {
+                                    "constant": false,
+                                    "name": "d",
+                                    "scope": 24,
+                                    "stateVariable": true,
+                                    "storageLocation": "default",
+                                    "type": "uint256",
+                                    "visibility": "internal"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "name": "uint",
+                                            "type": "uint256"
+                                        },
+                                        "id": 21,
+                                        "name": "ElementaryTypeName",
+                                        "src": "35:4:3"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "argumentTypes": null,
+                                            "hexvalue": "33",
+                                            "isConstant": false,
+                                            "isLValue": false,
+                                            "isPure": true,
+                                            "lValueRequested": false,
+                                            "subdenomination": null,
+                                            "token": "number",
+                                            "type": "int_const 3",
+                                            "value": "3"
+                                        },
+                                        "id": 22,
+                                        "name": "Literal",
+                                        "src": "44:1:3"
+                                    }
+                                ],
+                                "id": 23,
+                                "name": "VariableDeclaration",
+                                "src": "35:10:3"
+                            }
+                        ],
+                        "id": 24,
+                        "name": "ContractDefinition",
+                        "src": "20:28:3"
+                    }
+                ],
+                "id": 25,
+                "name": "SourceUnit",
+                "src": "0:49:3"
+            }
+        }
+    }
+}

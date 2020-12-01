@@ -1,0 +1,79 @@
+const AbiCoder = require("web3-eth-abi");
+
+/**
+ * Splits the string using the separator.
+ * If the string contains well formed parenthesized expressions
+ * then those expression will not be split even if the contain separators.
+ *
+ * E.g. if we call `split("a,b,c(d,e)", ",", "(", ")")` we will get `["a", "b", "c(d,e)"]`.
+ *
+ * @param string       String to split
+ * @param separator    Separator to use to split the string
+ * @param openBrace    String to consider to be an "opening brace"
+ * @param closeBrace   String to consider to be a "closing brace"
+ *
+ * @returns Return the parts into which s has been split.
+ */
+export function split(
+    string: string,
+    separator: string,
+    openBrace: string,
+    closeBrace: string
+): string[] {
+    const result: string[] = [];
+
+    let current = "";
+    let index = 0;
+    let depth = 0;
+
+    while (index < string.length) {
+        if (depth === 0 && string.startsWith(separator, index)) {
+            result.push(current);
+
+            current = "";
+
+            index += separator.length;
+        } else {
+            let addStr = "";
+
+            if (string.startsWith(openBrace, index)) {
+                depth++;
+
+                addStr = openBrace;
+            } else if (string.startsWith(closeBrace, index)) {
+                depth--;
+
+                if (depth < 0) {
+                    throw new Error(`Mismatched braces in string "${string}"`);
+                }
+
+                addStr = closeBrace;
+            } else {
+                addStr = string.slice(index, index + 1);
+            }
+
+            current += addStr;
+            index += addStr.length;
+        }
+    }
+
+    if (depth !== 0) {
+        throw new Error(`Mismatched braces in string "${string}"`);
+    }
+
+    result.push(current);
+
+    return result;
+}
+
+export function encodeSignature(signature: string, hexPrefix = false): string {
+    const selector = AbiCoder.encodeFunctionSignature(signature);
+
+    return hexPrefix ? selector : selector.substr(2);
+}
+
+export function* sequence(start = 0, step = 1): Generator<number, number, number> {
+    while (true) {
+        yield (start += step);
+    }
+}

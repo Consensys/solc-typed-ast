@@ -1,0 +1,11 @@
+{
+    "mainSource": "./test/sol_files/json_code/X.sol",
+    "sources": {
+        "./test/sol_files/json_code/A.sol": {
+            "source": "contract A {\n    uint8 test;\n}\n"
+        },
+        "./test/sol_files/json_code/B.sol": {
+            "source": "import './A.sol';\n\ncontract B {\n    int16 test;\n}\n"
+        }
+    }
+}

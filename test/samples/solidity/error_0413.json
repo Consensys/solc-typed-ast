@@ -1,0 +1,10 @@
+{
+    "contracts": {},
+    "errors": [
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/error.sol:3:1: ParserError: Expected token Semicolon got 'RBrace'\n}\n^\n"
+    ],
+    "sourceList": [
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/error.sol"
+    ],
+    "sources": {}
+}

@@ -1,0 +1,18 @@
+{
+    "contracts": {},
+    "errors": [
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/error.sol:3:1: ParserError: Expected ';' but got '}'\n}\n^\n",
+            "message": "Expected ';' but got '}'",
+            "severity": "error",
+            "sourceLocation": {
+                "end": 36,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/error.sol",
+                "start": 35
+            },
+            "type": "ParserError"
+        }
+    ],
+    "sources": {}
+}

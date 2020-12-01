@@ -1,0 +1,1862 @@
+{
+    "contracts": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol": {
+            "SomeContract": {
+                "evm": {}
+            }
+        }
+    },
+    "errors": [
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol:1:1: Warning: Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"\ncontract SomeContract {\n^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 389,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol",
+                "start": 0
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol:3:10: Warning: Unused local variable.\n        (uint x, uint y) = (1, 2);\n         ^----^\n",
+            "message": "Unused local variable.",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 75,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol",
+                "start": 69
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol:3:18: Warning: Unused local variable.\n        (uint x, uint y) = (1, 2);\n                 ^----^\n",
+            "message": "Unused local variable.",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 83,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol",
+                "start": 77
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol:4:10: Warning: Unused local variable.\n        (uint z) = (1);\n         ^----^\n",
+            "message": "Unused local variable.",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 110,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol",
+                "start": 104
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol:10:9: Warning: Unused local variable.\n        string memory x;\n        ^-------------^\n",
+            "message": "Unused local variable.",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 220,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol",
+                "start": 205
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol:17:9: Warning: Unused local variable.\n        uint8[3] memory a = [1, 2, 3];\n        ^---------------^\n",
+            "message": "Unused local variable.",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 367,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol",
+                "start": 350
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol:2:5: Warning: Function state mutability can be restricted to pure\n    function tupleSimple() public {\n    ^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Function state mutability can be restricted to pure",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 124,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol",
+                "start": 28
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol:7:5: Warning: Function state mutability can be restricted to pure\n    function tupleNested() public {\n    ^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Function state mutability can be restricted to pure",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 305,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol",
+                "start": 130
+            },
+            "type": "Warning"
+        },
+        {
+            "component": "general",
+            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol:16:5: Warning: Function state mutability can be restricted to pure\n    function tupleArray() public {\n    ^ (Relevant source part starts here and spans across multiple lines).\n",
+            "message": "Function state mutability can be restricted to pure",
+            "severity": "warning",
+            "sourceLocation": {
+                "end": 386,
+                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol",
+                "start": 311
+            },
+            "type": "Warning"
+        }
+    ],
+    "sources": {
+        "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol": {
+            "ast": {
+                "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol",
+                "exportedSymbols": {
+                    "SomeContract": [
+                        63
+                    ]
+                },
+                "id": 64,
+                "nodeType": "SourceUnit",
+                "nodes": [
+                    {
+                        "baseContracts": [],
+                        "contractDependencies": [],
+                        "contractKind": "contract",
+                        "documentation": null,
+                        "fullyImplemented": true,
+                        "id": 63,
+                        "linearizedBaseContracts": [
+                            63
+                        ],
+                        "name": "SomeContract",
+                        "nodeType": "ContractDefinition",
+                        "nodes": [
+                            {
+                                "body": {
+                                    "id": 16,
+                                    "nodeType": "Block",
+                                    "src": "58:66:0",
+                                    "statements": [
+                                        {
+                                            "assignments": [
+                                                4,
+                                                6
+                                            ],
+                                            "declarations": [
+                                                {
+                                                    "constant": false,
+                                                    "id": 4,
+                                                    "name": "x",
+                                                    "nodeType": "VariableDeclaration",
+                                                    "scope": 16,
+                                                    "src": "69:6:0",
+                                                    "stateVariable": false,
+                                                    "storageLocation": "default",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_uint256",
+                                                        "typeString": "uint256"
+                                                    },
+                                                    "typeName": {
+                                                        "id": 3,
+                                                        "name": "uint",
+                                                        "nodeType": "ElementaryTypeName",
+                                                        "src": "69:4:0",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_uint256",
+                                                            "typeString": "uint256"
+                                                        }
+                                                    },
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                },
+                                                {
+                                                    "constant": false,
+                                                    "id": 6,
+                                                    "name": "y",
+                                                    "nodeType": "VariableDeclaration",
+                                                    "scope": 16,
+                                                    "src": "77:6:0",
+                                                    "stateVariable": false,
+                                                    "storageLocation": "default",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_uint256",
+                                                        "typeString": "uint256"
+                                                    },
+                                                    "typeName": {
+                                                        "id": 5,
+                                                        "name": "uint",
+                                                        "nodeType": "ElementaryTypeName",
+                                                        "src": "77:4:0",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_uint256",
+                                                            "typeString": "uint256"
+                                                        }
+                                                    },
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                }
+                                            ],
+                                            "id": 10,
+                                            "initialValue": {
+                                                "argumentTypes": null,
+                                                "components": [
+                                                    {
+                                                        "argumentTypes": null,
+                                                        "hexValue": "31",
+                                                        "id": 7,
+                                                        "isConstant": false,
+                                                        "isLValue": false,
+                                                        "isPure": true,
+                                                        "kind": "number",
+                                                        "lValueRequested": false,
+                                                        "nodeType": "Literal",
+                                                        "src": "88:1:0",
+                                                        "subdenomination": null,
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_rational_1_by_1",
+                                                            "typeString": "int_const 1"
+                                                        },
+                                                        "value": "1"
+                                                    },
+                                                    {
+                                                        "argumentTypes": null,
+                                                        "hexValue": "32",
+                                                        "id": 8,
+                                                        "isConstant": false,
+                                                        "isLValue": false,
+                                                        "isPure": true,
+                                                        "kind": "number",
+                                                        "lValueRequested": false,
+                                                        "nodeType": "Literal",
+                                                        "src": "91:1:0",
+                                                        "subdenomination": null,
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_rational_2_by_1",
+                                                            "typeString": "int_const 2"
+                                                        },
+                                                        "value": "2"
+                                                    }
+                                                ],
+                                                "id": 9,
+                                                "isConstant": false,
+                                                "isInlineArray": false,
+                                                "isLValue": false,
+                                                "isPure": true,
+                                                "lValueRequested": false,
+                                                "nodeType": "TupleExpression",
+                                                "src": "87:6:0",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_tuple$_t_rational_1_by_1_$_t_rational_2_by_1_$",
+                                                    "typeString": "tuple(int_const 1,int_const 2)"
+                                                }
+                                            },
+                                            "nodeType": "VariableDeclarationStatement",
+                                            "src": "68:25:0"
+                                        },
+                                        {
+                                            "assignments": [
+                                                12
+                                            ],
+                                            "declarations": [
+                                                {
+                                                    "constant": false,
+                                                    "id": 12,
+                                                    "name": "z",
+                                                    "nodeType": "VariableDeclaration",
+                                                    "scope": 16,
+                                                    "src": "104:6:0",
+                                                    "stateVariable": false,
+                                                    "storageLocation": "default",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_uint256",
+                                                        "typeString": "uint256"
+                                                    },
+                                                    "typeName": {
+                                                        "id": 11,
+                                                        "name": "uint",
+                                                        "nodeType": "ElementaryTypeName",
+                                                        "src": "104:4:0",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_uint256",
+                                                            "typeString": "uint256"
+                                                        }
+                                                    },
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                }
+                                            ],
+                                            "id": 15,
+                                            "initialValue": {
+                                                "argumentTypes": null,
+                                                "components": [
+                                                    {
+                                                        "argumentTypes": null,
+                                                        "hexValue": "31",
+                                                        "id": 13,
+                                                        "isConstant": false,
+                                                        "isLValue": false,
+                                                        "isPure": true,
+                                                        "kind": "number",
+                                                        "lValueRequested": false,
+                                                        "nodeType": "Literal",
+                                                        "src": "115:1:0",
+                                                        "subdenomination": null,
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_rational_1_by_1",
+                                                            "typeString": "int_const 1"
+                                                        },
+                                                        "value": "1"
+                                                    }
+                                                ],
+                                                "id": 14,
+                                                "isConstant": false,
+                                                "isInlineArray": false,
+                                                "isLValue": false,
+                                                "isPure": true,
+                                                "lValueRequested": false,
+                                                "nodeType": "TupleExpression",
+                                                "src": "114:3:0",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_rational_1_by_1",
+                                                    "typeString": "int_const 1"
+                                                }
+                                            },
+                                            "nodeType": "VariableDeclarationStatement",
+                                            "src": "103:14:0"
+                                        }
+                                    ]
+                                },
+                                "documentation": null,
+                                "id": 17,
+                                "implemented": true,
+                                "kind": "function",
+                                "modifiers": [],
+                                "name": "tupleSimple",
+                                "nodeType": "FunctionDefinition",
+                                "parameters": {
+                                    "id": 1,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [],
+                                    "src": "48:2:0"
+                                },
+                                "returnParameters": {
+                                    "id": 2,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [],
+                                    "src": "58:0:0"
+                                },
+                                "scope": 63,
+                                "src": "28:96:0",
+                                "stateMutability": "nonpayable",
+                                "superFunction": null,
+                                "visibility": "public"
+                            },
+                            {
+                                "body": {
+                                    "id": 47,
+                                    "nodeType": "Block",
+                                    "src": "160:145:0",
+                                    "statements": [
+                                        {
+                                            "assignments": [
+                                                21
+                                            ],
+                                            "declarations": [
+                                                {
+                                                    "constant": false,
+                                                    "id": 21,
+                                                    "name": "r",
+                                                    "nodeType": "VariableDeclaration",
+                                                    "scope": 47,
+                                                    "src": "170:7:0",
+                                                    "stateVariable": false,
+                                                    "storageLocation": "default",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_uint8",
+                                                        "typeString": "uint8"
+                                                    },
+                                                    "typeName": {
+                                                        "id": 20,
+                                                        "name": "uint8",
+                                                        "nodeType": "ElementaryTypeName",
+                                                        "src": "170:5:0",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_uint8",
+                                                            "typeString": "uint8"
+                                                        }
+                                                    },
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                }
+                                            ],
+                                            "id": 22,
+                                            "initialValue": null,
+                                            "nodeType": "VariableDeclarationStatement",
+                                            "src": "170:7:0"
+                                        },
+                                        {
+                                            "assignments": [
+                                                24
+                                            ],
+                                            "declarations": [
+                                                {
+                                                    "constant": false,
+                                                    "id": 24,
+                                                    "name": "t",
+                                                    "nodeType": "VariableDeclaration",
+                                                    "scope": 47,
+                                                    "src": "187:8:0",
+                                                    "stateVariable": false,
+                                                    "storageLocation": "default",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_uint16",
+                                                        "typeString": "uint16"
+                                                    },
+                                                    "typeName": {
+                                                        "id": 23,
+                                                        "name": "uint16",
+                                                        "nodeType": "ElementaryTypeName",
+                                                        "src": "187:6:0",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_uint16",
+                                                            "typeString": "uint16"
+                                                        }
+                                                    },
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                }
+                                            ],
+                                            "id": 25,
+                                            "initialValue": null,
+                                            "nodeType": "VariableDeclarationStatement",
+                                            "src": "187:8:0"
+                                        },
+                                        {
+                                            "assignments": [
+                                                27
+                                            ],
+                                            "declarations": [
+                                                {
+                                                    "constant": false,
+                                                    "id": 27,
+                                                    "name": "x",
+                                                    "nodeType": "VariableDeclaration",
+                                                    "scope": 47,
+                                                    "src": "205:15:0",
+                                                    "stateVariable": false,
+                                                    "storageLocation": "memory",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_string_memory_ptr",
+                                                        "typeString": "string"
+                                                    },
+                                                    "typeName": {
+                                                        "id": 26,
+                                                        "name": "string",
+                                                        "nodeType": "ElementaryTypeName",
+                                                        "src": "205:6:0",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_string_storage_ptr",
+                                                            "typeString": "string"
+                                                        }
+                                                    },
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                }
+                                            ],
+                                            "id": 28,
+                                            "initialValue": null,
+                                            "nodeType": "VariableDeclarationStatement",
+                                            "src": "205:15:0"
+                                        },
+                                        {
+                                            "assignments": [
+                                                30
+                                            ],
+                                            "declarations": [
+                                                {
+                                                    "constant": false,
+                                                    "id": 30,
+                                                    "name": "f",
+                                                    "nodeType": "VariableDeclaration",
+                                                    "scope": 47,
+                                                    "src": "230:9:0",
+                                                    "stateVariable": false,
+                                                    "storageLocation": "default",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_address",
+                                                        "typeString": "address"
+                                                    },
+                                                    "typeName": {
+                                                        "id": 29,
+                                                        "name": "address",
+                                                        "nodeType": "ElementaryTypeName",
+                                                        "src": "230:7:0",
+                                                        "stateMutability": "nonpayable",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_address",
+                                                            "typeString": "address"
+                                                        }
+                                                    },
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                }
+                                            ],
+                                            "id": 31,
+                                            "initialValue": null,
+                                            "nodeType": "VariableDeclarationStatement",
+                                            "src": "230:9:0"
+                                        },
+                                        {
+                                            "expression": {
+                                                "argumentTypes": null,
+                                                "id": 45,
+                                                "isConstant": false,
+                                                "isLValue": false,
+                                                "isPure": false,
+                                                "lValueRequested": false,
+                                                "leftHandSide": {
+                                                    "argumentTypes": null,
+                                                    "components": [
+                                                        {
+                                                            "argumentTypes": null,
+                                                            "id": 32,
+                                                            "name": "r",
+                                                            "nodeType": "Identifier",
+                                                            "overloadedDeclarations": [],
+                                                            "referencedDeclaration": 21,
+                                                            "src": "251:1:0",
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_uint8",
+                                                                "typeString": "uint8"
+                                                            }
+                                                        },
+                                                        {
+                                                            "argumentTypes": null,
+                                                            "id": 33,
+                                                            "name": "t",
+                                                            "nodeType": "Identifier",
+                                                            "overloadedDeclarations": [],
+                                                            "referencedDeclaration": 24,
+                                                            "src": "254:1:0",
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_uint16",
+                                                                "typeString": "uint16"
+                                                            }
+                                                        },
+                                                        null,
+                                                        {
+                                                            "argumentTypes": null,
+                                                            "id": 34,
+                                                            "name": "f",
+                                                            "nodeType": "Identifier",
+                                                            "overloadedDeclarations": [],
+                                                            "referencedDeclaration": 30,
+                                                            "src": "258:1:0",
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_address",
+                                                                "typeString": "address"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "id": 35,
+                                                    "isConstant": false,
+                                                    "isInlineArray": false,
+                                                    "isLValue": true,
+                                                    "isPure": false,
+                                                    "lValueRequested": true,
+                                                    "nodeType": "TupleExpression",
+                                                    "src": "250:10:0",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_tuple$_t_uint8_$_t_uint16_$__$_t_address_$",
+                                                        "typeString": "tuple(uint8,uint16,,address)"
+                                                    }
+                                                },
+                                                "nodeType": "Assignment",
+                                                "operator": "=",
+                                                "rightHandSide": {
+                                                    "argumentTypes": null,
+                                                    "components": [
+                                                        {
+                                                            "argumentTypes": null,
+                                                            "hexValue": "37",
+                                                            "id": 36,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "kind": "number",
+                                                            "lValueRequested": false,
+                                                            "nodeType": "Literal",
+                                                            "src": "264:1:0",
+                                                            "subdenomination": null,
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_rational_7_by_1",
+                                                                "typeString": "int_const 7"
+                                                            },
+                                                            "value": "7"
+                                                        },
+                                                        {
+                                                            "argumentTypes": null,
+                                                            "hexValue": "38",
+                                                            "id": 37,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "kind": "number",
+                                                            "lValueRequested": false,
+                                                            "nodeType": "Literal",
+                                                            "src": "267:1:0",
+                                                            "subdenomination": null,
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_rational_8_by_1",
+                                                                "typeString": "int_const 8"
+                                                            },
+                                                            "value": "8"
+                                                        },
+                                                        {
+                                                            "argumentTypes": null,
+                                                            "components": [
+                                                                {
+                                                                    "argumentTypes": null,
+                                                                    "hexValue": "78797a",
+                                                                    "id": 38,
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "kind": "string",
+                                                                    "lValueRequested": false,
+                                                                    "nodeType": "Literal",
+                                                                    "src": "271:5:0",
+                                                                    "subdenomination": null,
+                                                                    "typeDescriptions": {
+                                                                        "typeIdentifier": "t_stringliteral_9dd2c369a187b4e6b9c402f030e50743e619301ea62aa4c0737d4ef7e10a3d49",
+                                                                        "typeString": "literal_string \"xyz\""
+                                                                    },
+                                                                    "value": "xyz"
+                                                                },
+                                                                {
+                                                                    "argumentTypes": null,
+                                                                    "hexValue": "30783432",
+                                                                    "id": 39,
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "kind": "number",
+                                                                    "lValueRequested": false,
+                                                                    "nodeType": "Literal",
+                                                                    "src": "278:4:0",
+                                                                    "subdenomination": null,
+                                                                    "typeDescriptions": {
+                                                                        "typeIdentifier": "t_rational_66_by_1",
+                                                                        "typeString": "int_const 66"
+                                                                    },
+                                                                    "value": "0x42"
+                                                                }
+                                                            ],
+                                                            "id": 40,
+                                                            "isConstant": false,
+                                                            "isInlineArray": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "lValueRequested": false,
+                                                            "nodeType": "TupleExpression",
+                                                            "src": "270:13:0",
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_tuple$_t_stringliteral_9dd2c369a187b4e6b9c402f030e50743e619301ea62aa4c0737d4ef7e10a3d49_$_t_rational_66_by_1_$",
+                                                                "typeString": "tuple(literal_string \"xyz\",int_const 66)"
+                                                            }
+                                                        },
+                                                        {
+                                                            "argumentTypes": null,
+                                                            "arguments": [
+                                                                {
+                                                                    "argumentTypes": null,
+                                                                    "hexValue": "307830",
+                                                                    "id": 42,
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "kind": "number",
+                                                                    "lValueRequested": false,
+                                                                    "nodeType": "Literal",
+                                                                    "src": "293:3:0",
+                                                                    "subdenomination": null,
+                                                                    "typeDescriptions": {
+                                                                        "typeIdentifier": "t_rational_0_by_1",
+                                                                        "typeString": "int_const 0"
+                                                                    },
+                                                                    "value": "0x0"
+                                                                }
+                                                            ],
+                                                            "expression": {
+                                                                "argumentTypes": [
+                                                                    {
+                                                                        "typeIdentifier": "t_rational_0_by_1",
+                                                                        "typeString": "int_const 0"
+                                                                    }
+                                                                ],
+                                                                "id": 41,
+                                                                "isConstant": false,
+                                                                "isLValue": false,
+                                                                "isPure": true,
+                                                                "lValueRequested": false,
+                                                                "nodeType": "ElementaryTypeNameExpression",
+                                                                "src": "285:7:0",
+                                                                "typeDescriptions": {
+                                                                    "typeIdentifier": "t_type$_t_address_$",
+                                                                    "typeString": "type(address)"
+                                                                },
+                                                                "typeName": "address"
+                                                            },
+                                                            "id": 43,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "kind": "typeConversion",
+                                                            "lValueRequested": false,
+                                                            "names": [],
+                                                            "nodeType": "FunctionCall",
+                                                            "src": "285:12:0",
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_address_payable",
+                                                                "typeString": "address payable"
+                                                            }
+                                                        }
+                                                    ],
+                                                    "id": 44,
+                                                    "isConstant": false,
+                                                    "isInlineArray": false,
+                                                    "isLValue": false,
+                                                    "isPure": true,
+                                                    "lValueRequested": false,
+                                                    "nodeType": "TupleExpression",
+                                                    "src": "263:35:0",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_tuple$_t_rational_7_by_1_$_t_rational_8_by_1_$_t_tuple$_t_stringliteral_9dd2c369a187b4e6b9c402f030e50743e619301ea62aa4c0737d4ef7e10a3d49_$_t_rational_66_by_1_$_$_t_address_payable_$",
+                                                        "typeString": "tuple(int_const 7,int_const 8,tuple(literal_string \"xyz\",int_const 66),address payable)"
+                                                    }
+                                                },
+                                                "src": "250:48:0",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_tuple$__$",
+                                                    "typeString": "tuple()"
+                                                }
+                                            },
+                                            "id": 46,
+                                            "nodeType": "ExpressionStatement",
+                                            "src": "250:48:0"
+                                        }
+                                    ]
+                                },
+                                "documentation": null,
+                                "id": 48,
+                                "implemented": true,
+                                "kind": "function",
+                                "modifiers": [],
+                                "name": "tupleNested",
+                                "nodeType": "FunctionDefinition",
+                                "parameters": {
+                                    "id": 18,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [],
+                                    "src": "150:2:0"
+                                },
+                                "returnParameters": {
+                                    "id": 19,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [],
+                                    "src": "160:0:0"
+                                },
+                                "scope": 63,
+                                "src": "130:175:0",
+                                "stateMutability": "nonpayable",
+                                "superFunction": null,
+                                "visibility": "public"
+                            },
+                            {
+                                "body": {
+                                    "id": 61,
+                                    "nodeType": "Block",
+                                    "src": "340:46:0",
+                                    "statements": [
+                                        {
+                                            "assignments": [
+                                                55
+                                            ],
+                                            "declarations": [
+                                                {
+                                                    "constant": false,
+                                                    "id": 55,
+                                                    "name": "a",
+                                                    "nodeType": "VariableDeclaration",
+                                                    "scope": 61,
+                                                    "src": "350:17:0",
+                                                    "stateVariable": false,
+                                                    "storageLocation": "memory",
+                                                    "typeDescriptions": {
+                                                        "typeIdentifier": "t_array$_t_uint8_$3_memory_ptr",
+                                                        "typeString": "uint8[3]"
+                                                    },
+                                                    "typeName": {
+                                                        "baseType": {
+                                                            "id": 53,
+                                                            "name": "uint8",
+                                                            "nodeType": "ElementaryTypeName",
+                                                            "src": "350:5:0",
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": "t_uint8",
+                                                                "typeString": "uint8"
+                                                            }
+                                                        },
+                                                        "id": 54,
+                                                        "length": {
+                                                            "argumentTypes": null,
+                                                            "hexValue": "33",
+                                                            "id": 52,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "kind": "number",
+                                                            "lValueRequested": false,
+                                                            "nodeType": "Literal",
+                                                            "src": "356:1:0",
+                                                            "subdenomination": null,
+                                                            "typeDescriptions": {
+                                                                "typeIdentifier": null,
+                                                                "typeString": null
+                                                            },
+                                                            "value": "3"
+                                                        },
+                                                        "nodeType": "ArrayTypeName",
+                                                        "src": "350:8:0",
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_array$_t_uint8_$3_storage_ptr",
+                                                            "typeString": "uint8[3]"
+                                                        }
+                                                    },
+                                                    "value": null,
+                                                    "visibility": "internal"
+                                                }
+                                            ],
+                                            "id": 60,
+                                            "initialValue": {
+                                                "argumentTypes": null,
+                                                "components": [
+                                                    {
+                                                        "argumentTypes": null,
+                                                        "hexValue": "31",
+                                                        "id": 56,
+                                                        "isConstant": false,
+                                                        "isLValue": false,
+                                                        "isPure": true,
+                                                        "kind": "number",
+                                                        "lValueRequested": false,
+                                                        "nodeType": "Literal",
+                                                        "src": "371:1:0",
+                                                        "subdenomination": null,
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_rational_1_by_1",
+                                                            "typeString": "int_const 1"
+                                                        },
+                                                        "value": "1"
+                                                    },
+                                                    {
+                                                        "argumentTypes": null,
+                                                        "hexValue": "32",
+                                                        "id": 57,
+                                                        "isConstant": false,
+                                                        "isLValue": false,
+                                                        "isPure": true,
+                                                        "kind": "number",
+                                                        "lValueRequested": false,
+                                                        "nodeType": "Literal",
+                                                        "src": "374:1:0",
+                                                        "subdenomination": null,
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_rational_2_by_1",
+                                                            "typeString": "int_const 2"
+                                                        },
+                                                        "value": "2"
+                                                    },
+                                                    {
+                                                        "argumentTypes": null,
+                                                        "hexValue": "33",
+                                                        "id": 58,
+                                                        "isConstant": false,
+                                                        "isLValue": false,
+                                                        "isPure": true,
+                                                        "kind": "number",
+                                                        "lValueRequested": false,
+                                                        "nodeType": "Literal",
+                                                        "src": "377:1:0",
+                                                        "subdenomination": null,
+                                                        "typeDescriptions": {
+                                                            "typeIdentifier": "t_rational_3_by_1",
+                                                            "typeString": "int_const 3"
+                                                        },
+                                                        "value": "3"
+                                                    }
+                                                ],
+                                                "id": 59,
+                                                "isConstant": false,
+                                                "isInlineArray": true,
+                                                "isLValue": false,
+                                                "isPure": true,
+                                                "lValueRequested": false,
+                                                "nodeType": "TupleExpression",
+                                                "src": "370:9:0",
+                                                "typeDescriptions": {
+                                                    "typeIdentifier": "t_array$_t_uint8_$3_memory_ptr",
+                                                    "typeString": "uint8[3] memory"
+                                                }
+                                            },
+                                            "nodeType": "VariableDeclarationStatement",
+                                            "src": "350:29:0"
+                                        }
+                                    ]
+                                },
+                                "documentation": null,
+                                "id": 62,
+                                "implemented": true,
+                                "kind": "function",
+                                "modifiers": [],
+                                "name": "tupleArray",
+                                "nodeType": "FunctionDefinition",
+                                "parameters": {
+                                    "id": 49,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [],
+                                    "src": "330:2:0"
+                                },
+                                "returnParameters": {
+                                    "id": 50,
+                                    "nodeType": "ParameterList",
+                                    "parameters": [],
+                                    "src": "340:0:0"
+                                },
+                                "scope": 63,
+                                "src": "311:75:0",
+                                "stateMutability": "nonpayable",
+                                "superFunction": null,
+                                "visibility": "public"
+                            }
+                        ],
+                        "scope": 64,
+                        "src": "0:388:0"
+                    }
+                ],
+                "src": "0:389:0"
+            },
+            "id": 0,
+            "legacyAST": {
+                "attributes": {
+                    "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/expressions/tuple.sol",
+                    "exportedSymbols": {
+                        "SomeContract": [
+                            63
+                        ]
+                    }
+                },
+                "children": [
+                    {
+                        "attributes": {
+                            "baseContracts": [
+                                null
+                            ],
+                            "contractDependencies": [
+                                null
+                            ],
+                            "contractKind": "contract",
+                            "documentation": null,
+                            "fullyImplemented": true,
+                            "linearizedBaseContracts": [
+                                63
+                            ],
+                            "name": "SomeContract",
+                            "scope": 64
+                        },
+                        "children": [
+                            {
+                                "attributes": {
+                                    "documentation": null,
+                                    "implemented": true,
+                                    "isConstructor": false,
+                                    "kind": "function",
+                                    "modifiers": [
+                                        null
+                                    ],
+                                    "name": "tupleSimple",
+                                    "scope": 63,
+                                    "stateMutability": "nonpayable",
+                                    "superFunction": null,
+                                    "visibility": "public"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 1,
+                                        "name": "ParameterList",
+                                        "src": "48:2:0"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 2,
+                                        "name": "ParameterList",
+                                        "src": "58:0:0"
+                                    },
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "assignments": [
+                                                        4,
+                                                        6
+                                                    ]
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "x",
+                                                            "scope": 16,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "default",
+                                                            "type": "uint256",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "name": "uint",
+                                                                    "type": "uint256"
+                                                                },
+                                                                "id": 3,
+                                                                "name": "ElementaryTypeName",
+                                                                "src": "69:4:0"
+                                                            }
+                                                        ],
+                                                        "id": 4,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "69:6:0"
+                                                    },
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "y",
+                                                            "scope": 16,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "default",
+                                                            "type": "uint256",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "name": "uint",
+                                                                    "type": "uint256"
+                                                                },
+                                                                "id": 5,
+                                                                "name": "ElementaryTypeName",
+                                                                "src": "77:4:0"
+                                                            }
+                                                        ],
+                                                        "id": 6,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "77:6:0"
+                                                    },
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isInlineArray": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "lValueRequested": false,
+                                                            "type": "tuple(int_const 1,int_const 2)"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "31",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 1",
+                                                                    "value": "1"
+                                                                },
+                                                                "id": 7,
+                                                                "name": "Literal",
+                                                                "src": "88:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "32",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 2",
+                                                                    "value": "2"
+                                                                },
+                                                                "id": 8,
+                                                                "name": "Literal",
+                                                                "src": "91:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 9,
+                                                        "name": "TupleExpression",
+                                                        "src": "87:6:0"
+                                                    }
+                                                ],
+                                                "id": 10,
+                                                "name": "VariableDeclarationStatement",
+                                                "src": "68:25:0"
+                                            },
+                                            {
+                                                "attributes": {
+                                                    "assignments": [
+                                                        12
+                                                    ]
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "z",
+                                                            "scope": 16,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "default",
+                                                            "type": "uint256",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "name": "uint",
+                                                                    "type": "uint256"
+                                                                },
+                                                                "id": 11,
+                                                                "name": "ElementaryTypeName",
+                                                                "src": "104:4:0"
+                                                            }
+                                                        ],
+                                                        "id": 12,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "104:6:0"
+                                                    },
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isInlineArray": false,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "lValueRequested": false,
+                                                            "type": "int_const 1"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "31",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 1",
+                                                                    "value": "1"
+                                                                },
+                                                                "id": 13,
+                                                                "name": "Literal",
+                                                                "src": "115:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 14,
+                                                        "name": "TupleExpression",
+                                                        "src": "114:3:0"
+                                                    }
+                                                ],
+                                                "id": 15,
+                                                "name": "VariableDeclarationStatement",
+                                                "src": "103:14:0"
+                                            }
+                                        ],
+                                        "id": 16,
+                                        "name": "Block",
+                                        "src": "58:66:0"
+                                    }
+                                ],
+                                "id": 17,
+                                "name": "FunctionDefinition",
+                                "src": "28:96:0"
+                            },
+                            {
+                                "attributes": {
+                                    "documentation": null,
+                                    "implemented": true,
+                                    "isConstructor": false,
+                                    "kind": "function",
+                                    "modifiers": [
+                                        null
+                                    ],
+                                    "name": "tupleNested",
+                                    "scope": 63,
+                                    "stateMutability": "nonpayable",
+                                    "superFunction": null,
+                                    "visibility": "public"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 18,
+                                        "name": "ParameterList",
+                                        "src": "150:2:0"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 19,
+                                        "name": "ParameterList",
+                                        "src": "160:0:0"
+                                    },
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "assignments": [
+                                                        21
+                                                    ],
+                                                    "initialValue": null
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "r",
+                                                            "scope": 47,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "default",
+                                                            "type": "uint8",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "name": "uint8",
+                                                                    "type": "uint8"
+                                                                },
+                                                                "id": 20,
+                                                                "name": "ElementaryTypeName",
+                                                                "src": "170:5:0"
+                                                            }
+                                                        ],
+                                                        "id": 21,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "170:7:0"
+                                                    }
+                                                ],
+                                                "id": 22,
+                                                "name": "VariableDeclarationStatement",
+                                                "src": "170:7:0"
+                                            },
+                                            {
+                                                "attributes": {
+                                                    "assignments": [
+                                                        24
+                                                    ],
+                                                    "initialValue": null
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "t",
+                                                            "scope": 47,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "default",
+                                                            "type": "uint16",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "name": "uint16",
+                                                                    "type": "uint16"
+                                                                },
+                                                                "id": 23,
+                                                                "name": "ElementaryTypeName",
+                                                                "src": "187:6:0"
+                                                            }
+                                                        ],
+                                                        "id": 24,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "187:8:0"
+                                                    }
+                                                ],
+                                                "id": 25,
+                                                "name": "VariableDeclarationStatement",
+                                                "src": "187:8:0"
+                                            },
+                                            {
+                                                "attributes": {
+                                                    "assignments": [
+                                                        27
+                                                    ],
+                                                    "initialValue": null
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "x",
+                                                            "scope": 47,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "memory",
+                                                            "type": "string",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "name": "string",
+                                                                    "type": "string"
+                                                                },
+                                                                "id": 26,
+                                                                "name": "ElementaryTypeName",
+                                                                "src": "205:6:0"
+                                                            }
+                                                        ],
+                                                        "id": 27,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "205:15:0"
+                                                    }
+                                                ],
+                                                "id": 28,
+                                                "name": "VariableDeclarationStatement",
+                                                "src": "205:15:0"
+                                            },
+                                            {
+                                                "attributes": {
+                                                    "assignments": [
+                                                        30
+                                                    ],
+                                                    "initialValue": null
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "f",
+                                                            "scope": 47,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "default",
+                                                            "type": "address",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "name": "address",
+                                                                    "stateMutability": "nonpayable",
+                                                                    "type": "address"
+                                                                },
+                                                                "id": 29,
+                                                                "name": "ElementaryTypeName",
+                                                                "src": "230:7:0"
+                                                            }
+                                                        ],
+                                                        "id": 30,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "230:9:0"
+                                                    }
+                                                ],
+                                                "id": 31,
+                                                "name": "VariableDeclarationStatement",
+                                                "src": "230:9:0"
+                                            },
+                                            {
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isLValue": false,
+                                                            "isPure": false,
+                                                            "lValueRequested": false,
+                                                            "operator": "=",
+                                                            "type": "tuple()"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "isConstant": false,
+                                                                    "isInlineArray": false,
+                                                                    "isLValue": true,
+                                                                    "isPure": false,
+                                                                    "lValueRequested": true,
+                                                                    "type": "tuple(uint8,uint16,,address)"
+                                                                },
+                                                                "children": [
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "overloadedDeclarations": [
+                                                                                null
+                                                                            ],
+                                                                            "referencedDeclaration": 21,
+                                                                            "type": "uint8",
+                                                                            "value": "r"
+                                                                        },
+                                                                        "id": 32,
+                                                                        "name": "Identifier",
+                                                                        "src": "251:1:0"
+                                                                    },
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "overloadedDeclarations": [
+                                                                                null
+                                                                            ],
+                                                                            "referencedDeclaration": 24,
+                                                                            "type": "uint16",
+                                                                            "value": "t"
+                                                                        },
+                                                                        "id": 33,
+                                                                        "name": "Identifier",
+                                                                        "src": "254:1:0"
+                                                                    },
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "overloadedDeclarations": [
+                                                                                null
+                                                                            ],
+                                                                            "referencedDeclaration": 30,
+                                                                            "type": "address",
+                                                                            "value": "f"
+                                                                        },
+                                                                        "id": 34,
+                                                                        "name": "Identifier",
+                                                                        "src": "258:1:0"
+                                                                    }
+                                                                ],
+                                                                "id": 35,
+                                                                "name": "TupleExpression",
+                                                                "src": "250:10:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "isConstant": false,
+                                                                    "isInlineArray": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "type": "tuple(int_const 7,int_const 8,tuple(literal_string \"xyz\",int_const 66),address payable)"
+                                                                },
+                                                                "children": [
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "hexvalue": "37",
+                                                                            "isConstant": false,
+                                                                            "isLValue": false,
+                                                                            "isPure": true,
+                                                                            "lValueRequested": false,
+                                                                            "subdenomination": null,
+                                                                            "token": "number",
+                                                                            "type": "int_const 7",
+                                                                            "value": "7"
+                                                                        },
+                                                                        "id": 36,
+                                                                        "name": "Literal",
+                                                                        "src": "264:1:0"
+                                                                    },
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "hexvalue": "38",
+                                                                            "isConstant": false,
+                                                                            "isLValue": false,
+                                                                            "isPure": true,
+                                                                            "lValueRequested": false,
+                                                                            "subdenomination": null,
+                                                                            "token": "number",
+                                                                            "type": "int_const 8",
+                                                                            "value": "8"
+                                                                        },
+                                                                        "id": 37,
+                                                                        "name": "Literal",
+                                                                        "src": "267:1:0"
+                                                                    },
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "isConstant": false,
+                                                                            "isInlineArray": false,
+                                                                            "isLValue": false,
+                                                                            "isPure": true,
+                                                                            "lValueRequested": false,
+                                                                            "type": "tuple(literal_string \"xyz\",int_const 66)"
+                                                                        },
+                                                                        "children": [
+                                                                            {
+                                                                                "attributes": {
+                                                                                    "argumentTypes": null,
+                                                                                    "hexvalue": "78797a",
+                                                                                    "isConstant": false,
+                                                                                    "isLValue": false,
+                                                                                    "isPure": true,
+                                                                                    "lValueRequested": false,
+                                                                                    "subdenomination": null,
+                                                                                    "token": "string",
+                                                                                    "type": "literal_string \"xyz\"",
+                                                                                    "value": "xyz"
+                                                                                },
+                                                                                "id": 38,
+                                                                                "name": "Literal",
+                                                                                "src": "271:5:0"
+                                                                            },
+                                                                            {
+                                                                                "attributes": {
+                                                                                    "argumentTypes": null,
+                                                                                    "hexvalue": "30783432",
+                                                                                    "isConstant": false,
+                                                                                    "isLValue": false,
+                                                                                    "isPure": true,
+                                                                                    "lValueRequested": false,
+                                                                                    "subdenomination": null,
+                                                                                    "token": "number",
+                                                                                    "type": "int_const 66",
+                                                                                    "value": "0x42"
+                                                                                },
+                                                                                "id": 39,
+                                                                                "name": "Literal",
+                                                                                "src": "278:4:0"
+                                                                            }
+                                                                        ],
+                                                                        "id": 40,
+                                                                        "name": "TupleExpression",
+                                                                        "src": "270:13:0"
+                                                                    },
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "isConstant": false,
+                                                                            "isLValue": false,
+                                                                            "isPure": true,
+                                                                            "isStructConstructorCall": false,
+                                                                            "lValueRequested": false,
+                                                                            "names": [
+                                                                                null
+                                                                            ],
+                                                                            "type": "address payable",
+                                                                            "type_conversion": true
+                                                                        },
+                                                                        "children": [
+                                                                            {
+                                                                                "attributes": {
+                                                                                    "argumentTypes": [
+                                                                                        {
+                                                                                            "typeIdentifier": "t_rational_0_by_1",
+                                                                                            "typeString": "int_const 0"
+                                                                                        }
+                                                                                    ],
+                                                                                    "isConstant": false,
+                                                                                    "isLValue": false,
+                                                                                    "isPure": true,
+                                                                                    "lValueRequested": false,
+                                                                                    "type": "type(address)",
+                                                                                    "value": "address"
+                                                                                },
+                                                                                "id": 41,
+                                                                                "name": "ElementaryTypeNameExpression",
+                                                                                "src": "285:7:0"
+                                                                            },
+                                                                            {
+                                                                                "attributes": {
+                                                                                    "argumentTypes": null,
+                                                                                    "hexvalue": "307830",
+                                                                                    "isConstant": false,
+                                                                                    "isLValue": false,
+                                                                                    "isPure": true,
+                                                                                    "lValueRequested": false,
+                                                                                    "subdenomination": null,
+                                                                                    "token": "number",
+                                                                                    "type": "int_const 0",
+                                                                                    "value": "0x0"
+                                                                                },
+                                                                                "id": 42,
+                                                                                "name": "Literal",
+                                                                                "src": "293:3:0"
+                                                                            }
+                                                                        ],
+                                                                        "id": 43,
+                                                                        "name": "FunctionCall",
+                                                                        "src": "285:12:0"
+                                                                    }
+                                                                ],
+                                                                "id": 44,
+                                                                "name": "TupleExpression",
+                                                                "src": "263:35:0"
+                                                            }
+                                                        ],
+                                                        "id": 45,
+                                                        "name": "Assignment",
+                                                        "src": "250:48:0"
+                                                    }
+                                                ],
+                                                "id": 46,
+                                                "name": "ExpressionStatement",
+                                                "src": "250:48:0"
+                                            }
+                                        ],
+                                        "id": 47,
+                                        "name": "Block",
+                                        "src": "160:145:0"
+                                    }
+                                ],
+                                "id": 48,
+                                "name": "FunctionDefinition",
+                                "src": "130:175:0"
+                            },
+                            {
+                                "attributes": {
+                                    "documentation": null,
+                                    "implemented": true,
+                                    "isConstructor": false,
+                                    "kind": "function",
+                                    "modifiers": [
+                                        null
+                                    ],
+                                    "name": "tupleArray",
+                                    "scope": 63,
+                                    "stateMutability": "nonpayable",
+                                    "superFunction": null,
+                                    "visibility": "public"
+                                },
+                                "children": [
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 49,
+                                        "name": "ParameterList",
+                                        "src": "330:2:0"
+                                    },
+                                    {
+                                        "attributes": {
+                                            "parameters": [
+                                                null
+                                            ]
+                                        },
+                                        "children": [],
+                                        "id": 50,
+                                        "name": "ParameterList",
+                                        "src": "340:0:0"
+                                    },
+                                    {
+                                        "children": [
+                                            {
+                                                "attributes": {
+                                                    "assignments": [
+                                                        55
+                                                    ]
+                                                },
+                                                "children": [
+                                                    {
+                                                        "attributes": {
+                                                            "constant": false,
+                                                            "name": "a",
+                                                            "scope": 61,
+                                                            "stateVariable": false,
+                                                            "storageLocation": "memory",
+                                                            "type": "uint8[3]",
+                                                            "value": null,
+                                                            "visibility": "internal"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "type": "uint8[3]"
+                                                                },
+                                                                "children": [
+                                                                    {
+                                                                        "attributes": {
+                                                                            "name": "uint8",
+                                                                            "type": "uint8"
+                                                                        },
+                                                                        "id": 53,
+                                                                        "name": "ElementaryTypeName",
+                                                                        "src": "350:5:0"
+                                                                    },
+                                                                    {
+                                                                        "attributes": {
+                                                                            "argumentTypes": null,
+                                                                            "hexvalue": "33",
+                                                                            "isConstant": false,
+                                                                            "isLValue": false,
+                                                                            "isPure": false,
+                                                                            "lValueRequested": false,
+                                                                            "subdenomination": null,
+                                                                            "token": "number",
+                                                                            "type": null,
+                                                                            "value": "3"
+                                                                        },
+                                                                        "id": 52,
+                                                                        "name": "Literal",
+                                                                        "src": "356:1:0"
+                                                                    }
+                                                                ],
+                                                                "id": 54,
+                                                                "name": "ArrayTypeName",
+                                                                "src": "350:8:0"
+                                                            }
+                                                        ],
+                                                        "id": 55,
+                                                        "name": "VariableDeclaration",
+                                                        "src": "350:17:0"
+                                                    },
+                                                    {
+                                                        "attributes": {
+                                                            "argumentTypes": null,
+                                                            "isConstant": false,
+                                                            "isInlineArray": true,
+                                                            "isLValue": false,
+                                                            "isPure": true,
+                                                            "lValueRequested": false,
+                                                            "type": "uint8[3] memory"
+                                                        },
+                                                        "children": [
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "31",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 1",
+                                                                    "value": "1"
+                                                                },
+                                                                "id": 56,
+                                                                "name": "Literal",
+                                                                "src": "371:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "32",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 2",
+                                                                    "value": "2"
+                                                                },
+                                                                "id": 57,
+                                                                "name": "Literal",
+                                                                "src": "374:1:0"
+                                                            },
+                                                            {
+                                                                "attributes": {
+                                                                    "argumentTypes": null,
+                                                                    "hexvalue": "33",
+                                                                    "isConstant": false,
+                                                                    "isLValue": false,
+                                                                    "isPure": true,
+                                                                    "lValueRequested": false,
+                                                                    "subdenomination": null,
+                                                                    "token": "number",
+                                                                    "type": "int_const 3",
+                                                                    "value": "3"
+                                                                },
+                                                                "id": 58,
+                                                                "name": "Literal",
+                                                                "src": "377:1:0"
+                                                            }
+                                                        ],
+                                                        "id": 59,
+                                                        "name": "TupleExpression",
+                                                        "src": "370:9:0"
+                                                    }
+                                                ],
+                                                "id": 60,
+                                                "name": "VariableDeclarationStatement",
+                                                "src": "350:29:0"
+                                            }
+                                        ],
+                                        "id": 61,
+                                        "name": "Block",
+                                        "src": "340:46:0"
+                                    }
+                                ],
+                                "id": 62,
+                                "name": "FunctionDefinition",
+                                "src": "311:75:0"
+                            }
+                        ],
+                        "id": 63,
+                        "name": "ContractDefinition",
+                        "src": "0:388:0"
+                    }
+                ],
+                "id": 64,
+                "name": "SourceUnit",
+                "src": "0:389:0"
+            }
+        }
+    }
+}
