@@ -320,7 +320,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         (node: TupleExpression): Specific<ConstructorParameters<typeof TupleExpression>> => [
             node.typeString,
             node.isInlineArray,
-            node.vComponents,
+            node.vOriginalComponents,
             node.raw
         ]
     ],
@@ -890,57 +890,68 @@ export class ASTNodeFactory {
     }
 
     makeIdentifierFor(
-        declaration:
+        target:
             | VariableDeclaration
             | ContractDefinition
             | FunctionDefinition
             | StructDefinition
             | EventDefinition
             | EnumDefinition
+            | ImportDirective
     ): Identifier {
         let typeString: string;
 
-        if (declaration instanceof VariableDeclaration) {
-            typeString = declaration.typeString;
-        } else if (declaration instanceof FunctionDefinition) {
-            const args = declaration.vParameters.vParameters.map(this.typeExtractor);
+        if (target instanceof VariableDeclaration) {
+            typeString = target.typeString;
+        } else if (target instanceof FunctionDefinition) {
+            const args = target.vParameters.vParameters.map(this.typeExtractor);
 
             const result = [`function (${args.join(",")})`];
 
-            if (declaration.stateMutability !== FunctionStateMutability.NonPayable) {
-                result.push(declaration.stateMutability);
+            if (target.stateMutability !== FunctionStateMutability.NonPayable) {
+                result.push(target.stateMutability);
             }
 
-            if (declaration.visibility !== FunctionVisibility.Public) {
-                result.push(declaration.visibility);
+            if (target.visibility !== FunctionVisibility.Public) {
+                result.push(target.visibility);
             }
 
-            if (declaration.vReturnParameters.vParameters.length) {
-                const rets = declaration.vReturnParameters.vParameters.map(this.typeExtractor);
+            if (target.vReturnParameters.vParameters.length) {
+                const rets = target.vReturnParameters.vParameters.map(this.typeExtractor);
 
                 result.push(`returns (${rets.join(",")})`);
             }
 
             typeString = result.join(" ");
-        } else if (declaration instanceof ContractDefinition) {
-            typeString = `type(contract ${declaration.name})`;
-        } else if (declaration instanceof EventDefinition) {
-            const args = declaration.vParameters.vParameters.map(this.typeExtractor);
+        } else if (target instanceof ContractDefinition) {
+            typeString = `type(contract ${target.name})`;
+        } else if (target instanceof EventDefinition) {
+            const args = target.vParameters.vParameters.map(this.typeExtractor);
 
             typeString = `function (${args.join(",")})`;
+        } else if (target instanceof ImportDirective) {
+            typeString = "<missing>";
+
+            if (target.unitAlias === "") {
+                throw new Error('Target ImportDirective required to have valid "unitAlias"');
+            }
         } else {
             const name =
-                declaration.vScope instanceof ContractDefinition
-                    ? declaration.vScope.name + "." + declaration.name
-                    : declaration.name;
+                target.vScope instanceof ContractDefinition
+                    ? target.vScope.name + "." + target.name
+                    : target.name;
 
             typeString =
-                declaration instanceof StructDefinition
+                target instanceof StructDefinition
                     ? `type(struct ${name} storage pointer)`
                     : `type(enum ${name})`;
         }
 
-        return this.makeIdentifier(typeString, declaration.name, declaration.id);
+        return this.makeIdentifier(
+            typeString,
+            target instanceof ImportDirective ? target.unitAlias : target.name,
+            target.id
+        );
     }
 
     makeUnfinalized<T extends ASTNode>(

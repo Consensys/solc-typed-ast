@@ -40,7 +40,7 @@ export class TupleExpression extends Expression {
      *
      * The `null` value is used to represent empty spots.
      */
-    get components(): Array<number | null> {
+    get components(): ReadonlyArray<number | null> {
         const result: Array<number | null> = [];
 
         for (const component of this.vOriginalComponents) {
@@ -53,7 +53,7 @@ export class TupleExpression extends Expression {
     /**
      * An array of non-`null` components
      */
-    get vComponents(): Expression[] {
+    get vComponents(): readonly Expression[] {
         const result: Expression[] = [];
 
         for (const component of this.vOriginalComponents) {
