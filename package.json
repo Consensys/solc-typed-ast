@@ -1,5 +1,5 @@
 {
-    "name": "@consensys/solc-typed-ast",
+    "name": "solc-typed-ast",
     "version": "3.0.4",
     "description": "A TypeScript library providing a normalized typed Solidity AST along with the utilities necessary to generate the AST (from Solc) and traverse/manipulate it.",
     "keywords": [],
@@ -105,5 +105,5 @@
         "typescript": "^4.1.2"
     },
     "repository": "https://github.com/ConsenSys/solc-typed-ast.git",
-    "license": "SEE LICENSE IN <LICENSE>"
+    "license": "Apache-2.0"
 }

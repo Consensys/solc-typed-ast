@@ -25,13 +25,13 @@ A TypeScript package providing a normalized typed Solidity AST along with the ut
 Package could be installed globally via following command:
 
 ```console
-npm install -g @consensys/solc-typed-ast
+npm install -g solc-typed-ast
 ```
 
 Also it can be installed as the dependency:
 
 ```console
-npm install --save @consensys/solc-typed-ast
+npm install --save solc-typed-ast
 ```
 
 ## Usage
