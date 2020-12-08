@@ -3,6 +3,7 @@
 [![dependencies Status](https://david-dm.org/ConsenSys/solc-typed-ast/status.svg)](https://david-dm.org/ConsenSys/solc-typed-ast)
 [![devDependencies Status](https://david-dm.org/ConsenSys/solc-typed-ast/dev-status.svg)](https://david-dm.org/ConsenSys/solc-typed-ast?type=dev)
 [![Documentation](https://github.com/ConsenSys/solc-typed-ast/workflows/Build%20and%20release%20docs/badge.svg)](https://consensys.github.io/solc-typed-ast/)
+[![npm](https://img.shields.io/npm/v/solc-typed-ast)](https://www.npmjs.com/package/solc-typed-ast)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 # solc-typed-ast
