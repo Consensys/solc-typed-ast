@@ -28,7 +28,16 @@ import {
 } from "..";
 
 const cli = {
-    boolean: ["version", "help", "solidity-versions", "stdin", "raw", "tree", "source"],
+    boolean: [
+        "version",
+        "help",
+        "solidity-versions",
+        "stdin",
+        "raw",
+        "with-sources",
+        "tree",
+        "source"
+    ],
     number: ["depth"],
     string: ["mode", "compiler-version", "path-remapping", "xpath"],
     default: {
@@ -79,6 +88,8 @@ OPTIONS:
                             Default value: auto
     --path-remapping        Path remapping input for Solc.
     --raw                   Print raw Solc compilation output.
+    --with-sources          When used with "raw", adds "source" property with 
+                            source files content to the compiler artifact.
     --tree                  Print short tree of parent-child relations in AST.
     --source                Print source code, assembled from Solc-generated AST.
     --xpath                 XPath selector to perform for each source unit.
@@ -174,6 +185,20 @@ OPTIONS:
     const { data, files } = result;
 
     if (args.raw) {
+        if (args["with-sources"] && files.size > 0) {
+            if (!data.sources) {
+                data.sources = {};
+            }
+
+            for (const [key, value] of files) {
+                if (!data.sources[key]) {
+                    data.sources[key] = {};
+                }
+
+                data.sources[key].source = value;
+            }
+        }
+
         const output = JSON.stringify(data, undefined, 4);
 
         console.log(output);

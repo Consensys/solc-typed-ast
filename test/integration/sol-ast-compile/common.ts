@@ -25,6 +25,7 @@ export const options = [
     "compiler-version",
     "path-remapping",
     "raw",
+    "with-sources",
     "tree",
     "source",
     "xpath",
