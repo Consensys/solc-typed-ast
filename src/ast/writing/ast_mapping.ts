@@ -626,7 +626,7 @@ class BlockWriter implements ASTNodeWriter {
 class EventDefinitionWriter implements ASTNodeWriter {
     write(node: EventDefinition, writer: ASTWriter): string {
         const args = writer.write(node.vParameters);
-        const definition = "event " + node.name + args + ";";
+        const definition = "event " + node.name + args + (node.anonymous ? " anonymous" : "") + ";";
 
         if (node.documentation) {
             const docs =
