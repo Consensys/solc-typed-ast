@@ -1,8 +1,8 @@
 name: Build and release package 
 
-on: [push]
-  # release:
-  #  types: [ published ]
+on:
+  release:
+    types: [ published ]
 
 jobs:
   publish:
