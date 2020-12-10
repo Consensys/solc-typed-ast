@@ -1,6 +1,7 @@
 pragma solidity ^0.4.13;
 
 contract SourceWriterEdgeCases {
+    event Foo() anonymous;
     struct EmptyStruct {}
 
     bytes3 a = hex"00ffcc";
