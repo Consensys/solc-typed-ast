@@ -1,4 +1,5 @@
 pragma solidity ^0.7.0;
+pragma abicoder v2;
 
 library Lib {
     function add(uint a, uint b) internal pure returns (uint) {
@@ -83,6 +84,38 @@ contract DecodingContractType {
 
         for (uint i = 0; i < SIZE; i++) {
             assert(a[i].v() == i * 10);
+        }
+    }
+}
+
+struct Job {
+    uint priority;
+    string name;
+    bool executed;
+}
+
+contract Scheduler {
+    function schedule(Job[] calldata _jobs) public {
+        for (uint i = 0; i < _jobs.length; i++) {
+            executeJob(_jobs[i]);
+        }
+    }
+
+    function executeJob(Job memory _job) internal {
+        _job.executed = true;
+    }
+}
+
+contract Proxy {
+    address target;
+
+    fallback(bytes calldata _input) external returns (bytes memory) {
+        (bool success, bytes memory result) = target.delegatecall(_input);
+
+        if (success) {
+            return result;
+        } else {
+            revert(string(result));
         }
     }
 }

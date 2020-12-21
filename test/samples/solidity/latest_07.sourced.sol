@@ -2,6 +2,13 @@
 // /test/samples/solidity/latest_07.sol
 // ------------------------------------------------------------
 pragma solidity ^0.7.0;
+pragma abicoder v2;
+
+struct Job {
+    uint priority;
+    string name;
+    bool executed;
+}
 
 /// @dev File-level constant feature
 uint constant SIZE = 2;
@@ -81,6 +88,31 @@ contract DecodingContractType {
         assert((a.length == SIZE));
         for (uint i = 0; (i < SIZE); (i++)) {
             assert((a[i].v() == (i * 10)));
+        }
+    }
+}
+
+contract Scheduler {
+    function schedule(Job[] calldata _jobs) public {
+        for (uint i = 0; (i < _jobs.length); (i++)) {
+            executeJob(_jobs[i]);
+        }
+    }
+
+    function executeJob(Job memory _job) internal {
+        _job.executed = true;
+    }
+}
+
+contract Proxy {
+    address internal target;
+
+    fallback(bytes calldata _input) external returns (bytes memory) {
+        (bool success, bytes memory result) = target.delegatecall(_input);
+        if (success) {
+            return result;
+        } else {
+            revert(string(result));
         }
     }
 }
