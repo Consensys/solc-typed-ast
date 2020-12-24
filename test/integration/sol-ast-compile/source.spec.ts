@@ -44,6 +44,7 @@ const cases: Array<[string, string]> = [
     ["test/samples/solidity/compile_06.sol", "test/samples/solidity/compile_06.sourced.sol"],
     ["test/samples/solidity/latest_06.sol", "test/samples/solidity/latest_06.sourced.sol"],
     ["test/samples/solidity/latest_07.sol", "test/samples/solidity/latest_07.sourced.sol"],
+    ["test/samples/solidity/latest_08.sol", "test/samples/solidity/latest_08.sourced.sol"],
     [
         "test/samples/solidity/writer_edge_cases.sol",
         "test/samples/solidity/writer_edge_cases.sourced.sol"

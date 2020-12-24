@@ -35,6 +35,7 @@ import {
     UnaryOperation
 } from "../implementation/expression";
 import {
+    IdentifierPath,
     ImportDirective,
     InheritanceSpecifier,
     ModifierInvocation,
@@ -60,6 +61,7 @@ import {
     Throw,
     TryCatchClause,
     TryStatement,
+    UncheckedBlock,
     VariableDeclarationStatement,
     WhileStatement
 } from "../implementation/statement";
@@ -116,7 +118,13 @@ class MappingTypeNameWriter implements ASTNodeWriter {
 }
 
 class UserDefinedTypeNameWriter implements ASTNodeWriter {
-    write(node: UserDefinedTypeName): string {
+    write(node: UserDefinedTypeName, writer: ASTWriter): string {
+        return node.path ? writer.write(node.path) : node.name;
+    }
+}
+
+class IdentifierPathWriter implements ASTNodeWriter {
+    write(node: IdentifierPath): string {
         return node.name;
     }
 }
@@ -623,6 +631,27 @@ class BlockWriter implements ASTNodeWriter {
     }
 }
 
+class UncheckedBlockWriter implements ASTNodeWriter {
+    write(node: UncheckedBlock, writer: ASTWriter): string {
+        if (node.children.length === 0) {
+            return "unchecked {}";
+        }
+
+        const formatter = writer.formatter;
+
+        formatter.increaseNesting();
+
+        const statements = node.children.map((s) => formatter.renderIndent() + writer.write(s));
+
+        formatter.decreaseNesting();
+
+        const wrap = formatter.renderWrap();
+        const indent = formatter.renderIndent();
+
+        return "unchecked {" + wrap + statements.join(wrap) + wrap + indent + "}";
+    }
+}
+
 class EventDefinitionWriter implements ASTNodeWriter {
     write(node: EventDefinition, writer: ASTWriter): string {
         const args = writer.write(node.vParameters);
@@ -1007,6 +1036,7 @@ export const DefaultASTWriterMapping = new Map<ASTNodeConstructor<ASTNode>, ASTN
     [FunctionTypeName, new FunctionTypeNameWriter()],
     [Literal, new LiteralWriter()],
     [Identifier, new IdentifierWriter()],
+    [IdentifierPath, new IdentifierPathWriter()],
     [FunctionCallOptions, new FunctionCallOptionsWriter()],
     [FunctionCall, new FunctionCallWriter()],
     [MemberAccess, new MemberAccessWriter()],
@@ -1022,6 +1052,7 @@ export const DefaultASTWriterMapping = new Map<ASTNodeConstructor<ASTNode>, ASTN
     [Assignment, new AssignmentWriter()],
     [VariableDeclaration, new VariableDeclarationWriter()],
     [Block, new BlockWriter()],
+    [UncheckedBlock, new UncheckedBlockWriter()],
     [VariableDeclarationStatement, new VariableDeclarationStatementWriter()],
     [IfStatement, new IfStatementWriter()],
     [ForStatement, new ForStatementWriter()],

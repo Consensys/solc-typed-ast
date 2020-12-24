@@ -1,12 +1,13 @@
 import { ASTNode } from "../../ast_node";
 import { TypeName } from "../type/type_name";
 import { UserDefinedTypeName } from "../type/user_defined_type_name";
+import { IdentifierPath } from "./identifier_path";
 
 export class UsingForDirective extends ASTNode {
     /**
      * A library type
      */
-    vLibraryName: UserDefinedTypeName;
+    vLibraryName: UserDefinedTypeName | IdentifierPath;
 
     /**
      * A target type name that the library functions will apply to.
@@ -17,7 +18,7 @@ export class UsingForDirective extends ASTNode {
         id: number,
         src: string,
         type: string,
-        libraryName: UserDefinedTypeName,
+        libraryName: UserDefinedTypeName | IdentifierPath,
         typeName?: TypeName,
         raw?: any
     ) {

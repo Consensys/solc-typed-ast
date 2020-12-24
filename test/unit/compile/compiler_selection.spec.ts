@@ -5,6 +5,7 @@ import {
     CompilerVersions05,
     CompilerVersions06,
     CompilerVersions07,
+    CompilerVersions08,
     CompilerVersionSelectionStrategy,
     LatestAndFirstVersionInEachSeriesStrategy,
     LatestCompilerVersion,
@@ -38,6 +39,7 @@ describe("LatestVersionInEachSeriesStrategy", () => {
         [
             true,
             [
+                CompilerVersions08[CompilerVersions08.length - 1],
                 CompilerVersions07[CompilerVersions07.length - 1],
                 CompilerVersions06[CompilerVersions06.length - 1],
                 CompilerVersions05[CompilerVersions05.length - 1],
@@ -50,12 +52,14 @@ describe("LatestVersionInEachSeriesStrategy", () => {
                 CompilerVersions04[CompilerVersions04.length - 1],
                 CompilerVersions05[CompilerVersions05.length - 1],
                 CompilerVersions06[CompilerVersions06.length - 1],
-                CompilerVersions07[CompilerVersions07.length - 1]
+                CompilerVersions07[CompilerVersions07.length - 1],
+                CompilerVersions08[CompilerVersions08.length - 1]
             ]
         ],
         [
             undefined,
             [
+                CompilerVersions08[CompilerVersions08.length - 1],
                 CompilerVersions07[CompilerVersions07.length - 1],
                 CompilerVersions06[CompilerVersions06.length - 1],
                 CompilerVersions05[CompilerVersions05.length - 1],
@@ -82,6 +86,7 @@ describe("LatestAndFirstVersionInEachSeriesStrategy", () => {
         [
             true,
             [
+                CompilerVersions08[0],
                 CompilerVersions07[CompilerVersions07.length - 1],
                 CompilerVersions07[0],
                 CompilerVersions06[CompilerVersions06.length - 1],
@@ -102,12 +107,14 @@ describe("LatestAndFirstVersionInEachSeriesStrategy", () => {
                 CompilerVersions06[CompilerVersions06.length - 1],
                 CompilerVersions06[0],
                 CompilerVersions07[CompilerVersions07.length - 1],
-                CompilerVersions07[0]
+                CompilerVersions07[0],
+                CompilerVersions08[0]
             ]
         ],
         [
             undefined,
             [
+                CompilerVersions08[0],
                 CompilerVersions07[CompilerVersions07.length - 1],
                 CompilerVersions07[0],
                 CompilerVersions06[CompilerVersions06.length - 1],

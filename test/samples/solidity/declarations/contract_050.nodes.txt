@@ -2,11 +2,11 @@ SourceUnit #146
     id: 146
     src: "0:0:0"
     type: "SourceUnit"
-    sourceEntryKey: "/home/blitz/development/solc-typed-ast/test/samples/solidity/declarations/contract_050.sol"
+    sourceEntryKey: "./test/samples/solidity/declarations/contract_050.sol"
     sourceListIndex: 0
-    absolutePath: "/home/blitz/development/solc-typed-ast/test/samples/solidity/declarations/contract_050.sol"
+    absolutePath: "./test/samples/solidity/declarations/contract_050.sol"
     exportedSymbols: Map(3) { "A" -> 90, "B" -> 100, "C" -> 145 }
-    context: ASTContext #183
+    context: ASTContext #1000
     <getter> vPragmaDirectives: Array(0)
     <getter> vImportDirectives: Array(0)
     <getter> vContracts: Array(3) [ ContractDefinition #90, ContractDefinition #100, ContractDefinition #145 ]
@@ -34,7 +34,7 @@ SourceUnit #146
         fullyImplemented: true
         linearizedBaseContracts: Array(1) [ 90 ]
         docString: undefined
-        context: ASTContext #183
+        context: ASTContext #1000
         parent: SourceUnit #146
         <getter> documentation: undefined
         <getter> vScope: SourceUnit #146
@@ -75,7 +75,7 @@ SourceUnit #146
             vModifiers: Array(0)
             vOverrideSpecifier: undefined
             vBody: Block #88
-            context: ASTContext #183
+            context: ASTContext #1000
             parent: ContractDefinition #90
             <getter> children: Array(3) [ ParameterList #78, ParameterList #81, Block #88 ]
             <getter> vScope: ContractDefinition #90
@@ -92,7 +92,7 @@ SourceUnit #146
                 id: 78
                 src: "0:0:0"
                 type: "ParameterList"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: FunctionDefinition #89
                 <getter> vParameters: Array(2) [ VariableDeclaration #75, VariableDeclaration #77 ]
                 <getter> children: Array(2) [ VariableDeclaration #75, VariableDeclaration #77 ]
@@ -120,7 +120,7 @@ SourceUnit #146
                     vType: ElementaryTypeName #74
                     vOverrideSpecifier: undefined
                     vValue: undefined
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: ParameterList #78
                     <getter> children: Array(1) [ ElementaryTypeName #74 ]
                     <getter> vScope: FunctionDefinition #89
@@ -141,7 +141,7 @@ SourceUnit #146
                         typeString: "uint256"
                         name: "uint"
                         stateMutability: "nonpayable"
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: VariableDeclaration #75
                         <getter> children: Array(0)
                         <getter> firstChild: undefined
@@ -168,7 +168,7 @@ SourceUnit #146
                     vType: ElementaryTypeName #76
                     vOverrideSpecifier: undefined
                     vValue: undefined
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: ParameterList #78
                     <getter> children: Array(1) [ ElementaryTypeName #76 ]
                     <getter> vScope: FunctionDefinition #89
@@ -189,7 +189,7 @@ SourceUnit #146
                         typeString: "uint256"
                         name: "uint"
                         stateMutability: "nonpayable"
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: VariableDeclaration #77
                         <getter> children: Array(0)
                         <getter> firstChild: undefined
@@ -203,7 +203,7 @@ SourceUnit #146
                 id: 81
                 src: "0:0:0"
                 type: "ParameterList"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: FunctionDefinition #89
                 <getter> vParameters: Array(1) [ VariableDeclaration #80 ]
                 <getter> children: Array(1) [ VariableDeclaration #80 ]
@@ -231,7 +231,7 @@ SourceUnit #146
                     vType: ElementaryTypeName #79
                     vOverrideSpecifier: undefined
                     vValue: undefined
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: ParameterList #81
                     <getter> children: Array(1) [ ElementaryTypeName #79 ]
                     <getter> vScope: FunctionDefinition #89
@@ -252,7 +252,7 @@ SourceUnit #146
                         typeString: "uint256"
                         name: "uint"
                         stateMutability: "nonpayable"
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: VariableDeclaration #80
                         <getter> children: Array(0)
                         <getter> firstChild: undefined
@@ -266,7 +266,7 @@ SourceUnit #146
                 id: 88
                 src: "0:0:0"
                 type: "Block"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: FunctionDefinition #89
                 <getter> vStatements: Array(1) [ ExpressionStatement #87 ]
                 <getter> children: Array(1) [ ExpressionStatement #87 ]
@@ -282,7 +282,7 @@ SourceUnit #146
                     src: "0:0:0"
                     type: "ExpressionStatement"
                     vExpression: Assignment #86
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: Block #88
                     <getter> children: Array(1) [ Assignment #86 ]
                     <getter> firstChild: Assignment #86
@@ -300,7 +300,7 @@ SourceUnit #146
                         operator: "="
                         vLeftHandSide: Identifier #82
                         vRightHandSide: BinaryOperation #85
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: ExpressionStatement #87
                         <getter> children: Array(2) [ Identifier #82, BinaryOperation #85 ]
                         <getter> firstChild: Identifier #82
@@ -317,7 +317,7 @@ SourceUnit #146
                             typeString: "uint256"
                             name: "c"
                             referencedDeclaration: 80
-                            context: ASTContext #183
+                            context: ASTContext #1000
                             parent: Assignment #86
                             <getter> vReferencedDeclaration: VariableDeclaration #80
                             <getter> vIdentifierType: "userDefined"
@@ -337,7 +337,7 @@ SourceUnit #146
                             operator: "+"
                             vLeftExpression: Identifier #83
                             vRightExpression: Identifier #84
-                            context: ASTContext #183
+                            context: ASTContext #1000
                             parent: Assignment #86
                             <getter> children: Array(2) [ Identifier #83, Identifier #84 ]
                             <getter> firstChild: Identifier #83
@@ -354,7 +354,7 @@ SourceUnit #146
                                 typeString: "uint256"
                                 name: "a"
                                 referencedDeclaration: 75
-                                context: ASTContext #183
+                                context: ASTContext #1000
                                 parent: BinaryOperation #85
                                 <getter> vReferencedDeclaration: VariableDeclaration #75
                                 <getter> vIdentifierType: "userDefined"
@@ -373,7 +373,7 @@ SourceUnit #146
                                 typeString: "uint256"
                                 name: "b"
                                 referencedDeclaration: 77
-                                context: ASTContext #183
+                                context: ASTContext #1000
                                 parent: BinaryOperation #85
                                 <getter> vReferencedDeclaration: VariableDeclaration #77
                                 <getter> vIdentifierType: "userDefined"
@@ -396,7 +396,7 @@ SourceUnit #146
         fullyImplemented: false
         linearizedBaseContracts: Array(1) [ 100 ]
         docString: undefined
-        context: ASTContext #183
+        context: ASTContext #1000
         parent: SourceUnit #146
         <getter> documentation: undefined
         <getter> vScope: SourceUnit #146
@@ -437,7 +437,7 @@ SourceUnit #146
             vModifiers: Array(0)
             vOverrideSpecifier: undefined
             vBody: undefined
-            context: ASTContext #183
+            context: ASTContext #1000
             parent: ContractDefinition #100
             <getter> children: Array(2) [ ParameterList #95, ParameterList #98 ]
             <getter> vScope: ContractDefinition #100
@@ -454,7 +454,7 @@ SourceUnit #146
                 id: 95
                 src: "0:0:0"
                 type: "ParameterList"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: FunctionDefinition #99
                 <getter> vParameters: Array(2) [ VariableDeclaration #92, VariableDeclaration #94 ]
                 <getter> children: Array(2) [ VariableDeclaration #92, VariableDeclaration #94 ]
@@ -482,7 +482,7 @@ SourceUnit #146
                     vType: ElementaryTypeName #91
                     vOverrideSpecifier: undefined
                     vValue: undefined
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: ParameterList #95
                     <getter> children: Array(1) [ ElementaryTypeName #91 ]
                     <getter> vScope: FunctionDefinition #99
@@ -503,7 +503,7 @@ SourceUnit #146
                         typeString: "uint256"
                         name: "uint"
                         stateMutability: "nonpayable"
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: VariableDeclaration #92
                         <getter> children: Array(0)
                         <getter> firstChild: undefined
@@ -530,7 +530,7 @@ SourceUnit #146
                     vType: ElementaryTypeName #93
                     vOverrideSpecifier: undefined
                     vValue: undefined
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: ParameterList #95
                     <getter> children: Array(1) [ ElementaryTypeName #93 ]
                     <getter> vScope: FunctionDefinition #99
@@ -551,7 +551,7 @@ SourceUnit #146
                         typeString: "uint256"
                         name: "uint"
                         stateMutability: "nonpayable"
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: VariableDeclaration #94
                         <getter> children: Array(0)
                         <getter> firstChild: undefined
@@ -565,7 +565,7 @@ SourceUnit #146
                 id: 98
                 src: "0:0:0"
                 type: "ParameterList"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: FunctionDefinition #99
                 <getter> vParameters: Array(1) [ VariableDeclaration #97 ]
                 <getter> children: Array(1) [ VariableDeclaration #97 ]
@@ -593,7 +593,7 @@ SourceUnit #146
                     vType: ElementaryTypeName #96
                     vOverrideSpecifier: undefined
                     vValue: undefined
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: ParameterList #98
                     <getter> children: Array(1) [ ElementaryTypeName #96 ]
                     <getter> vScope: FunctionDefinition #99
@@ -614,7 +614,7 @@ SourceUnit #146
                         typeString: "uint256"
                         name: "uint"
                         stateMutability: "nonpayable"
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: VariableDeclaration #97
                         <getter> children: Array(0)
                         <getter> firstChild: undefined
@@ -635,7 +635,7 @@ SourceUnit #146
         fullyImplemented: true
         linearizedBaseContracts: Array(2) [ 145, 100 ]
         docString: undefined
-        context: ASTContext #183
+        context: ASTContext #1000
         parent: SourceUnit #146
         <getter> documentation: undefined
         <getter> vScope: SourceUnit #146
@@ -664,7 +664,7 @@ SourceUnit #146
             type: "InheritanceSpecifier"
             vBaseType: UserDefinedTypeName #101
             vArguments: Array(0)
-            context: ASTContext #183
+            context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> children: Array(1) [ UserDefinedTypeName #101 ]
             <getter> firstChild: UserDefinedTypeName #101
@@ -681,10 +681,11 @@ SourceUnit #146
                 typeString: "contract B"
                 name: "B"
                 referencedDeclaration: 100
-                context: ASTContext #183
+                path: undefined
+                context: ASTContext #1000
                 parent: InheritanceSpecifier #102
-                <getter> vReferencedDeclaration: ContractDefinition #100
                 <getter> children: Array(0)
+                <getter> vReferencedDeclaration: ContractDefinition #100
                 <getter> firstChild: undefined
                 <getter> lastChild: undefined
                 <getter> previousSibling: undefined
@@ -700,7 +701,7 @@ SourceUnit #146
             name: "Ev"
             documentation: undefined
             vParameters: ParameterList #105
-            context: ASTContext #183
+            context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> children: Array(1) [ ParameterList #105 ]
             <getter> vScope: ContractDefinition #145
@@ -717,7 +718,7 @@ SourceUnit #146
                 id: 105
                 src: "0:0:0"
                 type: "ParameterList"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: EventDefinition #106
                 <getter> vParameters: Array(1) [ VariableDeclaration #104 ]
                 <getter> children: Array(1) [ VariableDeclaration #104 ]
@@ -745,7 +746,7 @@ SourceUnit #146
                     vType: ElementaryTypeName #103
                     vOverrideSpecifier: undefined
                     vValue: undefined
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: ParameterList #105
                     <getter> children: Array(1) [ ElementaryTypeName #103 ]
                     <getter> vScope: EventDefinition #106
@@ -766,7 +767,7 @@ SourceUnit #146
                         typeString: "address"
                         name: "address"
                         stateMutability: "nonpayable"
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: VariableDeclaration #104
                         <getter> children: Array(0)
                         <getter> firstChild: undefined
@@ -784,7 +785,7 @@ SourceUnit #146
             canonicalName: "C.St"
             scope: 145
             visibility: "public"
-            context: ASTContext #183
+            context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> vMembers: Array(1) [ VariableDeclaration #108 ]
             <getter> vScope: ContractDefinition #145
@@ -813,7 +814,7 @@ SourceUnit #146
                 vType: ElementaryTypeName #107
                 vOverrideSpecifier: undefined
                 vValue: undefined
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: StructDefinition #109
                 <getter> children: Array(1) [ ElementaryTypeName #107 ]
                 <getter> vScope: StructDefinition #109
@@ -834,7 +835,7 @@ SourceUnit #146
                     typeString: "uint256"
                     name: "uint"
                     stateMutability: "nonpayable"
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: VariableDeclaration #108
                     <getter> children: Array(0)
                     <getter> firstChild: undefined
@@ -850,7 +851,7 @@ SourceUnit #146
             type: "EnumDefinition"
             name: "En"
             canonicalName: "C.En"
-            context: ASTContext #183
+            context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> vMembers: Array(3) [ EnumValue #110, EnumValue #111, EnumValue #112 ]
             <getter> vScope: ContractDefinition #145
@@ -867,7 +868,7 @@ SourceUnit #146
                 src: "0:0:0"
                 type: "EnumValue"
                 name: "A"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: EnumDefinition #113
                 <getter> children: Array(0)
                 <getter> firstChild: undefined
@@ -882,7 +883,7 @@ SourceUnit #146
                 src: "0:0:0"
                 type: "EnumValue"
                 name: "B"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: EnumDefinition #113
                 <getter> children: Array(0)
                 <getter> firstChild: undefined
@@ -897,7 +898,7 @@ SourceUnit #146
                 src: "0:0:0"
                 type: "EnumValue"
                 name: "C"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: EnumDefinition #113
                 <getter> children: Array(0)
                 <getter> firstChild: undefined
@@ -913,7 +914,7 @@ SourceUnit #146
             type: "UsingForDirective"
             vLibraryName: UserDefinedTypeName #114
             vTypeName: ElementaryTypeName #115
-            context: ASTContext #183
+            context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> children: Array(2) [ UserDefinedTypeName #114, ElementaryTypeName #115 ]
             <getter> firstChild: UserDefinedTypeName #114
@@ -930,10 +931,11 @@ SourceUnit #146
                 typeString: "library A"
                 name: "A"
                 referencedDeclaration: 90
-                context: ASTContext #183
+                path: undefined
+                context: ASTContext #1000
                 parent: UsingForDirective #116
-                <getter> vReferencedDeclaration: ContractDefinition #90
                 <getter> children: Array(0)
+                <getter> vReferencedDeclaration: ContractDefinition #90
                 <getter> firstChild: undefined
                 <getter> lastChild: undefined
                 <getter> previousSibling: undefined
@@ -948,7 +950,7 @@ SourceUnit #146
                 typeString: "uint256"
                 name: "uint"
                 stateMutability: "nonpayable"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: UsingForDirective #116
                 <getter> children: Array(0)
                 <getter> firstChild: undefined
@@ -975,7 +977,7 @@ SourceUnit #146
             vType: ElementaryTypeName #117
             vOverrideSpecifier: undefined
             vValue: undefined
-            context: ASTContext #183
+            context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> children: Array(1) [ ElementaryTypeName #117 ]
             <getter> vScope: ContractDefinition #145
@@ -996,7 +998,7 @@ SourceUnit #146
                 typeString: "uint256"
                 name: "uint"
                 stateMutability: "nonpayable"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: VariableDeclaration #118
                 <getter> children: Array(0)
                 <getter> firstChild: undefined
@@ -1024,7 +1026,7 @@ SourceUnit #146
             vModifiers: Array(0)
             vOverrideSpecifier: undefined
             vBody: Block #128
-            context: ASTContext #183
+            context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> children: Array(3) [ ParameterList #119, ParameterList #120, Block #128 ]
             <getter> vScope: ContractDefinition #145
@@ -1041,7 +1043,7 @@ SourceUnit #146
                 id: 119
                 src: "0:0:0"
                 type: "ParameterList"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: FunctionDefinition #129
                 <getter> vParameters: Array(0)
                 <getter> children: Array(0)
@@ -1056,7 +1058,7 @@ SourceUnit #146
                 id: 120
                 src: "0:0:0"
                 type: "ParameterList"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: FunctionDefinition #129
                 <getter> vParameters: Array(0)
                 <getter> children: Array(0)
@@ -1071,7 +1073,7 @@ SourceUnit #146
                 id: 128
                 src: "0:0:0"
                 type: "Block"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: FunctionDefinition #129
                 <getter> vStatements: Array(1) [ ExpressionStatement #127 ]
                 <getter> children: Array(1) [ ExpressionStatement #127 ]
@@ -1087,7 +1089,7 @@ SourceUnit #146
                     src: "0:0:0"
                     type: "ExpressionStatement"
                     vExpression: Assignment #126
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: Block #128
                     <getter> children: Array(1) [ Assignment #126 ]
                     <getter> firstChild: Assignment #126
@@ -1105,7 +1107,7 @@ SourceUnit #146
                         operator: "="
                         vLeftHandSide: Identifier #121
                         vRightHandSide: FunctionCall #125
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: ExpressionStatement #127
                         <getter> children: Array(2) [ Identifier #121, FunctionCall #125 ]
                         <getter> firstChild: Identifier #121
@@ -1122,7 +1124,7 @@ SourceUnit #146
                             typeString: "uint256"
                             name: "val"
                             referencedDeclaration: 118
-                            context: ASTContext #183
+                            context: ASTContext #1000
                             parent: Assignment #126
                             <getter> vReferencedDeclaration: VariableDeclaration #118
                             <getter> vIdentifierType: "userDefined"
@@ -1143,7 +1145,7 @@ SourceUnit #146
                             fieldNames: undefined
                             vExpression: Identifier #122
                             vArguments: Array(2) [ Literal #123, Literal #124 ]
-                            context: ASTContext #183
+                            context: ASTContext #1000
                             parent: Assignment #126
                             <getter> children: Array(3) [ Identifier #122, Literal #123, Literal #124 ]
                             <getter> vIdentifier: "some"
@@ -1166,7 +1168,7 @@ SourceUnit #146
                                 typeString: "function (uint256,uint256) returns (uint256)"
                                 name: "some"
                                 referencedDeclaration: 144
-                                context: ASTContext #183
+                                context: ASTContext #1000
                                 parent: FunctionCall #125
                                 <getter> vReferencedDeclaration: FunctionDefinition #144
                                 <getter> vIdentifierType: "userDefined"
@@ -1187,7 +1189,7 @@ SourceUnit #146
                                 hexValue: "31"
                                 value: "1"
                                 subdenomination: undefined
-                                context: ASTContext #183
+                                context: ASTContext #1000
                                 parent: FunctionCall #125
                                 <getter> children: Array(0)
                                 <getter> firstChild: undefined
@@ -1206,7 +1208,7 @@ SourceUnit #146
                                 hexValue: "32"
                                 value: "2"
                                 subdenomination: undefined
-                                context: ASTContext #183
+                                context: ASTContext #1000
                                 parent: FunctionCall #125
                                 <getter> children: Array(0)
                                 <getter> firstChild: undefined
@@ -1234,7 +1236,7 @@ SourceUnit #146
             vModifiers: Array(0)
             vOverrideSpecifier: undefined
             vBody: Block #143
-            context: ASTContext #183
+            context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> children: Array(3) [ ParameterList #134, ParameterList #137, Block #143 ]
             <getter> vScope: ContractDefinition #145
@@ -1251,7 +1253,7 @@ SourceUnit #146
                 id: 134
                 src: "0:0:0"
                 type: "ParameterList"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: FunctionDefinition #144
                 <getter> vParameters: Array(2) [ VariableDeclaration #131, VariableDeclaration #133 ]
                 <getter> children: Array(2) [ VariableDeclaration #131, VariableDeclaration #133 ]
@@ -1279,7 +1281,7 @@ SourceUnit #146
                     vType: ElementaryTypeName #130
                     vOverrideSpecifier: undefined
                     vValue: undefined
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: ParameterList #134
                     <getter> children: Array(1) [ ElementaryTypeName #130 ]
                     <getter> vScope: FunctionDefinition #144
@@ -1300,7 +1302,7 @@ SourceUnit #146
                         typeString: "uint256"
                         name: "uint"
                         stateMutability: "nonpayable"
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: VariableDeclaration #131
                         <getter> children: Array(0)
                         <getter> firstChild: undefined
@@ -1327,7 +1329,7 @@ SourceUnit #146
                     vType: ElementaryTypeName #132
                     vOverrideSpecifier: undefined
                     vValue: undefined
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: ParameterList #134
                     <getter> children: Array(1) [ ElementaryTypeName #132 ]
                     <getter> vScope: FunctionDefinition #144
@@ -1348,7 +1350,7 @@ SourceUnit #146
                         typeString: "uint256"
                         name: "uint"
                         stateMutability: "nonpayable"
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: VariableDeclaration #133
                         <getter> children: Array(0)
                         <getter> firstChild: undefined
@@ -1362,7 +1364,7 @@ SourceUnit #146
                 id: 137
                 src: "0:0:0"
                 type: "ParameterList"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: FunctionDefinition #144
                 <getter> vParameters: Array(1) [ VariableDeclaration #136 ]
                 <getter> children: Array(1) [ VariableDeclaration #136 ]
@@ -1390,7 +1392,7 @@ SourceUnit #146
                     vType: ElementaryTypeName #135
                     vOverrideSpecifier: undefined
                     vValue: undefined
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: ParameterList #137
                     <getter> children: Array(1) [ ElementaryTypeName #135 ]
                     <getter> vScope: FunctionDefinition #144
@@ -1411,7 +1413,7 @@ SourceUnit #146
                         typeString: "uint256"
                         name: "uint"
                         stateMutability: "nonpayable"
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: VariableDeclaration #136
                         <getter> children: Array(0)
                         <getter> firstChild: undefined
@@ -1425,7 +1427,7 @@ SourceUnit #146
                 id: 143
                 src: "0:0:0"
                 type: "Block"
-                context: ASTContext #183
+                context: ASTContext #1000
                 parent: FunctionDefinition #144
                 <getter> vStatements: Array(1) [ Return #142 ]
                 <getter> children: Array(1) [ Return #142 ]
@@ -1442,7 +1444,7 @@ SourceUnit #146
                     type: "Return"
                     functionReturnParameters: 64
                     vExpression: FunctionCall #141
-                    context: ASTContext #183
+                    context: ASTContext #1000
                     parent: Block #143
                     <getter> children: Array(1) [ FunctionCall #141 ]
                     <getter> vFunctionReturnParameters: ParameterList #64
@@ -1462,7 +1464,7 @@ SourceUnit #146
                         fieldNames: undefined
                         vExpression: MemberAccess #139
                         vArguments: Array(1) [ Identifier #140 ]
-                        context: ASTContext #183
+                        context: ASTContext #1000
                         parent: Return #142
                         <getter> children: Array(2) [ MemberAccess #139, Identifier #140 ]
                         <getter> vIdentifier: "a"
@@ -1486,7 +1488,7 @@ SourceUnit #146
                             vExpression: Identifier #138
                             memberName: "add"
                             referencedDeclaration: 89
-                            context: ASTContext #183
+                            context: ASTContext #1000
                             parent: FunctionCall #141
                             <getter> children: Array(1) [ Identifier #138 ]
                             <getter> vReferencedDeclaration: FunctionDefinition #89
@@ -1504,7 +1506,7 @@ SourceUnit #146
                                 typeString: "uint256"
                                 name: "a"
                                 referencedDeclaration: 131
-                                context: ASTContext #183
+                                context: ASTContext #1000
                                 parent: MemberAccess #139
                                 <getter> vReferencedDeclaration: VariableDeclaration #131
                                 <getter> vIdentifierType: "userDefined"
@@ -1523,7 +1525,7 @@ SourceUnit #146
                             typeString: "uint256"
                             name: "b"
                             referencedDeclaration: 133
-                            context: ASTContext #183
+                            context: ASTContext #1000
                             parent: FunctionCall #141
                             <getter> vReferencedDeclaration: VariableDeclaration #133
                             <getter> vIdentifierType: "userDefined"

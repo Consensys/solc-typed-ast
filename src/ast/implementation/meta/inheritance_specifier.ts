@@ -1,12 +1,13 @@
 import { ASTNode } from "../../ast_node";
 import { Expression } from "../expression/expression";
 import { UserDefinedTypeName } from "../type/user_defined_type_name";
+import { IdentifierPath } from "./identifier_path";
 
 export class InheritanceSpecifier extends ASTNode {
     /**
      * A base contract type
      */
-    vBaseType: UserDefinedTypeName;
+    vBaseType: UserDefinedTypeName | IdentifierPath;
 
     /**
      * Arguments for the base contract constructor call
@@ -17,7 +18,7 @@ export class InheritanceSpecifier extends ASTNode {
         id: number,
         src: string,
         type: string,
-        baseType: UserDefinedTypeName,
+        baseType: UserDefinedTypeName | IdentifierPath,
         args: Expression[],
         raw?: any
     ) {
