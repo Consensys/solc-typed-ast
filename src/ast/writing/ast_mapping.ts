@@ -119,7 +119,17 @@ class MappingTypeNameWriter implements ASTNodeWriter {
 
 class UserDefinedTypeNameWriter implements ASTNodeWriter {
     write(node: UserDefinedTypeName, writer: ASTWriter): string {
-        return node.path ? writer.write(node.path) : node.name;
+        if (node.path) {
+            return writer.write(node.path);
+        }
+
+        if (node.name === undefined) {
+            throw new Error(
+                "Unable to detect name of user-defined type reference node: " + node.print()
+            );
+        }
+
+        return node.name;
     }
 }
 

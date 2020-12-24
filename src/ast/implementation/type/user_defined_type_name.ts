@@ -6,7 +6,7 @@ export class UserDefinedTypeName extends TypeName {
     /**
      * Name of the defined type
      */
-    name: string;
+    name?: string;
 
     /**
      * Id of the referenced declaration node
@@ -23,7 +23,7 @@ export class UserDefinedTypeName extends TypeName {
         src: string,
         type: string,
         typeString: string,
-        name: string,
+        name: string | undefined,
         referencedDeclaration: number,
         path?: IdentifierPath,
         raw?: any
