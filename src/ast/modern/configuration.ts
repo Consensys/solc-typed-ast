@@ -22,6 +22,7 @@ import { MemberAccess } from "../implementation/expression/member_access";
 import { NewExpression } from "../implementation/expression/new_expression";
 import { TupleExpression } from "../implementation/expression/tuple_expression";
 import { UnaryOperation } from "../implementation/expression/unary_operation";
+import { IdentifierPath } from "../implementation/meta/identifier_path";
 import { ImportDirective } from "../implementation/meta/import_directive";
 import { InheritanceSpecifier } from "../implementation/meta/inheritance_specifier";
 import { ModifierInvocation } from "../implementation/meta/modifier_invocation";
@@ -44,6 +45,7 @@ import { PlaceholderStatement } from "../implementation/statement/placeholder_st
 import { Return } from "../implementation/statement/return";
 import { TryCatchClause } from "../implementation/statement/try_catch_clause";
 import { TryStatement } from "../implementation/statement/try_statement";
+import { UncheckedBlock } from "../implementation/statement/unchecked_block";
 import { VariableDeclarationStatement } from "../implementation/statement/variable_declaration_statement";
 import { WhileStatement } from "../implementation/statement/while_statement";
 import { ArrayTypeName } from "../implementation/type/array_type_name";
@@ -70,6 +72,7 @@ import { ModernFunctionCallOptionsProcessor } from "./function_call_options_proc
 import { ModernFunctionCallProcessor } from "./function_call_processor";
 import { ModernFunctionDefinitionProcessor } from "./function_definition_processor";
 import { ModernFunctionTypeNameProcessor } from "./function_type_name_processor";
+import { ModernIdentifierPathProcessor } from "./identifier_path_processor";
 import { ModernIdentifierProcessor } from "./identifier_processor";
 import { ModernIfStatementProcessor } from "./if_statement_processor";
 import { ModernImportDirectiveProcessor } from "./import_directive_processor";
@@ -89,12 +92,13 @@ import { ModernParameterListProcessor } from "./parameter_list_processor";
 import { ModernPragmaDirectiveProcessor } from "./pragma_directive_processor";
 import { ModernReturnProcessor } from "./return_processor";
 import { ModernSourceUnitProcessor } from "./source_unit_processor";
-import { ModernStructDefinitionProcessor } from "./struct_definition_processor";
 import { ModernStructuredDocumentationProcessor } from "./structured_documentation_processor";
+import { ModernStructDefinitionProcessor } from "./struct_definition_processor";
 import { ModernTryCatchClauseProcessor } from "./try_catch_clause_processor";
 import { ModernTryStatementProcessor } from "./try_statement_processor";
 import { ModernTupleExpressionProcessor } from "./tuple_expression_processor";
 import { ModernUnaryOperationProcessor } from "./unary_operation_processor";
+import { ModernUncheckedBlockProcessor } from "./unchecked_block_processor";
 import { ModernUserDefinedTypeNameProcessor } from "./user_defined_type_name_processor";
 import { ModernUsingForDirectiveProcessor } from "./using_for_directive_processor";
 import { ModernVariableDeclarationProcessor } from "./variable_declaration_processor";
@@ -112,6 +116,7 @@ const processors = {
      */
     SourceUnit: new ModernSourceUnitProcessor(),
     PragmaDirective: new ModernPragmaDirectiveProcessor(),
+    IdentifierPath: new ModernIdentifierPathProcessor(),
     ImportDirective: new ModernImportDirectiveProcessor(),
     UsingForDirective: new ModernUsingForDirectiveProcessor(),
     ContractDefinition: new ModernContractDefinitionProcessor(),
@@ -156,6 +161,7 @@ const processors = {
     Return: new ModernReturnProcessor(),
     EmitStatement: new ModernEmitStatementProcessor(),
     ExpressionStatement: new ModernExpressionStatementProcessor(),
+    UncheckedBlock: new ModernUncheckedBlockProcessor(),
     VariableDeclarationStatement: new ModernVariableDeclarationStatementProcessor(),
     InlineAssembly: new ModernInlineAssemblyProcessor()
 };
@@ -177,6 +183,11 @@ export const ModernConfiguration: ASTReaderConfiguration = {
         PragmaDirective: {
             constructor: PragmaDirective,
             processor: processors.PragmaDirective
+        },
+
+        IdentifierPath: {
+            constructor: IdentifierPath,
+            processor: processors.IdentifierPath
         },
 
         ImportDirective: {
@@ -412,6 +423,11 @@ export const ModernConfiguration: ASTReaderConfiguration = {
         PlaceholderStatement: {
             constructor: PlaceholderStatement,
             processor: processors.Default
+        },
+
+        UncheckedBlock: {
+            constructor: UncheckedBlock,
+            processor: processors.UncheckedBlock
         },
 
         VariableDeclarationStatement: {

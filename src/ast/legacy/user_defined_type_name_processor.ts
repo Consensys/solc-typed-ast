@@ -14,6 +14,6 @@ export class LegacyUserDefinedTypeNameProcessor extends LegacyTypeNameProcessor<
         const name: string = attributes.name;
         const referencedDeclaration: number = attributes.referencedDeclaration;
 
-        return [id, src, type, typeString, name, referencedDeclaration, raw];
+        return [id, src, type, typeString, name, referencedDeclaration, undefined, raw];
     }
 }

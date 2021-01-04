@@ -3,12 +3,13 @@ import { ContractDefinition } from "../declaration/contract_definition";
 import { ModifierDefinition } from "../declaration/modifier_definition";
 import { Expression } from "../expression/expression";
 import { Identifier } from "../expression/identifier";
+import { IdentifierPath } from "./identifier_path";
 
 export class ModifierInvocation extends ASTNode {
     /**
      * An identifier of the referenced modifier declaration
      */
-    vModifierName: Identifier;
+    vModifierName: Identifier | IdentifierPath;
 
     /**
      * An array of arguments, that are passed for the modifier call
@@ -19,7 +20,7 @@ export class ModifierInvocation extends ASTNode {
         id: number,
         src: string,
         type: string,
-        modifierName: Identifier,
+        modifierName: Identifier | IdentifierPath,
         args: Expression[],
         raw?: any
     ) {

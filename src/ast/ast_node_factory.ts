@@ -25,6 +25,7 @@ import { NewExpression } from "./implementation/expression/new_expression";
 import { PrimaryExpression } from "./implementation/expression/primary_expression";
 import { TupleExpression } from "./implementation/expression/tuple_expression";
 import { UnaryOperation } from "./implementation/expression/unary_operation";
+import { IdentifierPath } from "./implementation/meta/identifier_path";
 import { ImportDirective } from "./implementation/meta/import_directive";
 import { InheritanceSpecifier } from "./implementation/meta/inheritance_specifier";
 import { ModifierInvocation } from "./implementation/meta/modifier_invocation";
@@ -49,6 +50,7 @@ import { Statement } from "./implementation/statement/statement";
 import { Throw } from "./implementation/statement/throw";
 import { TryCatchClause } from "./implementation/statement/try_catch_clause";
 import { TryStatement } from "./implementation/statement/try_statement";
+import { UncheckedBlock } from "./implementation/statement/unchecked_block";
 import { VariableDeclarationStatement } from "./implementation/statement/variable_declaration_statement";
 import { WhileStatement } from "./implementation/statement/while_statement";
 import { ArrayTypeName } from "./implementation/type/array_type_name";
@@ -268,6 +270,14 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         ]
     ],
     [
+        IdentifierPath,
+        (node: IdentifierPath): Specific<ConstructorParameters<typeof IdentifierPath>> => [
+            node.name,
+            node.referencedDeclaration,
+            node.raw
+        ]
+    ],
+    [
         IndexAccess,
         (node: IndexAccess): Specific<ConstructorParameters<typeof IndexAccess>> => [
             node.typeString,
@@ -413,6 +423,13 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
     [
         Block,
         (node: Block): Specific<ConstructorParameters<typeof Block>> => [node.vStatements, node.raw]
+    ],
+    [
+        UncheckedBlock,
+        (node: UncheckedBlock): Specific<ConstructorParameters<typeof UncheckedBlock>> => [
+            node.vStatements,
+            node.raw
+        ]
     ],
     [Break, (node: Break): Specific<ConstructorParameters<typeof Break>> => [node.raw]],
     [Continue, (node: Continue): Specific<ConstructorParameters<typeof Continue>> => [node.raw]],
@@ -573,6 +590,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.typeString,
             node.name,
             node.referencedDeclaration,
+            node.path,
             node.raw
         ]
     ]
@@ -675,6 +693,12 @@ export class ASTNodeFactory {
         return this.make(Identifier, ...args);
     }
 
+    makeIdentifierPath(
+        ...args: Specific<ConstructorParameters<typeof IdentifierPath>>
+    ): IdentifierPath {
+        return this.make(IdentifierPath, ...args);
+    }
+
     makeIndexAccess(...args: Specific<ConstructorParameters<typeof IndexAccess>>): IndexAccess {
         return this.make(IndexAccess, ...args);
     }
@@ -771,6 +795,12 @@ export class ASTNodeFactory {
 
     makeBlock(...args: Specific<ConstructorParameters<typeof Block>>): Block {
         return this.make(Block, ...args);
+    }
+
+    makeUncheckedBlock(
+        ...args: Specific<ConstructorParameters<typeof UncheckedBlock>>
+    ): UncheckedBlock {
+        return this.make(UncheckedBlock, ...args);
     }
 
     makeBreak(...args: Specific<ConstructorParameters<typeof Break>>): Break {

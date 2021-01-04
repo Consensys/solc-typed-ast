@@ -1,30 +1,44 @@
 import { ASTNode } from "../../ast_node";
+import { IdentifierPath } from "../meta/identifier_path";
 import { TypeName } from "./type_name";
 
 export class UserDefinedTypeName extends TypeName {
     /**
      * Name of the defined type
      */
-    name: string;
+    name?: string;
 
     /**
      * Id of the referenced declaration node
      */
     referencedDeclaration: number;
 
+    /**
+     * An identifier path (since Solidity 0.8.0)
+     */
+    path?: IdentifierPath;
+
     constructor(
         id: number,
         src: string,
         type: string,
         typeString: string,
-        name: string,
+        name: string | undefined,
         referencedDeclaration: number,
+        path?: IdentifierPath,
         raw?: any
     ) {
         super(id, src, type, typeString, raw);
 
         this.name = name;
         this.referencedDeclaration = referencedDeclaration;
+        this.path = path;
+
+        this.acceptChildren();
+    }
+
+    get children(): readonly ASTNode[] {
+        return this.pickNodes(this.path);
     }
 
     /**

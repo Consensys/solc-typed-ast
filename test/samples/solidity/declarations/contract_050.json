@@ -1,6 +1,6 @@
 {
     "contracts": {
-        "/home/blitz/development/solc-typed-ast/test/samples/solidity/declarations/contract_050.sol": {
+        "./test/samples/solidity/declarations/contract_050.sol": {
             "A": {
                 "evm": {}
             },
@@ -15,43 +15,37 @@
     "errors": [
         {
             "component": "general",
-            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/declarations/contract_050.sol:1:1: Warning: Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"\nlibrary A {\n^ (Relevant source part starts here and spans across multiple lines).\n",
+            "formattedMessage": "./test/samples/solidity/declarations/contract_050.sol:1:1: Warning: Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"\nlibrary A {\n^ (Relevant source part starts here and spans across multiple lines).\n",
             "message": "Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.5.0;\"",
             "severity": "warning",
             "sourceLocation": {
                 "end": 496,
-                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/declarations/contract_050.sol",
+                "file": "./test/samples/solidity/declarations/contract_050.sol",
                 "start": 0
             },
             "type": "Warning"
         },
         {
             "component": "general",
-            "formattedMessage": "/home/blitz/development/solc-typed-ast/test/samples/solidity/declarations/contract_050.sol:2:5: Warning: Function state mutability can be restricted to pure\n    function add(uint a, uint b) public returns (uint c) {\n    ^ (Relevant source part starts here and spans across multiple lines).\n",
+            "formattedMessage": "./test/samples/solidity/declarations/contract_050.sol:2:5: Warning: Function state mutability can be restricted to pure\n    function add(uint a, uint b) public returns (uint c) {\n    ^ (Relevant source part starts here and spans across multiple lines).\n",
             "message": "Function state mutability can be restricted to pure",
             "severity": "warning",
             "sourceLocation": {
                 "end": 95,
-                "file": "/home/blitz/development/solc-typed-ast/test/samples/solidity/declarations/contract_050.sol",
+                "file": "./test/samples/solidity/declarations/contract_050.sol",
                 "start": 16
             },
             "type": "Warning"
         }
     ],
     "sources": {
-        "/home/blitz/development/solc-typed-ast/test/samples/solidity/declarations/contract_050.sol": {
+        "./test/samples/solidity/declarations/contract_050.sol": {
             "ast": {
-                "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/declarations/contract_050.sol",
+                "absolutePath": "./test/samples/solidity/declarations/contract_050.sol",
                 "exportedSymbols": {
-                    "A": [
-                        17
-                    ],
-                    "B": [
-                        27
-                    ],
-                    "C": [
-                        72
-                    ]
+                    "A": [17],
+                    "B": [27],
+                    "C": [72]
                 },
                 "id": 73,
                 "nodeType": "SourceUnit",
@@ -63,9 +57,7 @@
                         "documentation": null,
                         "fullyImplemented": true,
                         "id": 17,
-                        "linearizedBaseContracts": [
-                            17
-                        ],
+                        "linearizedBaseContracts": [17],
                         "name": "A",
                         "nodeType": "ContractDefinition",
                         "nodes": [
@@ -271,9 +263,7 @@
                         "documentation": null,
                         "fullyImplemented": false,
                         "id": 27,
-                        "linearizedBaseContracts": [
-                            27
-                        ],
+                        "linearizedBaseContracts": [27],
                         "name": "B",
                         "nodeType": "ContractDefinition",
                         "nodes": [
@@ -409,17 +399,12 @@
                                 "src": "189:1:0"
                             }
                         ],
-                        "contractDependencies": [
-                            27
-                        ],
+                        "contractDependencies": [27],
                         "contractKind": "contract",
                         "documentation": null,
                         "fullyImplemented": true,
                         "id": 72,
-                        "linearizedBaseContracts": [
-                            72,
-                            27
-                        ],
+                        "linearizedBaseContracts": [72, 27],
                         "name": "C",
                         "nodeType": "ContractDefinition",
                         "nodes": [
@@ -919,34 +904,22 @@
             "id": 0,
             "legacyAST": {
                 "attributes": {
-                    "absolutePath": "/home/blitz/development/solc-typed-ast/test/samples/solidity/declarations/contract_050.sol",
+                    "absolutePath": "./test/samples/solidity/declarations/contract_050.sol",
                     "exportedSymbols": {
-                        "A": [
-                            17
-                        ],
-                        "B": [
-                            27
-                        ],
-                        "C": [
-                            72
-                        ]
+                        "A": [17],
+                        "B": [27],
+                        "C": [72]
                     }
                 },
                 "children": [
                     {
                         "attributes": {
-                            "baseContracts": [
-                                null
-                            ],
-                            "contractDependencies": [
-                                null
-                            ],
+                            "baseContracts": [null],
+                            "contractDependencies": [null],
                             "contractKind": "library",
                             "documentation": null,
                             "fullyImplemented": true,
-                            "linearizedBaseContracts": [
-                                17
-                            ],
+                            "linearizedBaseContracts": [17],
                             "name": "A",
                             "scope": 73
                         },
@@ -957,9 +930,7 @@
                                     "implemented": true,
                                     "isConstructor": false,
                                     "kind": "function",
-                                    "modifiers": [
-                                        null
-                                    ],
+                                    "modifiers": [null],
                                     "name": "add",
                                     "scope": 17,
                                     "stateMutability": "nonpayable",
@@ -1163,18 +1134,12 @@
                     },
                     {
                         "attributes": {
-                            "baseContracts": [
-                                null
-                            ],
-                            "contractDependencies": [
-                                null
-                            ],
+                            "baseContracts": [null],
+                            "contractDependencies": [null],
                             "contractKind": "interface",
                             "documentation": null,
                             "fullyImplemented": false,
-                            "linearizedBaseContracts": [
-                                27
-                            ],
+                            "linearizedBaseContracts": [27],
                             "name": "B",
                             "scope": 73
                         },
@@ -1186,9 +1151,7 @@
                                     "implemented": false,
                                     "isConstructor": false,
                                     "kind": "function",
-                                    "modifiers": [
-                                        null
-                                    ],
+                                    "modifiers": [null],
                                     "name": "some",
                                     "scope": 27,
                                     "stateMutability": "nonpayable",
@@ -1300,16 +1263,11 @@
                     },
                     {
                         "attributes": {
-                            "contractDependencies": [
-                                27
-                            ],
+                            "contractDependencies": [27],
                             "contractKind": "contract",
                             "documentation": null,
                             "fullyImplemented": true,
-                            "linearizedBaseContracts": [
-                                72,
-                                27
-                            ],
+                            "linearizedBaseContracts": [72, 27],
                             "name": "C",
                             "scope": 73
                         },
@@ -1515,9 +1473,7 @@
                                     "implemented": true,
                                     "isConstructor": true,
                                     "kind": "constructor",
-                                    "modifiers": [
-                                        null
-                                    ],
+                                    "modifiers": [null],
                                     "name": "",
                                     "scope": 72,
                                     "stateMutability": "nonpayable",
@@ -1527,9 +1483,7 @@
                                 "children": [
                                     {
                                         "attributes": {
-                                            "parameters": [
-                                                null
-                                            ]
+                                            "parameters": [null]
                                         },
                                         "children": [],
                                         "id": 46,
@@ -1538,9 +1492,7 @@
                                     },
                                     {
                                         "attributes": {
-                                            "parameters": [
-                                                null
-                                            ]
+                                            "parameters": [null]
                                         },
                                         "children": [],
                                         "id": 47,
@@ -1584,9 +1536,7 @@
                                                                     "isPure": false,
                                                                     "isStructConstructorCall": false,
                                                                     "lValueRequested": false,
-                                                                    "names": [
-                                                                        null
-                                                                    ],
+                                                                    "names": [null],
                                                                     "type": "uint256",
                                                                     "type_conversion": false
                                                                 },
@@ -1679,9 +1629,7 @@
                                     "implemented": true,
                                     "isConstructor": false,
                                     "kind": "function",
-                                    "modifiers": [
-                                        null
-                                    ],
+                                    "modifiers": [null],
                                     "name": "some",
                                     "scope": 72,
                                     "stateMutability": "nonpayable",
@@ -1796,9 +1744,7 @@
                                                             "isPure": false,
                                                             "isStructConstructorCall": false,
                                                             "lValueRequested": false,
-                                                            "names": [
-                                                                null
-                                                            ],
+                                                            "names": [null],
                                                             "type": "uint256",
                                                             "type_conversion": false
                                                         },

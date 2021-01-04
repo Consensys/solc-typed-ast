@@ -1,3 +1,4 @@
+export * from "./identifier_path";
 export * from "./import_directive";
 export * from "./inheritance_specifier";
 export * from "./modifier_invocation";

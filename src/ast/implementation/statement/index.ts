@@ -13,5 +13,6 @@ export * from "./statement";
 export * from "./throw";
 export * from "./try_catch_clause";
 export * from "./try_statement";
+export * from "./unchecked_block";
 export * from "./variable_declaration_statement";
 export * from "./while_statement";
