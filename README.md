@@ -25,13 +25,13 @@ A TypeScript package providing a normalized typed Solidity AST along with the ut
 
 Package could be installed globally via following command:
 
-```console
+```bash
 npm install -g solc-typed-ast
 ```
 
 Also it can be installed as the dependency:
 
-```console
+```bash
 npm install --save solc-typed-ast
 ```
 
@@ -120,7 +120,7 @@ for (const sourceUnit of sourceUnits) {
 
 Package bundles a `sol-ast-compile` CLI tool to provide help with development process. It is able to compile the Solidity source and output short AST structure with following:
 
-```console
+```bash
 sol-ast-compile sample.sol --tree
 ```
 
@@ -172,13 +172,13 @@ Install prerequisites:
 
 Clone repository:
 
-```console
+```bash
 git clone https://github.com/ConsenSys/solc-typed-ast.git
 ```
 
 Install and link:
 
-```console
+```bash
 npm install
 npm link
 ```
@@ -187,7 +187,7 @@ npm link
 
 The project documentation is contained in the `docs/` directory. It could be built via following command:
 
-```console
+```bash
 npm run docs:refresh
 ```
 
