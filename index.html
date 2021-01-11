@@ -7,6 +7,7 @@
 	<meta name="description" content="Documentation for solc-typed-ast">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -38,8 +39,6 @@
 							</div>
 							<input type="checkbox" id="tsd-filter-inherited" checked />
 							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-only-exported" />
-							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
 						</div>
 					</div>
 					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
@@ -49,11 +48,6 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
 			<h1>solc-typed-ast</h1>
 		</div>
 	</div>
@@ -77,22 +71,24 @@
 					<h2>Features</h2>
 				</a>
 				<ul>
-					<li>Various <a href="https://www.npmjs.com/package/solc">solc-js</a> compiler versions support, starting from <strong>0.4.13</strong>.</li>
-					<li>Various compiler selection strategies, including compiler auto-detection via <code>pragma solidity</code> directives in Solidity sources with possible fallback options.</li>
-					<li>Interaction with AST nodes, using type definitions.</li>
-					<li>Compensation of differences between legacy and compact Solidity AST.</li>
-					<li>Referenced AST nodes linking.</li>
-					<li>Easy tree traversal with siblings, parent/children relations, recursive walks and node selection via custom predicates.</li>
-					<li>XPath AST traversal (based on <a href="https://www.npmjs.com/package/jsel">jSel package</a>).</li>
-					<li>Generating the source code from the AST.</li>
+					<li>  Various <a href="https://www.npmjs.com/package/solc">solc-js</a> compiler versions support, starting from <strong>0.4.13</strong>.</li>
+					<li>  Various compiler selection strategies, including compiler auto-detection via <code>pragma solidity</code> directives in Solidity sources with possible fallback options.</li>
+					<li>  Interaction with AST nodes, using type definitions.</li>
+					<li>  Compensation of differences between legacy and compact Solidity AST.</li>
+					<li>  Referenced AST nodes linking.</li>
+					<li>  Easy tree traversal with siblings, parent/children relations, recursive walks and node selection via custom predicates.</li>
+					<li>  XPath AST traversal (based on <a href="https://www.npmjs.com/package/jsel">jSel package</a>).</li>
+					<li>  Generating the source code from the AST.</li>
 				</ul>
 				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
 					<h2>Installation</h2>
 				</a>
 				<p>Package could be installed globally via following command:</p>
-				<pre><code class="language-console">npm install -g solc-typed-ast</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">npm install -g solc-typed-ast</span>
+</code></pre>
 				<p>Also it can be installed as the dependency:</p>
-				<pre><code class="language-console">npm install --save solc-typed-ast</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">npm install --save solc-typed-ast</span>
+</code></pre>
 				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
 					<h2>Usage</h2>
 				</a>
@@ -100,1251 +96,743 @@
 					<h3>Easy compiling</h3>
 				</a>
 				<p>The package introduces easy and universal compiler invocation. Starting with <strong>Solidity 0.4.13</strong>, source compilation could be done universally:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { CompileFailedError, CompileResult, compileSol } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;solc-typed-ast&quot;</span>;
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">CompileFailedError</span><span style="color: #000000">, </span><span style="color: #001080">CompileResult</span><span style="color: #000000">, </span><span style="color: #001080">compileSol</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;solc-typed-ast&quot;</span><span style="color: #000000">;</span>
 
-<span class="hljs-keyword">let</span> result: CompileResult;
+<span style="color: #0000FF">let</span><span style="color: #000000"> </span><span style="color: #001080">result</span><span style="color: #000000">: </span><span style="color: #267F99">CompileResult</span><span style="color: #000000">;</span>
 
-<span class="hljs-keyword">try</span> {
-    result = compileSol(<span class="hljs-string">&quot;sample.sol&quot;</span>, <span class="hljs-string">&quot;auto&quot;</span>, []);
-} <span class="hljs-keyword">catch</span> (e) {
-    <span class="hljs-keyword">if</span> (e <span class="hljs-keyword">instanceof</span> CompileFailedError) {
-        <span class="hljs-built_in">console</span>.error(<span class="hljs-string">&quot;Compile errors encountered:&quot;</span>);
+<span style="color: #AF00DB">try</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">result</span><span style="color: #000000"> = </span><span style="color: #795E26">compileSol</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;sample.sol&quot;</span><span style="color: #000000">, </span><span style="color: #A31515">&quot;auto&quot;</span><span style="color: #000000">, []);</span>
+<span style="color: #000000">} </span><span style="color: #AF00DB">catch</span><span style="color: #000000"> (</span><span style="color: #001080">e</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">e</span><span style="color: #000000"> </span><span style="color: #0000FF">instanceof</span><span style="color: #000000"> </span><span style="color: #267F99">CompileFailedError</span><span style="color: #000000">) {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">error</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Compile errors encountered:&quot;</span><span style="color: #000000">);</span>
 
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> failure <span class="hljs-keyword">of</span> e.failures) {
-            <span class="hljs-built_in">console</span>.error(<span class="hljs-string">`SolcJS <span class="hljs-subst">${failure.compilerVersion}</span>:`</span>);
+<span style="color: #000000">        </span><span style="color: #AF00DB">for</span><span style="color: #000000"> (</span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">failure</span><span style="color: #000000"> </span><span style="color: #0000FF">of</span><span style="color: #000000"> </span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">failures</span><span style="color: #000000">) {</span>
+<span style="color: #000000">            </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">error</span><span style="color: #000000">(</span><span style="color: #A31515">`SolcJS </span><span style="color: #0000FF">${</span><span style="color: #001080">failure</span><span style="color: #000000FF">.</span><span style="color: #001080">compilerVersion</span><span style="color: #0000FF">}</span><span style="color: #A31515">:`</span><span style="color: #000000">);</span>
 
-            <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> error <span class="hljs-keyword">of</span> failure.errors) {
-                <span class="hljs-built_in">console</span>.error(error);
-            }
-        }
-    } <span class="hljs-keyword">else</span> {
-        <span class="hljs-built_in">console</span>.error(e.message);
-    }
-}
+<span style="color: #000000">            </span><span style="color: #AF00DB">for</span><span style="color: #000000"> (</span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">error</span><span style="color: #000000"> </span><span style="color: #0000FF">of</span><span style="color: #000000"> </span><span style="color: #001080">failure</span><span style="color: #000000">.</span><span style="color: #001080">errors</span><span style="color: #000000">) {</span>
+<span style="color: #000000">                </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">error</span><span style="color: #000000">(</span><span style="color: #001080">error</span><span style="color: #000000">);</span>
+<span style="color: #000000">            }</span>
+<span style="color: #000000">        }</span>
+<span style="color: #000000">    } </span><span style="color: #AF00DB">else</span><span style="color: #000000"> {</span>
+<span style="color: #000000">        </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">error</span><span style="color: #000000">(</span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">message</span><span style="color: #000000">);</span>
+<span style="color: #000000">    }</span>
+<span style="color: #000000">}</span>
 
-<span class="hljs-built_in">console</span>.log(result);</code></pre>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">result</span><span style="color: #000000">);</span>
+</code></pre>
 				<p>The second argument with the <code>&quot;auto&quot;</code> value specifies a compiler selection strategy. If <code>&quot;auto&quot;</code> is specified and source code contains valid <code>pragma solidity</code> directive, then compiler version will be automatically picked from it. If compile process will not succedd, the execution will fall back to <em>&quot;compiler guessing&quot;</em>: trying to compile source with a few different versions of the new and old Solidity compilers. The other option would be to specify a concrete supported compiler version string, like <code>&quot;0.7.0&quot;</code> for example. There is also a support for various compiler selection strategies, including used-defined custom ones (<code>CompilerVersionSelectionStrategy</code> interface implementations).</p>
 				<p><strong>NOTE:</strong> We want to notify that <strong>the package preinstalls 50+ SolcJS compilers</strong> (since 0.4.13), so be ready that it will occupy fair amount of free space. At some point we may consider to move compilers away from this package. It will mostly depend on users feedback.</p>
 				<a href="#typed-universal-ast" id="typed-universal-ast" style="color: inherit; text-decoration: none;">
 					<h3>Typed universal AST</h3>
 				</a>
 				<p>After the source is compiled and original compiler has provided the raw AST, the <code>ASTReader</code> could be used to read the typed universal AST:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> { ASTReader } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;solc-typed-ast&quot;</span>;
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">ASTReader</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;solc-typed-ast&quot;</span><span style="color: #000000">;</span>
 
-<span class="hljs-keyword">const</span> reader = <span class="hljs-keyword">new</span> ASTReader();
-<span class="hljs-keyword">const</span> sourceUnits = reader.read(result.data);
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">reader</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">ASTReader</span><span style="color: #000000">();</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sourceUnits</span><span style="color: #000000"> = </span><span style="color: #001080">reader</span><span style="color: #000000">.</span><span style="color: #795E26">read</span><span style="color: #000000">(</span><span style="color: #001080">result</span><span style="color: #000000">.</span><span style="color: #001080">data</span><span style="color: #000000">);</span>
 
-<span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;Used compiler version: &quot;</span> + result.compilerVersion);
-<span class="hljs-built_in">console</span>.log(sourceUnits[<span class="hljs-number">0</span>].print());</code></pre>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Used compiler version: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">result</span><span style="color: #000000">.</span><span style="color: #001080">compilerVersion</span><span style="color: #000000">);</span>
+<span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">sourceUnits</span><span style="color: #000000">[</span><span style="color: #098658">0</span><span style="color: #000000">].</span><span style="color: #795E26">print</span><span style="color: #000000">());</span>
+</code></pre>
 				<p>The typed universal AST has following benefits:</p>
 				<ul>
-					<li>It is <em>universal</em> between legacy and compact AST. Solc changed AST format between releases, so dependent packages were either forced to migrate from one raw AST version to another or to build adaptive logic (such as implemented in this package).</li>
-					<li>It has TypeScript types and proper AST node classes hierarchy.</li>
-					<li>It has built-in tree traversal routines, like <code>walk()</code>, <code>getChildrenBySelector()</code>, <code>getParents()</code>, <code>getClosestParentBySelector()</code> and so on.</li>
+					<li>  It is <em>universal</em> between legacy and compact AST. Solc changed AST format between releases, so dependent packages were either forced to migrate from one raw AST version to another or to build adaptive logic (such as implemented in this package).</li>
+					<li>  It has TypeScript types and proper AST node classes hierarchy.</li>
+					<li>  It has built-in tree traversal routines, like <code>walk()</code>, <code>getChildrenBySelector()</code>, <code>getParents()</code>, <code>getClosestParentBySelector()</code> and so on.</li>
 				</ul>
 				<a href="#converting-an-ast-back-to-source" id="converting-an-ast-back-to-source" style="color: inherit; text-decoration: none;">
 					<h3>Converting an AST back to source</h3>
 				</a>
 				<p>One of the goals of each AST is to provide a way for programmatic modification. To do that, you could modify properties of the typed universal AST nodes. Then use the <code>ASTWriter</code> to write modified AST back to source code:</p>
-				<pre><code class="language-typescript"><span class="hljs-keyword">import</span> {
-    ASTWriter,
-    DefaultASTWriterMapping,
-    LatestCompilerVersion,
-    PrettyFormatter
-} <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;solc-typed-ast&quot;</span>;
+				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #001080">ASTWriter</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">DefaultASTWriterMapping</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">LatestCompilerVersion</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">PrettyFormatter</span>
+<span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;solc-typed-ast&quot;</span><span style="color: #000000">;</span>
 
-<span class="hljs-keyword">const</span> formatter = <span class="hljs-keyword">new</span> PrettyFormatter(<span class="hljs-number">4</span>, <span class="hljs-number">0</span>);
-<span class="hljs-keyword">const</span> writer = <span class="hljs-keyword">new</span> ASTWriter(
-    DefaultASTWriterMapping,
-    formatter,
-    result.compilerVersion ? result.compilerVersion : LatestCompilerVersion
-);
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">formatter</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">PrettyFormatter</span><span style="color: #000000">(</span><span style="color: #098658">4</span><span style="color: #000000">, </span><span style="color: #098658">0</span><span style="color: #000000">);</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">writer</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">ASTWriter</span><span style="color: #000000">(</span>
+<span style="color: #000000">    </span><span style="color: #001080">DefaultASTWriterMapping</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">formatter</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">result</span><span style="color: #000000">.</span><span style="color: #001080">compilerVersion</span><span style="color: #000000"> ? </span><span style="color: #001080">result</span><span style="color: #000000">.</span><span style="color: #001080">compilerVersion</span><span style="color: #000000"> : </span><span style="color: #001080">LatestCompilerVersion</span>
+<span style="color: #000000">);</span>
 
-<span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> sourceUnit <span class="hljs-keyword">of</span> sourceUnits) {
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&quot;// &quot;</span> + sourceUnit.absolutePath);
-    <span class="hljs-built_in">console</span>.log(writer.write(sourceUnit));
-}</code></pre>
+<span style="color: #AF00DB">for</span><span style="color: #000000"> (</span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sourceUnit</span><span style="color: #000000"> </span><span style="color: #0000FF">of</span><span style="color: #000000"> </span><span style="color: #001080">sourceUnits</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;// &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">sourceUnit</span><span style="color: #000000">.</span><span style="color: #001080">absolutePath</span><span style="color: #000000">);</span>
+<span style="color: #000000">    </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">writer</span><span style="color: #000000">.</span><span style="color: #795E26">write</span><span style="color: #000000">(</span><span style="color: #001080">sourceUnit</span><span style="color: #000000">));</span>
+<span style="color: #000000">}</span>
+</code></pre>
 				<a href="#cli-tool" id="cli-tool" style="color: inherit; text-decoration: none;">
 					<h3>CLI tool</h3>
 				</a>
 				<p>Package bundles a <code>sol-ast-compile</code> CLI tool to provide help with development process. It is able to compile the Solidity source and output short AST structure with following:</p>
-				<pre><code class="language-console">sol-ast-compile sample.sol --tree</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">sol-ast-compile sample.sol --tree</span>
+</code></pre>
 				<p>Use <code>--help</code> to see all available features.</p>
 				<a href="#project-overview" id="project-overview" style="color: inherit; text-decoration: none;">
 					<h2>Project overview</h2>
 				</a>
 				<p>The project have following directory structure:</p>
-				<pre><code>├── coverage                    # Test coverage report, produced by <span class="hljs-string">&quot;npm test&quot;</span> command.
-├── dist                        # Generated JavaScript sources <span class="hljs-keyword">for</span> package distribution (produced by <span class="hljs-string">&quot;npm run build&quot;</span> <span class="hljs-keyword">and</span> published by <span class="hljs-string">&quot;npm publish&quot;</span> commands).
-├── docs                        # Project documentation <span class="hljs-keyword">and</span> API reference, produced by <span class="hljs-string">&quot;npm run docs:render&quot;</span> <span class="hljs-keyword">or</span> <span class="hljs-string">&quot;npm run docs:refresh&quot;</span> commands.
-├── src                         # Original TypeScript sources.
-│   ├── ast                     # AST-related definitions <span class="hljs-keyword">and</span> logic:
-│   │   ├── implementation      #   - Implemented universal AST nodes:
-│   │   │   ├── declaration     #       - declarations <span class="hljs-keyword">or</span> definitions;
-│   │   │   ├── expression      #       - expressions;
-│   │   │   ├── meta            #       - directives, units, specifiers <span class="hljs-keyword">and</span> other information nodes;
-│   │   │   ├── statement       #       - statements;
-│   │   │   └──<span class="hljs-built_in"> type </span>           #       - type-related nodes.
-│   │   ├── legacy              #   - Solc legacy<span class="hljs-built_in"> raw </span>AST processors, that are producing arguments <span class="hljs-keyword">for</span> constrcuting universal AST nodes.
-│   │   ├── modern              #   - Solc modern (<span class="hljs-keyword">or</span> compact)<span class="hljs-built_in"> raw </span>AST processors, that are producing arguments <span class="hljs-keyword">for</span> constrcuting universal AST nodes.
-│   │   ├── postprocessing      #   - AST postprocessors <span class="hljs-keyword">to</span> apply additional logic (fixes <span class="hljs-keyword">and</span> discovery) during tree finalization process.
-│   │   └── writing             #   - Components <span class="hljs-keyword">to</span> convert universal AST nodes back <span class="hljs-keyword">to</span> Solidity source code.
-│   ├── bin                     # Executable files, that are shipped with the package <span class="hljs-keyword">and</span> deployed via <span class="hljs-string">&quot;npm install&quot;</span> <span class="hljs-keyword">or</span> <span class="hljs-string">&quot;npm link&quot;</span> commands.
-│   ├── compile                 # Compile-related definitions <span class="hljs-keyword">and</span> logic.
-│   └── misc                    # Miscellaneous functionality <span class="hljs-keyword">and</span> utility modules.
-└── test                        # Tests:
-    ├── integration             #   - Integration test suites.
-    ├── samples                 #   - Solidity <span class="hljs-keyword">and</span> compiler ourput JSON samples <span class="hljs-keyword">for</span> the tests.
-    └── unit                    #   - Unit test suites.</code></pre>
+				<pre><code><span style="color: #000000">├── </span><span style="color: #001080">coverage</span><span style="color: #000000">                    # </span><span style="color: #001080">Test</span><span style="color: #000000"> </span><span style="color: #001080">coverage</span><span style="color: #000000"> </span><span style="color: #001080">report</span><span style="color: #000000">, </span><span style="color: #001080">produced</span><span style="color: #000000"> </span><span style="color: #001080">by</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;npm test&quot;</span><span style="color: #000000"> </span><span style="color: #001080">command</span><span style="color: #000000">.</span>
+<span style="color: #000000">├── </span><span style="color: #001080">dist</span><span style="color: #000000">                        # </span><span style="color: #001080">Generated</span><span style="color: #000000"> </span><span style="color: #001080">JavaScript</span><span style="color: #000000"> </span><span style="color: #001080">sources</span><span style="color: #000000"> </span><span style="color: #001080">for</span><span style="color: #000000"> </span><span style="color: #AF00DB">package</span><span style="color: #000000"> </span><span style="color: #795E26">distribution</span><span style="color: #000000"> (</span><span style="color: #001080">produced</span><span style="color: #000000"> </span><span style="color: #001080">by</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;npm run build&quot;</span><span style="color: #000000"> </span><span style="color: #001080">and</span><span style="color: #000000"> </span><span style="color: #001080">published</span><span style="color: #000000"> </span><span style="color: #001080">by</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;npm publish&quot;</span><span style="color: #000000"> </span><span style="color: #001080">commands</span><span style="color: #000000">).</span>
+<span style="color: #000000">├── </span><span style="color: #001080">docs</span><span style="color: #000000">                        # </span><span style="color: #001080">Project</span><span style="color: #000000"> </span><span style="color: #001080">documentation</span><span style="color: #000000"> </span><span style="color: #001080">and</span><span style="color: #000000"> </span><span style="color: #0070C1">API</span><span style="color: #000000"> </span><span style="color: #001080">reference</span><span style="color: #000000">, </span><span style="color: #001080">produced</span><span style="color: #000000"> </span><span style="color: #001080">by</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;npm run docs:render&quot;</span><span style="color: #000000"> </span><span style="color: #001080">or</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;npm run docs:refresh&quot;</span><span style="color: #000000"> </span><span style="color: #001080">commands</span><span style="color: #000000">.</span>
+<span style="color: #000000">├── </span><span style="color: #001080">src</span><span style="color: #000000">                         # </span><span style="color: #001080">Original</span><span style="color: #000000"> </span><span style="color: #001080">TypeScript</span><span style="color: #000000"> </span><span style="color: #001080">sources</span><span style="color: #000000">.</span>
+<span style="color: #000000">│   ├── </span><span style="color: #001080">ast</span><span style="color: #000000">                     # </span><span style="color: #0070C1">AST</span><span style="color: #000000">-</span><span style="color: #001080">related</span><span style="color: #000000"> </span><span style="color: #001080">definitions</span><span style="color: #000000"> </span><span style="color: #001080">and</span><span style="color: #000000"> logic:</span>
+<span style="color: #000000">│   │   ├── </span><span style="color: #001080">implementation</span><span style="color: #000000">      #   - </span><span style="color: #001080">Implemented</span><span style="color: #000000"> </span><span style="color: #001080">universal</span><span style="color: #000000"> </span><span style="color: #0070C1">AST</span><span style="color: #000000"> nodes:</span>
+<span style="color: #000000">│   │   │   ├── </span><span style="color: #001080">declaration</span><span style="color: #000000">     #       - </span><span style="color: #001080">declarations</span><span style="color: #000000"> </span><span style="color: #001080">or</span><span style="color: #000000"> </span><span style="color: #001080">definitions</span><span style="color: #000000">;</span>
+<span style="color: #000000">│   │   │   ├── </span><span style="color: #001080">expression</span><span style="color: #000000">      #       - </span><span style="color: #001080">expressions</span><span style="color: #000000">;</span>
+<span style="color: #000000">│   │   │   ├── </span><span style="color: #001080">meta</span><span style="color: #000000">            #       - </span><span style="color: #001080">directives</span><span style="color: #000000">, </span><span style="color: #001080">units</span><span style="color: #000000">, </span><span style="color: #001080">specifiers</span><span style="color: #000000"> </span><span style="color: #001080">and</span><span style="color: #000000"> </span><span style="color: #001080">other</span><span style="color: #000000"> </span><span style="color: #001080">information</span><span style="color: #000000"> </span><span style="color: #001080">nodes</span><span style="color: #000000">;</span>
+<span style="color: #000000">│   │   │   ├── </span><span style="color: #001080">statement</span><span style="color: #000000">       #       - </span><span style="color: #001080">statements</span><span style="color: #000000">;</span>
+<span style="color: #000000">│   │   │   └── </span><span style="color: #001080">type</span><span style="color: #000000">            #       - </span><span style="color: #001080">type</span><span style="color: #000000">-</span><span style="color: #001080">related</span><span style="color: #000000"> </span><span style="color: #001080">nodes</span><span style="color: #000000">.</span>
+<span style="color: #000000">│   │   ├── </span><span style="color: #001080">legacy</span><span style="color: #000000">              #   - </span><span style="color: #001080">Solc</span><span style="color: #000000"> </span><span style="color: #001080">legacy</span><span style="color: #000000"> </span><span style="color: #001080">raw</span><span style="color: #000000"> </span><span style="color: #0070C1">AST</span><span style="color: #000000"> </span><span style="color: #001080">processors</span><span style="color: #000000">, </span><span style="color: #001080">that</span><span style="color: #000000"> </span><span style="color: #001080">are</span><span style="color: #000000"> </span><span style="color: #001080">producing</span><span style="color: #000000"> </span><span style="color: #0000FF">arguments</span><span style="color: #000000"> </span><span style="color: #001080">for</span><span style="color: #000000"> </span><span style="color: #001080">constrcuting</span><span style="color: #000000"> </span><span style="color: #001080">universal</span><span style="color: #000000"> </span><span style="color: #0070C1">AST</span><span style="color: #000000"> </span><span style="color: #001080">nodes</span><span style="color: #000000">.</span>
+<span style="color: #000000">│   │   ├── </span><span style="color: #001080">modern</span><span style="color: #000000">              #   - </span><span style="color: #001080">Solc</span><span style="color: #000000"> </span><span style="color: #795E26">modern</span><span style="color: #000000"> (</span><span style="color: #001080">or</span><span style="color: #000000"> </span><span style="color: #001080">compact</span><span style="color: #000000">) </span><span style="color: #001080">raw</span><span style="color: #000000"> </span><span style="color: #0070C1">AST</span><span style="color: #000000"> </span><span style="color: #001080">processors</span><span style="color: #000000">, </span><span style="color: #001080">that</span><span style="color: #000000"> </span><span style="color: #001080">are</span><span style="color: #000000"> </span><span style="color: #001080">producing</span><span style="color: #000000"> </span><span style="color: #0000FF">arguments</span><span style="color: #000000"> </span><span style="color: #001080">for</span><span style="color: #000000"> </span><span style="color: #001080">constrcuting</span><span style="color: #000000"> </span><span style="color: #001080">universal</span><span style="color: #000000"> </span><span style="color: #0070C1">AST</span><span style="color: #000000"> </span><span style="color: #001080">nodes</span><span style="color: #000000">.</span>
+<span style="color: #000000">│   │   ├── </span><span style="color: #001080">postprocessing</span><span style="color: #000000">      #   - </span><span style="color: #0070C1">AST</span><span style="color: #000000"> </span><span style="color: #001080">postprocessors</span><span style="color: #000000"> </span><span style="color: #001080">to</span><span style="color: #000000"> </span><span style="color: #001080">apply</span><span style="color: #000000"> </span><span style="color: #001080">additional</span><span style="color: #000000"> </span><span style="color: #795E26">logic</span><span style="color: #000000"> (</span><span style="color: #001080">fixes</span><span style="color: #000000"> </span><span style="color: #001080">and</span><span style="color: #000000"> </span><span style="color: #001080">discovery</span><span style="color: #000000">) </span><span style="color: #001080">during</span><span style="color: #000000"> </span><span style="color: #001080">tree</span><span style="color: #000000"> </span><span style="color: #001080">finalization</span><span style="color: #000000"> </span><span style="color: #001080">process</span><span style="color: #000000">.</span>
+<span style="color: #000000">│   │   └── </span><span style="color: #001080">writing</span><span style="color: #000000">             #   - </span><span style="color: #001080">Components</span><span style="color: #000000"> </span><span style="color: #001080">to</span><span style="color: #000000"> </span><span style="color: #001080">convert</span><span style="color: #000000"> </span><span style="color: #001080">universal</span><span style="color: #000000"> </span><span style="color: #0070C1">AST</span><span style="color: #000000"> </span><span style="color: #001080">nodes</span><span style="color: #000000"> </span><span style="color: #001080">back</span><span style="color: #000000"> </span><span style="color: #001080">to</span><span style="color: #000000"> </span><span style="color: #001080">Solidity</span><span style="color: #000000"> </span><span style="color: #001080">source</span><span style="color: #000000"> </span><span style="color: #001080">code</span><span style="color: #000000">.</span>
+<span style="color: #000000">│   ├── </span><span style="color: #001080">bin</span><span style="color: #000000">                     # </span><span style="color: #001080">Executable</span><span style="color: #000000"> </span><span style="color: #001080">files</span><span style="color: #000000">, </span><span style="color: #001080">that</span><span style="color: #000000"> </span><span style="color: #001080">are</span><span style="color: #000000"> </span><span style="color: #001080">shipped</span><span style="color: #000000"> </span><span style="color: #AF00DB">with</span><span style="color: #000000"> </span><span style="color: #001080">the</span><span style="color: #000000"> </span><span style="color: #AF00DB">package</span><span style="color: #000000"> </span><span style="color: #001080">and</span><span style="color: #000000"> </span><span style="color: #001080">deployed</span><span style="color: #000000"> </span><span style="color: #001080">via</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;npm install&quot;</span><span style="color: #000000"> </span><span style="color: #001080">or</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;npm link&quot;</span><span style="color: #000000"> </span><span style="color: #001080">commands</span><span style="color: #000000">.</span>
+<span style="color: #000000">│   ├── </span><span style="color: #001080">compile</span><span style="color: #000000">                 # </span><span style="color: #001080">Compile</span><span style="color: #000000">-</span><span style="color: #001080">related</span><span style="color: #000000"> </span><span style="color: #001080">definitions</span><span style="color: #000000"> </span><span style="color: #001080">and</span><span style="color: #000000"> </span><span style="color: #001080">logic</span><span style="color: #000000">.</span>
+<span style="color: #000000">│   └── </span><span style="color: #001080">misc</span><span style="color: #000000">                    # </span><span style="color: #001080">Miscellaneous</span><span style="color: #000000"> </span><span style="color: #001080">functionality</span><span style="color: #000000"> </span><span style="color: #001080">and</span><span style="color: #000000"> </span><span style="color: #001080">utility</span><span style="color: #000000"> </span><span style="color: #001080">modules</span><span style="color: #000000">.</span>
+<span style="color: #000000">└── </span><span style="color: #001080">test</span><span style="color: #000000">                        # Tests:</span>
+<span style="color: #000000">    ├── </span><span style="color: #001080">integration</span><span style="color: #000000">             #   - </span><span style="color: #001080">Integration</span><span style="color: #000000"> </span><span style="color: #001080">test</span><span style="color: #000000"> </span><span style="color: #001080">suites</span><span style="color: #000000">.</span>
+<span style="color: #000000">    ├── </span><span style="color: #001080">samples</span><span style="color: #000000">                 #   - </span><span style="color: #001080">Solidity</span><span style="color: #000000"> </span><span style="color: #001080">and</span><span style="color: #000000"> </span><span style="color: #001080">compiler</span><span style="color: #000000"> </span><span style="color: #001080">ourput</span><span style="color: #000000"> </span><span style="color: #267F99">JSON</span><span style="color: #000000"> </span><span style="color: #001080">samples</span><span style="color: #000000"> </span><span style="color: #001080">for</span><span style="color: #000000"> </span><span style="color: #001080">the</span><span style="color: #000000"> </span><span style="color: #001080">tests</span><span style="color: #000000">.</span>
+<span style="color: #000000">    └── </span><span style="color: #001080">unit</span><span style="color: #000000">                    #   - </span><span style="color: #001080">Unit</span><span style="color: #000000"> </span><span style="color: #001080">test</span><span style="color: #000000"> </span><span style="color: #001080">suites</span><span style="color: #000000">.</span>
+</code></pre>
 				<p>A key points for better understanding:</p>
 				<ul>
-					<li>The <code>ASTNode</code> is generic implementation of universal AST node and a base class for all concrete node implementations, <em>except Yul nodes</em>.</li>
-					<li>The <code>ASTReader</code> takes raw Solc AST (legacy or modern) and produces universal AST.</li>
-					<li>The <code>ASTContext</code> provides node-to-node dynamic reference resolution map. The example of such reference would be a <code>vReferencedDeclaration</code> property of the <code>Identifier</code> node.</li>
-					<li>The <code>LegacyNodeProcessor</code> class, <code>ModernNodeProcessor</code> class and their descendant classes are raw-to-universal AST conversion bridge.</li>
-					<li>The compiling-related logic (located in <code>src/compile/*</code>) should not have imports from or any bindings to the universal AST (<code>src/ast/*</code>). Compile-related utils should be standalone as much as possible.</li>
+					<li>  The <code>ASTNode</code> is generic implementation of universal AST node and a base class for all concrete node implementations, <em>except Yul nodes</em>.</li>
+					<li>  The <code>ASTReader</code> takes raw Solc AST (legacy or modern) and produces universal AST.</li>
+					<li>  The <code>ASTContext</code> provides node-to-node dynamic reference resolution map. The example of such reference would be a <code>vReferencedDeclaration</code> property of the <code>Identifier</code> node.</li>
+					<li>  The <code>LegacyNodeProcessor</code> class, <code>ModernNodeProcessor</code> class and their descendant classes are raw-to-universal AST conversion bridge.</li>
+					<li>  The compiling-related logic (located in <code>src/compile/*</code>) should not have imports from or any bindings to the universal AST (<code>src/ast/*</code>). Compile-related utils should be standalone as much as possible.</li>
 				</ul>
 				<a href="#development-installation" id="development-installation" style="color: inherit; text-decoration: none;">
 					<h2>Development installation</h2>
 				</a>
 				<p>Install prerequisites:</p>
 				<ul>
-					<li>NodeJS version <strong>12.x</strong> or newer.</li>
-					<li>NPM version <strong>6.9.0</strong> or newer.</li>
+					<li>  NodeJS version <strong>12.x</strong> or newer.</li>
+					<li>  NPM version <strong>6.9.0</strong> or newer.</li>
 				</ul>
 				<p>Clone repository:</p>
-				<pre><code class="language-console">git clone https://github.com/ConsenSys/solc-typed-ast.git</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">git clone https://github.com/ConsenSys/solc-typed-ast.git</span>
+</code></pre>
 				<p>Install and link:</p>
-				<pre><code class="language-console">npm install
-npm link</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">npm install</span>
+<span style="color: #000000">npm link</span>
+</code></pre>
 				<a href="#project-documentation-and-api-reference" id="project-documentation-and-api-reference" style="color: inherit; text-decoration: none;">
 					<h2>Project documentation and API reference</h2>
 				</a>
 				<p>The project documentation is contained in the <code>docs/</code> directory. It could be built via following command:</p>
-				<pre><code class="language-console">npm run docs:refresh</code></pre>
+				<pre><code class="language-bash"><span style="color: #000000">npm run docs:refresh</span>
+</code></pre>
 				<p>It is also published here: <a href="https://consensys.github.io/solc-typed-ast/">https://consensys.github.io/solc-typed-ast/</a></p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast.html">ast</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_ast_node.html">ast/ast_<wbr>node</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_ast_node_factory.html">ast/ast_<wbr>node_<wbr>factory</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_ast_node_formatter.html">ast/ast_<wbr>node_<wbr>formatter</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_ast_reader.html">ast/ast_<wbr>reader</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_constants.html">ast/constants</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_dispatch.html">ast/dispatch</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration.html">ast/implementation/declaration</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_contract_definition.html">ast/implementation/declaration/contract_<wbr>definition</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_enum_definition.html">ast/implementation/declaration/enum_<wbr>definition</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_enum_value.html">ast/implementation/declaration/enum_<wbr>value</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_event_definition.html">ast/implementation/declaration/event_<wbr>definition</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_function_definition.html">ast/implementation/declaration/function_<wbr>definition</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_modifier_definition.html">ast/implementation/declaration/modifier_<wbr>definition</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_struct_definition.html">ast/implementation/declaration/struct_<wbr>definition</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_variable_declaration.html">ast/implementation/declaration/variable_<wbr>declaration</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression.html">ast/implementation/expression</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_assignment.html">ast/implementation/expression/assignment</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_binary_operation.html">ast/implementation/expression/binary_<wbr>operation</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_conditional.html">ast/implementation/expression/conditional</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_elementary_type_name_expression.html">ast/implementation/expression/elementary_<wbr>type_<wbr>name_<wbr>expression</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_expression.html">ast/implementation/expression/expression</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_function_call.html">ast/implementation/expression/function_<wbr>call</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_function_call_options.html">ast/implementation/expression/function_<wbr>call_<wbr>options</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_identifier.html">ast/implementation/expression/identifier</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_index_access.html">ast/implementation/expression/index_<wbr>access</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_index_range_access.html">ast/implementation/expression/index_<wbr>range_<wbr>access</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_literal.html">ast/implementation/expression/literal</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_member_access.html">ast/implementation/expression/member_<wbr>access</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_new_expression.html">ast/implementation/expression/new_<wbr>expression</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_primary_expression.html">ast/implementation/expression/primary_<wbr>expression</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_tuple_expression.html">ast/implementation/expression/tuple_<wbr>expression</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_unary_operation.html">ast/implementation/expression/unary_<wbr>operation</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta.html">ast/implementation/meta</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_identifier_path.html">ast/implementation/meta/identifier_<wbr>path</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_import_directive.html">ast/implementation/meta/import_<wbr>directive</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_inheritance_specifier.html">ast/implementation/meta/inheritance_<wbr>specifier</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_modifier_invocation.html">ast/implementation/meta/modifier_<wbr>invocation</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_override_specifier.html">ast/implementation/meta/override_<wbr>specifier</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_parameter_list.html">ast/implementation/meta/parameter_<wbr>list</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_pragma_directive.html">ast/implementation/meta/pragma_<wbr>directive</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_source_unit.html">ast/implementation/meta/source_<wbr>unit</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_structured_documentation.html">ast/implementation/meta/structured_<wbr>documentation</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_using_for_directive.html">ast/implementation/meta/using_<wbr>for_<wbr>directive</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement.html">ast/implementation/statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_block.html">ast/implementation/statement/block</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_break.html">ast/implementation/statement/break</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_continue.html">ast/implementation/statement/continue</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_do_while_statement.html">ast/implementation/statement/do_<wbr>while_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_emit_statement.html">ast/implementation/statement/emit_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_expression_statement.html">ast/implementation/statement/expression_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_for_statement.html">ast/implementation/statement/for_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_if_statement.html">ast/implementation/statement/if_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_inline_assembly.html">ast/implementation/statement/inline_<wbr>assembly</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_placeholder_statement.html">ast/implementation/statement/placeholder_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_return.html">ast/implementation/statement/return</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_statement.html">ast/implementation/statement/statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_throw.html">ast/implementation/statement/throw</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_try_catch_clause.html">ast/implementation/statement/try_<wbr>catch_<wbr>clause</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_try_statement.html">ast/implementation/statement/try_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_unchecked_block.html">ast/implementation/statement/unchecked_<wbr>block</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_variable_declaration_statement.html">ast/implementation/statement/variable_<wbr>declaration_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_while_statement.html">ast/implementation/statement/while_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type.html">ast/implementation/type</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type_array_type_name.html">ast/implementation/type/array_<wbr>type_<wbr>name</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type_elementary_type_name.html">ast/implementation/type/elementary_<wbr>type_<wbr>name</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type_function_type_name.html">ast/implementation/type/function_<wbr>type_<wbr>name</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type_mapping.html">ast/implementation/type/mapping</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type_type_name.html">ast/implementation/type/type_<wbr>name</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type_user_defined_type_name.html">ast/implementation/type/user_<wbr>defined_<wbr>type_<wbr>name</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy.html">ast/legacy</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_array_type_name_processor.html">ast/legacy/array_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_assignment_processor.html">ast/legacy/assignment_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_binary_operation_processor.html">ast/legacy/binary_<wbr>operation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_block_processor.html">ast/legacy/block_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_conditional_processor.html">ast/legacy/conditional_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_configuration.html">ast/legacy/configuration</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_contract_definition_processor.html">ast/legacy/contract_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_do_while_statement_processor.html">ast/legacy/do_<wbr>while_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_elementary_type_name_expression_processor.html">ast/legacy/elementary_<wbr>type_<wbr>name_<wbr>expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_elementary_type_name_processor.html">ast/legacy/elementary_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_emit_statement_processor.html">ast/legacy/emit_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_enum_definition_processor.html">ast/legacy/enum_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_enum_value_processor.html">ast/legacy/enum_<wbr>value_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_event_definition_processor.html">ast/legacy/event_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_expression_processor.html">ast/legacy/expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_expression_statement_processor.html">ast/legacy/expression_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_for_statement_processor.html">ast/legacy/for_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_function_call_options_processor.html">ast/legacy/function_<wbr>call_<wbr>options_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_function_call_processor.html">ast/legacy/function_<wbr>call_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_function_definition_processor.html">ast/legacy/function_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_function_type_name_processor.html">ast/legacy/function_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_identifier_processor.html">ast/legacy/identifier_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_if_statement_processor.html">ast/legacy/if_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_import_directive_processor.html">ast/legacy/import_<wbr>directive_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_index_access_processor.html">ast/legacy/index_<wbr>access_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_index_range_access_processor.html">ast/legacy/index_<wbr>range_<wbr>access_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_inheritance_specifier_processor.html">ast/legacy/inheritance_<wbr>specifier_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_inline_assembly_processor.html">ast/legacy/inline_<wbr>assembly_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_literal_processor.html">ast/legacy/literal_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_mapping_processor.html">ast/legacy/mapping_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_member_access_processor.html">ast/legacy/member_<wbr>access_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_modifier_definition_processor.html">ast/legacy/modifier_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_modifier_invocation_processor.html">ast/legacy/modifier_<wbr>invocation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_new_expression_processor.html">ast/legacy/new_<wbr>expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_node_processor.html">ast/legacy/node_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_override_specifier_processor.html">ast/legacy/override_<wbr>specifier_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_parameter_list_processor.html">ast/legacy/parameter_<wbr>list_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_pragma_directive_processor.html">ast/legacy/pragma_<wbr>directive_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_return_processor.html">ast/legacy/return_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_source_unit_processor.html">ast/legacy/source_<wbr>unit_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_struct_definition_processor.html">ast/legacy/struct_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_structured_documentation_processor.html">ast/legacy/structured_<wbr>documentation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_try_catch_clause_processor.html">ast/legacy/try_<wbr>catch_<wbr>clause_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_try_statement_processor.html">ast/legacy/try_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_tuple_expression_processor.html">ast/legacy/tuple_<wbr>expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_type_name_processor.html">ast/legacy/type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_unary_operation_processor.html">ast/legacy/unary_<wbr>operation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_user_defined_type_name_processor.html">ast/legacy/user_<wbr>defined_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_using_for_directive_processor.html">ast/legacy/using_<wbr>for_<wbr>directive_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_variable_declaration_processor.html">ast/legacy/variable_<wbr>declaration_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_variable_declaration_statement_processor.html">ast/legacy/variable_<wbr>declaration_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_while_statement_processor.html">ast/legacy/while_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern.html">ast/modern</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_array_type_name_processor.html">ast/modern/array_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_assignment_processor.html">ast/modern/assignment_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_binary_operation_processor.html">ast/modern/binary_<wbr>operation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_block_processor.html">ast/modern/block_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_conditional_processor.html">ast/modern/conditional_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_configuration.html">ast/modern/configuration</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_contract_definition_processor.html">ast/modern/contract_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_do_while_statement_processor.html">ast/modern/do_<wbr>while_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_elementary_type_name_expression_processor.html">ast/modern/elementary_<wbr>type_<wbr>name_<wbr>expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_elementary_type_name_processor.html">ast/modern/elementary_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_emit_statement_processor.html">ast/modern/emit_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_enum_definition_processor.html">ast/modern/enum_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_enum_value_processor.html">ast/modern/enum_<wbr>value_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_event_definition_processor.html">ast/modern/event_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_expression_processor.html">ast/modern/expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_expression_statement_processor.html">ast/modern/expression_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_for_statement_processor.html">ast/modern/for_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_function_call_options_processor.html">ast/modern/function_<wbr>call_<wbr>options_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_function_call_processor.html">ast/modern/function_<wbr>call_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_function_definition_processor.html">ast/modern/function_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_function_type_name_processor.html">ast/modern/function_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_identifier_path_processor.html">ast/modern/identifier_<wbr>path_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_identifier_processor.html">ast/modern/identifier_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_if_statement_processor.html">ast/modern/if_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_import_directive_processor.html">ast/modern/import_<wbr>directive_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_index_access_processor.html">ast/modern/index_<wbr>access_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_index_range_access_processor.html">ast/modern/index_<wbr>range_<wbr>access_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_inheritance_specifier_processor.html">ast/modern/inheritance_<wbr>specifier_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_inline_assembly_processor.html">ast/modern/inline_<wbr>assembly_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_literal_processor.html">ast/modern/literal_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_mapping_processor.html">ast/modern/mapping_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_member_access_processor.html">ast/modern/member_<wbr>access_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_modifier_definition_processor.html">ast/modern/modifier_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_modifier_invocation_processor.html">ast/modern/modifier_<wbr>invocation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_new_expression_processor.html">ast/modern/new_<wbr>expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_node_processor.html">ast/modern/node_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_override_specifier_processor.html">ast/modern/override_<wbr>specifier_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_parameter_list_processor.html">ast/modern/parameter_<wbr>list_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_pragma_directive_processor.html">ast/modern/pragma_<wbr>directive_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_return_processor.html">ast/modern/return_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_source_unit_processor.html">ast/modern/source_<wbr>unit_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_struct_definition_processor.html">ast/modern/struct_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_structured_documentation_processor.html">ast/modern/structured_<wbr>documentation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_try_catch_clause_processor.html">ast/modern/try_<wbr>catch_<wbr>clause_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_try_statement_processor.html">ast/modern/try_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_tuple_expression_processor.html">ast/modern/tuple_<wbr>expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_type_name_processor.html">ast/modern/type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_unary_operation_processor.html">ast/modern/unary_<wbr>operation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_unchecked_block_processor.html">ast/modern/unchecked_<wbr>block_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_user_defined_type_name_processor.html">ast/modern/user_<wbr>defined_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_using_for_directive_processor.html">ast/modern/using_<wbr>for_<wbr>directive_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_variable_declaration_processor.html">ast/modern/variable_<wbr>declaration_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_variable_declaration_statement_processor.html">ast/modern/variable_<wbr>declaration_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_while_statement_processor.html">ast/modern/while_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_postprocessing.html">ast/postprocessing</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_postprocessing_mapping.html">ast/postprocessing/mapping</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_postprocessing_structured_documentation_reconstruction.html">ast/postprocessing/structured_<wbr>documentation_<wbr>reconstruction</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_utils.html">ast/utils</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_writing.html">ast/writing</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_writing_ast_mapping.html">ast/writing/ast_<wbr>mapping</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_writing_formatter.html">ast/writing/formatter</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_writing_writer.html">ast/writing/writer</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_writing_yul_mapping.html">ast/writing/yul_<wbr>mapping</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_xpath.html">ast/xpath</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bin_compile.html">bin/compile</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/compile.html">compile</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/compile_compiler_selection.html">compile/compiler_<wbr>selection</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/compile_constants.html">compile/constants</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/compile_import_resolver.html">compile/import_<wbr>resolver</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/compile_utils.html">compile/utils</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/compile_version.html">compile/version</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/index.html">index</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/misc.html">misc</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/misc_location.html">misc/location</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-enum">
-						<a href="enums/astkind.html" class="tsd-kind-icon">ASTKind</a>
-					</li>
-					<li class=" tsd-kind-enum">
-						<a href="enums/contractkind.html" class="tsd-kind-icon">Contract<wbr>Kind</a>
-					</li>
-					<li class=" tsd-kind-enum">
-						<a href="enums/datalocation.html" class="tsd-kind-icon">Data<wbr>Location</a>
-					</li>
-					<li class=" tsd-kind-enum">
-						<a href="enums/etherunit.html" class="tsd-kind-icon">Ether<wbr>Unit</a>
-					</li>
-					<li class=" tsd-kind-enum">
-						<a href="enums/externalreferencetype.html" class="tsd-kind-icon">External<wbr>Reference<wbr>Type</a>
-					</li>
-					<li class=" tsd-kind-enum">
-						<a href="enums/functioncallkind.html" class="tsd-kind-icon">Function<wbr>Call<wbr>Kind</a>
-					</li>
-					<li class=" tsd-kind-enum">
-						<a href="enums/functionkind.html" class="tsd-kind-icon">Function<wbr>Kind</a>
-					</li>
-					<li class=" tsd-kind-enum">
-						<a href="enums/functionstatemutability.html" class="tsd-kind-icon">Function<wbr>State<wbr>Mutability</a>
-					</li>
-					<li class=" tsd-kind-enum">
-						<a href="enums/functionvisibility.html" class="tsd-kind-icon">Function<wbr>Visibility</a>
-					</li>
-					<li class=" tsd-kind-enum">
-						<a href="enums/literalkind.html" class="tsd-kind-icon">Literal<wbr>Kind</a>
-					</li>
-					<li class=" tsd-kind-enum">
-						<a href="enums/mutability.html" class="tsd-kind-icon">Mutability</a>
-					</li>
-					<li class=" tsd-kind-enum">
-						<a href="enums/statevariablevisibility.html" class="tsd-kind-icon">State<wbr>Variable<wbr>Visibility</a>
-					</li>
-					<li class=" tsd-kind-enum">
-						<a href="enums/timeunit.html" class="tsd-kind-icon">Time<wbr>Unit</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/astcontext.html" class="tsd-kind-icon">ASTContext</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/astnode.html" class="tsd-kind-icon">ASTNode</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/astnodefactory.html" class="tsd-kind-icon">ASTNode<wbr>Factory</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/astnodeformatter.html" class="tsd-kind-icon">ASTNode<wbr>Formatter</a>
-					</li>
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/astnodewithchildren.html" class="tsd-kind-icon">ASTNode<wbr>With<wbr>Children</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/astpostprocessor.html" class="tsd-kind-icon">ASTPostprocessor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/astreader.html" class="tsd-kind-icon">ASTReader</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/astwriter.html" class="tsd-kind-icon">ASTWriter</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/arraytypename.html" class="tsd-kind-icon">Array<wbr>Type<wbr>Name</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/arraytypenamewriter.html" class="tsd-kind-icon">Array<wbr>Type<wbr>Name<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/assignment.html" class="tsd-kind-icon">Assignment</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/assignmentwriter.html" class="tsd-kind-icon">Assignment<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/binaryoperation.html" class="tsd-kind-icon">Binary<wbr>Operation</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/binaryoperationwriter.html" class="tsd-kind-icon">Binary<wbr>Operation<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/block.html" class="tsd-kind-icon">Block</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/blockwriter.html" class="tsd-kind-icon">Block<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/break.html" class="tsd-kind-icon">Break</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/breakwriter.html" class="tsd-kind-icon">Break<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/compilefailederror.html" class="tsd-kind-icon">Compile<wbr>Failed<wbr>Error</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/conditional.html" class="tsd-kind-icon">Conditional</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/conditionalwriter.html" class="tsd-kind-icon">Conditional<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/continue.html" class="tsd-kind-icon">Continue</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/continuewriter.html" class="tsd-kind-icon">Continue<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/contractdefinition.html" class="tsd-kind-icon">Contract<wbr>Definition</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/contractdefinitionwriter.html" class="tsd-kind-icon">Contract<wbr>Definition<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/dowhilestatement.html" class="tsd-kind-icon">Do<wbr>While<wbr>Statement</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/dowhilestatementwriter.html" class="tsd-kind-icon">Do<wbr>While<wbr>Statement<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/elementarytypename.html" class="tsd-kind-icon">Elementary<wbr>Type<wbr>Name</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/elementarytypenameexpression.html" class="tsd-kind-icon">Elementary<wbr>Type<wbr>Name<wbr>Expression</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/elementarytypenameexpressionwriter.html" class="tsd-kind-icon">Elementary<wbr>Type<wbr>Name<wbr>Expression<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/elementarytypenamewriter.html" class="tsd-kind-icon">Elementary<wbr>Type<wbr>Name<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/emitstatement.html" class="tsd-kind-icon">Emit<wbr>Statement</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/emitstatementwriter.html" class="tsd-kind-icon">Emit<wbr>Statement<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/enumdefinition.html" class="tsd-kind-icon">Enum<wbr>Definition</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/enumdefinitionwriter.html" class="tsd-kind-icon">Enum<wbr>Definition<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/enumvalue.html" class="tsd-kind-icon">Enum<wbr>Value</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/enumvaluewriter.html" class="tsd-kind-icon">Enum<wbr>Value<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/eventdefinition.html" class="tsd-kind-icon">Event<wbr>Definition</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/eventdefinitionwriter.html" class="tsd-kind-icon">Event<wbr>Definition<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/expression.html" class="tsd-kind-icon">Expression</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/expressionstatement.html" class="tsd-kind-icon">Expression<wbr>Statement</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/expressionstatementwriter.html" class="tsd-kind-icon">Expression<wbr>Statement<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/filesystemresolver.html" class="tsd-kind-icon">File<wbr>System<wbr>Resolver</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/forstatement.html" class="tsd-kind-icon">For<wbr>Statement</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/forstatementwriter.html" class="tsd-kind-icon">For<wbr>Statement<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/functioncall.html" class="tsd-kind-icon">Function<wbr>Call</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/functioncalloptions.html" class="tsd-kind-icon">Function<wbr>Call<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/functioncalloptionswriter.html" class="tsd-kind-icon">Function<wbr>Call<wbr>Options<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/functioncallwriter.html" class="tsd-kind-icon">Function<wbr>Call<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/functiondefinition.html" class="tsd-kind-icon">Function<wbr>Definition</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/functiondefinitionwriter.html" class="tsd-kind-icon">Function<wbr>Definition<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/functiontypename.html" class="tsd-kind-icon">Function<wbr>Type<wbr>Name</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/functiontypenamewriter.html" class="tsd-kind-icon">Function<wbr>Type<wbr>Name<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/identifier.html" class="tsd-kind-icon">Identifier</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/identifierwriter.html" class="tsd-kind-icon">Identifier<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/ifstatement.html" class="tsd-kind-icon">If<wbr>Statement</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/ifstatementwriter.html" class="tsd-kind-icon">If<wbr>Statement<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/importdirective.html" class="tsd-kind-icon">Import<wbr>Directive</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/importdirectivewriter.html" class="tsd-kind-icon">Import<wbr>Directive<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/indexaccess.html" class="tsd-kind-icon">Index<wbr>Access</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/indexaccesswriter.html" class="tsd-kind-icon">Index<wbr>Access<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/indexrangeaccess.html" class="tsd-kind-icon">Index<wbr>Range<wbr>Access</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/indexrangeaccesswriter.html" class="tsd-kind-icon">Index<wbr>Range<wbr>Access<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/inheritancespecifier.html" class="tsd-kind-icon">Inheritance<wbr>Specifier</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/inheritancespecifierwriter.html" class="tsd-kind-icon">Inheritance<wbr>Specifier<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/inlineassembly.html" class="tsd-kind-icon">Inline<wbr>Assembly</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/inlineassemblywriter.html" class="tsd-kind-icon">Inline<wbr>Assembly<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/latestandfirstversionineachseriesstrategy.html" class="tsd-kind-icon">Latest<wbr>And<wbr>First<wbr>Version<wbr>InEach<wbr>Series<wbr>Strategy</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/latestversionineachseriesstrategy.html" class="tsd-kind-icon">Latest<wbr>Version<wbr>InEach<wbr>Series<wbr>Strategy</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyarraytypenameprocessor.html" class="tsd-kind-icon">Legacy<wbr>Array<wbr>Type<wbr>Name<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyassignmentprocessor.html" class="tsd-kind-icon">Legacy<wbr>Assignment<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacybinaryoperationprocessor.html" class="tsd-kind-icon">Legacy<wbr>Binary<wbr>Operation<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyblockprocessor.html" class="tsd-kind-icon">Legacy<wbr>Block<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyconditionalprocessor.html" class="tsd-kind-icon">Legacy<wbr>Conditional<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacycontractdefinitionprocessor.html" class="tsd-kind-icon">Legacy<wbr>Contract<wbr>Definition<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacydowhilestatementprocessor.html" class="tsd-kind-icon">Legacy<wbr>DoWhile<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyelementarytypenameexpressionprocessor.html" class="tsd-kind-icon">Legacy<wbr>Elementary<wbr>Type<wbr>Name<wbr>Expression<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyelementarytypenameprocessor.html" class="tsd-kind-icon">Legacy<wbr>Elementary<wbr>Type<wbr>Name<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyemitstatementprocessor.html" class="tsd-kind-icon">Legacy<wbr>Emit<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyenumdefinitionprocessor.html" class="tsd-kind-icon">Legacy<wbr>Enum<wbr>Definition<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyenumvalueprocessor.html" class="tsd-kind-icon">Legacy<wbr>Enum<wbr>Value<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyeventdefinitionprocessor.html" class="tsd-kind-icon">Legacy<wbr>Event<wbr>Definition<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/legacyexpressionprocessor.html" class="tsd-kind-icon">Legacy<wbr>Expression<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyexpressionstatementprocessor.html" class="tsd-kind-icon">Legacy<wbr>Expression<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyforstatementprocessor.html" class="tsd-kind-icon">Legacy<wbr>For<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyfunctioncalloptionsprocessor.html" class="tsd-kind-icon">Legacy<wbr>Function<wbr>Call<wbr>Options<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyfunctioncallprocessor.html" class="tsd-kind-icon">Legacy<wbr>Function<wbr>Call<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyfunctiondefinitionprocessor.html" class="tsd-kind-icon">Legacy<wbr>Function<wbr>Definition<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyfunctiontypenameprocessor.html" class="tsd-kind-icon">Legacy<wbr>Function<wbr>Type<wbr>Name<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyidentifierprocessor.html" class="tsd-kind-icon">Legacy<wbr>Identifier<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyifstatementprocessor.html" class="tsd-kind-icon">Legacy<wbr>IfStatement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyimportdirectiveprocessor.html" class="tsd-kind-icon">Legacy<wbr>Import<wbr>Directive<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyindexaccessprocessor.html" class="tsd-kind-icon">Legacy<wbr>Index<wbr>Access<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyindexrangeaccessprocessor.html" class="tsd-kind-icon">Legacy<wbr>Index<wbr>Range<wbr>Access<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyinheritancespecifierprocessor.html" class="tsd-kind-icon">Legacy<wbr>Inheritance<wbr>Specifier<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyinlineassemblyprocessor.html" class="tsd-kind-icon">Legacy<wbr>Inline<wbr>Assembly<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyliteralprocessor.html" class="tsd-kind-icon">Legacy<wbr>Literal<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacymappingprocessor.html" class="tsd-kind-icon">Legacy<wbr>Mapping<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacymemberaccessprocessor.html" class="tsd-kind-icon">Legacy<wbr>Member<wbr>Access<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacymodifierdefinitionprocessor.html" class="tsd-kind-icon">Legacy<wbr>Modifier<wbr>Definition<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacymodifierinvocationprocessor.html" class="tsd-kind-icon">Legacy<wbr>Modifier<wbr>Invocation<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacynewexpressionprocessor.html" class="tsd-kind-icon">Legacy<wbr>New<wbr>Expression<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/legacynodeprocessor.html" class="tsd-kind-icon">Legacy<wbr>Node<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyoverridespecifierprocessor.html" class="tsd-kind-icon">Legacy<wbr>Override<wbr>Specifier<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyparameterlistprocessor.html" class="tsd-kind-icon">Legacy<wbr>Parameter<wbr>List<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacypragmadirectiveprocessor.html" class="tsd-kind-icon">Legacy<wbr>Pragma<wbr>Directive<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyreturnprocessor.html" class="tsd-kind-icon">Legacy<wbr>Return<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacysourceunitprocessor.html" class="tsd-kind-icon">Legacy<wbr>Source<wbr>Unit<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacystructdefinitionprocessor.html" class="tsd-kind-icon">Legacy<wbr>Struct<wbr>Definition<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacystructureddocumentationprocessor.html" class="tsd-kind-icon">Legacy<wbr>Structured<wbr>Documentation<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacytrycatchclauseprocessor.html" class="tsd-kind-icon">Legacy<wbr>Try<wbr>Catch<wbr>Clause<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacytrystatementprocessor.html" class="tsd-kind-icon">Legacy<wbr>Try<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacytupleexpressionprocessor.html" class="tsd-kind-icon">Legacy<wbr>Tuple<wbr>Expression<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/legacytypenameprocessor.html" class="tsd-kind-icon">Legacy<wbr>Type<wbr>Name<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyunaryoperationprocessor.html" class="tsd-kind-icon">Legacy<wbr>Unary<wbr>Operation<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyuserdefinedtypenameprocessor.html" class="tsd-kind-icon">Legacy<wbr>User<wbr>Defined<wbr>Type<wbr>Name<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyusingfordirectiveprocessor.html" class="tsd-kind-icon">Legacy<wbr>Using<wbr>For<wbr>Directive<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyvariabledeclarationprocessor.html" class="tsd-kind-icon">Legacy<wbr>Variable<wbr>Declaration<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacyvariabledeclarationstatementprocessor.html" class="tsd-kind-icon">Legacy<wbr>Variable<wbr>Declaration<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/legacywhilestatementprocessor.html" class="tsd-kind-icon">Legacy<wbr>While<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/literal.html" class="tsd-kind-icon">Literal</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/literalwriter.html" class="tsd-kind-icon">Literal<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/localnpmresolver.html" class="tsd-kind-icon">Local<wbr>Npm<wbr>Resolver</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/location.html" class="tsd-kind-icon">Location</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/mapping.html" class="tsd-kind-icon">Mapping</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/mappingtypenamewriter.html" class="tsd-kind-icon">Mapping<wbr>Type<wbr>Name<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/memberaccess.html" class="tsd-kind-icon">Member<wbr>Access</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/memberaccesswriter.html" class="tsd-kind-icon">Member<wbr>Access<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernarraytypenameprocessor.html" class="tsd-kind-icon">Modern<wbr>Array<wbr>Type<wbr>Name<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernassignmentprocessor.html" class="tsd-kind-icon">Modern<wbr>Assignment<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernbinaryoperationprocessor.html" class="tsd-kind-icon">Modern<wbr>Binary<wbr>Operation<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernblockprocessor.html" class="tsd-kind-icon">Modern<wbr>Block<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernconditionalprocessor.html" class="tsd-kind-icon">Modern<wbr>Conditional<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/moderncontractdefinitionprocessor.html" class="tsd-kind-icon">Modern<wbr>Contract<wbr>Definition<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/moderndowhilestatementprocessor.html" class="tsd-kind-icon">Modern<wbr>DoWhile<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernelementarytypenameexpressionprocessor.html" class="tsd-kind-icon">Modern<wbr>Elementary<wbr>Type<wbr>Name<wbr>Expression<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernelementarytypenameprocessor.html" class="tsd-kind-icon">Modern<wbr>Elementary<wbr>Type<wbr>Name<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernemitstatementprocessor.html" class="tsd-kind-icon">Modern<wbr>Emit<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernenumdefinitionprocessor.html" class="tsd-kind-icon">Modern<wbr>Enum<wbr>Definition<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernenumvalueprocessor.html" class="tsd-kind-icon">Modern<wbr>Enum<wbr>Value<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/moderneventdefinitionprocessor.html" class="tsd-kind-icon">Modern<wbr>Event<wbr>Definition<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/modernexpressionprocessor.html" class="tsd-kind-icon">Modern<wbr>Expression<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernexpressionstatementprocessor.html" class="tsd-kind-icon">Modern<wbr>Expression<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernforstatementprocessor.html" class="tsd-kind-icon">Modern<wbr>For<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernfunctioncalloptionsprocessor.html" class="tsd-kind-icon">Modern<wbr>Function<wbr>Call<wbr>Options<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernfunctioncallprocessor.html" class="tsd-kind-icon">Modern<wbr>Function<wbr>Call<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernfunctiondefinitionprocessor.html" class="tsd-kind-icon">Modern<wbr>Function<wbr>Definition<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernfunctiontypenameprocessor.html" class="tsd-kind-icon">Modern<wbr>Function<wbr>Type<wbr>Name<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernidentifierprocessor.html" class="tsd-kind-icon">Modern<wbr>Identifier<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernifstatementprocessor.html" class="tsd-kind-icon">Modern<wbr>IfStatement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernimportdirectiveprocessor.html" class="tsd-kind-icon">Modern<wbr>Import<wbr>Directive<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernindexaccessprocessor.html" class="tsd-kind-icon">Modern<wbr>Index<wbr>Access<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernindexrangeaccessprocessor.html" class="tsd-kind-icon">Modern<wbr>Index<wbr>Range<wbr>Access<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/moderninheritancespecifierprocessor.html" class="tsd-kind-icon">Modern<wbr>Inheritance<wbr>Specifier<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/moderninlineassemblyprocessor.html" class="tsd-kind-icon">Modern<wbr>Inline<wbr>Assembly<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernliteralprocessor.html" class="tsd-kind-icon">Modern<wbr>Literal<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernmappingprocessor.html" class="tsd-kind-icon">Modern<wbr>Mapping<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernmemberaccessprocessor.html" class="tsd-kind-icon">Modern<wbr>Member<wbr>Access<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernmodifierdefinitionprocessor.html" class="tsd-kind-icon">Modern<wbr>Modifier<wbr>Definition<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernmodifierinvocationprocessor.html" class="tsd-kind-icon">Modern<wbr>Modifier<wbr>Invocation<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernnewexpressionprocessor.html" class="tsd-kind-icon">Modern<wbr>New<wbr>Expression<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/modernnodeprocessor.html" class="tsd-kind-icon">Modern<wbr>Node<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernoverridespecifierprocessor.html" class="tsd-kind-icon">Modern<wbr>Override<wbr>Specifier<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernparameterlistprocessor.html" class="tsd-kind-icon">Modern<wbr>Parameter<wbr>List<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernpragmadirectiveprocessor.html" class="tsd-kind-icon">Modern<wbr>Pragma<wbr>Directive<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernreturnprocessor.html" class="tsd-kind-icon">Modern<wbr>Return<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernsourceunitprocessor.html" class="tsd-kind-icon">Modern<wbr>Source<wbr>Unit<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernstructdefinitionprocessor.html" class="tsd-kind-icon">Modern<wbr>Struct<wbr>Definition<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernstructureddocumentationprocessor.html" class="tsd-kind-icon">Modern<wbr>Structured<wbr>Documentation<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/moderntrycatchclauseprocessor.html" class="tsd-kind-icon">Modern<wbr>Try<wbr>Catch<wbr>Clause<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/moderntrystatementprocessor.html" class="tsd-kind-icon">Modern<wbr>Try<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/moderntupleexpressionprocessor.html" class="tsd-kind-icon">Modern<wbr>Tuple<wbr>Expression<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/moderntypenameprocessor.html" class="tsd-kind-icon">Modern<wbr>Type<wbr>Name<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernunaryoperationprocessor.html" class="tsd-kind-icon">Modern<wbr>Unary<wbr>Operation<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernuserdefinedtypenameprocessor.html" class="tsd-kind-icon">Modern<wbr>User<wbr>Defined<wbr>Type<wbr>Name<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernusingfordirectiveprocessor.html" class="tsd-kind-icon">Modern<wbr>Using<wbr>For<wbr>Directive<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernvariabledeclarationprocessor.html" class="tsd-kind-icon">Modern<wbr>Variable<wbr>Declaration<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernvariabledeclarationstatementprocessor.html" class="tsd-kind-icon">Modern<wbr>Variable<wbr>Declaration<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modernwhilestatementprocessor.html" class="tsd-kind-icon">Modern<wbr>While<wbr>Statement<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modifierdefinition.html" class="tsd-kind-icon">Modifier<wbr>Definition</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modifierdefinitionwriter.html" class="tsd-kind-icon">Modifier<wbr>Definition<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modifierinvocation.html" class="tsd-kind-icon">Modifier<wbr>Invocation</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/modifierinvocationwriter.html" class="tsd-kind-icon">Modifier<wbr>Invocation<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/newexpression.html" class="tsd-kind-icon">New<wbr>Expression</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/newexpressionwriter.html" class="tsd-kind-icon">New<wbr>Expression<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/overridespecifier.html" class="tsd-kind-icon">Override<wbr>Specifier</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/overridespecifierwriter.html" class="tsd-kind-icon">Override<wbr>Specifier<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/parameterlist.html" class="tsd-kind-icon">Parameter<wbr>List</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/parameterlistwriter.html" class="tsd-kind-icon">Parameter<wbr>List<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/placeholderstatement.html" class="tsd-kind-icon">Placeholder<wbr>Statement</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/placeholderstatementwriter.html" class="tsd-kind-icon">Placeholder<wbr>Statement<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/pragmadirective.html" class="tsd-kind-icon">Pragma<wbr>Directive</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/pragmadirectivewriter.html" class="tsd-kind-icon">Pragma<wbr>Directive<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/prettyformatter.html" class="tsd-kind-icon">Pretty<wbr>Formatter</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/primaryexpression.html" class="tsd-kind-icon">Primary<wbr>Expression</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/rangeversionstrategy.html" class="tsd-kind-icon">Range<wbr>Version<wbr>Strategy</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/remappingresolver.html" class="tsd-kind-icon">Remapping<wbr>Resolver</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/return.html" class="tsd-kind-icon">Return</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/returnwriter.html" class="tsd-kind-icon">Return<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/sourceunit.html" class="tsd-kind-icon">Source<wbr>Unit</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/sourceunitwriter.html" class="tsd-kind-icon">Source<wbr>Unit<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/spacelessformatter.html" class="tsd-kind-icon">Spaceless<wbr>Formatter</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/statement.html" class="tsd-kind-icon">Statement</a>
-					</li>
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/statementwithchildren.html" class="tsd-kind-icon">Statement<wbr>With<wbr>Children</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/structdefinition.html" class="tsd-kind-icon">Struct<wbr>Definition</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/structdefinitionwriter.html" class="tsd-kind-icon">Struct<wbr>Definition<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/structureddocumentation.html" class="tsd-kind-icon">Structured<wbr>Documentation</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/structureddocumentationreconstructingpostprocessor.html" class="tsd-kind-icon">Structured<wbr>Documentation<wbr>Reconstructing<wbr>Postprocessor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/structureddocumentationreconstructor.html" class="tsd-kind-icon">Structured<wbr>Documentation<wbr>Reconstructor</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/structureddocumentationwriter.html" class="tsd-kind-icon">Structured<wbr>Documentation<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/throw.html" class="tsd-kind-icon">Throw</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/throwwriter.html" class="tsd-kind-icon">Throw<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/trycatchclause.html" class="tsd-kind-icon">Try<wbr>Catch<wbr>Clause</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/trycatchclausewriter.html" class="tsd-kind-icon">Try<wbr>Catch<wbr>Clause<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/trystatement.html" class="tsd-kind-icon">Try<wbr>Statement</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/trystatementwriter.html" class="tsd-kind-icon">Try<wbr>Statement<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/tupleexpression.html" class="tsd-kind-icon">Tuple<wbr>Expression</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/tupleexpressionwriter.html" class="tsd-kind-icon">Tuple<wbr>Expression<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/typename.html" class="tsd-kind-icon">Type<wbr>Name</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/unaryoperation.html" class="tsd-kind-icon">Unary<wbr>Operation</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/unaryoperationwriter.html" class="tsd-kind-icon">Unary<wbr>Operation<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/userdefinedtypename.html" class="tsd-kind-icon">User<wbr>Defined<wbr>Type<wbr>Name</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/userdefinedtypenamewriter.html" class="tsd-kind-icon">User<wbr>Defined<wbr>Type<wbr>Name<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/usingfordirective.html" class="tsd-kind-icon">Using<wbr>For<wbr>Directive</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/usingfordirectivewriter.html" class="tsd-kind-icon">Using<wbr>For<wbr>Directive<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/variabledeclaration.html" class="tsd-kind-icon">Variable<wbr>Declaration</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/variabledeclarationstatement.html" class="tsd-kind-icon">Variable<wbr>Declaration<wbr>Statement</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/variabledeclarationstatementwriter.html" class="tsd-kind-icon">Variable<wbr>Declaration<wbr>Statement<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/variabledeclarationwriter.html" class="tsd-kind-icon">Variable<wbr>Declaration<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/versiondetectionstrategy.html" class="tsd-kind-icon">Version<wbr>Detection<wbr>Strategy</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/whilestatement.html" class="tsd-kind-icon">While<wbr>Statement</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/whilestatementwriter.html" class="tsd-kind-icon">While<wbr>Statement<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/xpath.html" class="tsd-kind-icon">XPath</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulassignmentwriter.html" class="tsd-kind-icon">Yul<wbr>Assignment<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulblockwriter.html" class="tsd-kind-icon">Yul<wbr>Block<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulbreakwriter.html" class="tsd-kind-icon">Yul<wbr>Break<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulcasewriter.html" class="tsd-kind-icon">Yul<wbr>Case<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulcontinuewriter.html" class="tsd-kind-icon">Yul<wbr>Continue<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulexpressionstatementwriter.html" class="tsd-kind-icon">Yul<wbr>Expression<wbr>Statement<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulforloopwriter.html" class="tsd-kind-icon">Yul<wbr>For<wbr>Loop<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulfunctioncallwriter.html" class="tsd-kind-icon">Yul<wbr>Function<wbr>Call<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulfunctiondefinitionwriter.html" class="tsd-kind-icon">Yul<wbr>Function<wbr>Definition<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulidentifierwriter.html" class="tsd-kind-icon">Yul<wbr>Identifier<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulifwriter.html" class="tsd-kind-icon">Yul<wbr>IfWriter</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulleavewriter.html" class="tsd-kind-icon">Yul<wbr>Leave<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulliteralwriter.html" class="tsd-kind-icon">Yul<wbr>Literal<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulswitchwriter.html" class="tsd-kind-icon">Yul<wbr>Switch<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yultypednamewriter.html" class="tsd-kind-icon">Yul<wbr>Typed<wbr>Name<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulvariabledeclarationwriter.html" class="tsd-kind-icon">Yul<wbr>Variable<wbr>Declaration<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/yulwriter.html" class="tsd-kind-icon">Yul<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/astnodepostprocessor.html" class="tsd-kind-icon">ASTNode<wbr>Postprocessor</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="interfaces/astnodeprocessor.html" class="tsd-kind-icon">ASTNode<wbr>Processor</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/astnodewriter.html" class="tsd-kind-icon">ASTNode<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/astreaderconfiguration.html" class="tsd-kind-icon">ASTReader<wbr>Configuration</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/astreadingrule.html" class="tsd-kind-icon">ASTReading<wbr>Rule</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/astreadingrules.html" class="tsd-kind-icon">ASTReading<wbr>Rules</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/compilefailure.html" class="tsd-kind-icon">Compile<wbr>Failure</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/compileresult.html" class="tsd-kind-icon">Compile<wbr>Result</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/compilerversionselectionstrategy.html" class="tsd-kind-icon">Compiler<wbr>Version<wbr>Selection<wbr>Strategy</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/coordinates.html" class="tsd-kind-icon">Coordinates</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/importresolver.html" class="tsd-kind-icon">Import<wbr>Resolver</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/memorystorage.html" class="tsd-kind-icon">Memory<wbr>Storage</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/point.html" class="tsd-kind-icon">Point</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/schemainterface.html" class="tsd-kind-icon">Schema<wbr>Interface</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/sourceformatter.html" class="tsd-kind-icon">Source<wbr>Formatter</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/symbolalias.html" class="tsd-kind-icon">Symbol<wbr>Alias</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/yulnode.html" class="tsd-kind-icon">Yul<wbr>Node</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/yulnodewriter.html" class="tsd-kind-icon">Yul<wbr>Node<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#astnodecallback" class="tsd-kind-icon">ASTNode<wbr>Callback</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-						<a href="globals.html#astnodeconstructor" class="tsd-kind-icon">ASTNode<wbr>Constructor</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#astnodeselector" class="tsd-kind-icon">ASTNode<wbr>Selector</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#astreadingsignaturedetector" class="tsd-kind-icon">ASTReading<wbr>Signature<wbr>Detector</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#compilerinputcreator" class="tsd-kind-icon">Compiler<wbr>Input<wbr>Creator</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#exportedsymbol" class="tsd-kind-icon">Exported<wbr>Symbol</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-						<a href="globals.html#expressionconstructor" class="tsd-kind-icon">Expression<wbr>Constructor</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#functionlikeresolvable" class="tsd-kind-icon">Function<wbr>Like<wbr>Resolvable</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#idmap" class="tsd-kind-icon">IDMap</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#importfinder" class="tsd-kind-icon">Import<wbr>Finder</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#remapping" class="tsd-kind-icon">Remapping</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#resolvable" class="tsd-kind-icon">Resolvable</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#resolvedsymbolalias" class="tsd-kind-icon">Resolved<wbr>Symbol<wbr>Alias</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-						<a href="globals.html#specific" class="tsd-kind-icon">Specific</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#supportednode" class="tsd-kind-icon">Supported<wbr>Node</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#symbolorigin" class="tsd-kind-icon">Symbol<wbr>Origin</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-						<a href="globals.html#typenameconstructor" class="tsd-kind-icon">Type<wbr>Name<wbr>Constructor</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#abicoder" class="tsd-kind-icon">Abi<wbr>Coder</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#compilerseries" class="tsd-kind-icon">Compiler<wbr>Series</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#compilerversions" class="tsd-kind-icon">Compiler<wbr>Versions</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#compilerversions04" class="tsd-kind-icon">Compiler<wbr>Versions04</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#compilerversions05" class="tsd-kind-icon">Compiler<wbr>Versions05</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#compilerversions06" class="tsd-kind-icon">Compiler<wbr>Versions06</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#compilerversions07" class="tsd-kind-icon">Compiler<wbr>Versions07</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#defaultastwritermapping" class="tsd-kind-icon">DefaultASTWriter<wbr>Mapping</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#defaultpostprocessormapping" class="tsd-kind-icon">Default<wbr>Postprocessor<wbr>Mapping</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#defaultyulwritermapping" class="tsd-kind-icon">Default<wbr>Yul<wbr>Writer<wbr>Mapping</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#indent" class="tsd-kind-icon">INDENT</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#latestcompilerversion" class="tsd-kind-icon">Latest<wbr>Compiler<wbr>Version</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#possiblecontractkinds" class="tsd-kind-icon">Possible<wbr>Contract<wbr>Kinds</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#possibledatalocations" class="tsd-kind-icon">Possible<wbr>Data<wbr>Locations</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#possibleetherunits" class="tsd-kind-icon">Possible<wbr>Ether<wbr>Units</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#possiblefunctioncallkinds" class="tsd-kind-icon">Possible<wbr>Function<wbr>Call<wbr>Kinds</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#possiblefunctionkinds" class="tsd-kind-icon">Possible<wbr>Function<wbr>Kinds</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#possiblefunctionstatemutabilities" class="tsd-kind-icon">Possible<wbr>Function<wbr>State<wbr>Mutabilities</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#possiblefunctionvisibilities" class="tsd-kind-icon">Possible<wbr>Function<wbr>Visibilities</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#possibleliteralkinds" class="tsd-kind-icon">Possible<wbr>Literal<wbr>Kinds</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#possiblemutabilities" class="tsd-kind-icon">Possible<wbr>Mutabilities</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#possiblestatevariablevisibilities" class="tsd-kind-icon">Possible<wbr>State<wbr>Variable<wbr>Visibilities</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#possibletimeunits" class="tsd-kind-icon">Possible<wbr>Time<wbr>Units</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#skip" class="tsd-kind-icon">SKIP</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#srclocation" class="tsd-kind-icon">Src<wbr>Location</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#argextractionmapping" class="tsd-kind-icon">arg<wbr>Extraction<wbr>Mapping</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#args" class="tsd-kind-icon">args</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#contextidsequence" class="tsd-kind-icon">context<wbr>IdSequence</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#findupsync" class="tsd-kind-icon">find<wbr>UpSync</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#formatter" class="tsd-kind-icon">formatter</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#jsel" class="tsd-kind-icon">j<wbr>Sel</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#modes" class="tsd-kind-icon">modes</a>
-					</li>
-					<li class=" tsd-kind-variable">
-						<a href="globals.html#reconstructor" class="tsd-kind-icon">reconstructor</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#aliasesfilterfn" class="tsd-kind-icon">aliases<wbr>Filter<wbr>Fn</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#compile" class="tsd-kind-icon">compile</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#compilejson" class="tsd-kind-icon">compile<wbr>Json</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#compilejsondata" class="tsd-kind-icon">compile<wbr>Json<wbr>Data</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#compilesol" class="tsd-kind-icon">compile<wbr>Sol</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#compilesourcestring" class="tsd-kind-icon">compile<wbr>Source<wbr>String</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#consistentlycontainsoneof" class="tsd-kind-icon">consistently<wbr>Contains<wbr>One<wbr>Of</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#createcompiler04input" class="tsd-kind-icon">create<wbr>Compiler04<wbr>Input</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#createcompiler05input" class="tsd-kind-icon">create<wbr>Compiler05<wbr>Input</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#createfilesystemimportfinder" class="tsd-kind-icon">create<wbr>File<wbr>System<wbr>Import<wbr>Finder</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#creatememoryimportfinder" class="tsd-kind-icon">create<wbr>Memory<wbr>Import<wbr>Finder</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#declarationsfilterfn" class="tsd-kind-icon">declarations<wbr>Filter<wbr>Fn</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#detectcompileerrors" class="tsd-kind-icon">detect<wbr>Compile<wbr>Errors</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#detectmainfilename" class="tsd-kind-icon">detect<wbr>Main<wbr>File<wbr>Name</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#encodesignature" class="tsd-kind-icon">encode<wbr>Signature</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#extractspecifiersfromsource" class="tsd-kind-icon">extract<wbr>Specifiers<wbr>From<wbr>Source</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#fillfilesfromsources" class="tsd-kind-icon">fill<wbr>Files<wbr>From<wbr>Sources</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#getcompilerforversion" class="tsd-kind-icon">get<wbr>Compiler<wbr>For<wbr>Version</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#getcompilerversionstrategy" class="tsd-kind-icon">get<wbr>Compiler<wbr>Version<wbr>Strategy</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#getcompilerversionsbyspecifiers" class="tsd-kind-icon">get<wbr>Compiler<wbr>Versions<wbr>BySpecifiers</a>
-					</li>
-					<li class=" tsd-kind-function tsd-has-type-parameter">
-						<a href="globals.html#getresolvablecollection" class="tsd-kind-icon">get<wbr>Resolvable<wbr>Collection</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#isexact" class="tsd-kind-icon">is<wbr>Exact</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#isexplicitlybound" class="tsd-kind-icon">is<wbr>Explicitly<wbr>Bound</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#isfixed" class="tsd-kind-icon">is<wbr>Fixed</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#isfloating" class="tsd-kind-icon">is<wbr>Floating</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#normalizespecifier" class="tsd-kind-icon">normalize<wbr>Specifier</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#parsepathremapping" class="tsd-kind-icon">parse<wbr>Path<wbr>Remapping</a>
-					</li>
-					<li class=" tsd-kind-function tsd-has-type-parameter">
-						<a href="globals.html#resolve" class="tsd-kind-icon">resolve</a>
-					</li>
-					<li class=" tsd-kind-function tsd-has-type-parameter">
-						<a href="globals.html#resolvebyname" class="tsd-kind-icon">resolve<wbr>ByName</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#resolvecallable" class="tsd-kind-icon">resolve<wbr>Callable</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#resolveevent" class="tsd-kind-icon">resolve<wbr>Event</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#sequence" class="tsd-kind-icon">sequence</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#split" class="tsd-kind-icon">split</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#astnodeschema" class="tsd-kind-icon">ASTNode<wbr>Schema</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#legacyconfiguration" class="tsd-kind-icon">Legacy<wbr>Configuration</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#modernconfiguration" class="tsd-kind-icon">Modern<wbr>Configuration</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#cli" class="tsd-kind-icon">cli</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#processors" class="tsd-kind-icon">processors</a>
-					</li>
-					<li class=" tsd-kind-object-literal">
-						<a href="globals.html#rx" class="tsd-kind-icon">rx</a>
-					</li>
 				</ul>
 			</nav>
 		</div>
@@ -1355,23 +843,22 @@ npm link</code></pre>
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
 			</ul>
 		</div>
 	</div>

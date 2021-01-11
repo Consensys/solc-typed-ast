@@ -1,0 +1,909 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>solc-typed-ast</title>
+	<meta name="description" content="Documentation for solc-typed-ast">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">solc-typed-ast</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<h1>solc-typed-ast</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Modules</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-module"><a href="modules/ast.html" class="tsd-kind-icon">ast</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_ast_node.html" class="tsd-kind-icon">ast/ast_<wbr>node</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_ast_node_factory.html" class="tsd-kind-icon">ast/ast_<wbr>node_<wbr>factory</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_ast_node_formatter.html" class="tsd-kind-icon">ast/ast_<wbr>node_<wbr>formatter</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_ast_reader.html" class="tsd-kind-icon">ast/ast_<wbr>reader</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_constants.html" class="tsd-kind-icon">ast/constants</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_dispatch.html" class="tsd-kind-icon">ast/dispatch</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_declaration.html" class="tsd-kind-icon">ast/implementation/declaration</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_declaration_contract_definition.html" class="tsd-kind-icon">ast/implementation/declaration/contract_<wbr>definition</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_declaration_enum_definition.html" class="tsd-kind-icon">ast/implementation/declaration/enum_<wbr>definition</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_declaration_enum_value.html" class="tsd-kind-icon">ast/implementation/declaration/enum_<wbr>value</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_declaration_event_definition.html" class="tsd-kind-icon">ast/implementation/declaration/event_<wbr>definition</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_declaration_function_definition.html" class="tsd-kind-icon">ast/implementation/declaration/function_<wbr>definition</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_declaration_modifier_definition.html" class="tsd-kind-icon">ast/implementation/declaration/modifier_<wbr>definition</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_declaration_struct_definition.html" class="tsd-kind-icon">ast/implementation/declaration/struct_<wbr>definition</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_declaration_variable_declaration.html" class="tsd-kind-icon">ast/implementation/declaration/variable_<wbr>declaration</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression.html" class="tsd-kind-icon">ast/implementation/expression</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_assignment.html" class="tsd-kind-icon">ast/implementation/expression/assignment</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_binary_operation.html" class="tsd-kind-icon">ast/implementation/expression/binary_<wbr>operation</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_conditional.html" class="tsd-kind-icon">ast/implementation/expression/conditional</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_elementary_type_name_expression.html" class="tsd-kind-icon">ast/implementation/expression/elementary_<wbr>type_<wbr>name_<wbr>expression</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_expression.html" class="tsd-kind-icon">ast/implementation/expression/expression</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_function_call.html" class="tsd-kind-icon">ast/implementation/expression/function_<wbr>call</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_function_call_options.html" class="tsd-kind-icon">ast/implementation/expression/function_<wbr>call_<wbr>options</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_identifier.html" class="tsd-kind-icon">ast/implementation/expression/identifier</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_index_access.html" class="tsd-kind-icon">ast/implementation/expression/index_<wbr>access</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_index_range_access.html" class="tsd-kind-icon">ast/implementation/expression/index_<wbr>range_<wbr>access</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_literal.html" class="tsd-kind-icon">ast/implementation/expression/literal</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_member_access.html" class="tsd-kind-icon">ast/implementation/expression/member_<wbr>access</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_new_expression.html" class="tsd-kind-icon">ast/implementation/expression/new_<wbr>expression</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_primary_expression.html" class="tsd-kind-icon">ast/implementation/expression/primary_<wbr>expression</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_tuple_expression.html" class="tsd-kind-icon">ast/implementation/expression/tuple_<wbr>expression</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_expression_unary_operation.html" class="tsd-kind-icon">ast/implementation/expression/unary_<wbr>operation</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_meta.html" class="tsd-kind-icon">ast/implementation/meta</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_meta_identifier_path.html" class="tsd-kind-icon">ast/implementation/meta/identifier_<wbr>path</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_meta_import_directive.html" class="tsd-kind-icon">ast/implementation/meta/import_<wbr>directive</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_meta_inheritance_specifier.html" class="tsd-kind-icon">ast/implementation/meta/inheritance_<wbr>specifier</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_meta_modifier_invocation.html" class="tsd-kind-icon">ast/implementation/meta/modifier_<wbr>invocation</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_meta_override_specifier.html" class="tsd-kind-icon">ast/implementation/meta/override_<wbr>specifier</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_meta_parameter_list.html" class="tsd-kind-icon">ast/implementation/meta/parameter_<wbr>list</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_meta_pragma_directive.html" class="tsd-kind-icon">ast/implementation/meta/pragma_<wbr>directive</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_meta_source_unit.html" class="tsd-kind-icon">ast/implementation/meta/source_<wbr>unit</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_meta_structured_documentation.html" class="tsd-kind-icon">ast/implementation/meta/structured_<wbr>documentation</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_meta_using_for_directive.html" class="tsd-kind-icon">ast/implementation/meta/using_<wbr>for_<wbr>directive</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement.html" class="tsd-kind-icon">ast/implementation/statement</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_block.html" class="tsd-kind-icon">ast/implementation/statement/block</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_break.html" class="tsd-kind-icon">ast/implementation/statement/break</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_continue.html" class="tsd-kind-icon">ast/implementation/statement/continue</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_do_while_statement.html" class="tsd-kind-icon">ast/implementation/statement/do_<wbr>while_<wbr>statement</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_emit_statement.html" class="tsd-kind-icon">ast/implementation/statement/emit_<wbr>statement</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_expression_statement.html" class="tsd-kind-icon">ast/implementation/statement/expression_<wbr>statement</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_for_statement.html" class="tsd-kind-icon">ast/implementation/statement/for_<wbr>statement</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_if_statement.html" class="tsd-kind-icon">ast/implementation/statement/if_<wbr>statement</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_inline_assembly.html" class="tsd-kind-icon">ast/implementation/statement/inline_<wbr>assembly</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_placeholder_statement.html" class="tsd-kind-icon">ast/implementation/statement/placeholder_<wbr>statement</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_return.html" class="tsd-kind-icon">ast/implementation/statement/return</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_statement.html" class="tsd-kind-icon">ast/implementation/statement/statement</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_throw.html" class="tsd-kind-icon">ast/implementation/statement/throw</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_try_catch_clause.html" class="tsd-kind-icon">ast/implementation/statement/try_<wbr>catch_<wbr>clause</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_try_statement.html" class="tsd-kind-icon">ast/implementation/statement/try_<wbr>statement</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_unchecked_block.html" class="tsd-kind-icon">ast/implementation/statement/unchecked_<wbr>block</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_variable_declaration_statement.html" class="tsd-kind-icon">ast/implementation/statement/variable_<wbr>declaration_<wbr>statement</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_statement_while_statement.html" class="tsd-kind-icon">ast/implementation/statement/while_<wbr>statement</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_type.html" class="tsd-kind-icon">ast/implementation/type</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_type_array_type_name.html" class="tsd-kind-icon">ast/implementation/type/array_<wbr>type_<wbr>name</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_type_elementary_type_name.html" class="tsd-kind-icon">ast/implementation/type/elementary_<wbr>type_<wbr>name</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_type_function_type_name.html" class="tsd-kind-icon">ast/implementation/type/function_<wbr>type_<wbr>name</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_type_mapping.html" class="tsd-kind-icon">ast/implementation/type/mapping</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_type_type_name.html" class="tsd-kind-icon">ast/implementation/type/type_<wbr>name</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_implementation_type_user_defined_type_name.html" class="tsd-kind-icon">ast/implementation/type/user_<wbr>defined_<wbr>type_<wbr>name</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy.html" class="tsd-kind-icon">ast/legacy</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_array_type_name_processor.html" class="tsd-kind-icon">ast/legacy/array_<wbr>type_<wbr>name_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_assignment_processor.html" class="tsd-kind-icon">ast/legacy/assignment_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_binary_operation_processor.html" class="tsd-kind-icon">ast/legacy/binary_<wbr>operation_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_block_processor.html" class="tsd-kind-icon">ast/legacy/block_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_conditional_processor.html" class="tsd-kind-icon">ast/legacy/conditional_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_configuration.html" class="tsd-kind-icon">ast/legacy/configuration</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_contract_definition_processor.html" class="tsd-kind-icon">ast/legacy/contract_<wbr>definition_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_do_while_statement_processor.html" class="tsd-kind-icon">ast/legacy/do_<wbr>while_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_elementary_type_name_expression_processor.html" class="tsd-kind-icon">ast/legacy/elementary_<wbr>type_<wbr>name_<wbr>expression_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_elementary_type_name_processor.html" class="tsd-kind-icon">ast/legacy/elementary_<wbr>type_<wbr>name_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_emit_statement_processor.html" class="tsd-kind-icon">ast/legacy/emit_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_enum_definition_processor.html" class="tsd-kind-icon">ast/legacy/enum_<wbr>definition_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_enum_value_processor.html" class="tsd-kind-icon">ast/legacy/enum_<wbr>value_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_event_definition_processor.html" class="tsd-kind-icon">ast/legacy/event_<wbr>definition_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_expression_processor.html" class="tsd-kind-icon">ast/legacy/expression_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_expression_statement_processor.html" class="tsd-kind-icon">ast/legacy/expression_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_for_statement_processor.html" class="tsd-kind-icon">ast/legacy/for_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_function_call_options_processor.html" class="tsd-kind-icon">ast/legacy/function_<wbr>call_<wbr>options_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_function_call_processor.html" class="tsd-kind-icon">ast/legacy/function_<wbr>call_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_function_definition_processor.html" class="tsd-kind-icon">ast/legacy/function_<wbr>definition_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_function_type_name_processor.html" class="tsd-kind-icon">ast/legacy/function_<wbr>type_<wbr>name_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_identifier_processor.html" class="tsd-kind-icon">ast/legacy/identifier_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_if_statement_processor.html" class="tsd-kind-icon">ast/legacy/if_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_import_directive_processor.html" class="tsd-kind-icon">ast/legacy/import_<wbr>directive_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_index_access_processor.html" class="tsd-kind-icon">ast/legacy/index_<wbr>access_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_index_range_access_processor.html" class="tsd-kind-icon">ast/legacy/index_<wbr>range_<wbr>access_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_inheritance_specifier_processor.html" class="tsd-kind-icon">ast/legacy/inheritance_<wbr>specifier_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_inline_assembly_processor.html" class="tsd-kind-icon">ast/legacy/inline_<wbr>assembly_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_literal_processor.html" class="tsd-kind-icon">ast/legacy/literal_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_mapping_processor.html" class="tsd-kind-icon">ast/legacy/mapping_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_member_access_processor.html" class="tsd-kind-icon">ast/legacy/member_<wbr>access_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_modifier_definition_processor.html" class="tsd-kind-icon">ast/legacy/modifier_<wbr>definition_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_modifier_invocation_processor.html" class="tsd-kind-icon">ast/legacy/modifier_<wbr>invocation_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_new_expression_processor.html" class="tsd-kind-icon">ast/legacy/new_<wbr>expression_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_node_processor.html" class="tsd-kind-icon">ast/legacy/node_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_override_specifier_processor.html" class="tsd-kind-icon">ast/legacy/override_<wbr>specifier_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_parameter_list_processor.html" class="tsd-kind-icon">ast/legacy/parameter_<wbr>list_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_pragma_directive_processor.html" class="tsd-kind-icon">ast/legacy/pragma_<wbr>directive_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_return_processor.html" class="tsd-kind-icon">ast/legacy/return_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_source_unit_processor.html" class="tsd-kind-icon">ast/legacy/source_<wbr>unit_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_struct_definition_processor.html" class="tsd-kind-icon">ast/legacy/struct_<wbr>definition_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_structured_documentation_processor.html" class="tsd-kind-icon">ast/legacy/structured_<wbr>documentation_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_try_catch_clause_processor.html" class="tsd-kind-icon">ast/legacy/try_<wbr>catch_<wbr>clause_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_try_statement_processor.html" class="tsd-kind-icon">ast/legacy/try_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_tuple_expression_processor.html" class="tsd-kind-icon">ast/legacy/tuple_<wbr>expression_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_type_name_processor.html" class="tsd-kind-icon">ast/legacy/type_<wbr>name_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_unary_operation_processor.html" class="tsd-kind-icon">ast/legacy/unary_<wbr>operation_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_user_defined_type_name_processor.html" class="tsd-kind-icon">ast/legacy/user_<wbr>defined_<wbr>type_<wbr>name_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_using_for_directive_processor.html" class="tsd-kind-icon">ast/legacy/using_<wbr>for_<wbr>directive_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_variable_declaration_processor.html" class="tsd-kind-icon">ast/legacy/variable_<wbr>declaration_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_variable_declaration_statement_processor.html" class="tsd-kind-icon">ast/legacy/variable_<wbr>declaration_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_legacy_while_statement_processor.html" class="tsd-kind-icon">ast/legacy/while_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern.html" class="tsd-kind-icon">ast/modern</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_array_type_name_processor.html" class="tsd-kind-icon">ast/modern/array_<wbr>type_<wbr>name_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_assignment_processor.html" class="tsd-kind-icon">ast/modern/assignment_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_binary_operation_processor.html" class="tsd-kind-icon">ast/modern/binary_<wbr>operation_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_block_processor.html" class="tsd-kind-icon">ast/modern/block_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_conditional_processor.html" class="tsd-kind-icon">ast/modern/conditional_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_configuration.html" class="tsd-kind-icon">ast/modern/configuration</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_contract_definition_processor.html" class="tsd-kind-icon">ast/modern/contract_<wbr>definition_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_do_while_statement_processor.html" class="tsd-kind-icon">ast/modern/do_<wbr>while_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_elementary_type_name_expression_processor.html" class="tsd-kind-icon">ast/modern/elementary_<wbr>type_<wbr>name_<wbr>expression_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_elementary_type_name_processor.html" class="tsd-kind-icon">ast/modern/elementary_<wbr>type_<wbr>name_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_emit_statement_processor.html" class="tsd-kind-icon">ast/modern/emit_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_enum_definition_processor.html" class="tsd-kind-icon">ast/modern/enum_<wbr>definition_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_enum_value_processor.html" class="tsd-kind-icon">ast/modern/enum_<wbr>value_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_event_definition_processor.html" class="tsd-kind-icon">ast/modern/event_<wbr>definition_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_expression_processor.html" class="tsd-kind-icon">ast/modern/expression_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_expression_statement_processor.html" class="tsd-kind-icon">ast/modern/expression_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_for_statement_processor.html" class="tsd-kind-icon">ast/modern/for_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_function_call_options_processor.html" class="tsd-kind-icon">ast/modern/function_<wbr>call_<wbr>options_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_function_call_processor.html" class="tsd-kind-icon">ast/modern/function_<wbr>call_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_function_definition_processor.html" class="tsd-kind-icon">ast/modern/function_<wbr>definition_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_function_type_name_processor.html" class="tsd-kind-icon">ast/modern/function_<wbr>type_<wbr>name_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_identifier_path_processor.html" class="tsd-kind-icon">ast/modern/identifier_<wbr>path_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_identifier_processor.html" class="tsd-kind-icon">ast/modern/identifier_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_if_statement_processor.html" class="tsd-kind-icon">ast/modern/if_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_import_directive_processor.html" class="tsd-kind-icon">ast/modern/import_<wbr>directive_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_index_access_processor.html" class="tsd-kind-icon">ast/modern/index_<wbr>access_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_index_range_access_processor.html" class="tsd-kind-icon">ast/modern/index_<wbr>range_<wbr>access_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_inheritance_specifier_processor.html" class="tsd-kind-icon">ast/modern/inheritance_<wbr>specifier_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_inline_assembly_processor.html" class="tsd-kind-icon">ast/modern/inline_<wbr>assembly_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_literal_processor.html" class="tsd-kind-icon">ast/modern/literal_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_mapping_processor.html" class="tsd-kind-icon">ast/modern/mapping_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_member_access_processor.html" class="tsd-kind-icon">ast/modern/member_<wbr>access_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_modifier_definition_processor.html" class="tsd-kind-icon">ast/modern/modifier_<wbr>definition_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_modifier_invocation_processor.html" class="tsd-kind-icon">ast/modern/modifier_<wbr>invocation_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_new_expression_processor.html" class="tsd-kind-icon">ast/modern/new_<wbr>expression_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_node_processor.html" class="tsd-kind-icon">ast/modern/node_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_override_specifier_processor.html" class="tsd-kind-icon">ast/modern/override_<wbr>specifier_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_parameter_list_processor.html" class="tsd-kind-icon">ast/modern/parameter_<wbr>list_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_pragma_directive_processor.html" class="tsd-kind-icon">ast/modern/pragma_<wbr>directive_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_return_processor.html" class="tsd-kind-icon">ast/modern/return_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_source_unit_processor.html" class="tsd-kind-icon">ast/modern/source_<wbr>unit_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_struct_definition_processor.html" class="tsd-kind-icon">ast/modern/struct_<wbr>definition_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_structured_documentation_processor.html" class="tsd-kind-icon">ast/modern/structured_<wbr>documentation_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_try_catch_clause_processor.html" class="tsd-kind-icon">ast/modern/try_<wbr>catch_<wbr>clause_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_try_statement_processor.html" class="tsd-kind-icon">ast/modern/try_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_tuple_expression_processor.html" class="tsd-kind-icon">ast/modern/tuple_<wbr>expression_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_type_name_processor.html" class="tsd-kind-icon">ast/modern/type_<wbr>name_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_unary_operation_processor.html" class="tsd-kind-icon">ast/modern/unary_<wbr>operation_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_unchecked_block_processor.html" class="tsd-kind-icon">ast/modern/unchecked_<wbr>block_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_user_defined_type_name_processor.html" class="tsd-kind-icon">ast/modern/user_<wbr>defined_<wbr>type_<wbr>name_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_using_for_directive_processor.html" class="tsd-kind-icon">ast/modern/using_<wbr>for_<wbr>directive_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_variable_declaration_processor.html" class="tsd-kind-icon">ast/modern/variable_<wbr>declaration_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_variable_declaration_statement_processor.html" class="tsd-kind-icon">ast/modern/variable_<wbr>declaration_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_modern_while_statement_processor.html" class="tsd-kind-icon">ast/modern/while_<wbr>statement_<wbr>processor</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_postprocessing.html" class="tsd-kind-icon">ast/postprocessing</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_postprocessing_mapping.html" class="tsd-kind-icon">ast/postprocessing/mapping</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_postprocessing_structured_documentation_reconstruction.html" class="tsd-kind-icon">ast/postprocessing/structured_<wbr>documentation_<wbr>reconstruction</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_utils.html" class="tsd-kind-icon">ast/utils</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_writing.html" class="tsd-kind-icon">ast/writing</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_writing_ast_mapping.html" class="tsd-kind-icon">ast/writing/ast_<wbr>mapping</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_writing_formatter.html" class="tsd-kind-icon">ast/writing/formatter</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_writing_writer.html" class="tsd-kind-icon">ast/writing/writer</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_writing_yul_mapping.html" class="tsd-kind-icon">ast/writing/yul_<wbr>mapping</a></li>
+								<li class="tsd-kind-module"><a href="modules/ast_xpath.html" class="tsd-kind-icon">ast/xpath</a></li>
+								<li class="tsd-kind-module"><a href="modules/bin_compile.html" class="tsd-kind-icon">bin/compile</a></li>
+								<li class="tsd-kind-module"><a href="modules/compile.html" class="tsd-kind-icon">compile</a></li>
+								<li class="tsd-kind-module"><a href="modules/compile_compiler_selection.html" class="tsd-kind-icon">compile/compiler_<wbr>selection</a></li>
+								<li class="tsd-kind-module"><a href="modules/compile_constants.html" class="tsd-kind-icon">compile/constants</a></li>
+								<li class="tsd-kind-module"><a href="modules/compile_import_resolver.html" class="tsd-kind-icon">compile/import_<wbr>resolver</a></li>
+								<li class="tsd-kind-module"><a href="modules/compile_utils.html" class="tsd-kind-icon">compile/utils</a></li>
+								<li class="tsd-kind-module"><a href="modules/compile_version.html" class="tsd-kind-icon">compile/version</a></li>
+								<li class="tsd-kind-module"><a href="modules/index.html" class="tsd-kind-icon">index</a></li>
+								<li class="tsd-kind-module"><a href="modules/misc.html" class="tsd-kind-icon">misc</a></li>
+								<li class="tsd-kind-module"><a href="modules/misc_location.html" class="tsd-kind-icon">misc/location</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="current ">
+						<a href="modules.html">Exports</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast.html">ast</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_ast_node.html">ast/ast_<wbr>node</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_ast_node_factory.html">ast/ast_<wbr>node_<wbr>factory</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_ast_node_formatter.html">ast/ast_<wbr>node_<wbr>formatter</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_ast_reader.html">ast/ast_<wbr>reader</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_constants.html">ast/constants</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_dispatch.html">ast/dispatch</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration.html">ast/implementation/declaration</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_contract_definition.html">ast/implementation/declaration/contract_<wbr>definition</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_enum_definition.html">ast/implementation/declaration/enum_<wbr>definition</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_enum_value.html">ast/implementation/declaration/enum_<wbr>value</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_event_definition.html">ast/implementation/declaration/event_<wbr>definition</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_function_definition.html">ast/implementation/declaration/function_<wbr>definition</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_modifier_definition.html">ast/implementation/declaration/modifier_<wbr>definition</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_struct_definition.html">ast/implementation/declaration/struct_<wbr>definition</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_declaration_variable_declaration.html">ast/implementation/declaration/variable_<wbr>declaration</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression.html">ast/implementation/expression</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_assignment.html">ast/implementation/expression/assignment</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_binary_operation.html">ast/implementation/expression/binary_<wbr>operation</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_conditional.html">ast/implementation/expression/conditional</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_elementary_type_name_expression.html">ast/implementation/expression/elementary_<wbr>type_<wbr>name_<wbr>expression</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_expression.html">ast/implementation/expression/expression</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_function_call.html">ast/implementation/expression/function_<wbr>call</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_function_call_options.html">ast/implementation/expression/function_<wbr>call_<wbr>options</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_identifier.html">ast/implementation/expression/identifier</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_index_access.html">ast/implementation/expression/index_<wbr>access</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_index_range_access.html">ast/implementation/expression/index_<wbr>range_<wbr>access</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_literal.html">ast/implementation/expression/literal</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_member_access.html">ast/implementation/expression/member_<wbr>access</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_new_expression.html">ast/implementation/expression/new_<wbr>expression</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_primary_expression.html">ast/implementation/expression/primary_<wbr>expression</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_tuple_expression.html">ast/implementation/expression/tuple_<wbr>expression</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_expression_unary_operation.html">ast/implementation/expression/unary_<wbr>operation</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta.html">ast/implementation/meta</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_identifier_path.html">ast/implementation/meta/identifier_<wbr>path</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_import_directive.html">ast/implementation/meta/import_<wbr>directive</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_inheritance_specifier.html">ast/implementation/meta/inheritance_<wbr>specifier</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_modifier_invocation.html">ast/implementation/meta/modifier_<wbr>invocation</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_override_specifier.html">ast/implementation/meta/override_<wbr>specifier</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_parameter_list.html">ast/implementation/meta/parameter_<wbr>list</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_pragma_directive.html">ast/implementation/meta/pragma_<wbr>directive</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_source_unit.html">ast/implementation/meta/source_<wbr>unit</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_structured_documentation.html">ast/implementation/meta/structured_<wbr>documentation</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_meta_using_for_directive.html">ast/implementation/meta/using_<wbr>for_<wbr>directive</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement.html">ast/implementation/statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_block.html">ast/implementation/statement/block</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_break.html">ast/implementation/statement/break</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_continue.html">ast/implementation/statement/continue</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_do_while_statement.html">ast/implementation/statement/do_<wbr>while_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_emit_statement.html">ast/implementation/statement/emit_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_expression_statement.html">ast/implementation/statement/expression_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_for_statement.html">ast/implementation/statement/for_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_if_statement.html">ast/implementation/statement/if_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_inline_assembly.html">ast/implementation/statement/inline_<wbr>assembly</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_placeholder_statement.html">ast/implementation/statement/placeholder_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_return.html">ast/implementation/statement/return</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_statement.html">ast/implementation/statement/statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_throw.html">ast/implementation/statement/throw</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_try_catch_clause.html">ast/implementation/statement/try_<wbr>catch_<wbr>clause</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_try_statement.html">ast/implementation/statement/try_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_unchecked_block.html">ast/implementation/statement/unchecked_<wbr>block</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_variable_declaration_statement.html">ast/implementation/statement/variable_<wbr>declaration_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_statement_while_statement.html">ast/implementation/statement/while_<wbr>statement</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type.html">ast/implementation/type</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type_array_type_name.html">ast/implementation/type/array_<wbr>type_<wbr>name</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type_elementary_type_name.html">ast/implementation/type/elementary_<wbr>type_<wbr>name</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type_function_type_name.html">ast/implementation/type/function_<wbr>type_<wbr>name</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type_mapping.html">ast/implementation/type/mapping</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type_type_name.html">ast/implementation/type/type_<wbr>name</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_implementation_type_user_defined_type_name.html">ast/implementation/type/user_<wbr>defined_<wbr>type_<wbr>name</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy.html">ast/legacy</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_array_type_name_processor.html">ast/legacy/array_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_assignment_processor.html">ast/legacy/assignment_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_binary_operation_processor.html">ast/legacy/binary_<wbr>operation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_block_processor.html">ast/legacy/block_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_conditional_processor.html">ast/legacy/conditional_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_configuration.html">ast/legacy/configuration</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_contract_definition_processor.html">ast/legacy/contract_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_do_while_statement_processor.html">ast/legacy/do_<wbr>while_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_elementary_type_name_expression_processor.html">ast/legacy/elementary_<wbr>type_<wbr>name_<wbr>expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_elementary_type_name_processor.html">ast/legacy/elementary_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_emit_statement_processor.html">ast/legacy/emit_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_enum_definition_processor.html">ast/legacy/enum_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_enum_value_processor.html">ast/legacy/enum_<wbr>value_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_event_definition_processor.html">ast/legacy/event_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_expression_processor.html">ast/legacy/expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_expression_statement_processor.html">ast/legacy/expression_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_for_statement_processor.html">ast/legacy/for_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_function_call_options_processor.html">ast/legacy/function_<wbr>call_<wbr>options_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_function_call_processor.html">ast/legacy/function_<wbr>call_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_function_definition_processor.html">ast/legacy/function_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_function_type_name_processor.html">ast/legacy/function_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_identifier_processor.html">ast/legacy/identifier_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_if_statement_processor.html">ast/legacy/if_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_import_directive_processor.html">ast/legacy/import_<wbr>directive_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_index_access_processor.html">ast/legacy/index_<wbr>access_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_index_range_access_processor.html">ast/legacy/index_<wbr>range_<wbr>access_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_inheritance_specifier_processor.html">ast/legacy/inheritance_<wbr>specifier_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_inline_assembly_processor.html">ast/legacy/inline_<wbr>assembly_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_literal_processor.html">ast/legacy/literal_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_mapping_processor.html">ast/legacy/mapping_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_member_access_processor.html">ast/legacy/member_<wbr>access_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_modifier_definition_processor.html">ast/legacy/modifier_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_modifier_invocation_processor.html">ast/legacy/modifier_<wbr>invocation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_new_expression_processor.html">ast/legacy/new_<wbr>expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_node_processor.html">ast/legacy/node_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_override_specifier_processor.html">ast/legacy/override_<wbr>specifier_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_parameter_list_processor.html">ast/legacy/parameter_<wbr>list_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_pragma_directive_processor.html">ast/legacy/pragma_<wbr>directive_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_return_processor.html">ast/legacy/return_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_source_unit_processor.html">ast/legacy/source_<wbr>unit_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_struct_definition_processor.html">ast/legacy/struct_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_structured_documentation_processor.html">ast/legacy/structured_<wbr>documentation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_try_catch_clause_processor.html">ast/legacy/try_<wbr>catch_<wbr>clause_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_try_statement_processor.html">ast/legacy/try_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_tuple_expression_processor.html">ast/legacy/tuple_<wbr>expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_type_name_processor.html">ast/legacy/type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_unary_operation_processor.html">ast/legacy/unary_<wbr>operation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_user_defined_type_name_processor.html">ast/legacy/user_<wbr>defined_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_using_for_directive_processor.html">ast/legacy/using_<wbr>for_<wbr>directive_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_variable_declaration_processor.html">ast/legacy/variable_<wbr>declaration_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_variable_declaration_statement_processor.html">ast/legacy/variable_<wbr>declaration_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_while_statement_processor.html">ast/legacy/while_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern.html">ast/modern</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_array_type_name_processor.html">ast/modern/array_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_assignment_processor.html">ast/modern/assignment_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_binary_operation_processor.html">ast/modern/binary_<wbr>operation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_block_processor.html">ast/modern/block_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_conditional_processor.html">ast/modern/conditional_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_configuration.html">ast/modern/configuration</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_contract_definition_processor.html">ast/modern/contract_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_do_while_statement_processor.html">ast/modern/do_<wbr>while_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_elementary_type_name_expression_processor.html">ast/modern/elementary_<wbr>type_<wbr>name_<wbr>expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_elementary_type_name_processor.html">ast/modern/elementary_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_emit_statement_processor.html">ast/modern/emit_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_enum_definition_processor.html">ast/modern/enum_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_enum_value_processor.html">ast/modern/enum_<wbr>value_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_event_definition_processor.html">ast/modern/event_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_expression_processor.html">ast/modern/expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_expression_statement_processor.html">ast/modern/expression_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_for_statement_processor.html">ast/modern/for_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_function_call_options_processor.html">ast/modern/function_<wbr>call_<wbr>options_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_function_call_processor.html">ast/modern/function_<wbr>call_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_function_definition_processor.html">ast/modern/function_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_function_type_name_processor.html">ast/modern/function_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_identifier_path_processor.html">ast/modern/identifier_<wbr>path_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_identifier_processor.html">ast/modern/identifier_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_if_statement_processor.html">ast/modern/if_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_import_directive_processor.html">ast/modern/import_<wbr>directive_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_index_access_processor.html">ast/modern/index_<wbr>access_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_index_range_access_processor.html">ast/modern/index_<wbr>range_<wbr>access_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_inheritance_specifier_processor.html">ast/modern/inheritance_<wbr>specifier_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_inline_assembly_processor.html">ast/modern/inline_<wbr>assembly_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_literal_processor.html">ast/modern/literal_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_mapping_processor.html">ast/modern/mapping_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_member_access_processor.html">ast/modern/member_<wbr>access_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_modifier_definition_processor.html">ast/modern/modifier_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_modifier_invocation_processor.html">ast/modern/modifier_<wbr>invocation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_new_expression_processor.html">ast/modern/new_<wbr>expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_node_processor.html">ast/modern/node_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_override_specifier_processor.html">ast/modern/override_<wbr>specifier_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_parameter_list_processor.html">ast/modern/parameter_<wbr>list_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_pragma_directive_processor.html">ast/modern/pragma_<wbr>directive_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_return_processor.html">ast/modern/return_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_source_unit_processor.html">ast/modern/source_<wbr>unit_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_struct_definition_processor.html">ast/modern/struct_<wbr>definition_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_structured_documentation_processor.html">ast/modern/structured_<wbr>documentation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_try_catch_clause_processor.html">ast/modern/try_<wbr>catch_<wbr>clause_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_try_statement_processor.html">ast/modern/try_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_tuple_expression_processor.html">ast/modern/tuple_<wbr>expression_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_type_name_processor.html">ast/modern/type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_unary_operation_processor.html">ast/modern/unary_<wbr>operation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_unchecked_block_processor.html">ast/modern/unchecked_<wbr>block_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_user_defined_type_name_processor.html">ast/modern/user_<wbr>defined_<wbr>type_<wbr>name_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_using_for_directive_processor.html">ast/modern/using_<wbr>for_<wbr>directive_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_variable_declaration_processor.html">ast/modern/variable_<wbr>declaration_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_variable_declaration_statement_processor.html">ast/modern/variable_<wbr>declaration_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_while_statement_processor.html">ast/modern/while_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_postprocessing.html">ast/postprocessing</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_postprocessing_mapping.html">ast/postprocessing/mapping</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_postprocessing_structured_documentation_reconstruction.html">ast/postprocessing/structured_<wbr>documentation_<wbr>reconstruction</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_utils.html">ast/utils</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_writing.html">ast/writing</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_writing_ast_mapping.html">ast/writing/ast_<wbr>mapping</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_writing_formatter.html">ast/writing/formatter</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_writing_writer.html">ast/writing/writer</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_writing_yul_mapping.html">ast/writing/yul_<wbr>mapping</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_xpath.html">ast/xpath</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/bin_compile.html">bin/compile</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/compile.html">compile</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/compile_compiler_selection.html">compile/compiler_<wbr>selection</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/compile_constants.html">compile/constants</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/compile_import_resolver.html">compile/import_<wbr>resolver</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/compile_utils.html">compile/utils</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/compile_version.html">compile/version</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/index.html">index</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/misc.html">misc</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/misc_location.html">misc/location</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
