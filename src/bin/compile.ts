@@ -26,6 +26,7 @@ import {
     VariableDeclaration,
     XPath
 } from "..";
+import { ASTNode, ASTSourceMapComputer } from "../ast";
 
 const cli = {
     boolean: [
@@ -292,6 +293,7 @@ OPTIONS:
 
     if (args.source) {
         const formatter = new PrettyFormatter(4, 0);
+        const srcComputer = new ASTSourceMapComputer();
         const writer = new ASTWriter(
             DefaultASTWriterMapping,
             formatter,
@@ -302,7 +304,18 @@ OPTIONS:
             console.log("// " + separator);
             console.log("// " + unit.absolutePath);
             console.log("// " + separator);
-            console.log(writer.write(unit));
+
+            const fragments = new Map<ASTNode, string>();
+            const source = writer.write(unit, fragments);
+            const srcMap = srcComputer.compute(unit, fragments);
+
+            for (const [node, coords] of srcMap.entries()) {
+                console.log(node.type + "#" + node.id + " -> " + node.src, coords);
+                console.log(fragments.get(node));
+                console.log();
+            }
+
+            console.log(source);
         }
 
         process.exit(0);
