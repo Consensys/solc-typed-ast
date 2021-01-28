@@ -134,11 +134,11 @@ export class ASTSourceMapComputer {
         return [startP + index, sourceN.length];
     }
 
-    compute(node: ASTNode, cache: Map<ASTNode, string>): Map<ASTNode, [number, number]> {
+    compute(node: ASTNode, fragments: Map<ASTNode, string>): Map<ASTNode, [number, number]> {
         const result = new Map<ASTNode, [number, number]>();
 
         node.walk((target) => {
-            result.set(target, this.computeNodeCoords(target, cache, result));
+            result.set(target, this.computeNodeCoords(target, fragments, result));
         });
 
         return result;
