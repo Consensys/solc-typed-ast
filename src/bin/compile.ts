@@ -4,9 +4,11 @@ import minimist from "minimist";
 import path from "path";
 import {
     ASTKind,
+    ASTNode,
     ASTNodeCallback,
     ASTNodeFormatter,
     ASTReader,
+    ASTSourceMapComputer,
     ASTWriter,
     CompileFailedError,
     compileJson,
@@ -26,7 +28,6 @@ import {
     VariableDeclaration,
     XPath
 } from "..";
-import { ASTNode, ASTSourceMapComputer } from "../ast";
 
 const cli = {
     boolean: [

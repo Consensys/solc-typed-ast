@@ -111,9 +111,13 @@ export class ASTSourceMapComputer {
     ): [number, number] {
         const parent = node.parent;
         const sourceN = this.getSourceFragment(node, fragments);
+        const lenN = sourceN.length;
 
+        /**
+         * If there is no parent, then it is a root.
+         */
         if (parent === undefined) {
-            return [0, sourceN.length];
+            return [0, lenN];
         }
 
         const sourceP = this.getSourceFragment(parent, fragments);
@@ -123,15 +127,20 @@ export class ASTSourceMapComputer {
 
         const sibling = node.previousSibling;
 
+        /**
+         * If there is a previous sibling, then shift searching offset
+         * to start looking just after the end of the previous sibling node.
+         * Then we will not have collisions for the equal code segments.
+         */
         if (sibling) {
             const [startS, lenS] = this.getPrecomputedCoords(sibling, computed);
 
             offset = startS + lenS - startP;
         }
 
-        const index = sourceP.indexOf(sourceN, offset);
+        const startN = startP + sourceP.indexOf(sourceN, offset);
 
-        return [startP + index, sourceN.length];
+        return [startN, lenN];
     }
 
     compute(node: ASTNode, fragments: Map<ASTNode, string>): Map<ASTNode, [number, number]> {
