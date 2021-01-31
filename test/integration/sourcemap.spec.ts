@@ -23,7 +23,7 @@ const cases: Array<[string, string]> = [
     ]
 ];
 
-describe("SourceMapComputer", () => {
+describe("ASTSourceMapComputer", () => {
     for (const [fileName, sample] of cases) {
         describe(fileName, () => {
             let units: SourceUnit[];
@@ -43,7 +43,7 @@ describe("SourceMapComputer", () => {
                 expect(units.length).toBeGreaterThan(0);
             });
 
-            it(`Verified by sample ${sample}`, () => {
+            it(`Matches expected output sample "${sample}"`, () => {
                 const sourceMapComputer = new ASTSourceMapComputer();
                 const formatter = new PrettyFormatter(4, 0);
                 const writer = new ASTWriter(DefaultASTWriterMapping, formatter, compilerVersion);
