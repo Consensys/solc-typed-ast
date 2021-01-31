@@ -28,7 +28,6 @@ export const options = [
     "with-sources",
     "tree",
     "source",
-    "with-source-map",
     "xpath",
     "depth"
 ];
