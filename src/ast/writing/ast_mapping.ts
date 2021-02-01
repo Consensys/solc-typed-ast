@@ -247,6 +247,20 @@ class IndexRangeAccessWriter implements ASTNodeWriter {
     }
 }
 
+/**
+ * Determine if a given unary/binary/conditional expression needs to be surrounded
+ * by parenthesis to clarify order of evaluation.
+ *
+ * @param e - expression
+ */
+function needsParenthesis(e: UnaryOperation | BinaryOperation | Conditional): boolean {
+    return (
+        e.parent instanceof UnaryOperation ||
+        e.parent instanceof BinaryOperation ||
+        e.parent instanceof Conditional
+    );
+}
+
 class UnaryOperationWriter implements ASTNodeWriter {
     write(node: UnaryOperation, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
         const sub = writer.write(node.vSubExpression, fragments);
@@ -256,7 +270,8 @@ class UnaryOperationWriter implements ASTNodeWriter {
             return operator + " " + sub;
         }
 
-        return "(" + (node.prefix ? operator + sub : sub + operator) + ")";
+        const res = node.prefix ? operator + sub : sub + operator;
+        return needsParenthesis(node) ? "(" + res + ")" : res;
     }
 }
 
@@ -265,7 +280,8 @@ class BinaryOperationWriter implements ASTNodeWriter {
         const l = writer.write(node.vLeftExpression, fragments);
         const r = writer.write(node.vRightExpression, fragments);
 
-        return "(" + l + " " + node.operator + " " + r + ")";
+        const res = l + " " + node.operator + " " + r;
+        return needsParenthesis(node) ? "(" + res + ")" : res;
     }
 }
 
@@ -275,7 +291,8 @@ class ConditionalWriter implements ASTNodeWriter {
         const t = writer.write(node.vTrueExpression, fragments);
         const f = writer.write(node.vFalseExpression, fragments);
 
-        return "(" + c + " ? " + t + " : " + f + ")";
+        const res = c + " ? " + t + " : " + f;
+        return needsParenthesis(node) ? "(" + res + ")" : res;
     }
 }
 
@@ -324,7 +341,8 @@ class TupleExpressionWriter implements ASTNodeWriter {
 
 class ExpressionStatementWriter implements ASTNodeWriter {
     write(node: ExpressionStatement, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        return writer.write(node.vExpression, fragments) + ";";
+        const noSemi = node.parent instanceof ForStatement && node.parent.vLoopExpression === node;
+        return writer.write(node.vExpression, fragments) + (noSemi ? "" : ";");
     }
 }
 
@@ -336,13 +354,16 @@ class VariableDeclarationStatementWriter implements ASTNodeWriter {
     ): string {
         const declarations = this.getDeclarations(node, writer, fragments);
 
+        const noSemi =
+            node.parent instanceof ForStatement && node.parent.vInitializationExpression === node;
+
         if (node.vInitialValue) {
             const value = writer.write(node.vInitialValue, fragments);
 
-            return declarations + " = " + value + ";";
+            return declarations + " = " + value + (noSemi ? "" : ";");
         }
 
-        return declarations + ";";
+        return declarations + (noSemi ? "" : ";");
     }
 
     private getDeclarations(
@@ -413,10 +434,10 @@ class ForStatementWriter implements ASTNodeWriter {
          */
         const header = [
             node.vInitializationExpression
-                ? writer.write(node.vInitializationExpression, fragments).slice(0, -1)
+                ? writer.write(node.vInitializationExpression, fragments)
                 : "",
             node.vCondition ? writer.write(node.vCondition, fragments) : "",
-            node.vLoopExpression ? writer.write(node.vLoopExpression, fragments).slice(0, -1) : ""
+            node.vLoopExpression ? writer.write(node.vLoopExpression, fragments) : ""
         ];
 
         return "for (" + header.join("; ") + ") " + body;

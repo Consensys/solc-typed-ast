@@ -1,4 +1,5 @@
 import { ASTNode, ASTNodeConstructor } from "../ast_node";
+import { Statement } from "../implementation/statement";
 import { YulNode } from "../implementation/statement/inline_assembly";
 import { SourceFormatter } from "./formatter";
 
@@ -111,7 +112,10 @@ export class ASTSourceMapComputer {
     ): [number, number] {
         const parent = node.parent;
         const sourceN = this.getSourceFragment(node, fragments);
-        const lenN = sourceN.length;
+        const lenN =
+            node instanceof Statement && sourceN.endsWith(";")
+                ? sourceN.length - 1
+                : sourceN.length;
 
         /**
          * If there is no parent, then it is a root.
