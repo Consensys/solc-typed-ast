@@ -73,8 +73,20 @@ import {
     UserDefinedTypeName
 } from "../implementation/type";
 import { SourceFormatter } from "./formatter";
-import { ASTNodeWriter, ASTWriter, YulWriter } from "./writer";
+import { ASTNodeWriter, ASTWriter, SrcRangeMap, WriteManyArgs, YulWriter } from "./writer";
 import { DefaultYulWriterMapping } from "./yul_mapping";
+
+function flatJoin<T1, T2>(arr: T1[], join: T2): Array<T1 | T2> {
+    const res: Array<T1 | T2> = [];
+    for (let i = 0; i < arr.length; i++) {
+        res.push(arr[i]);
+        if (i != arr.length - 1) {
+            res.push(join);
+        }
+    }
+
+    return res;
+}
 
 class ElementaryTypeNameWriter implements ASTNodeWriter {
     write(node: ElementaryTypeName, writer: ASTWriter): string {
@@ -95,32 +107,25 @@ class ElementaryTypeNameWriter implements ASTNodeWriter {
 }
 
 class ArrayTypeNameWriter implements ASTNodeWriter {
-    write(node: ArrayTypeName, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const baseType = writer.write(node.vBaseType, fragments);
-
+    write(node: ArrayTypeName, writer: ASTWriter, srcM: SrcRangeMap): string {
         if (node.vLength) {
-            const length = writer.write(node.vLength, fragments);
-
-            return baseType + "[" + length + "]";
+            return writer.writeMany(srcM, node.vBaseType, "[", node.vLength, "]");
         }
 
-        return baseType + "[]";
+        return writer.writeMany(srcM, node.vBaseType, "[]");
     }
 }
 
 class MappingTypeNameWriter implements ASTNodeWriter {
-    write(node: Mapping, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const k = writer.write(node.vKeyType, fragments);
-        const v = writer.write(node.vValueType, fragments);
-
-        return "mapping(" + k + " => " + v + ")";
+    write(node: Mapping, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(srcM, "mapping(", node.vKeyType, " => ", node.vValueType, "+");
     }
 }
 
 class UserDefinedTypeNameWriter implements ASTNodeWriter {
-    write(node: UserDefinedTypeName, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: UserDefinedTypeName, writer: ASTWriter, srcM: SrcRangeMap): string {
         if (node.path) {
-            return writer.write(node.path, fragments);
+            return writer.write(node.path, srcM);
         }
 
         if (node.name === undefined) {
@@ -140,21 +145,18 @@ class IdentifierPathWriter implements ASTNodeWriter {
 }
 
 class FunctionTypeNameWriter implements ASTNodeWriter {
-    write(node: FunctionTypeName, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const args = writer.write(node.vParameterTypes, fragments);
-        const result = ["function" + args, node.visibility];
+    write(node: FunctionTypeName, writer: ASTWriter, srcM: SrcRangeMap): string {
+        const elements = ["function ", node.vParameterTypes, ` ${node.visibility}`];
 
         if (node.stateMutability !== FunctionStateMutability.NonPayable) {
-            result.push(node.stateMutability);
+            elements.push(" " + node.stateMutability);
         }
 
         if (node.vReturnParameterTypes.vParameters.length) {
-            const rets = writer.write(node.vReturnParameterTypes, fragments);
-
-            result.push("returns", rets);
+            elements.push(` returns `, node.vReturnParameterTypes);
         }
 
-        return result.join(" ");
+        return writer.writeMany(srcM, ...elements);
     }
 }
 
@@ -189,61 +191,55 @@ class IdentifierWriter implements ASTNodeWriter {
 }
 
 class FunctionCallOptionsWriter implements ASTNodeWriter {
-    write(node: FunctionCallOptions, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const expr = writer.write(node.vExpression, fragments);
-        const options: string[] = [];
+    write(node: FunctionCallOptions, writer: ASTWriter, srcM: SrcRangeMap): string {
+        const elements: WriteManyArgs = [node.vExpression, "{"];
 
         for (const [name, value] of node.vOptionsMap.entries()) {
-            options.push(name + ": " + writer.write(value, fragments));
+            elements.push(name, ": ", value);
         }
 
-        return expr + "{" + options.join(", ") + "}";
+        elements.push("}");
+
+        return writer.writeMany(srcM, ...elements);
     }
 }
 
 class FunctionCallWriter implements ASTNodeWriter {
-    write(node: FunctionCall, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const expr = writer.write(node.vExpression, fragments);
+    write(node: FunctionCall, writer: ASTWriter, srcM: SrcRangeMap): string {
+        const elements: WriteManyArgs = [
+            node.vExpression,
+            "(",
+            ...flatJoin(node.vArguments, ", "),
+            ")"
+        ];
 
-        if (node.vArguments.length) {
-            const args = node.vArguments.map((arg) => writer.write(arg, fragments));
-
-            return expr + "(" + args.join(", ") + ")";
-        }
-
-        return expr + "()";
+        return writer.writeMany(srcM, ...elements);
     }
 }
 
 class MemberAccessWriter implements ASTNodeWriter {
-    write(node: MemberAccess, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const expr = writer.write(node.vExpression, fragments);
-
-        return expr + "." + node.memberName;
+    write(node: MemberAccess, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(srcM, node.vExpression, `.${node.memberName}`);
     }
 }
 
 class IndexAccessWriter implements ASTNodeWriter {
-    write(node: IndexAccess, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const base = writer.write(node.vBaseExpression, fragments);
-
-        if (node.vIndexExpression) {
-            const index = writer.write(node.vIndexExpression, fragments);
-
-            return base + "[" + index + "]";
-        }
-
-        return base + "[]";
+    write(node: IndexAccess, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(srcM, ...[node.vBaseExpression, "[", node.vIndexExpression, "]"]);
     }
 }
 
 class IndexRangeAccessWriter implements ASTNodeWriter {
-    write(node: IndexRangeAccess, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const base = writer.write(node.vBaseExpression, fragments);
-        const start = node.vStartExpression ? writer.write(node.vStartExpression, fragments) : "";
-        const end = node.vEndExpression ? writer.write(node.vEndExpression, fragments) : "";
-
-        return base + "[" + start + ":" + end + "]";
+    write(node: IndexRangeAccess, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(
+            srcM,
+            node.vBaseExpression,
+            "[",
+            node.vStartExpression,
+            ":",
+            node.vEndExpression,
+            "]"
+        );
     }
 }
 
@@ -262,211 +258,215 @@ function needsParenthesis(e: UnaryOperation | BinaryOperation | Conditional): bo
 }
 
 class UnaryOperationWriter implements ASTNodeWriter {
-    write(node: UnaryOperation, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const sub = writer.write(node.vSubExpression, fragments);
-        const operator = node.operator;
-
-        if (operator === "delete") {
-            return operator + " " + sub;
+    write(node: UnaryOperation, writer: ASTWriter, srcM: SrcRangeMap): string {
+        if (node.operator === "delete") {
+            return writer.writeMany(srcM, "delete ", node.vSubExpression);
         }
 
-        const res = node.prefix ? operator + sub : sub + operator;
-        return needsParenthesis(node) ? "(" + res + ")" : res;
+        const elements: WriteManyArgs = [node.vSubExpression];
+        if (node.prefix) {
+            elements.unshift(node.operator);
+        } else {
+            elements.push(node.operator);
+        }
+
+        if (needsParenthesis(node)) {
+            elements.unshift("(");
+            elements.push(")");
+        }
+
+        return writer.writeMany(srcM, ...elements);
     }
 }
 
 class BinaryOperationWriter implements ASTNodeWriter {
-    write(node: BinaryOperation, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const l = writer.write(node.vLeftExpression, fragments);
-        const r = writer.write(node.vRightExpression, fragments);
+    write(node: BinaryOperation, writer: ASTWriter, srcM: SrcRangeMap): string {
+        const elements: WriteManyArgs = [
+            node.vLeftExpression,
+            ` ${node.operator} `,
+            node.vRightExpression
+        ];
 
-        const res = l + " " + node.operator + " " + r;
-        return needsParenthesis(node) ? "(" + res + ")" : res;
+        if (needsParenthesis(node)) {
+            elements.unshift("(");
+            elements.push(")");
+        }
+
+        return writer.writeMany(srcM, ...elements);
     }
 }
 
 class ConditionalWriter implements ASTNodeWriter {
-    write(node: Conditional, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const c = writer.write(node.vCondition, fragments);
-        const t = writer.write(node.vTrueExpression, fragments);
-        const f = writer.write(node.vFalseExpression, fragments);
+    write(node: Conditional, writer: ASTWriter, srcM: SrcRangeMap): string {
+        const elements: WriteManyArgs = [
+            node.vCondition,
+            " ? ",
+            node.vTrueExpression,
+            " : ",
+            node.vFalseExpression
+        ];
 
-        const res = c + " ? " + t + " : " + f;
-        return needsParenthesis(node) ? "(" + res + ")" : res;
+        if (needsParenthesis(node)) {
+            elements.unshift("(");
+            elements.push(")");
+        }
+
+        return writer.writeMany(srcM, ...elements);
     }
 }
 
 class AssignmentWriter implements ASTNodeWriter {
-    write(node: Assignment, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const l = writer.write(node.vLeftHandSide, fragments);
-        const r = writer.write(node.vRightHandSide, fragments);
-
-        return l + " " + node.operator + " " + r;
+    write(node: Assignment, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(
+            srcM,
+            node.vLeftHandSide,
+            ` ${node.operator} `,
+            node.vRightHandSide
+        );
     }
 }
 
 class ElementaryTypeNameExpressionWriter implements ASTNodeWriter {
-    write(
-        node: ElementaryTypeNameExpression,
-        writer: ASTWriter,
-        fragments: Map<ASTNode, string>
-    ): string {
-        return typeof node.typeName === "string"
-            ? node.typeName
-            : writer.write(node.typeName, fragments);
+    write(node: ElementaryTypeNameExpression, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(srcM, node.typeName);
     }
 }
 
 class NewExpressionWriter implements ASTNodeWriter {
-    write(node: NewExpression, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const expr = writer.write(node.vTypeName, fragments);
-
-        return "new " + expr;
+    write(node: NewExpression, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(srcM, "new ", node.vTypeName);
     }
 }
 
 class TupleExpressionWriter implements ASTNodeWriter {
-    write(node: TupleExpression, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const components = node.vOriginalComponents.map((c) =>
-            c ? writer.write(c, fragments) : ""
-        );
-
+    write(node: TupleExpression, writer: ASTWriter, srcM: SrcRangeMap): string {
         if (node.isInlineArray) {
-            return "[" + components.join(", ") + "]";
+            return writer.writeMany(srcM, "[", ...flatJoin(node.vOriginalComponents, ", "), "]");
         }
 
-        return "(" + components.join(", ") + ")";
+        return writer.writeMany(srcM, "(", ...flatJoin(node.vOriginalComponents, ", "), ")");
     }
 }
 
 class ExpressionStatementWriter implements ASTNodeWriter {
-    write(node: ExpressionStatement, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const noSemi = node.parent instanceof ForStatement && node.parent.vLoopExpression === node;
-        return writer.write(node.vExpression, fragments) + (noSemi ? "" : ";");
+    write(node: ExpressionStatement, writer: ASTWriter, srcM: SrcRangeMap): string {
+        const elements: WriteManyArgs = [node.vExpression];
+
+        if (!(node.parent instanceof ForStatement && node.parent.vLoopExpression === node)) {
+            elements.push(";");
+        }
+
+        return writer.writeMany(srcM, ...elements);
     }
 }
 
 class VariableDeclarationStatementWriter implements ASTNodeWriter {
-    write(
-        node: VariableDeclarationStatement,
-        writer: ASTWriter,
-        fragments: Map<ASTNode, string>
-    ): string {
-        const declarations = this.getDeclarations(node, writer, fragments);
+    write(node: VariableDeclarationStatement, writer: ASTWriter, srcM: SrcRangeMap): string {
+        const elements = this.getDeclarations(node);
 
         const noSemi =
             node.parent instanceof ForStatement && node.parent.vInitializationExpression === node;
 
         if (node.vInitialValue) {
-            const value = writer.write(node.vInitialValue, fragments);
-
-            return declarations + " = " + value + (noSemi ? "" : ";");
+            elements.push(" = ", node.vInitialValue);
         }
 
-        return declarations + (noSemi ? "" : ";");
+        if (!noSemi) {
+            elements.push(";");
+        }
+
+        return writer.writeMany(srcM, ...elements);
     }
 
-    private getDeclarations(
-        node: VariableDeclarationStatement,
-        writer: ASTWriter,
-        fragments: Map<ASTNode, string>
-    ): string {
+    private getDeclarations(node: VariableDeclarationStatement): WriteManyArgs {
         const assignments = node.assignments;
         const children = node.children;
 
         if (assignments.length < 2 || assignments.every((id) => id === null)) {
             const declaration = node.vDeclarations[0];
 
-            return declaration.vType === undefined
-                ? "var " + writer.write(declaration, fragments)
-                : writer.write(declaration, fragments);
+            return declaration.vType === undefined ? ["var " + declaration] : [declaration];
         }
+
+        const declarations: WriteManyArgs = flatJoin(
+            assignments.map((id) => {
+                if (id === null) {
+                    return "";
+                }
+
+                const declaration = children.find((c) => c.id === id);
+
+                if (!declaration) {
+                    throw new Error(
+                        `Unable to find assigned declaration ${id} in children of ${node.print()}`
+                    );
+                }
+
+                return declaration;
+            }),
+            ", "
+        );
+
+        const tuple: WriteManyArgs = ["(", ...declarations, ")"];
 
         const isUntyped = node.vDeclarations.every(
             (declaration) => declaration.vType === undefined
         );
+        if (isUntyped) tuple.unshift("var ");
 
-        const declarations = assignments.map((id) => {
-            if (id === null) {
-                return "";
-            }
-
-            const declaration = children.find((c) => c.id === id);
-
-            if (!declaration) {
-                throw new Error(
-                    `Unable to find assigned declaration ${id} in children of ${node.print()}`
-                );
-            }
-
-            return writer.write(declaration, fragments);
-        });
-
-        const tuple = "(" + declarations.join(", ") + ")";
-
-        return isUntyped ? "var " + tuple : tuple;
+        return tuple;
     }
 }
 
 class IfStatementWriter implements ASTNodeWriter {
-    write(node: IfStatement, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const condition = writer.write(node.vCondition, fragments);
-        const trueBody = writer.write(node.vTrueBody, fragments);
-
+    write(node: IfStatement, writer: ASTWriter, srcM: SrcRangeMap): string {
         if (node.vFalseBody) {
-            const falseBody = writer.write(node.vFalseBody, fragments);
-
-            return `if (${condition}) ${trueBody} else ${falseBody}`;
+            return writer.writeMany(
+                srcM,
+                "if (",
+                node.vCondition,
+                ") ",
+                node.vTrueBody,
+                " else ",
+                node.vFalseBody
+            );
         }
 
-        return `if (${condition}) ${trueBody}`;
+        return writer.writeMany(srcM, "if (", node.vCondition, ") ", node.vTrueBody);
     }
 }
 
 class ForStatementWriter implements ASTNodeWriter {
-    write(node: ForStatement, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const body = writer.write(node.vBody, fragments);
-
-        /**
-         * Special case: for initialization expression and loop post-expression
-         * statements trailing semicolons are removed, as `for` statement
-         * uses semicolons as section delimiters.
-         */
-        const header = [
-            node.vInitializationExpression
-                ? writer.write(node.vInitializationExpression, fragments)
-                : "",
-            node.vCondition ? writer.write(node.vCondition, fragments) : "",
-            node.vLoopExpression ? writer.write(node.vLoopExpression, fragments) : ""
-        ];
-
-        return "for (" + header.join("; ") + ") " + body;
+    write(node: ForStatement, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(
+            srcM,
+            "for (",
+            node.vInitializationExpression,
+            "; ",
+            node.vCondition,
+            "; ",
+            node.vLoopExpression,
+            ") ",
+            node.vBody
+        );
     }
 }
 
 class WhileStatementWriter implements ASTNodeWriter {
-    write(node: WhileStatement, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const condition = writer.write(node.vCondition, fragments);
-        const body = writer.write(node.vBody, fragments);
-
-        return "while (" + condition + ") " + body;
+    write(node: WhileStatement, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(srcM, "while (", node.vCondition, ") ", node.vBody);
     }
 }
 
 class DoWhileStatementWriter implements ASTNodeWriter {
-    write(node: DoWhileStatement, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const condition = writer.write(node.vCondition, fragments);
-        const body = writer.write(node.vBody, fragments);
-
-        return "do " + body + " while(" + condition + ");";
+    write(node: DoWhileStatement, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(srcM, "do ", node.vBody, " while(", node.vCondition, ");");
     }
 }
 
 class ReturnWriter implements ASTNodeWriter {
-    write(node: Return, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        return node.vExpression
-            ? "return " + writer.write(node.vExpression, fragments) + ";"
-            : "return;";
+    write(node: Return, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(srcM, "return ", node.vExpression, ";");
     }
 }
 
@@ -489,8 +489,8 @@ class ThrowWriter implements ASTNodeWriter {
 }
 
 class EmitStatementWriter implements ASTNodeWriter {
-    write(node: EmitStatement, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        return "emit " + writer.write(node.vEventCall, fragments) + ";";
+    write(node: EmitStatement, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(srcM, "emit ", node.vEventCall, ";");
     }
 }
 
@@ -523,28 +523,24 @@ class InlineAssemblyWriter implements ASTNodeWriter {
 }
 
 class TryCatchClauseWriter implements ASTNodeWriter {
-    write(node: TryCatchClause, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const body = writer.write(node.vBlock, fragments);
-        const args = node.vParameters ? writer.write(node.vParameters, fragments) : "";
-
+    write(node: TryCatchClause, writer: ASTWriter, srcM: SrcRangeMap): string {
+        // Success clause (always the first child of the try-catch after the call)
         if (node.previousSibling instanceof FunctionCall) {
-            if (args === "") {
-                return body;
+            if (node.vParameters === undefined || node.vParameters.vParameters.length === 0) {
+                return writer.writeMany(srcM, node.vBlock);
             }
 
-            return "returns " + args + " " + body;
+            return writer.writeMany(srcM, "returns ", node.vParameters, " ", node.vBlock);
         }
 
-        return "catch " + node.errorName + args + " " + body;
+        // Error clause
+        return writer.writeMany(srcM, "catch ", node.errorName, node.vParameters, " ", node.vBlock);
     }
 }
 
 class TryStatementWriter implements ASTNodeWriter {
-    write(node: TryStatement, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const call = writer.write(node.vExternalCall, fragments);
-        const clauses = node.vClauses.map((clause) => writer.write(clause, fragments));
-
-        return "try " + call + " " + clauses.join(" ");
+    write(node: TryStatement, writer: ASTWriter, srcM: SrcRangeMap): string {
+        return writer.writeMany(srcM, "try ", node.vExternalCall, " ", ...node.vClauses);
     }
 }
 
@@ -564,13 +560,13 @@ class StructuredDocumentationWriter implements ASTNodeWriter {
 }
 
 class VariableDeclarationWriter implements ASTNodeWriter {
-    write(node: VariableDeclaration, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        const declaration = this.getVariable(node, writer, fragments);
+    write(node: VariableDeclaration, writer: ASTWriter, srcM: SrcRangeMap): string {
+        const declaration = this.getVariable(node, writer, srcM);
 
         if (node.documentation) {
             const docs =
                 node.documentation instanceof StructuredDocumentation
-                    ? writer.write(node.documentation, fragments)
+                    ? writer.write(node.documentation, srcM)
                     : StructuredDocumentationWriter.render(node.documentation, writer.formatter);
 
             return docs + declaration;
@@ -579,96 +575,94 @@ class VariableDeclarationWriter implements ASTNodeWriter {
         return declaration;
     }
 
-    private getVariable(
-        node: VariableDeclaration,
-        writer: ASTWriter,
-        fragments: Map<ASTNode, string>
-    ): string {
+    private getVariable(node: VariableDeclaration, writer: ASTWriter, srcM: SrcRangeMap): string {
         if (node.vScope instanceof SourceUnit) {
-            return this.getUnitConstant(node, writer, fragments);
+            return this.getUnitConstant(node, writer, srcM);
         }
 
         return node.stateVariable
-            ? this.getStateVariable(node, writer, fragments)
-            : this.getLocalVariable(node, writer, fragments);
+            ? this.getStateVariable(node, writer, srcM)
+            : this.getLocalVariable(node, writer, srcM);
     }
 
     private getUnitConstant(
         node: VariableDeclaration,
         writer: ASTWriter,
-        fragments: Map<ASTNode, string>
+        srcM: SrcRangeMap
     ): string {
         if (!(node.vType && node.vValue && node.mutability === Mutability.Constant)) {
             throw new Error("Malformed unit-level constant variable: " + node.print());
         }
 
-        const type = writer.write(node.vType, fragments);
-        const value = writer.write(node.vValue, fragments);
-
-        return type + " " + node.mutability + " " + node.name + " = " + value;
+        return writer.writeMany(
+            srcM,
+            node.vType,
+            " ",
+            node.mutability,
+            " ",
+            node.name,
+            " = ",
+            node.vValue
+        );
     }
 
     private getStateVariable(
         node: VariableDeclaration,
         writer: ASTWriter,
-        fragments: Map<ASTNode, string>
+        srcM: SrcRangeMap
     ): string {
         if (!node.vType) {
             throw new Error("Unexpected untyped state variable: " + node.print());
         }
 
-        const result = [writer.write(node.vType, fragments)];
+        const elements: WriteManyArgs = [node.vType];
 
         if (node.visibility !== StateVariableVisibility.Default) {
-            result.push(node.visibility);
+            elements.push(" ", node.visibility);
         }
 
         if (node.mutability !== Mutability.Mutable) {
-            result.push(node.mutability);
+            elements.push(" ", node.mutability);
         }
 
         if (node.vOverrideSpecifier) {
-            result.push(writer.write(node.vOverrideSpecifier, fragments));
+            elements.push(" ", node.vOverrideSpecifier);
         }
 
-        result.push(node.name);
+        elements.push(" ", node.name);
 
         if (node.vValue) {
-            result.push("=", writer.write(node.vValue, fragments));
+            elements.push(" = ", node.vValue);
         }
 
-        return result.join(" ");
+        return writer.writeMany(srcM, ...elements);
     }
 
     private getLocalVariable(
         node: VariableDeclaration,
         writer: ASTWriter,
-        fragments: Map<ASTNode, string>
+        srcM: SrcRangeMap
     ): string {
-        const result = [];
-
-        if (node.vType) {
-            result.push(writer.write(node.vType, fragments));
-        }
+        const elements: WriteManyArgs = [node.vType];
 
         if (node.storageLocation !== DataLocation.Default) {
-            result.push(node.storageLocation);
+            elements.push(" ", node.storageLocation);
         }
 
         if (node.indexed) {
-            result.push("indexed");
+            elements.push(" ", "indexed");
         }
 
         if (node.name !== "") {
-            result.push(node.name);
+            elements.push(" ", node.name);
         }
 
-        return result.join(" ");
+        return writer.writeMany(srcM, ...elements);
     }
 }
 
 class ParameterListWriter implements ASTNodeWriter {
-    write(node: ParameterList, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: ParameterList, writer: ASTWriter, srcM: SrcRangeMap): string {
         const vars = node.vParameters.map((v) => writer.write(v, fragments));
 
         return "(" + vars.join(", ") + ")";
@@ -676,7 +670,7 @@ class ParameterListWriter implements ASTNodeWriter {
 }
 
 class BlockWriter implements ASTNodeWriter {
-    write(node: Block, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: Block, writer: ASTWriter, srcM: SrcRangeMap): string {
         if (node.children.length === 0) {
             return "{}";
         }
@@ -699,7 +693,7 @@ class BlockWriter implements ASTNodeWriter {
 }
 
 class UncheckedBlockWriter implements ASTNodeWriter {
-    write(node: UncheckedBlock, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: UncheckedBlock, writer: ASTWriter, srcM: SrcRangeMap): string {
         if (node.children.length === 0) {
             return "unchecked {}";
         }
@@ -722,7 +716,7 @@ class UncheckedBlockWriter implements ASTNodeWriter {
 }
 
 class EventDefinitionWriter implements ASTNodeWriter {
-    write(node: EventDefinition, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: EventDefinition, writer: ASTWriter, srcM: SrcRangeMap): string {
         const args = writer.write(node.vParameters, fragments);
         const definition = "event " + node.name + args + (node.anonymous ? " anonymous" : "") + ";";
 
@@ -740,15 +734,11 @@ class EventDefinitionWriter implements ASTNodeWriter {
 }
 
 class StructDefinitionWriter implements ASTNodeWriter {
-    write(node: StructDefinition, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: StructDefinition, writer: ASTWriter, srcM: SrcRangeMap): string {
         return "struct " + node.name + " " + this.getBody(node, writer, fragments);
     }
 
-    private getBody(
-        node: StructDefinition,
-        writer: ASTWriter,
-        fragments: Map<ASTNode, string>
-    ): string {
+    private getBody(node: StructDefinition, writer: ASTWriter, srcM: SrcRangeMap): string {
         if (node.vMembers.length === 0) {
             return "{}";
         }
@@ -770,7 +760,7 @@ class StructDefinitionWriter implements ASTNodeWriter {
 }
 
 class ModifierDefinitionWriter implements ASTNodeWriter {
-    write(node: ModifierDefinition, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: ModifierDefinition, writer: ASTWriter, srcM: SrcRangeMap): string {
         const header = this.getHeader(node, writer, fragments);
 
         if (node.vBody === undefined) {
@@ -782,11 +772,7 @@ class ModifierDefinitionWriter implements ASTNodeWriter {
         return header + " " + body;
     }
 
-    private getHeader(
-        node: ModifierDefinition,
-        writer: ASTWriter,
-        fragments: Map<ASTNode, string>
-    ): string {
+    private getHeader(node: ModifierDefinition, writer: ASTWriter, srcM: SrcRangeMap): string {
         const isGte06 = gte(writer.targetCompilerVersion, "0.6.0");
 
         const args = writer.write(node.vParameters, fragments);
@@ -818,7 +804,7 @@ class ModifierDefinitionWriter implements ASTNodeWriter {
 }
 
 class ModifierInvocationWriter implements ASTNodeWriter {
-    write(node: ModifierInvocation, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: ModifierInvocation, writer: ASTWriter, srcM: SrcRangeMap): string {
         const name = writer.write(node.vModifierName, fragments);
         const args = node.vArguments.map((arg) => writer.write(arg, fragments));
 
@@ -827,7 +813,7 @@ class ModifierInvocationWriter implements ASTNodeWriter {
 }
 
 class OverrideSpecifierWriter implements ASTNodeWriter {
-    write(node: OverrideSpecifier, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: OverrideSpecifier, writer: ASTWriter, srcM: SrcRangeMap): string {
         if (node.vOverrides.length) {
             const overrides = node.vOverrides.map((type) => writer.write(type, fragments));
 
@@ -839,7 +825,7 @@ class OverrideSpecifierWriter implements ASTNodeWriter {
 }
 
 class FunctionDefinitionWriter implements ASTNodeWriter {
-    write(node: FunctionDefinition, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: FunctionDefinition, writer: ASTWriter, srcM: SrcRangeMap): string {
         const header = this.getHeader(node, writer, fragments);
         const body = this.getBody(node, writer, fragments);
 
@@ -850,11 +836,7 @@ class FunctionDefinitionWriter implements ASTNodeWriter {
         return header + " " + body;
     }
 
-    private getHeader(
-        node: FunctionDefinition,
-        writer: ASTWriter,
-        fragments: Map<ASTNode, string>
-    ): string {
+    private getHeader(node: FunctionDefinition, writer: ASTWriter, srcM: SrcRangeMap): string {
         const isGte06 = gte(writer.targetCompilerVersion, "0.6.0");
         const isGte07 = gte(writer.targetCompilerVersion, "0.7.0");
 
@@ -921,14 +903,14 @@ class FunctionDefinitionWriter implements ASTNodeWriter {
     private getBody(
         node: FunctionDefinition,
         writer: ASTWriter,
-        fragments: Map<ASTNode, string>
+        srcM: SrcRangeMap
     ): string | undefined {
         return node.vBody ? writer.write(node.vBody, fragments) : undefined;
     }
 }
 
 class UsingForDirectiveWriter implements ASTNodeWriter {
-    write(node: UsingForDirective, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: UsingForDirective, writer: ASTWriter, srcM: SrcRangeMap): string {
         const library = writer.write(node.vLibraryName, fragments);
         const type = node.vTypeName ? writer.write(node.vTypeName, fragments) : "*";
 
@@ -943,15 +925,11 @@ class EnumValueWriter implements ASTNodeWriter {
 }
 
 class EnumDefinitionWriter implements ASTNodeWriter {
-    write(node: EnumDefinition, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: EnumDefinition, writer: ASTWriter, srcM: SrcRangeMap): string {
         return "enum " + node.name + " " + this.getBody(node, writer, fragments);
     }
 
-    private getBody(
-        node: EnumDefinition,
-        writer: ASTWriter,
-        fragments: Map<ASTNode, string>
-    ): string {
+    private getBody(node: EnumDefinition, writer: ASTWriter, srcM: SrcRangeMap): string {
         const values = node.vMembers.map((v) => writer.write(v, fragments));
 
         return "{ " + values.join(", ") + " }";
@@ -959,7 +937,7 @@ class EnumDefinitionWriter implements ASTNodeWriter {
 }
 
 class InheritanceSpecifierWriter implements ASTNodeWriter {
-    write(node: InheritanceSpecifier, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: InheritanceSpecifier, writer: ASTWriter, srcM: SrcRangeMap): string {
         const name = writer.write(node.vBaseType, fragments);
 
         if (node.vArguments.length) {
@@ -973,18 +951,14 @@ class InheritanceSpecifierWriter implements ASTNodeWriter {
 }
 
 class ContractDefinitionWriter implements ASTNodeWriter {
-    write(node: ContractDefinition, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: ContractDefinition, writer: ASTWriter, srcM: SrcRangeMap): string {
         const header = this.getHeader(node, writer, fragments);
         const body = this.getBody(node, writer, fragments);
 
         return header + " " + body;
     }
 
-    private getHeader(
-        node: ContractDefinition,
-        writer: ASTWriter,
-        fragments: Map<ASTNode, string>
-    ): string {
+    private getHeader(node: ContractDefinition, writer: ASTWriter, srcM: SrcRangeMap): string {
         const result = [];
 
         if (gte(writer.targetCompilerVersion, "0.6.0") && node.abstract) {
@@ -1012,11 +986,7 @@ class ContractDefinitionWriter implements ASTNodeWriter {
         return result.join(" ");
     }
 
-    private getBody(
-        node: ContractDefinition,
-        writer: ASTWriter,
-        fragments: Map<ASTNode, string>
-    ): string {
+    private getBody(node: ContractDefinition, writer: ASTWriter, srcM: SrcRangeMap): string {
         const formatter = writer.formatter;
 
         const wrap = formatter.renderWrap();
@@ -1097,7 +1067,7 @@ class PragmaDirectiveWriter implements ASTNodeWriter {
 }
 
 class SourceUnitWriter implements ASTNodeWriter {
-    write(node: SourceUnit, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
+    write(node: SourceUnit, writer: ASTWriter, srcM: SrcRangeMap): string {
         const wrap = writer.formatter.renderWrap();
 
         const writeFn = (n: ASTNode) => writer.write(n, fragments);

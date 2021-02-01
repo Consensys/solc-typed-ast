@@ -7,8 +7,12 @@ export interface YulNodeWriter {
     write(node: YulNode, writer: YulWriter): string;
 }
 
+export type SrcRangeMap = Map<ASTNode, [number, number]>;
+export type WriteManyArgs = Array<string | ASTNode | undefined>;
+export type SrcDesc = Array<string | [ASTNode, any[]]>;
+
 export interface ASTNodeWriter {
-    write(node: ASTNode, writer: ASTWriter, cache: Map<ASTNode, string>): string;
+    write(node: ASTNode, writer: ASTWriter, cache: SrcRangeMap): string;
 }
 
 export class YulWriter {
@@ -48,21 +52,11 @@ export class ASTWriter {
         this.targetCompilerVersion = targetCompilerVersion;
     }
 
-    write(node: ASTNode, fragments = new Map<ASTNode, string>()): string {
-        const result = fragments.get(node);
-
-        if (result !== undefined) {
-            return result;
-        }
-
+    write(node: ASTNode, fragments = new Map<ASTNode, [number, number]>()): string {
         const writer = this.mapping.get(node.constructor as ASTNodeConstructor<ASTNode>);
 
         if (writer) {
-            const result = writer.write(node, this, fragments);
-
-            fragments.set(node, result);
-
-            return result;
+            return writer.write(node, this, fragments);
         }
 
         if (node instanceof ASTNode) {
@@ -72,6 +66,40 @@ export class ASTWriter {
         const data = JSON.stringify(node, undefined, 4);
 
         throw new Error("Expected an instance of ASTNode but got following: " + data);
+    }
+
+    desc(node: ASTNode): SrcDesc {
+        const writer = this.mapping.get(node.constructor as ASTNodeConstructor<ASTNode>);
+
+        if (writer) {
+            return writer.write(node, this, fragments);
+        }
+
+        if (node instanceof ASTNode) {
+            throw new Error("Unable to find writer for AST node: " + node.print());
+        }
+
+        const data = JSON.stringify(node, undefined, 4);
+
+        throw new Error("Expected an instance of ASTNode but got following: " + data);
+    }
+
+    writeMany(srcM: SrcRangeMap, ...args: Array<string | ASTNode | undefined | null>): string {
+        let res = "";
+        for (const arg of args) {
+            if (arg === null || arg === undefined) {
+                // nothing to do...
+            } else if (typeof arg === "string") {
+                res += arg;
+            } else {
+                const nodeStr = this.write(arg, srcM);
+                const nodeOff = res.length;
+                const nodeLen = nodeStr.length;
+                srcM.set(arg, [nodeOff, nodeLen]);
+                res += nodeStr;
+            }
+        }
+        return res;
     }
 }
 
