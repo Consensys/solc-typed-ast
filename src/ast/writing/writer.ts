@@ -93,9 +93,9 @@ export class ASTSourceMapComputer {
 
     private getPrecomputedCoords(
         node: ASTNode,
-        computed: Map<ASTNode, [number, number]>
+        ranges: Map<ASTNode, [number, number]>
     ): [number, number] {
-        const coordinates = computed.get(node);
+        const coordinates = ranges.get(node);
 
         if (coordinates === undefined) {
             throw new Error("Missing precomputed coordinates for the node " + node.print());
@@ -106,22 +106,23 @@ export class ASTSourceMapComputer {
 
     private computeNodeCoords(
         node: ASTNode,
+        root: ASTNode,
         fragments: Map<ASTNode, string>,
-        computed: Map<ASTNode, [number, number]>
+        ranges: Map<ASTNode, [number, number]>
     ): [number, number] {
-        const parent = node.parent;
+        const parent = node === root ? undefined : node.parent;
         const sourceN = this.getSourceFragment(node, fragments);
         const lenN = sourceN.length;
 
         /**
-         * If there is no parent, then it is a root.
+         * If there is no parent, then it is a root node.
          */
         if (parent === undefined) {
             return [0, lenN];
         }
 
         const sourceP = this.getSourceFragment(parent, fragments);
-        const [startP] = this.getPrecomputedCoords(parent, computed);
+        const [startP] = this.getPrecomputedCoords(parent, ranges);
 
         let offset = 0;
 
@@ -133,7 +134,7 @@ export class ASTSourceMapComputer {
          * Then we will not have collisions for the equal code segments.
          */
         if (sibling) {
-            const [startS, lenS] = this.getPrecomputedCoords(sibling, computed);
+            const [startS, lenS] = this.getPrecomputedCoords(sibling, ranges);
 
             offset = startS + lenS - startP;
         }
@@ -147,7 +148,7 @@ export class ASTSourceMapComputer {
         const result = new Map<ASTNode, [number, number]>();
 
         node.walk((target) => {
-            result.set(target, this.computeNodeCoords(target, fragments, result));
+            result.set(target, this.computeNodeCoords(target, node, fragments, result));
         });
 
         return result;
