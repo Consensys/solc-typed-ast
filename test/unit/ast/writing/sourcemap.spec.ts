@@ -2,7 +2,6 @@ import { assert } from "console";
 import {
     ASTNode,
     ASTReader,
-    ASTSourceMapComputer,
     ASTWriter,
     CompileResult,
     compileSol,
@@ -29,28 +28,12 @@ function readAST(
     return reader.read(compRes.data);
 }
 
-function writeAST(units: SourceUnit[], version: string): [string, Map<ASTNode, string>] {
+function writeAST(units: SourceUnit[], version: string): [string, Map<ASTNode, [number, number]>] {
     const formatter = new PrettyFormatter(4, 0);
     const writer = new ASTWriter(DefaultASTWriterMapping, formatter, version);
 
-    const fragments: Map<ASTNode, string> = new Map();
-    return [units.map((unit) => writer.write(unit, fragments)).join("\n"), fragments];
-}
-
-function computeUnitsSourceMap(
-    units: SourceUnit[],
-    fragments: Map<ASTNode, string>
-): Map<ASTNode, [number, number]> {
-    const sourceMapComputer = new ASTSourceMapComputer();
-    const unitSourceMaps = units.map((unit) => sourceMapComputer.compute(unit, fragments));
-    // Merge unit source maps
-    return unitSourceMaps.reduce((acc, cur) => {
-        for (const key of cur.keys()) {
-            assert(!acc.has(key));
-            acc.set(key, cur.get(key) as [number, number]);
-        }
-        return acc;
-    }, new Map<ASTNode, [number, number]>());
+    const srcM: Map<ASTNode, [number, number]> = new Map();
+    return [units.map((unit) => writer.write(unit, srcM)).join("\n"), srcM];
 }
 
 describe("Source mappings correct", () => {
@@ -70,8 +53,7 @@ describe("Source mappings correct", () => {
             const [canonicalSource] = writeAST(units, version);
 
             const canonUnits = readAST(file, version, canonicalSource);
-            const [canonicalSource2, fragments] = writeAST(canonUnits, version);
-            const computedSourceMap = computeUnitsSourceMap(canonUnits, fragments);
+            const [canonicalSource2, computedSourceMap] = writeAST(canonUnits, version);
 
             const getSlice = (start: number, len: number, str: string) =>
                 len < 20 ? str.slice(start, start + len) : str.slice(start, start + 17) + "...";
@@ -83,6 +65,13 @@ describe("Source mappings correct", () => {
                 for (const child of unit.getChildren(true)) {
                     const solcRngStart = child.sourceInfo.offset;
                     const solcRngLen = child.sourceInfo.length;
+
+                    if (!computedSourceMap.has(child)) {
+                        console.log(
+                            `Child ${child.constructor.name}#${child.id} missing from source map`
+                        );
+                        continue;
+                    }
 
                     const [compRngStart, compRngLen] = computedSourceMap.get(child) as [
                         number,
@@ -107,7 +96,7 @@ describe("Source mappings correct", () => {
                                 child.previousSibling?.constructor.name
                             }#${child.previousSibling?.id} ${
                                 child.previousSibling !== undefined
-                                    ? fragments.get(child.previousSibling)
+                                    ? computedSourceMap.get(child.previousSibling)
                                     : undefined
                             }`
                         );

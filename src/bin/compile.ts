@@ -8,7 +8,6 @@ import {
     ASTNodeCallback,
     ASTNodeFormatter,
     ASTReader,
-    ASTSourceMapComputer,
     ASTWriter,
     CompileFailedError,
     compileJson,
@@ -296,7 +295,6 @@ OPTIONS:
     }
 
     if (args.source) {
-        const sourceMapComputer = new ASTSourceMapComputer();
         const formatter = new PrettyFormatter(4, 0);
         const writer = new ASTWriter(
             DefaultASTWriterMapping,
@@ -305,13 +303,11 @@ OPTIONS:
         );
 
         for (const unit of units) {
-            const fragments = new Map<ASTNode, string>();
-            const source = writer.write(unit, fragments);
+            const sourceMap = new Map<ASTNode, [number, number]>();
+            const source = writer.write(unit, sourceMap);
 
             if (args["with-source-map"]) {
                 console.log(source);
-
-                const sourceMap = sourceMapComputer.compute(unit, fragments);
 
                 for (const [node, [offset, length]] of sourceMap.entries()) {
                     const nodeStr = node.type + "#" + node.id + " (" + node.src + ")";
