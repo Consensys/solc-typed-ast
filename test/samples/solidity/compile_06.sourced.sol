@@ -13,7 +13,7 @@ struct GlobalStruct {
 
 library SampleLibrary {
     function testSignedBaseExponentiation(int base, uint pow) public returns (int) {
-        return (base ** pow);
+        return base ** pow;
     }
 }
 

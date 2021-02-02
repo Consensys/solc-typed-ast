@@ -32,30 +32,30 @@ contract Simple {
 
     function testTimeUnits() public view returns (uint) {
         uint valid = 0;
-        if ((1 == 1 seconds)) (valid++);
-        if ((1 minutes == 60 seconds)) (valid++);
-        if ((1 hours == 60 minutes)) (valid++);
-        if ((1 days == 24 hours)) (valid++);
-        if ((1 weeks == 7 days)) (valid++);
-        if ((1 years == 365 days)) (valid++);
+        if (1 == 1 seconds) valid++;
+        if (1 minutes == 60 seconds) valid++;
+        if (1 hours == 60 minutes) valid++;
+        if (1 days == 24 hours) valid++;
+        if (1 weeks == 7 days) valid++;
+        if (1 years == 365 days) valid++;
         return valid;
     }
 
     function testControlStructures(int32 x) public {
-        if ((x == 1)) {
+        if (x == 1) {
             x += 1;
         } else {
             x += 2;
         }
-        ((x == 1) ? x += 1 : x += 2);
+        (x == 1) ? x += 1 : x += 2;
         x = 2;
-        while ((x < 10)) {
+        while (x < 10) {
             x += 1;
         }
-        for (uint y = 1; (y < 10); (y++)) {
-            if ((y == 4)) {
+        for (uint y = 1; y < 10; y++) {
+            if (y == 4) {
                 continue;
-            } else if ((y == 5)) {
+            } else if (y == 5) {
                 break;
             }
         }

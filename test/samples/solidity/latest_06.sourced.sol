@@ -19,7 +19,7 @@ struct GlobalStruct {
 ///  Contains testSignedBaseExponentiation()
 library SampleLibrary {
     function testSignedBaseExponentiation(int base, uint pow) public returns (int) {
-        return ((base ** pow));
+        return (base ** pow);
     }
 }
 
@@ -68,7 +68,7 @@ contract SampleBase is SampleAbstract(1) {
     ///  Modifier that requires `some` to be positive
     ///  before the function execution.
     modifier onlyPositiveSomeBefore() {
-        require((some > 0), "Failure");
+        require(some > 0, "Failure");
         _;
     }
 
@@ -88,10 +88,10 @@ contract SampleBase is SampleAbstract(1) {
     function internalCallback() internal pure {}
 
     function testMinMax() public {
-        assert((type(uint).min == 0));
-        assert((type(uint).max == 115792089237316195423570985008687907853269984665640564039457584007913129639935));
-        assert((type(int256).min == (-57896044618658097711785492504343953926634992332820282019728792003956564819968)));
-        assert((type(int256).max == 57896044618658097711785492504343953926634992332820282019728792003956564819967));
+        assert(type(uint).min == 0);
+        assert(type(uint).max == 115792089237316195423570985008687907853269984665640564039457584007913129639935);
+        assert(type(int256).min == (-57896044618658097711785492504343953926634992332820282019728792003956564819968));
+        assert(type(int256).max == 57896044618658097711785492504343953926634992332820282019728792003956564819967);
     }
 
     /// Interface ID (ERC-165)
@@ -120,8 +120,8 @@ contract SampleBase is SampleAbstract(1) {
     }
 
     function testGWei() public {
-        assert((1 gwei == 1000000000 wei));
-        assert((1 gwei == 0.001 szabo));
+        assert(1 gwei == 1000000000 wei);
+        assert(1 gwei == 0.001 szabo);
     }
 
     function basicFunctionality() internal onlyPositiveSomeBefore() returns (uint) {
@@ -162,7 +162,7 @@ contract CallDataUsage {
     uint[] internal values;
 
     function returnRow(uint[][] calldata rows, uint index) private pure returns (uint[] calldata) {
-        require((rows.length > index), "Rows does not contain index");
+        require(rows.length > index, "Rows does not contain index");
         uint[] calldata row = rows[index];
         return row;
     }
@@ -170,15 +170,15 @@ contract CallDataUsage {
     function addOwners(uint[][] calldata rows) public {
         uint[] calldata row = returnRow(rows, 0);
         checkUnique(row);
-        for (uint i = 0; (i < row.length); (i++)) {
+        for (uint i = 0; i < row.length; i++) {
             values.push(row[i]);
         }
     }
 
     function checkUnique(uint[] calldata newValues) internal pure {
-        for (uint i = 0; (i < newValues.length); (i++)) {
-            for (uint j = (i + 1); (i < newValues.length); (j++)) {
-                require((newValues[i] != newValues[i]));
+        for (uint i = 0; i < newValues.length; i++) {
+            for (uint j = i + 1; i < newValues.length; j++) {
+                require(newValues[i] != newValues[i]);
             }
         }
     }

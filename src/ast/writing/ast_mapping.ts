@@ -23,6 +23,7 @@ import {
     BinaryOperation,
     Conditional,
     ElementaryTypeNameExpression,
+    Expression,
     FunctionCall,
     FunctionCallOptions,
     Identifier,
@@ -75,6 +76,18 @@ import {
 import { SourceFormatter } from "./formatter";
 import { ASTNodeWriter, ASTWriter, YulWriter } from "./writer";
 import { DefaultYulWriterMapping } from "./yul_mapping";
+
+/**
+ * Determine if a given unary/binary/conditional expression needs to be surrounded
+ * by parenthesis to clarify order of evaluation.
+ */
+function needsParenthesis(e: Expression): boolean {
+    return (
+        e.parent instanceof UnaryOperation ||
+        e.parent instanceof BinaryOperation ||
+        e.parent instanceof Conditional
+    );
+}
 
 class ElementaryTypeNameWriter implements ASTNodeWriter {
     write(node: ElementaryTypeName, writer: ASTWriter): string {
@@ -256,7 +269,9 @@ class UnaryOperationWriter implements ASTNodeWriter {
             return operator + " " + sub;
         }
 
-        return "(" + (node.prefix ? operator + sub : sub + operator) + ")";
+        const result = node.prefix ? operator + sub : sub + operator;
+
+        return needsParenthesis(node) ? "(" + result + ")" : result;
     }
 }
 
@@ -265,7 +280,9 @@ class BinaryOperationWriter implements ASTNodeWriter {
         const l = writer.write(node.vLeftExpression, fragments);
         const r = writer.write(node.vRightExpression, fragments);
 
-        return "(" + l + " " + node.operator + " " + r + ")";
+        const result = l + " " + node.operator + " " + r;
+
+        return needsParenthesis(node) ? "(" + result + ")" : result;
     }
 }
 
@@ -275,7 +292,9 @@ class ConditionalWriter implements ASTNodeWriter {
         const t = writer.write(node.vTrueExpression, fragments);
         const f = writer.write(node.vFalseExpression, fragments);
 
-        return "(" + c + " ? " + t + " : " + f + ")";
+        const result = c + " ? " + t + " : " + f;
+
+        return needsParenthesis(node) ? "(" + result + ")" : result;
     }
 }
 
@@ -324,7 +343,16 @@ class TupleExpressionWriter implements ASTNodeWriter {
 
 class ExpressionStatementWriter implements ASTNodeWriter {
     write(node: ExpressionStatement, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
-        return writer.write(node.vExpression, fragments) + ";";
+        const result = writer.write(node.vExpression, fragments);
+
+        if (
+            node.parent instanceof ForStatement &&
+            (node.parent.vLoopExpression === node || node.parent.vInitializationExpression === node)
+        ) {
+            return result;
+        }
+
+        return result + ";";
     }
 }
 
@@ -334,15 +362,29 @@ class VariableDeclarationStatementWriter implements ASTNodeWriter {
         writer: ASTWriter,
         fragments: Map<ASTNode, string>
     ): string {
+        const result = this.getCleanStatement(node, writer, fragments);
+
+        if (node.parent instanceof ForStatement && node.parent.vInitializationExpression === node) {
+            return result;
+        }
+
+        return result + ";";
+    }
+
+    private getCleanStatement(
+        node: VariableDeclarationStatement,
+        writer: ASTWriter,
+        fragments: Map<ASTNode, string>
+    ): string {
         const declarations = this.getDeclarations(node, writer, fragments);
 
         if (node.vInitialValue) {
             const value = writer.write(node.vInitialValue, fragments);
 
-            return declarations + " = " + value + ";";
+            return declarations + " = " + value;
         }
 
-        return declarations + ";";
+        return declarations;
     }
 
     private getDeclarations(
@@ -406,17 +448,12 @@ class ForStatementWriter implements ASTNodeWriter {
     write(node: ForStatement, writer: ASTWriter, fragments: Map<ASTNode, string>): string {
         const body = writer.write(node.vBody, fragments);
 
-        /**
-         * Special case: for initialization expression and loop post-expression
-         * statements trailing semicolons are removed, as `for` statement
-         * uses semicolons as section delimiters.
-         */
         const header = [
             node.vInitializationExpression
-                ? writer.write(node.vInitializationExpression, fragments).slice(0, -1)
+                ? writer.write(node.vInitializationExpression, fragments)
                 : "",
             node.vCondition ? writer.write(node.vCondition, fragments) : "",
-            node.vLoopExpression ? writer.write(node.vLoopExpression, fragments).slice(0, -1) : ""
+            node.vLoopExpression ? writer.write(node.vLoopExpression, fragments) : ""
         ];
 
         return "for (" + header.join("; ") + ") " + body;

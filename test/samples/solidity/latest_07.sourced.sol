@@ -14,18 +14,18 @@ struct Job {
 uint constant SIZE = 2;
 
 function min(uint x, uint y) pure returns (uint) {
-    return ((x < y) ? x : y);
+    return (x < y) ? x : y;
 }
 
 function sum(uint[] storage items) view returns (uint s) {
-    for (uint i = 0; (i < items.length); (i++)) {
+    for (uint i = 0; i < items.length; i++) {
         s += items[i];
     }
 }
 
 library Lib {
     function add(uint a, uint b) internal pure returns (uint) {
-        return ((a + b));
+        return (a + b);
     }
 }
 
@@ -44,8 +44,8 @@ contract A {
     }
 
     function callFreeFunctions() public {
-        assert((min(1, 3) == 1));
-        assert((sum(nums) == 6));
+        assert(min(1, 3) == 1);
+        assert(sum(nums) == 6);
     }
 }
 
@@ -57,7 +57,7 @@ contract EventWithFuncParam {
     event Some(function(uint) external pure returns (uint) indexed fn);
 
     function x(uint a) public pure returns (uint b) {
-        b = (a * 10);
+        b = a * 10;
     }
 
     function verify() public {
@@ -76,8 +76,8 @@ contract Sample {
 contract DecodingContractType {
     function encode() internal returns (bytes memory) {
         Sample[] memory a = new Sample[](SIZE);
-        for (uint i = 0; (i < SIZE); (i++)) {
-            a[i] = new Sample((i * 10));
+        for (uint i = 0; i < SIZE; i++) {
+            a[i] = new Sample(i * 10);
         }
         return abi.encode(a);
     }
@@ -85,16 +85,16 @@ contract DecodingContractType {
     function verify() public {
         bytes memory data = encode();
         Sample[] memory a = abi.decode(data, (Sample[]));
-        assert((a.length == SIZE));
-        for (uint i = 0; (i < SIZE); (i++)) {
-            assert((a[i].v() == (i * 10)));
+        assert(a.length == SIZE);
+        for (uint i = 0; i < SIZE; i++) {
+            assert(a[i].v() == (i * 10));
         }
     }
 }
 
 contract Scheduler {
     function schedule(Job[] calldata _jobs) public {
-        for (uint i = 0; (i < _jobs.length); (i++)) {
+        for (uint i = 0; i < _jobs.length; i++) {
             executeJob(_jobs[i]);
         }
     }

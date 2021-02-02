@@ -10,7 +10,7 @@ import {
     LatestCompilerVersion,
     PrettyFormatter,
     SourceUnit
-} from "../../src";
+} from "../../../src";
 
 const cases: Array<[string, string]> = [
     [

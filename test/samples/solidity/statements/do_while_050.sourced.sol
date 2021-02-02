@@ -7,7 +7,7 @@ contract TestDoWhile {
     function doWhileWithExpression() public {
         int a = 0;
         int b = 10;
-        do (a + 5); while((a < b));
+        do a + 5; while(a < b);
     }
 
     function doWhileWithBlock() public {
@@ -16,6 +16,6 @@ contract TestDoWhile {
         do {
             a += 2;
             b -= 1;
-        } while((a < b));
+        } while(a < b);
     }
 }
