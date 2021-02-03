@@ -63,7 +63,7 @@ for (const fileName of cases) {
             expect(errData).toContain("");
         });
 
-        it("STDOUT produces correct bytecode", () => {
+        it("Written text compiles", () => {
             fse.writeFileSync("tmp.sol", outData, { encoding: "utf8" });
 
             const result = SolAstCompileExec("tmp.sol");
