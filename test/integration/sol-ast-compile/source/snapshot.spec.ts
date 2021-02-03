@@ -1,6 +1,6 @@
 import expect from "expect";
 import fse from "fs-extra";
-import { SolAstCompileCommand, SolAstCompileExec } from "./common";
+import { SolAstCompileCommand, SolAstCompileExec } from "../common";
 
 const cases: Array<[string, string]> = [
     [
@@ -68,14 +68,12 @@ for (const [fileName, sample] of cases) {
         let outData: string;
         let errData: string;
 
-        before((done) => {
+        before(() => {
             const result = SolAstCompileExec(...args);
 
             outData = result.stdout;
             errData = result.stderr;
             exitCode = result.status;
-
-            done();
         });
 
         it("Exit code is valid", () => {

@@ -93,6 +93,7 @@ for (const [sample, version] of samples) {
                         expect(node.type).toEqual("ParameterList");
                         expect((node as ParameterList).vParameters.length).toEqual(0);
                     });
+
                     continue;
                 }
 
@@ -116,22 +117,25 @@ for (const [sample, version] of samples) {
                     continue;
                 }
 
-                // Known edge cases where we differ from solc
-                if (compFragment !== solcFragment || compCoords !== solcCoords) {
-                    // payable typename
-                    if (
-                        (node instanceof ElementaryTypeNameExpression ||
-                            node instanceof ElementaryTypeName) &&
-                        compFragment === "payable" &&
-                        solcFragment === "payable("
-                    ) {
-                        continue;
-                    }
+                /**
+                 * Known edge cases where we differ from solc
+                 *
+                 * Edge-case with typecast to `address payable`
+                 */
+                if (
+                    (node instanceof ElementaryTypeNameExpression ||
+                        node instanceof ElementaryTypeName) &&
+                    compFragment === "payable" &&
+                    solcFragment === "payable("
+                ) {
+                    continue;
+                }
 
-                    // function typenames
-                    if (node instanceof FunctionTypeName) {
-                        continue;
-                    }
+                /**
+                 * Edge-case with function typenames
+                 */
+                if (node instanceof FunctionTypeName) {
+                    continue;
                 }
 
                 console.log(`------ Solc ------ [${solcCoords}]`);

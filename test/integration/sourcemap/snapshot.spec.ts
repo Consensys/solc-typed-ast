@@ -64,7 +64,6 @@ describe("Source map snapshot tests", () => {
 
                 const result = parts.join("\n") + "\n";
                 const expectation = fse.readFileSync(sample, { encoding: "utf-8" });
-                //fse.writeFileSync(sample, result, { encoding: "utf-8" });
 
                 expect(result).toEqual(expectation);
             });
