@@ -6,9 +6,14 @@ import {
     CompileResult,
     compileSol,
     compileSourceString,
+    ContractDefinition,
     DefaultASTWriterMapping,
+    EventDefinition,
+    FunctionDefinition,
+    ModifierDefinition,
     PrettyFormatter,
-    SourceUnit
+    SourceUnit,
+    VariableDeclaration
 } from "../../../../src";
 
 function readAST(
@@ -48,8 +53,21 @@ describe("Source mappings correct", () => {
     for (const [file, version] of samples) {
         it(`Check mappings of ${file}`, () => {
             // Read the file
-
             const units = readAST(file, version);
+            for (const unit of units) {
+                for (const child of unit.getChildren(true)) {
+                    if (
+                        child instanceof ContractDefinition ||
+                        child instanceof VariableDeclaration ||
+                        child instanceof FunctionDefinition ||
+                        child instanceof EventDefinition ||
+                        child instanceof ModifierDefinition
+                    ) {
+                        child.documentation = undefined;
+                    }
+                }
+            }
+
             const [canonicalSource] = writeAST(units, version);
 
             const canonUnits = readAST(file, version, canonicalSource);

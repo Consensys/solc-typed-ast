@@ -1,5 +1,9 @@
 pragma solidity ^0.5.0;
 
+/**
+ * A
+ *  B
+ */
 contract Simple {
     enum TestEnum {
         A,
@@ -31,6 +35,9 @@ contract Simple {
         c = TestStructB(TestStructA("x", 2, TestEnum.C), "b", 5, address(0x0));
     }
 
+    /// A
+    ///  B
+    ///   C
     function testTimeUnits() public pure returns (uint) {
         uint valid = 0;
 
