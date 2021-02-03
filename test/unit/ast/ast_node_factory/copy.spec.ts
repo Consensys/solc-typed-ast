@@ -176,7 +176,7 @@ describe("ASTNodeFactory.copy()", () => {
             id: 7,
             type: "FunctionDefinition",
             src: "0:0:0",
-            children: [override, parameters, returns, body],
+            children: [parameters, override, returns, body],
             raw: undefined,
 
             implemented: true,
@@ -205,8 +205,8 @@ describe("ASTNodeFactory.copy()", () => {
         props.children = clone.children;
 
         [
-            props.vOverrideSpecifier,
             props.vParameters,
+            props.vOverrideSpecifier,
             props.vReturnParameters,
             props.vBody
         ] = clone.children as [OverrideSpecifier, ParameterList, ParameterList, Block];

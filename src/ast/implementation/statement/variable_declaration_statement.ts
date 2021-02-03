@@ -13,7 +13,7 @@ export class VariableDeclarationStatement extends Statement {
      * An array of variable declarations,
      * e.g. `x` and `y` in `(uint x, uint y) = (1,2)` or `z` in `(uint z) = (1);`
      */
-    vDeclarations!: VariableDeclaration[];
+    vDeclarations: VariableDeclaration[];
 
     /**
      * The expression that is evaluated and assigned as an initial value

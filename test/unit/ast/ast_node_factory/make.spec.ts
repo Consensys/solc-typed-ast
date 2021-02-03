@@ -197,7 +197,7 @@ describe("ASTNodeFactory.make*()", () => {
             id: 7,
             type: "FunctionDefinition",
             src: "0:0:0",
-            children: [override, parameters, returns, body],
+            children: [parameters, override, returns, body],
             raw: undefined,
 
             implemented: true,

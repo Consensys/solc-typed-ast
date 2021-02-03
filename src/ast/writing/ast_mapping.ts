@@ -185,7 +185,7 @@ class IdentifierPathWriter extends ASTNodeWriter {
 
 class FunctionTypeNameWriter extends ASTNodeWriter {
     writeInt(node: FunctionTypeName, writer: ASTWriter): SrcDesc {
-        const elements = ["function ", node.vParameterTypes, ` ${node.visibility}`];
+        const elements = ["function", node.vParameterTypes, ` ${node.visibility}`];
 
         if (node.stateMutability !== FunctionStateMutability.NonPayable) {
             elements.push(" " + node.stateMutability);
@@ -542,7 +542,9 @@ class ForStatementWriter extends CompoundStatementWriter<ForStatement> {
     writeInt(node: ForStatement, writer: ASTWriter): SrcDesc {
         return writer.desc(
             "for (",
-            node.vInitializationExpression === undefined ? ";" : node.vInitializationExpression,
+            ...(node.vInitializationExpression === undefined
+                ? ["; "]
+                : [node.vInitializationExpression, " "]),
             node.vCondition,
             "; ",
             node.vLoopExpression,
@@ -566,7 +568,11 @@ class DoWhileStatementWriter extends SimpleStatementWriter<DoWhileStatement> {
 
 class ReturnWriter extends SimpleStatementWriter<Return> {
     writeInt(node: Return, writer: ASTWriter): SrcDesc {
-        return writer.desc("return ", node.vExpression);
+        if (node.vExpression) {
+            return writer.desc("return ", node.vExpression);
+        } else {
+            return ["return"];
+        }
     }
 }
 
@@ -634,7 +640,7 @@ class TryCatchClauseWriter extends ASTNodeWriter {
         }
 
         // Error clause
-        return writer.desc("catch ", node.errorName, node.vParameters, " ", node.vBlock);
+        return writer.desc(" catch ", node.errorName, node.vParameters, " ", node.vBlock);
     }
 }
 
@@ -881,7 +887,7 @@ class StructDefinitionWriter extends ASTNodeWriter {
 
 class ModifierDefinitionWriter extends DocumentedNodeWriter<ModifierDefinition> {
     writeInt(node: ModifierDefinition, writer: ASTWriter): SrcDesc {
-        const args: DescArgs = [node.documentation, "modifier ", node.name, " ", node.vParameters];
+        const args: DescArgs = ["modifier ", node.name, node.vParameters];
 
         if (gte(writer.targetCompilerVersion, "0.6.0")) {
             if (node.virtual) {
@@ -1081,7 +1087,7 @@ class ContractDefinitionWriter extends DocumentedNodeWriter<ContractDefinition> 
         }
 
         if (node.vModifiers.length) {
-            result.push(...flatJoin(node.vModifiers.map(writeLineFn), wrap));
+            result.push(...flatJoin(node.vModifiers.map(writeLineFn), wrap), wrap);
         }
 
         if (node.vFunctions.length) {
@@ -1142,7 +1148,7 @@ class SourceUnitWriter extends ASTNodeWriter {
         }
 
         if (node.vImportDirectives.length > 0) {
-            result.push(...flatten(node.vImportDirectives.map(writeLineFn)));
+            result.push(...flatten(node.vImportDirectives.map(writeLineFn)), wrap);
         }
 
         const typeDefs = node.vEnums.concat(node.vStructs);

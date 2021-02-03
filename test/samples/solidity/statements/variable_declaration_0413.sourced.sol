@@ -25,7 +25,7 @@ contract TestVariableDeclarationStatement {
         if (true) {
             string memory test = "test";
         }
-        for (int i = 0; (i < 5); (i++)) {
+        for (int i = 0; i < 5; i++) {
             string memory a = "";
         }
     }

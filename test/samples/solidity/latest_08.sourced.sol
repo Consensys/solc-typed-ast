@@ -10,7 +10,7 @@ contract UncheckedMathExample {
     function test() public pure returns (uint) {
         uint x = 0;
         unchecked {
-            (x--);
+            x--;
         }
         return x;
     }

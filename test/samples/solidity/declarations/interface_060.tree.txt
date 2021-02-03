@@ -46,10 +46,10 @@ SourceUnit #101 -> /test/samples/solidity/declarations/interface_060.sol
 |   |   |   |   |   |   |   Identifier #39
 |   |   |   |   |   |   |   Identifier #40
 |   |   FunctionDefinition #60 -> doA(uint256) [selector: 092f1b5f]
-|   |   |   OverrideSpecifier #49
 |   |   |   ParameterList #48
 |   |   |   |   VariableDeclaration #47 -> uint256 a
 |   |   |   |   |   ElementaryTypeName #46
+|   |   |   OverrideSpecifier #49
 |   |   |   ParameterList #52
 |   |   |   |   VariableDeclaration #51 -> uint256 r
 |   |   |   |   |   ElementaryTypeName #50
@@ -61,10 +61,10 @@ SourceUnit #101 -> /test/samples/solidity/declarations/interface_060.sol
 |   |   |   |   |   |   |   Identifier #54
 |   |   |   |   |   |   |   Literal #55
 |   |   FunctionDefinition #99 -> doB(uint256) [selector: 4b981cb5]
-|   |   |   OverrideSpecifier #64
 |   |   |   ParameterList #63
 |   |   |   |   VariableDeclaration #62 -> uint256 a
 |   |   |   |   |   ElementaryTypeName #61
+|   |   |   OverrideSpecifier #64
 |   |   |   ParameterList #67
 |   |   |   |   VariableDeclaration #66 -> uint256
 |   |   |   |   |   ElementaryTypeName #65

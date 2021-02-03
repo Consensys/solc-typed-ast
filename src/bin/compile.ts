@@ -4,7 +4,6 @@ import minimist from "minimist";
 import path from "path";
 import {
     ASTKind,
-    ASTNode,
     ASTNodeCallback,
     ASTNodeFormatter,
     ASTReader,
@@ -37,8 +36,7 @@ const cli = {
         "raw",
         "with-sources",
         "tree",
-        "source",
-        "with-source-map"
+        "source"
     ],
     number: ["depth"],
     string: ["mode", "compiler-version", "path-remapping", "xpath"],
@@ -94,8 +92,6 @@ OPTIONS:
                             source files content to the compiler artifact.
     --tree                  Print short tree of parent-child relations in AST.
     --source                Print source code, assembled from Solc-generated AST.
-    --with-source-map       When used with "source", adds source map coordinates
-                            for the written nodes.
     --xpath                 XPath selector to perform for each source unit.
     --depth                 Number of children for each of AST node to print.
                             Minimum value is 0. Not affects "raw", "tree" and "source".
@@ -303,24 +299,10 @@ OPTIONS:
         );
 
         for (const unit of units) {
-            const sourceMap = new Map<ASTNode, [number, number]>();
-            const source = writer.write(unit, sourceMap);
-
-            if (args["with-source-map"]) {
-                console.log(source);
-
-                for (const [node, [offset, length]] of sourceMap.entries()) {
-                    const nodeStr = node.type + "#" + node.id + " (" + node.src + ")";
-                    const coordsStr = offset + ":" + length + ":" + unit.sourceListIndex;
-
-                    console.log("// " + nodeStr + " -> " + coordsStr);
-                }
-            } else {
-                console.log("// " + separator);
-                console.log("// " + unit.absolutePath);
-                console.log("// " + separator);
-                console.log(source);
-            }
+            console.log("// " + separator);
+            console.log("// " + unit.absolutePath);
+            console.log("// " + separator);
+            console.log(writer.write(unit));
         }
 
         process.exit(0);
