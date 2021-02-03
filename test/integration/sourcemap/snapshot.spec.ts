@@ -22,7 +22,7 @@ const cases: Array<[string, string]> = [
     ]
 ];
 
-describe("ASTSourceMapComputer", () => {
+describe("Source map snapshot tests", () => {
     for (const [fileName, sample] of cases) {
         describe(fileName, () => {
             let units: SourceUnit[];
@@ -64,6 +64,7 @@ describe("ASTSourceMapComputer", () => {
 
                 const result = parts.join("\n") + "\n";
                 const expectation = fse.readFileSync(sample, { encoding: "utf-8" });
+                //fse.writeFileSync(sample, result, { encoding: "utf-8" });
 
                 expect(result).toEqual(expectation);
             });

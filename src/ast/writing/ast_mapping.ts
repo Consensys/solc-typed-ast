@@ -640,13 +640,13 @@ class TryCatchClauseWriter extends ASTNodeWriter {
         }
 
         // Error clause
-        return writer.desc(" catch ", node.errorName, node.vParameters, " ", node.vBlock);
+        return writer.desc("catch ", node.errorName, node.vParameters, " ", node.vBlock);
     }
 }
 
 class TryStatementWriter extends ASTNodeWriter {
     writeInt(node: TryStatement, writer: ASTWriter): SrcDesc {
-        return writer.desc("try ", node.vExternalCall, " ", ...node.vClauses);
+        return writer.desc("try ", node.vExternalCall, " ", ...join(node.vClauses, " "));
     }
 }
 
