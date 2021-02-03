@@ -2,15 +2,18 @@ import expect from "expect";
 import {
     ASTNode,
     ASTReader,
-    ASTSourceMapComputer,
     ASTWriter,
     compileSol,
     compileSourceString,
     ContractDefinition,
     DefaultASTWriterMapping,
+    ElementaryTypeName,
+    ElementaryTypeNameExpression,
     EventDefinition,
     FunctionDefinition,
+    FunctionTypeName,
     ModifierDefinition,
+    ParameterList,
     PrettyFormatter,
     SourceUnit,
     VariableDeclaration
@@ -27,33 +30,12 @@ function readAST(fileName: string, version: string, source?: string): SourceUnit
     return reader.read(result.data);
 }
 
-function writeAST(units: SourceUnit[], version: string): [string, Map<ASTNode, string>] {
+function writeAST(units: SourceUnit[], version: string): [string, Map<ASTNode, [number, number]>] {
     const formatter = new PrettyFormatter(4, 0);
     const writer = new ASTWriter(DefaultASTWriterMapping, formatter, version);
-    const fragments = new Map<ASTNode, string>();
+    const sourceMap = new Map<ASTNode, [number, number]>();
 
-    return [units.map((unit) => writer.write(unit, fragments)).join("\n"), fragments];
-}
-
-function computeUnitsSourceMap(
-    units: SourceUnit[],
-    fragments: Map<ASTNode, string>
-): Map<ASTNode, [number, number]> {
-    const sourceMapComputer = new ASTSourceMapComputer();
-    const unitSourceMaps = units.map((unit) => sourceMapComputer.compute(unit, fragments));
-
-    // Merge unit source maps
-    return unitSourceMaps.reduce((acc, cur) => {
-        for (const key of cur.keys()) {
-            if (acc.has(key)) {
-                throw new Error(`Key "${key}" is already set in target map`);
-            }
-
-            acc.set(key, cur.get(key) as [number, number]);
-        }
-
-        return acc;
-    }, new Map<ASTNode, [number, number]>());
+    return [units.map((unit) => writer.write(unit, sourceMap)).join("\n"), sourceMap];
 }
 
 function removeStructuredDocumentationNodes(units: SourceUnit[]): void {
@@ -81,7 +63,7 @@ const samples = [
     ["test/samples/solidity/compile_05.sol", "0.5.6"],
     ["test/samples/solidity/compile_06.sol", "0.6.1"],
     ["test/samples/solidity/latest_06.sol", "0.6.12"],
-    ["test/samples/solidity/latest_07.sol", "0.7.6"]
+    ["test/samples/solidity/latest_07_no_unicode.sol", "0.7.6"]
 ];
 
 for (const [sample, version] of samples) {
@@ -97,9 +79,7 @@ for (const [sample, version] of samples) {
         const [writtenSource] = writeAST(units, version);
 
         const writtenUnits = readAST(sample, version, writtenSource);
-        const [, fragments] = writeAST(writtenUnits, version);
-
-        const sourceMap = computeUnitsSourceMap(writtenUnits, fragments);
+        const [, sourceMap] = writeAST(writtenUnits, version);
 
         for (const unit of writtenUnits) {
             for (const node of unit.getChildren(true)) {
@@ -107,6 +87,14 @@ for (const [sample, version] of samples) {
 
                 const solcStart = sourceInfo.offset;
                 const solcLen = sourceInfo.length;
+
+                if (!sourceMap.has(node)) {
+                    it(`Missing node ${node.type}#${node.id} must be an empty parameter list`, () => {
+                        expect(node.type).toEqual("ParameterList");
+                        expect((node as ParameterList).vParameters.length).toEqual(0);
+                    });
+                    continue;
+                }
 
                 const [compStart, compLen] = sourceMap.get(node) as [number, number];
 
@@ -124,18 +112,36 @@ for (const [sample, version] of samples) {
                 const solcFragment = getSourceFragment(solcStart, solcLen, writtenSource);
                 const compFragment = getSourceFragment(compStart, compLen, writtenSource);
 
-                it(`Coordinates of ${node.type}#${node.id} are valid`, () => {
-                    if (compFragment !== solcFragment || compFragment !== solcFragment) {
-                        console.log(`------ Solc ------ [${solcCoords}]`);
-                        console.log(solcFragment);
-                        console.log(`---- Computed ---- [${compCoords}]`);
-                        console.log(compFragment);
-                        console.log("------------------");
+                if (compFragment === solcFragment && compCoords === solcCoords) {
+                    continue;
+                }
+
+                // Known edge cases where we differ from solc
+                if (compFragment !== solcFragment || compCoords !== solcCoords) {
+                    // payable typename
+                    if (
+                        (node instanceof ElementaryTypeNameExpression ||
+                            node instanceof ElementaryTypeName) &&
+                        compFragment === "payable" &&
+                        solcFragment === "payable("
+                    ) {
+                        continue;
                     }
 
-                    expect(compCoords).toEqual(solcCoords);
-                    expect(compFragment).toEqual(solcFragment);
-                });
+                    // function typenames
+                    if (node instanceof FunctionTypeName) {
+                        continue;
+                    }
+                }
+
+                console.log(`------ Solc ------ [${solcCoords}]`);
+                console.log(solcFragment);
+                console.log(`---- Computed ---- [${compCoords}]`);
+                console.log(compFragment);
+                console.log("------------------");
+
+                expect(compCoords).toEqual(solcCoords);
+                expect(compFragment).toEqual(solcFragment);
             }
         }
     });

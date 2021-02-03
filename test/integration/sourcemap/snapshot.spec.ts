@@ -3,7 +3,6 @@ import fse from "fs-extra";
 import {
     ASTNode,
     ASTReader,
-    ASTSourceMapComputer,
     ASTWriter,
     compileSol,
     DefaultASTWriterMapping,
@@ -23,7 +22,7 @@ const cases: Array<[string, string]> = [
     ]
 ];
 
-describe("ASTSourceMapComputer", () => {
+describe("Source map snapshot tests", () => {
     for (const [fileName, sample] of cases) {
         describe(fileName, () => {
             let units: SourceUnit[];
@@ -44,16 +43,14 @@ describe("ASTSourceMapComputer", () => {
             });
 
             it(`Matches expected output sample "${sample}"`, () => {
-                const sourceMapComputer = new ASTSourceMapComputer();
                 const formatter = new PrettyFormatter(4, 0);
                 const writer = new ASTWriter(DefaultASTWriterMapping, formatter, compilerVersion);
 
                 const parts = [];
 
                 for (const unit of units) {
-                    const fragments = new Map<ASTNode, string>();
-                    const source = writer.write(unit, fragments);
-                    const sourceMap = sourceMapComputer.compute(unit, fragments);
+                    const sourceMap = new Map<ASTNode, [number, number]>();
+                    const source = writer.write(unit, sourceMap);
 
                     parts.push(source);
 
@@ -67,6 +64,7 @@ describe("ASTSourceMapComputer", () => {
 
                 const result = parts.join("\n") + "\n";
                 const expectation = fse.readFileSync(sample, { encoding: "utf-8" });
+                //fse.writeFileSync(sample, result, { encoding: "utf-8" });
 
                 expect(result).toEqual(expectation);
             });
