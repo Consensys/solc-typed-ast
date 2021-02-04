@@ -1,20 +1,14 @@
-// ------------------------------------------------------------
-// /test/samples/solidity/latest_07.sol
-// ------------------------------------------------------------
 pragma solidity ^0.7.0;
 pragma abicoder v2;
 
-struct Job {
-    uint priority;
-    string name;
-    bool executed;
+library Lib {
+    function add(uint a, uint b) internal pure returns (uint) {
+        return (a + b);
+    }
 }
 
-/// @dev File-level constant feature
-uint constant SIZE = 2;
-
 function min(uint x, uint y) pure returns (uint) {
-    return (x < y) ? x : y;
+    return x < y ? x : y;
 }
 
 function sum(uint[] storage items) view returns (uint s) {
@@ -23,22 +17,15 @@ function sum(uint[] storage items) view returns (uint s) {
     }
 }
 
-library Lib {
-    function add(uint a, uint b) internal pure returns (uint) {
-        return (a + b);
-    }
-}
-
 contract A {
     using Lib for uint256;
 
-    uint[] internal nums = [1, 2, 3];
+    uint[] nums = [1, 2, 3];
 
     constructor() {}
 
     function testVariousStringLiterals() public {
         string memory a = "\u0000\u0001\u0002";
-        string memory b = unicode"😃";
         string memory c = hex"000102";
         bytes memory d = hex"ffcc33";
     }
@@ -54,9 +41,9 @@ contract B is A {
 }
 
 contract EventWithFuncParam {
-    event Some(function(uint) external pure returns (uint) indexed fn);
+    event Some(function(uint) pure external returns (uint) indexed fn);
 
-    function x(uint a) public pure returns (uint b) {
+    function x(uint a) pure public returns (uint b) {
         b = a * 10;
     }
 
@@ -64,6 +51,9 @@ contract EventWithFuncParam {
         emit Some(this.x);
     }
 }
+
+/// @dev File-level constant feature
+uint constant SIZE = 2;
 
 contract Sample {
     uint public v;
@@ -76,20 +66,31 @@ contract Sample {
 contract DecodingContractType {
     function encode() internal returns (bytes memory) {
         Sample[] memory a = new Sample[](SIZE);
+
         for (uint i = 0; i < SIZE; i++) {
             a[i] = new Sample(i * 10);
         }
+
         return abi.encode(a);
     }
 
     function verify() public {
         bytes memory data = encode();
+
         Sample[] memory a = abi.decode(data, (Sample[]));
+
         assert(a.length == SIZE);
+
         for (uint i = 0; i < SIZE; i++) {
-            assert(a[i].v() == (i * 10));
+            assert(a[i].v() == i * 10);
         }
     }
+}
+
+struct Job {
+    uint priority;
+    string name;
+    bool executed;
 }
 
 contract Scheduler {
@@ -105,10 +106,11 @@ contract Scheduler {
 }
 
 contract Proxy {
-    address internal target;
+    address target;
 
     fallback(bytes calldata _input) external returns (bytes memory) {
         (bool success, bytes memory result) = target.delegatecall(_input);
+
         if (success) {
             return result;
         } else {

@@ -581,7 +581,7 @@ SourceUnit #175
             vBody: Block #128
             context: ASTContext #1000
             parent: ContractDefinition #153
-            <getter> children: Array(4) [ ParameterList #124, ParameterList #125, ModifierInvocation #127, Block #128 ]
+            <getter> children: Array(4) [ ParameterList #124, ModifierInvocation #127, ParameterList #125, Block #128 ]
             <getter> vScope: ContractDefinition #153
             <getter> canonicalSignature: ""
             <getter> canonicalSignatureHash: ""
@@ -603,21 +603,6 @@ SourceUnit #175
                 <getter> firstChild: undefined
                 <getter> lastChild: undefined
                 <getter> previousSibling: undefined
-                <getter> nextSibling: ParameterList #125
-                <getter> root: SourceUnit #175
-                <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
-
-            ParameterList #125
-                id: 125
-                src: "0:0:0"
-                type: "ParameterList"
-                context: ASTContext #1000
-                parent: FunctionDefinition #129
-                <getter> vParameters: Array(0)
-                <getter> children: Array(0)
-                <getter> firstChild: undefined
-                <getter> lastChild: undefined
-                <getter> previousSibling: ParameterList #124
                 <getter> nextSibling: ModifierInvocation #127
                 <getter> root: SourceUnit #175
                 <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
@@ -634,8 +619,8 @@ SourceUnit #175
                 <getter> vModifier: ContractDefinition #95
                 <getter> firstChild: IdentifierPath #126
                 <getter> lastChild: IdentifierPath #126
-                <getter> previousSibling: ParameterList #125
-                <getter> nextSibling: Block #128
+                <getter> previousSibling: ParameterList #124
+                <getter> nextSibling: ParameterList #125
                 <getter> root: SourceUnit #175
                 <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
 
@@ -656,6 +641,21 @@ SourceUnit #175
                     <getter> root: SourceUnit #175
                     <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
 
+            ParameterList #125
+                id: 125
+                src: "0:0:0"
+                type: "ParameterList"
+                context: ASTContext #1000
+                parent: FunctionDefinition #129
+                <getter> vParameters: Array(0)
+                <getter> children: Array(0)
+                <getter> firstChild: undefined
+                <getter> lastChild: undefined
+                <getter> previousSibling: ModifierInvocation #127
+                <getter> nextSibling: Block #128
+                <getter> root: SourceUnit #175
+                <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
             Block #128
                 id: 128
                 src: "0:0:0"
@@ -666,7 +666,7 @@ SourceUnit #175
                 <getter> children: Array(0)
                 <getter> firstChild: undefined
                 <getter> lastChild: undefined
-                <getter> previousSibling: ModifierInvocation #127
+                <getter> previousSibling: ParameterList #125
                 <getter> nextSibling: undefined
                 <getter> root: SourceUnit #175
                 <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
@@ -952,16 +952,31 @@ SourceUnit #175
             vBody: Block #151
             context: ASTContext #1000
             parent: ContractDefinition #153
-            <getter> children: Array(4) [ OverrideSpecifier #148, ParameterList #143, ParameterList #146, Block #151 ]
+            <getter> children: Array(4) [ ParameterList #143, OverrideSpecifier #148, ParameterList #146, Block #151 ]
             <getter> vScope: ContractDefinition #153
             <getter> canonicalSignature: "some()"
             <getter> canonicalSignatureHash: "c03ee3d3"
-            <getter> firstChild: OverrideSpecifier #148
+            <getter> firstChild: ParameterList #143
             <getter> lastChild: Block #151
             <getter> previousSibling: FunctionDefinition #142
             <getter> nextSibling: undefined
             <getter> root: SourceUnit #175
             <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+            ParameterList #143
+                id: 143
+                src: "0:0:0"
+                type: "ParameterList"
+                context: ASTContext #1000
+                parent: FunctionDefinition #152
+                <getter> vParameters: Array(0)
+                <getter> children: Array(0)
+                <getter> firstChild: undefined
+                <getter> lastChild: undefined
+                <getter> previousSibling: undefined
+                <getter> nextSibling: OverrideSpecifier #148
+                <getter> root: SourceUnit #175
+                <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
 
             OverrideSpecifier #148
                 id: 148
@@ -973,8 +988,8 @@ SourceUnit #175
                 <getter> children: Array(1) [ IdentifierPath #147 ]
                 <getter> firstChild: IdentifierPath #147
                 <getter> lastChild: IdentifierPath #147
-                <getter> previousSibling: undefined
-                <getter> nextSibling: ParameterList #143
+                <getter> previousSibling: ParameterList #143
+                <getter> nextSibling: ParameterList #146
                 <getter> root: SourceUnit #175
                 <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
 
@@ -995,21 +1010,6 @@ SourceUnit #175
                     <getter> root: SourceUnit #175
                     <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
 
-            ParameterList #143
-                id: 143
-                src: "0:0:0"
-                type: "ParameterList"
-                context: ASTContext #1000
-                parent: FunctionDefinition #152
-                <getter> vParameters: Array(0)
-                <getter> children: Array(0)
-                <getter> firstChild: undefined
-                <getter> lastChild: undefined
-                <getter> previousSibling: OverrideSpecifier #148
-                <getter> nextSibling: ParameterList #146
-                <getter> root: SourceUnit #175
-                <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
-
             ParameterList #146
                 id: 146
                 src: "0:0:0"
@@ -1020,7 +1020,7 @@ SourceUnit #175
                 <getter> children: Array(1) [ VariableDeclaration #145 ]
                 <getter> firstChild: VariableDeclaration #145
                 <getter> lastChild: VariableDeclaration #145
-                <getter> previousSibling: ParameterList #143
+                <getter> previousSibling: OverrideSpecifier #148
                 <getter> nextSibling: Block #151
                 <getter> root: SourceUnit #175
                 <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }

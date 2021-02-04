@@ -6,13 +6,13 @@ pragma solidity ^0.5.0;
 contract TestFor {
     function forWithExpression() public {
         int a = 0;
-        for (int b = 1; (b < 10); (b++)) a += b;
+        for (int b = 1; b < 10; b++) a += b;
     }
 
     function forWithBlock() public {
         int a = 0;
         int b = 1;
-        for (int c = 0; (c < 10); (c++)) {
+        for (int c = 0; c < 10; c++) {
             a += c;
             b -= c;
         }
@@ -22,7 +22,7 @@ contract TestFor {
         int a = 0;
         int b = 1;
         int c;
-        for (c = 0; (c < 10); (c++)) {
+        for (c = 0; c < 10; c++) {
             a += c;
             b -= c;
         }
@@ -31,18 +31,18 @@ contract TestFor {
     function forWithoutInitialization() public {
         int a = 0;
         int b = 1;
-        for (; (b < 10); b += 2) a += b;
+        for (; b < 10; b += 2) a += b;
     }
 
     function forWithoutLoopExpression() public {
         int a = 0;
-        for (int b = 0; (b < 10); ) a += (++b);
+        for (int b = 0; b < 10; ) a += ++b;
     }
 
     function forWithoutLoopCondition() public {
         int a = 0;
-        for (int b = 0; ; (b++)) {
-            if ((b > 10)) {
+        for (int b = 0; ; b++) {
+            if (b > 10) {
                 break;
             }
             a += b;
@@ -52,8 +52,8 @@ contract TestFor {
     function forWithExpressionOnly() public {
         int a = 0;
         int b = 1;
-        for (; ; (a++)) {
-            if ((a > 10)) {
+        for (; ; a++) {
+            if (a > 10) {
                 break;
             }
             b += a;
@@ -63,16 +63,16 @@ contract TestFor {
     function forWithLoopConditionOnly() public {
         int a = 0;
         int b = 1;
-        for (; (a > 10); ) b += (a++);
+        for (; a > 10; ) b += a++;
     }
 
     function forWithInitializationOnly() public {
         int a = 0;
         for (int b = 0; ; ) {
-            if ((b > 10)) {
+            if (b > 10) {
                 break;
             }
-            a += (b++);
+            a += b++;
         }
     }
 
@@ -80,10 +80,10 @@ contract TestFor {
         int a = 0;
         int b = 1;
         for (; ; ) {
-            if ((a > 10)) {
+            if (a > 10) {
                 break;
             }
-            b += (a++);
+            b += a++;
         }
     }
 }

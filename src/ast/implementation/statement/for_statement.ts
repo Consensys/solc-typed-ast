@@ -6,9 +6,10 @@ import { VariableDeclarationStatement } from "./variable_declaration_statement";
 
 export class ForStatement extends Statement {
     /**
-     * Variable declaration and initialization `uint x = 1`
+     * Variable declaration and initialization `uint x = 1`.
+     * Also accepts other expression statements.
      */
-    vInitializationExpression?: VariableDeclarationStatement;
+    vInitializationExpression?: VariableDeclarationStatement | ExpressionStatement;
 
     /**
      * Continuation condition, e.g. `x < 10`
@@ -30,7 +31,7 @@ export class ForStatement extends Statement {
         src: string,
         type: string,
         body: Statement,
-        initializationExpression?: VariableDeclarationStatement,
+        initializationExpression?: VariableDeclarationStatement | ExpressionStatement,
         condition?: Expression,
         loopExpression?: ExpressionStatement,
         raw?: any

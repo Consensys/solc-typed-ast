@@ -3,7 +3,7 @@
 // ------------------------------------------------------------
 library A {
     function add(uint a, uint b) public returns (uint c) {
-        c = (a + b);
+        c = a + b;
     }
 }
 

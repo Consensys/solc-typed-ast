@@ -65,8 +65,6 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
     ) {
         super(id, src, type, raw);
 
-        this.ownChildren = [];
-
         this.name = name;
         this.scope = scope;
         this.kind = kind;

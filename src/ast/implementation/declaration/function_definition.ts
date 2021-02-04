@@ -132,10 +132,10 @@ export class FunctionDefinition extends ASTNode {
     get children(): readonly ASTNode[] {
         return this.pickNodes(
             this.documentation,
-            this.vOverrideSpecifier,
             this.vParameters,
-            this.vReturnParameters,
+            this.vOverrideSpecifier,
             this.vModifiers,
+            this.vReturnParameters,
             this.vBody
         );
     }
