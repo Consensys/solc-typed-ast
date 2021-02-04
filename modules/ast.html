@@ -93,6 +93,7 @@
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.astnodefactory.html" class="tsd-kind-icon">ASTNode<wbr>Factory</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.astnodeformatter.html" class="tsd-kind-icon">ASTNode<wbr>Formatter</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module tsd-has-type-parameter"><a href="../classes/ast.astnodewithchildren.html" class="tsd-kind-icon">ASTNode<wbr>With<wbr>Children</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.astnodewriter.html" class="tsd-kind-icon">ASTNode<wbr>Writer</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.astpostprocessor.html" class="tsd-kind-icon">ASTPostprocessor</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.astreader.html" class="tsd-kind-icon">ASTReader</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.astwriter.html" class="tsd-kind-icon">ASTWriter</a></li>
@@ -101,6 +102,7 @@
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.binaryoperation.html" class="tsd-kind-icon">Binary<wbr>Operation</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.block.html" class="tsd-kind-icon">Block</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.break.html" class="tsd-kind-icon">Break</a></li>
+								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.builtinreferenceddeclarationnormalizer.html" class="tsd-kind-icon">Builtin<wbr>Referenced<wbr>Declaration<wbr>Normalizer</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.conditional.html" class="tsd-kind-icon">Conditional</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.continue.html" class="tsd-kind-icon">Continue</a></li>
 								<li class="tsd-kind-class tsd-parent-kind-module"><a href="../classes/ast.contractdefinition.html" class="tsd-kind-icon">Contract<wbr>Definition</a></li>
@@ -168,7 +170,6 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/ast.astnodepostprocessor.html" class="tsd-kind-icon">ASTNode<wbr>Postprocessor</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter"><a href="../interfaces/ast.astnodeprocessor.html" class="tsd-kind-icon">ASTNode<wbr>Processor</a></li>
-								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/ast.astnodewriter.html" class="tsd-kind-icon">ASTNode<wbr>Writer</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/ast.astreaderconfiguration.html" class="tsd-kind-icon">ASTReader<wbr>Configuration</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/ast.astreadingrule.html" class="tsd-kind-icon">ASTReading<wbr>Rule</a></li>
 								<li class="tsd-kind-interface tsd-parent-kind-module"><a href="../interfaces/ast.astreadingrules.html" class="tsd-kind-icon">ASTReading<wbr>Rules</a></li>
@@ -185,9 +186,12 @@
 								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="ast.html#astnodeconstructor" class="tsd-kind-icon">ASTNode<wbr>Constructor</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="ast.html#astnodeselector" class="tsd-kind-icon">ASTNode<wbr>Selector</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="ast.html#astreadingsignaturedetector" class="tsd-kind-icon">ASTReading<wbr>Signature<wbr>Detector</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="ast.html#descargs" class="tsd-kind-icon">Desc<wbr>Args</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="ast.html#exportedsymbol" class="tsd-kind-icon">Exported<wbr>Symbol</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="ast.html#expressionconstructor" class="tsd-kind-icon">Expression<wbr>Constructor</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="ast.html#resolvedsymbolalias" class="tsd-kind-icon">Resolved<wbr>Symbol<wbr>Alias</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="ast.html#srcdesc" class="tsd-kind-icon">Src<wbr>Desc</a></li>
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="ast.html#srcrangemap" class="tsd-kind-icon">Src<wbr>Range<wbr>Map</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="ast.html#symbolorigin" class="tsd-kind-icon">Symbol<wbr>Origin</a></li>
 								<li class="tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter"><a href="ast.html#typenameconstructor" class="tsd-kind-icon">Type<wbr>Name<wbr>Constructor</a></li>
 							</ul>
@@ -368,6 +372,16 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="descargs" class="tsd-anchor"></a>
+					<h3>Desc<wbr>Args</h3>
+					<div class="tsd-signature tsd-kind-icon">Desc<wbr>Args<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/writing/writer.ts#L10">ast/writing/writer.ts:10</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
 					<a name="exportedsymbol" class="tsd-anchor"></a>
 					<h3>Exported<wbr>Symbol</h3>
 					<div class="tsd-signature tsd-kind-icon">Exported<wbr>Symbol<span class="tsd-signature-symbol">:</span> <a href="../classes/ast_implementation_declaration_contract_definition.contractdefinition.html" class="tsd-signature-type" data-tsd-kind="Class">ContractDefinition</a><span class="tsd-signature-symbol"> | </span><a href="../classes/ast_implementation_declaration_struct_definition.structdefinition.html" class="tsd-signature-type" data-tsd-kind="Class">StructDefinition</a><span class="tsd-signature-symbol"> | </span><a href="../classes/ast_implementation_declaration_enum_definition.enumdefinition.html" class="tsd-signature-type" data-tsd-kind="Class">EnumDefinition</a><span class="tsd-signature-symbol"> | </span><a href="../classes/ast_implementation_declaration_function_definition.functiondefinition.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionDefinition</a><span class="tsd-signature-symbol"> | </span><a href="../classes/ast_implementation_declaration_variable_declaration.variabledeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a><span class="tsd-signature-symbol"> | </span><a href="../classes/ast_implementation_meta_import_directive.importdirective.html" class="tsd-signature-type" data-tsd-kind="Class">ImportDirective</a></div>
@@ -437,6 +451,38 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="srcdesc" class="tsd-anchor"></a>
+					<h3>Src<wbr>Desc</h3>
+					<div class="tsd-signature tsd-kind-icon">Src<wbr>Desc<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">[</span><a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/writing/writer.ts#L26">ast/writing/writer.ts:26</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The <code>SrcDesc</code> is the intermediate description for source that is generated by
+							<code>ASTNodeWriter</code>s. It has a tree-like structure, defined by the following grammar:</p>
+						</div>
+						<pre><code><span style="color: #000000">SrcDesc ::= (</span><span style="color: #001080">string</span><span style="color: #000000"> | [</span><span style="color: #001080">ASTNode</span><span style="color: #000000">, </span><span style="color: #001080">SrcDesc</span><span style="color: #000000">])*</span>
+</code></pre>
+						<p>Essentially its a tree of strings, with some ASTNode attached to it at given locations.</p>
+						<p>For example having <code>[ASTNode#5, &lt;SrcDescX&gt;]</code> in the tree, indicates that
+							the source generated by <code>&lt;SrcDescX&gt;</code> corresponds precisely to <code>ASTNode#5</code>
+						in the source map.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="srcrangemap" class="tsd-anchor"></a>
+					<h3>Src<wbr>Range<wbr>Map</h3>
+					<div class="tsd-signature tsd-kind-icon">Src<wbr>Range<wbr>Map<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">]</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/writing/writer.ts#L9">ast/writing/writer.ts:9</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
 					<a name="symbolorigin" class="tsd-anchor"></a>
 					<h3>Symbol<wbr>Origin</h3>
 					<div class="tsd-signature tsd-kind-icon">Symbol<wbr>Origin<span class="tsd-signature-symbol">:</span> <a href="ast_implementation_meta_source_unit.html#exportedsymbol" class="tsd-signature-type" data-tsd-kind="Type alias">ExportedSymbol</a></div>
@@ -501,10 +547,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-module">
 					<a name="defaultastwritermapping" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> DefaultASTWriter<wbr>Mapping</h3>
-					<div class="tsd-signature tsd-kind-icon">DefaultASTWriter<wbr>Mapping<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="ast_ast_node.html#astnodeconstructor" class="tsd-signature-type" data-tsd-kind="Type alias">ASTNodeConstructor</a><span class="tsd-signature-symbol">&lt;</span><a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/ast_writing_writer.astnodewriter.html" class="tsd-signature-type" data-tsd-kind="Interface">ASTNodeWriter</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
+					<div class="tsd-signature tsd-kind-icon">DefaultASTWriter<wbr>Mapping<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="ast_ast_node.html#astnodeconstructor" class="tsd-signature-type" data-tsd-kind="Type alias">ASTNodeConstructor</a><span class="tsd-signature-symbol">&lt;</span><a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="../classes/ast_writing_writer.astnodewriter.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNodeWriter</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/writing/ast_mapping.ts#L1041">ast/writing/ast_mapping.ts:1041</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/writing/ast_mapping.ts#L1200">ast/writing/ast_mapping.ts:1200</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -514,7 +560,7 @@
 					<div class="tsd-signature tsd-kind-icon">Default<wbr>Postprocessor<wbr>Mapping<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><a href="ast_ast_node.html#astnodeconstructor" class="tsd-signature-type" data-tsd-kind="Type alias">ASTNodeConstructor</a><span class="tsd-signature-symbol">&lt;</span><a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/ast_ast_reader.astnodepostprocessor.html" class="tsd-signature-type" data-tsd-kind="Interface">ASTNodePostprocessor</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/postprocessing/mapping.ts#L12">ast/postprocessing/mapping.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/postprocessing/mapping.ts#L18">ast/postprocessing/mapping.ts:18</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -965,6 +1011,9 @@
 						<a href="../classes/ast.astnodewithchildren.html" class="tsd-kind-icon">ASTNode<wbr>With<wbr>Children</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/ast.astnodewriter.html" class="tsd-kind-icon">ASTNode<wbr>Writer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/ast.astpostprocessor.html" class="tsd-kind-icon">ASTPostprocessor</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
@@ -987,6 +1036,9 @@
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/ast.break.html" class="tsd-kind-icon">Break</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module">
+						<a href="../classes/ast.builtinreferenceddeclarationnormalizer.html" class="tsd-kind-icon">Builtin<wbr>Referenced<wbr>Declaration<wbr>Normalizer</a>
 					</li>
 					<li class=" tsd-kind-class tsd-parent-kind-module">
 						<a href="../classes/ast.conditional.html" class="tsd-kind-icon">Conditional</a>
@@ -1175,9 +1227,6 @@
 						<a href="../interfaces/ast.astnodeprocessor.html" class="tsd-kind-icon">ASTNode<wbr>Processor</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
-						<a href="../interfaces/ast.astnodewriter.html" class="tsd-kind-icon">ASTNode<wbr>Writer</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-module">
 						<a href="../interfaces/ast.astreaderconfiguration.html" class="tsd-kind-icon">ASTReader<wbr>Configuration</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-parent-kind-module">
@@ -1211,6 +1260,9 @@
 						<a href="ast.html#astreadingsignaturedetector" class="tsd-kind-icon">ASTReading<wbr>Signature<wbr>Detector</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="ast.html#descargs" class="tsd-kind-icon">Desc<wbr>Args</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
 						<a href="ast.html#exportedsymbol" class="tsd-kind-icon">Exported<wbr>Symbol</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module tsd-has-type-parameter">
@@ -1218,6 +1270,12 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
 						<a href="ast.html#resolvedsymbolalias" class="tsd-kind-icon">Resolved<wbr>Symbol<wbr>Alias</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="ast.html#srcdesc" class="tsd-kind-icon">Src<wbr>Desc</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="ast.html#srcrangemap" class="tsd-kind-icon">Src<wbr>Range<wbr>Map</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
 						<a href="ast.html#symbolorigin" class="tsd-kind-icon">Symbol<wbr>Origin</a>

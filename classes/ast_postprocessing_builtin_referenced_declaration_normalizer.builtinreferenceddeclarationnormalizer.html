@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>YulWriter | solc-typed-ast</title>
+	<title>BuiltinReferencedDeclarationNormalizer | solc-typed-ast</title>
 	<meta name="description" content="Documentation for solc-typed-ast">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -53,13 +53,13 @@
 					<a href="../modules.html">solc-typed-ast</a>
 				</li>
 				<li>
-					<a href="../modules/ast.html">ast</a>
+					<a href="../modules/ast_postprocessing_builtin_referenced_declaration_normalizer.html">ast/postprocessing/builtin_referenced_declaration_normalizer</a>
 				</li>
 				<li>
-					<a href="ast.yulwriter.html">YulWriter</a>
+					<a href="ast_postprocessing_builtin_referenced_declaration_normalizer.builtinreferenceddeclarationnormalizer.html">BuiltinReferencedDeclarationNormalizer</a>
 				</li>
 			</ul>
-			<h1>Class YulWriter</h1>
+			<h1>Class BuiltinReferencedDeclarationNormalizer</h1>
 		</div>
 	</div>
 </header>
@@ -70,8 +70,14 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">YulWriter</span>
+						<span class="target">BuiltinReferencedDeclarationNormalizer</span>
 					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implements</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../interfaces/ast_ast_reader.astnodepostprocessor.html" class="tsd-signature-type" data-tsd-kind="Interface">ASTNodePostprocessor</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -81,20 +87,13 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="ast.yulwriter.html#constructor" class="tsd-kind-icon">constructor</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
-							<h3>Properties</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ast.yulwriter.html#formatter" class="tsd-kind-icon">formatter</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ast.yulwriter.html#mapping" class="tsd-kind-icon">mapping</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="ast_postprocessing_builtin_referenced_declaration_normalizer.builtinreferenceddeclarationnormalizer.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ast.yulwriter.html#write" class="tsd-kind-icon">write</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ast_postprocessing_builtin_referenced_declaration_normalizer.builtinreferenceddeclarationnormalizer.html#process" class="tsd-kind-icon">process</a></li>
 							</ul>
 						</section>
 					</div>
@@ -106,74 +105,42 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Yul<wbr>Writer<span class="tsd-signature-symbol">(</span>mapping<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/ast_writing_writer.yulnodewriter.html" class="tsd-signature-type" data-tsd-kind="Interface">YulNodeWriter</a><span class="tsd-signature-symbol">&gt;</span>, formatter<span class="tsd-signature-symbol">: </span><a href="../interfaces/ast_writing_formatter.sourceformatter.html" class="tsd-signature-type" data-tsd-kind="Interface">SourceFormatter</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ast_writing_writer.yulwriter.html" class="tsd-signature-type" data-tsd-kind="Class">YulWriter</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Builtin<wbr>Referenced<wbr>Declaration<wbr>Normalizer<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ast_postprocessing_builtin_referenced_declaration_normalizer.builtinreferenceddeclarationnormalizer.html" class="tsd-signature-type" data-tsd-kind="Class">BuiltinReferencedDeclarationNormalizer</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/writing/writer.ts#L71">ast/writing/writer.ts:71</a></li>
-								</ul>
 							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>mapping: <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/ast_writing_writer.yulnodewriter.html" class="tsd-signature-type" data-tsd-kind="Interface">YulNodeWriter</a><span class="tsd-signature-symbol">&gt;</span></h5>
-								</li>
-								<li>
-									<h5>formatter: <a href="../interfaces/ast_writing_formatter.sourceformatter.html" class="tsd-signature-type" data-tsd-kind="Interface">SourceFormatter</a></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="ast_writing_writer.yulwriter.html" class="tsd-signature-type" data-tsd-kind="Class">YulWriter</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="ast_postprocessing_builtin_referenced_declaration_normalizer.builtinreferenceddeclarationnormalizer.html" class="tsd-signature-type" data-tsd-kind="Class">BuiltinReferencedDeclarationNormalizer</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="formatter" class="tsd-anchor"></a>
-					<h3>formatter</h3>
-					<div class="tsd-signature tsd-kind-icon">formatter<span class="tsd-signature-symbol">:</span> <a href="../interfaces/ast_writing_formatter.sourceformatter.html" class="tsd-signature-type" data-tsd-kind="Interface">SourceFormatter</a></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/writing/writer.ts#L71">ast/writing/writer.ts:71</a></li>
-						</ul>
-					</aside>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="mapping" class="tsd-anchor"></a>
-					<h3>mapping</h3>
-					<div class="tsd-signature tsd-kind-icon">mapping<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><a href="../interfaces/ast_writing_writer.yulnodewriter.html" class="tsd-signature-type" data-tsd-kind="Interface">YulNodeWriter</a><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/writing/writer.ts#L70">ast/writing/writer.ts:70</a></li>
-						</ul>
-					</aside>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="write" class="tsd-anchor"></a>
-					<h3>write</h3>
+					<a name="process" class="tsd-anchor"></a>
+					<h3>process</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">write<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="../interfaces/ast_implementation_statement_inline_assembly.yulnode.html" class="tsd-signature-type" data-tsd-kind="Interface">YulNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a>, context<span class="tsd-signature-symbol">: </span><a href="ast_ast_reader.astcontext.html" class="tsd-signature-type" data-tsd-kind="Class">ASTContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/writing/writer.ts#L78">ast/writing/writer.ts:78</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/postprocessing/builtin_referenced_declaration_normalizer.ts#L11">ast/postprocessing/builtin_referenced_declaration_normalizer.ts:11</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>node: <a href="../interfaces/ast_implementation_statement_inline_assembly.yulnode.html" class="tsd-signature-type" data-tsd-kind="Interface">YulNode</a></h5>
+									<h5>node: <a href="ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a></h5>
+								</li>
+								<li>
+									<h5>context: <a href="ast_ast_reader.astcontext.html" class="tsd-signature-type" data-tsd-kind="Class">ASTContext</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -186,7 +153,7 @@
 						<a href="../modules.html">Exports</a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/ast.html">ast</a>
+						<a href="../modules/ast_postprocessing_builtin_referenced_declaration_normalizer.html">ast/postprocessing/builtin_<wbr>referenced_<wbr>declaration_<wbr>normalizer</a>
 					</li>
 				</ul>
 			</nav>
@@ -195,19 +162,13 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-module">
-						<a href="ast.yulwriter.html" class="tsd-kind-icon">Yul<wbr>Writer</a>
+						<a href="ast_postprocessing_builtin_referenced_declaration_normalizer.builtinreferenceddeclarationnormalizer.html" class="tsd-kind-icon">Builtin<wbr>Referenced<wbr>Declaration<wbr>Normalizer</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="ast.yulwriter.html#constructor" class="tsd-kind-icon">constructor</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="ast.yulwriter.html#formatter" class="tsd-kind-icon">formatter</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="ast.yulwriter.html#mapping" class="tsd-kind-icon">mapping</a>
+								<a href="ast_postprocessing_builtin_referenced_declaration_normalizer.builtinreferenceddeclarationnormalizer.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="ast.yulwriter.html#write" class="tsd-kind-icon">write</a>
+								<a href="ast_postprocessing_builtin_referenced_declaration_normalizer.builtinreferenceddeclarationnormalizer.html#process" class="tsd-kind-icon">process</a>
 							</li>
 						</ul>
 					</li>
@@ -233,7 +194,6 @@
 				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
 				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
 				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
 			<ul class="tsd-legend">
