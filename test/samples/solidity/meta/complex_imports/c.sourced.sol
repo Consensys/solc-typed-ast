@@ -25,5 +25,5 @@ import { SOME_CONST as OTHER_CONST, SomeStruct as OtherStruct, SomeEnum as Other
 pragma solidity ^0.7.4;
 
 import { Util as OtherUtil } from "./b.sol";
-import { SOME_CONST, SomeStruct, SomeEnum, someFn, SomeContract } from "./b.sol";
-import { SOME_CONST as ANOTHER_CONST, SomeStruct as AnotherStruct, SomeEnum as AnotherEnum, someFn as anotherFn, SomeContract as AnotherContract } from "./b.sol";
+import { OTHER_CONST, OtherStruct, OtherEnum, otherFn, OtherContract } from "./b.sol";
+import { OTHER_CONST as ANOTHER_CONST, OtherStruct as AnotherStruct, OtherEnum as AnotherEnum, otherFn as anotherFn, OtherContract as AnotherContract } from "./b.sol";

@@ -1131,21 +1131,32 @@ class ContractDefinitionWriter extends DocumentedNodeWriter<ContractDefinition> 
 }
 
 class ImportDirectiveWriter extends ASTNodeWriter {
-    writeInner(node: ImportDirective): SrcDesc {
+    writeInner(node: ImportDirective, writer: ASTWriter): SrcDesc {
         if (node.unitAlias) {
             return [`import "${node.file}" as ${node.unitAlias};`];
         }
 
         if (node.vSymbolAliases.length) {
-            const entries: string[] = [];
+            const entries: SrcDesc[] = [];
 
-            for (const [origin, alias] of node.vSymbolAliases) {
-                const symbol = origin instanceof ImportDirective ? origin.unitAlias : origin.name;
+            for (let i = 0; i < node.vSymbolAliases.length; i++) {
+                const rawSymAlias = node.symbolAliases[i];
+                const [origin, alias] = node.vSymbolAliases[i];
 
-                entries.push(alias !== undefined ? symbol + " as " + alias : symbol);
+                if (rawSymAlias.foreign instanceof Identifier) {
+                    const desc = writer.desc(rawSymAlias.foreign);
+                    if (alias) {
+                        desc.push(` as ${alias}`);
+                    }
+                    entries.push(desc);
+                } else {
+                    const symbol =
+                        origin instanceof ImportDirective ? origin.unitAlias : origin.name;
+                    entries.push([alias !== undefined ? symbol + " as " + alias : symbol]);
+                }
             }
 
-            return [`import { ${entries.join(", ")} } from "${node.file}";`];
+            return [`import { `, ...flatJoin(entries, ", "), ` } from "${node.file}";`];
         }
 
         return [`import "${node.file}";`];
