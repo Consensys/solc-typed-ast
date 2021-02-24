@@ -369,12 +369,20 @@ class UnaryOperationWriter extends ASTNodeWriter {
             elements.push(node.operator);
         }
 
+        return writer.desc(...elements);
+    }
+
+    writeWhole(node: UnaryOperation, writer: ASTWriter): SrcDesc {
+        const innerDesc: SrcDesc = [[node, this.writeInner(node, writer)]];
+
+        /// Don't include the implicit parenthesis in the src range for the
+        /// unary operation
         if (needsParenthesis(node)) {
-            elements.unshift("(");
-            elements.push(")");
+            innerDesc.unshift("(");
+            innerDesc.push(")");
         }
 
-        return writer.desc(...elements);
+        return innerDesc;
     }
 }
 
@@ -386,12 +394,20 @@ class BinaryOperationWriter extends ASTNodeWriter {
             node.vRightExpression
         ];
 
+        return writer.desc(...elements);
+    }
+
+    writeWhole(node: BinaryOperation, writer: ASTWriter): SrcDesc {
+        const innerDesc: SrcDesc = [[node, this.writeInner(node, writer)]];
+
+        /// Don't include the implicit parenthesis in the src range for the
+        /// conditional
         if (needsParenthesis(node)) {
-            elements.unshift("(");
-            elements.push(")");
+            innerDesc.unshift("(");
+            innerDesc.push(")");
         }
 
-        return writer.desc(...elements);
+        return innerDesc;
     }
 }
 
@@ -405,12 +421,20 @@ class ConditionalWriter extends ASTNodeWriter {
             node.vFalseExpression
         ];
 
+        return writer.desc(...elements);
+    }
+
+    writeWhole(node: Conditional, writer: ASTWriter): SrcDesc {
+        const innerDesc: SrcDesc = [[node, this.writeInner(node, writer)]];
+
+        /// Don't include the implicit parenthesis in the src range for the
+        /// unary operation
         if (needsParenthesis(node)) {
-            elements.unshift("(");
-            elements.push(")");
+            innerDesc.unshift("(");
+            innerDesc.push(")");
         }
 
-        return writer.desc(...elements);
+        return innerDesc;
     }
 }
 
