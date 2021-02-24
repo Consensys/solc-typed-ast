@@ -1156,7 +1156,7 @@ class ImportDirectiveWriter extends ASTNodeWriter {
                 }
             }
 
-            return [`import { `, ...flatJoin(entries, ", "), `} from "${node.file}";`];
+            return [`import { `, ...flatJoin(entries, ", "), ` } from "${node.file}";`];
         }
 
         return [`import "${node.file}";`];
