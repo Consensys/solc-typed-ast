@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// /home/blitz/development/solc-typed-ast/test/samples/solidity/latest_08.sol
+// /test/samples/solidity/latest_08.sol
 // ------------------------------------------------------------
 pragma solidity ^0.8.0;
 pragma abicoder v2;
@@ -54,7 +54,7 @@ contract CatchPanic {
     }
 }
 // ------------------------------------------------------------
-// /home/blitz/development/solc-typed-ast/test/samples/solidity/latest_imports_08.sol
+// /test/samples/solidity/latest_imports_08.sol
 // ------------------------------------------------------------
 pragma solidity ^0.8.0;
 pragma abicoder v2;
