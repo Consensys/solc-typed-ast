@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// /test/samples/solidity/latest_08.sol
+// /home/blitz/development/solc-typed-ast/test/samples/solidity/latest_08.sol
 // ------------------------------------------------------------
 pragma solidity ^0.8.0;
 pragma abicoder v2;
@@ -36,8 +36,25 @@ contract UsesNewAddressMembers {
         bytes32 codeHash = address(0).codehash;
     }
 }
+
+contract CatchPanic {
+    function test() public {
+        UsesNewAddressMembers c = new UsesNewAddressMembers();
+        try c.test() {} catch Error(string memory reason) {
+            revert(reason);
+        } catch Panic(uint _code) {
+            if (_code == 0x01) {
+                revert("Assertion failed");
+            } else if (_code == 0x11) {
+                revert("Underflow/overflow");
+            }
+        } catch {
+            revert("Internal error");
+        }
+    }
+}
 // ------------------------------------------------------------
-// /test/samples/solidity/latest_imports_08.sol
+// /home/blitz/development/solc-typed-ast/test/samples/solidity/latest_imports_08.sol
 // ------------------------------------------------------------
 pragma solidity ^0.8.0;
 pragma abicoder v2;

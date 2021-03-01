@@ -43,6 +43,7 @@ import { IfStatement } from "../implementation/statement/if_statement";
 import { InlineAssembly } from "../implementation/statement/inline_assembly";
 import { PlaceholderStatement } from "../implementation/statement/placeholder_statement";
 import { Return } from "../implementation/statement/return";
+import { Throw } from "../implementation/statement/throw";
 import { TryCatchClause } from "../implementation/statement/try_catch_clause";
 import { TryStatement } from "../implementation/statement/try_statement";
 import { UncheckedBlock } from "../implementation/statement/unchecked_block";
@@ -438,6 +439,11 @@ export const ModernConfiguration: ASTReaderConfiguration = {
         InlineAssembly: {
             constructor: InlineAssembly,
             processor: processors.InlineAssembly
+        },
+
+        Throw: {
+            constructor: Throw,
+            processor: processors.Default
         }
     }
 };

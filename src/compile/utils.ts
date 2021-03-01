@@ -7,6 +7,7 @@ import {
     RangeVersionStrategy,
     VersionDetectionStrategy
 } from "./compiler_selection";
+import { compilerMapping } from "./constants";
 import {
     FileSystemResolver,
     ImportResolver,
@@ -15,6 +16,8 @@ import {
     RemappingResolver
 } from "./import_resolver";
 import { isExact } from "./version";
+
+const solc = require("solc");
 
 export interface MemoryStorage {
     [path: string]: {
@@ -45,9 +48,21 @@ export class CompileFailedError extends Error {
 
 export type ImportFinder = (filePath: string) => { contents: string } | { error: string };
 
+function getCompilerSnapshotPath(fileName: string): string {
+    return path.resolve(path.join(__dirname, '..', '..', 'compilers', fileName));
+}
+
 export function getCompilerForVersion(version: string): any {
     if (isExact(version)) {
-        return require("solc-" + version);
+        const fileName = compilerMapping.get(version);
+
+        if (fileName === undefined) {
+            throw new Error(`Compiler version ${version} is not yet supported`);
+        }
+
+        const snapshot = require(getCompilerSnapshotPath(fileName));
+
+        return solc.setupMethods(snapshot);
     }
 
     throw new Error(
@@ -57,23 +72,7 @@ export function getCompilerForVersion(version: string): any {
 
 type CompilerInputCreator = (fileName: string, content: string, remappings?: string[]) => any;
 
-const createCompiler04Input: CompilerInputCreator = (fileName, content, remappings?) => ({
-    language: "Solidity",
-    sources: {
-        [fileName]: content
-    },
-    settings: {
-        remappings,
-        outputSelection: {
-            "*": {
-                "*": ["*"],
-                "": ["*"]
-            }
-        }
-    }
-});
-
-const createCompiler05Input: CompilerInputCreator = (fileName, content, remappings?) => ({
+const createCompilerInput: CompilerInputCreator = (fileName, content, remappings?) => ({
     language: "Solidity",
     sources: {
         [fileName]: {
@@ -236,24 +235,10 @@ export function compile(
     finder: ImportFinder,
     remapping: string[]
 ): any {
+    const callbacks = { import: finder };
     const compiler = getCompilerForVersion(version);
 
-    if (satisfies(version, "0.4")) {
-        const input = createCompiler04Input(fileName, content, remapping);
-        const output = compiler.compile(input, 1, finder);
-
-        return output;
-    }
-
-    if (satisfies(version, "0.5")) {
-        const input = createCompiler05Input(fileName, content, remapping);
-        const output = compiler.compile(JSON.stringify(input), finder);
-
-        return JSON.parse(output);
-    }
-
-    const callbacks = { import: finder };
-    const input = createCompiler05Input(fileName, content, remapping);
+    const input = createCompilerInput(fileName, content, remapping);
     const output = compiler.compile(JSON.stringify(input), callbacks);
 
     return JSON.parse(output);

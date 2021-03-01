@@ -86,6 +86,7 @@ describe("LatestAndFirstVersionInEachSeriesStrategy", () => {
         [
             true,
             [
+                CompilerVersions08[CompilerVersions08.length - 1],
                 CompilerVersions08[0],
                 CompilerVersions07[CompilerVersions07.length - 1],
                 CompilerVersions07[0],
@@ -108,12 +109,14 @@ describe("LatestAndFirstVersionInEachSeriesStrategy", () => {
                 CompilerVersions06[0],
                 CompilerVersions07[CompilerVersions07.length - 1],
                 CompilerVersions07[0],
+                CompilerVersions08[CompilerVersions08.length - 1],
                 CompilerVersions08[0]
             ]
         ],
         [
             undefined,
             [
+                CompilerVersions08[CompilerVersions08.length - 1],
                 CompilerVersions08[0],
                 CompilerVersions07[CompilerVersions07.length - 1],
                 CompilerVersions07[0],
