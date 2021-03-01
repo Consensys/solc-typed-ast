@@ -52,7 +52,7 @@ const encounters = new Map<string, number>([
     ["TryStatement", 1],
     ["TryCatchClause", 4],
     ["IfStatement", 2],
-    ["BinaryOperation", 2]    
+    ["BinaryOperation", 2]
 ]);
 
 describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {

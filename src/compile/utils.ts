@@ -49,7 +49,7 @@ export class CompileFailedError extends Error {
 export type ImportFinder = (filePath: string) => { contents: string } | { error: string };
 
 function getCompilerSnapshotPath(fileName: string): string {
-    return path.resolve(path.join(__dirname, '..', '..', 'compilers', fileName));
+    return path.resolve(path.join(__dirname, "..", "..", "compilers", fileName));
 }
 
 export function getCompilerForVersion(version: string): any {
