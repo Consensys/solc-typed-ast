@@ -74,7 +74,7 @@ export const CompilerVersions = [
 
 export const LatestCompilerVersion = CompilerVersions[CompilerVersions.length - 1];
 
-export const compilerMapping = new Map<string, string>([
+export const VersionToCompilerFileName = new Map<string, string>([
     ["0.8.1", "soljson-v0.8.1+commit.df193b15.js"],
     ["0.8.0", "soljson-v0.8.0+commit.c7dfd78e.js"],
     ["0.7.6", "soljson-v0.7.6+commit.7338295f.js"],

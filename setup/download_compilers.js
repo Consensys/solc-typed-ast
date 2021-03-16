@@ -2,7 +2,16 @@ const fse = require("fs-extra");
 const http = require("http");
 const https = require("https");
 const path = require("path");
-const { compilerMapping } = require("../dist/compile/constants.js");
+
+const constsModulePath = path.join(__dirname, "../dist/compile/constants.js");
+
+if (!fse.existsSync(constsModulePath)) {
+    console.log("Constants module is not accessible yet");
+
+    process.exit(0);
+}
+
+const { VersionToCompilerFileName } = require(constsModulePath);
 
 /**
  * Downloads file from remote HTTP[S] host and puts its contents to the
@@ -18,7 +27,7 @@ async function download(url, filePath) {
 
         const request = proto.get(url, (response) => {
             if (response.statusCode !== 200) {
-                reject(new Error(`Failed to get '${url}' (${response.statusCode})`));
+                reject(new Error(`Failed to get "${url}" (${response.statusCode})`));
 
                 return;
             }
@@ -46,7 +55,7 @@ async function download(url, filePath) {
 }
 
 (async () => {
-    const compilersDir = path.resolve(path.join(__dirname, '..', "compilers"));
+    const compilersDir = path.resolve(path.join(__dirname, "..", "compilers"));
 
     fse.ensureDirSync(compilersDir);
 
@@ -54,17 +63,21 @@ async function download(url, filePath) {
 
     const promises = [];
 
-    for (const [version, fileName] of compilerMapping.entries()) {
+    for (const [version, fileName] of VersionToCompilerFileName.entries()) {
         const url = "https://binaries.soliditylang.org/bin/" + fileName;
         const filePath = path.join(compilersDir, fileName);
 
         if (fse.existsSync(filePath)) {
-            console.log(`Skipped downloading ${fileName} (version ${version}) as it is already present at ${filePath}`);
+            console.log(
+                `Skipped downloading ${fileName} (version ${version}) as it is already present at ${filePath}`
+            );
         } else {
             console.log(`Started downloading ${fileName} (version ${version})`);
 
             promises.push(
-                download(url, filePath).then(() => console.log(`Downloaded ${fileName} from ${url}`))
+                download(url, filePath).then(() =>
+                    console.log(`Downloaded ${fileName} from ${url}`)
+                )
             );
         }
     }

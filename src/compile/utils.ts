@@ -7,7 +7,7 @@ import {
     RangeVersionStrategy,
     VersionDetectionStrategy
 } from "./compiler_selection";
-import { compilerMapping } from "./constants";
+import { VersionToCompilerFileName } from "./constants";
 import {
     FileSystemResolver,
     ImportResolver,
@@ -54,7 +54,7 @@ function getCompilerSnapshotPath(fileName: string): string {
 
 export function getCompilerForVersion(version: string): any {
     if (isExact(version)) {
-        const fileName = compilerMapping.get(version);
+        const fileName = VersionToCompilerFileName.get(version);
 
         if (fileName === undefined) {
             throw new Error(`Compiler version ${version} is not yet supported`);
