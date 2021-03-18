@@ -325,7 +325,32 @@ class FunctionCallOptionsWriter extends ASTNodeWriter {
 
 class FunctionCallWriter extends ASTNodeWriter {
     writeInner(node: FunctionCall, writer: ASTWriter): SrcDesc {
-        const elements: DescArgs = [node.vExpression, "(", ...join(node.vArguments, ", "), ")"];
+        const elements: DescArgs = [node.vExpression, "("];
+
+        const fields = node.fieldNames;
+        const args = node.vArguments;
+
+        if (fields) {
+            if (fields.length !== args.length) {
+                throw new Error(
+                    "Unexpected different length of field names and arguments in function call node: " +
+                        node.print()
+                );
+            }
+
+            elements.push(
+                "{",
+                ...flatJoin(
+                    fields.map((field, i) => [field, ": ", args[i]]),
+                    ", "
+                ),
+                "}"
+            );
+        } else {
+            elements.push(...join(args, ", "));
+        }
+
+        elements.push(")");
 
         return writer.desc(...elements);
     }
