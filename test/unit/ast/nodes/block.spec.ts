@@ -343,6 +343,98 @@ describe("Block", () => {
         });
     });
 
+    describe("insertAtBeginning()", () => {
+        it("Without children", () => {
+            const myLiteral1 = new Literal(
+                1,
+                "0:0:0",
+                "Literal",
+                "uint256",
+                LiteralKind.Number,
+                "",
+                "1"
+            );
+
+            const myExprStmt1 = new ExpressionStatement(
+                2,
+                "0:0:0",
+                "ExpressionStatement",
+                myLiteral1
+            );
+
+            const block = new Block(3, "0:0:0", "Block", []);
+
+            const statement = block.insertAtBeginning(myExprStmt1);
+
+            expect(statement === myExprStmt1).toBeTruthy();
+
+            expect(block.children.length).toEqual(1);
+            expect(block.firstChild === myExprStmt1).toBeTruthy();
+            expect(block.lastChild === myExprStmt1).toBeTruthy();
+            expect(block.vStatements).toEqual([myExprStmt1]);
+
+            expect(statement.parent === block).toBeTruthy();
+            expect(statement.previousSibling).toBeUndefined();
+            expect(statement.nextSibling).toBeUndefined();
+        });
+
+        it("With children", () => {
+            const myLiteral1 = new Literal(
+                1,
+                "0:0:0",
+                "Literal",
+                "uint256",
+                LiteralKind.Number,
+                "",
+                "1"
+            );
+
+            const myExprStmt1 = new ExpressionStatement(
+                2,
+                "0:0:0",
+                "ExpressionStatement",
+                myLiteral1
+            );
+
+            const myLiteral2 = new Literal(
+                3,
+                "0:0:0",
+                "Literal",
+                "uint256",
+                LiteralKind.Number,
+                "",
+                "2"
+            );
+
+            const myExprStmt2 = new ExpressionStatement(
+                4,
+                "0:0:0",
+                "ExpressionStatement",
+                myLiteral2
+            );
+
+            const block = new Block(5, "0:0:0", "Block", [myExprStmt1]);
+
+            const statement = block.insertAtBeginning(myExprStmt2);
+
+            expect(statement === myExprStmt2).toBeTruthy();
+
+            expect(block.children.length).toEqual(2);
+            expect(block.firstChild === myExprStmt2).toBeTruthy();
+            expect(block.lastChild === myExprStmt1).toBeTruthy();
+            expect(block.vStatements).toEqual([myExprStmt2, myExprStmt1]);
+
+            expect(statement.parent === block).toBeTruthy();
+            expect(statement.previousSibling).toBeUndefined();
+            expect(statement.nextSibling === myExprStmt1).toBeTruthy();
+
+            expect(myExprStmt1.previousSibling === myExprStmt2).toBeTruthy();
+            expect(myExprStmt1.nextSibling).toBeUndefined();
+            expect(myExprStmt2.previousSibling).toBeUndefined();
+            expect(myExprStmt2.nextSibling === myExprStmt1).toBeTruthy();
+        });
+    });
+
     describe("insertAfter()", () => {
         it("Last child", () => {
             const myLiteral1 = new Literal(

@@ -404,6 +404,12 @@ export class ASTNodeWithChildren<T extends ASTNode> extends ASTNode {
         return sibling ? this.insertBefore(node, sibling) : this.appendChild(node);
     }
 
+    insertAtBeginning(node: T): T {
+        const firstChild = this.firstChild;
+
+        return firstChild ? this.insertBefore(node, firstChild) : this.appendChild(node);
+    }
+
     replaceChild<N extends T, O extends T>(newNode: N, oldNode: O): O {
         const index = this.ownChildren.indexOf(oldNode);
 
