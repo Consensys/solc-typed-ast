@@ -11,8 +11,15 @@ export class ExpressionStatement extends Statement {
      */
     vExpression: Expression;
 
-    constructor(id: number, src: string, type: string, expression: Expression, raw?: any) {
-        super(id, src, type, raw);
+    constructor(
+        id: number,
+        src: string,
+        type: string,
+        expression: Expression,
+        documentation?: string,
+        raw?: any
+    ) {
+        super(id, src, type, documentation, raw);
 
         this.vExpression = expression;
 

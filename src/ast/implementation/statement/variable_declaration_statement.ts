@@ -28,9 +28,10 @@ export class VariableDeclarationStatement extends Statement {
         assignments: Array<number | null>,
         declarations: VariableDeclaration[],
         initialValue?: Expression,
+        documentation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, type, documentation, raw);
 
         this.assignments = assignments;
         this.vDeclarations = declarations;

@@ -61,7 +61,7 @@ export class VariableDeclaration extends ASTNode {
     typeString: string;
 
     /**
-     * Optional documentation appearing above the contract definition:
+     * Optional documentation appearing above the variable declaration:
      * - Is `undefined` when not specified.
      * - Is type of `string` for compatibility reasons.
      * - Is instance of `StructuredDocumentation` when specified and compiler version is `0.6.9` or newer.

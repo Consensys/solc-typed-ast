@@ -13,6 +13,6 @@ export class LegacyEmitStatementProcessor extends LegacyNodeProcessor<EmitStatem
 
         const [eventCall] = reader.convertArray(raw.children, config) as [FunctionCall];
 
-        return [id, src, type, eventCall, raw];
+        return [id, src, type, eventCall, undefined, raw];
     }
 }

@@ -43,6 +43,7 @@ import { IfStatement } from "../implementation/statement/if_statement";
 import { InlineAssembly } from "../implementation/statement/inline_assembly";
 import { PlaceholderStatement } from "../implementation/statement/placeholder_statement";
 import { Return } from "../implementation/statement/return";
+import { Throw } from "../implementation/statement/throw";
 import { TryCatchClause } from "../implementation/statement/try_catch_clause";
 import { TryStatement } from "../implementation/statement/try_statement";
 import { UncheckedBlock } from "../implementation/statement/unchecked_block";
@@ -57,7 +58,9 @@ import { ModernArrayTypeNameProcessor } from "./array_type_name_processor";
 import { ModernAssignmentProcessor } from "./assignment_processor";
 import { ModernBinaryOperationProcessor } from "./binary_operation_processor";
 import { ModernBlockProcessor } from "./block_processor";
+import { ModernBreakProcessor } from "./break_processor";
 import { ModernConditionalProcessor } from "./conditional_processor";
+import { ModernContinueProcessor } from "./continue_processor";
 import { ModernContractDefinitionProcessor } from "./contract_definition_processor";
 import { ModernDoWhileStatementProcessor } from "./do_while_statement_processor";
 import { ModernElementaryTypeNameExpressionProcessor } from "./elementary_type_name_expression_processor";
@@ -89,11 +92,13 @@ import { ModernNewExpressionProcessor } from "./new_expression_processor";
 import { ModernNodeProcessor } from "./node_processor";
 import { ModernOverrideSpecifierProcessor } from "./override_specifier_processor";
 import { ModernParameterListProcessor } from "./parameter_list_processor";
+import { ModernPlaceholderStatementProcessor } from "./placeholder_statement_processor";
 import { ModernPragmaDirectiveProcessor } from "./pragma_directive_processor";
 import { ModernReturnProcessor } from "./return_processor";
 import { ModernSourceUnitProcessor } from "./source_unit_processor";
 import { ModernStructuredDocumentationProcessor } from "./structured_documentation_processor";
 import { ModernStructDefinitionProcessor } from "./struct_definition_processor";
+import { ModernThrowProcessor } from "./throw_processor";
 import { ModernTryCatchClauseProcessor } from "./try_catch_clause_processor";
 import { ModernTryStatementProcessor } from "./try_statement_processor";
 import { ModernTupleExpressionProcessor } from "./tuple_expression_processor";
@@ -163,7 +168,11 @@ const processors = {
     ExpressionStatement: new ModernExpressionStatementProcessor(),
     UncheckedBlock: new ModernUncheckedBlockProcessor(),
     VariableDeclarationStatement: new ModernVariableDeclarationStatementProcessor(),
-    InlineAssembly: new ModernInlineAssemblyProcessor()
+    InlineAssembly: new ModernInlineAssemblyProcessor(),
+    Break: new ModernBreakProcessor(),
+    Continue: new ModernContinueProcessor(),
+    PlaceholderStatement: new ModernPlaceholderStatementProcessor(),
+    Throw: new ModernThrowProcessor()
 };
 
 export const ModernConfiguration: ASTReaderConfiguration = {
@@ -372,12 +381,12 @@ export const ModernConfiguration: ASTReaderConfiguration = {
 
         Continue: {
             constructor: Continue,
-            processor: processors.Default
+            processor: processors.Continue
         },
 
         Break: {
             constructor: Break,
-            processor: processors.Default
+            processor: processors.Break
         },
 
         Return: {
@@ -422,7 +431,7 @@ export const ModernConfiguration: ASTReaderConfiguration = {
 
         PlaceholderStatement: {
             constructor: PlaceholderStatement,
-            processor: processors.Default
+            processor: processors.PlaceholderStatement
         },
 
         UncheckedBlock: {
@@ -438,6 +447,11 @@ export const ModernConfiguration: ASTReaderConfiguration = {
         InlineAssembly: {
             constructor: InlineAssembly,
             processor: processors.InlineAssembly
+        },
+
+        Throw: {
+            constructor: Throw,
+            processor: processors.Throw
         }
     }
 };

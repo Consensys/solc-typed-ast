@@ -266,6 +266,7 @@ SourceUnit #146
                 id: 88
                 src: "0:0:0"
                 type: "Block"
+                documentation: undefined
                 context: ASTContext #1000
                 parent: FunctionDefinition #89
                 <getter> vStatements: Array(1) [ ExpressionStatement #87 ]
@@ -281,6 +282,7 @@ SourceUnit #146
                     id: 87
                     src: "0:0:0"
                     type: "ExpressionStatement"
+                    documentation: undefined
                     vExpression: Assignment #86
                     context: ASTContext #1000
                     parent: Block #88
@@ -1073,6 +1075,7 @@ SourceUnit #146
                 id: 128
                 src: "0:0:0"
                 type: "Block"
+                documentation: undefined
                 context: ASTContext #1000
                 parent: FunctionDefinition #129
                 <getter> vStatements: Array(1) [ ExpressionStatement #127 ]
@@ -1088,6 +1091,7 @@ SourceUnit #146
                     id: 127
                     src: "0:0:0"
                     type: "ExpressionStatement"
+                    documentation: undefined
                     vExpression: Assignment #126
                     context: ASTContext #1000
                     parent: Block #128
@@ -1427,6 +1431,7 @@ SourceUnit #146
                 id: 143
                 src: "0:0:0"
                 type: "Block"
+                documentation: undefined
                 context: ASTContext #1000
                 parent: FunctionDefinition #144
                 <getter> vStatements: Array(1) [ Return #142 ]
@@ -1442,6 +1447,7 @@ SourceUnit #146
                     id: 142
                     src: "0:0:0"
                     type: "Return"
+                    documentation: undefined
                     functionReturnParameters: 64
                     vExpression: FunctionCall #141
                     context: ASTContext #1000

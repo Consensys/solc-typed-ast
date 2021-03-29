@@ -4,8 +4,15 @@ import { Statement, StatementWithChildren } from "./statement";
  * Block is a compound statement and it can hold other statements
  */
 export class Block extends StatementWithChildren<Statement> {
-    constructor(id: number, src: string, type: string, statements: Iterable<Statement>, raw?: any) {
-        super(id, src, type, raw);
+    constructor(
+        id: number,
+        src: string,
+        type: string,
+        statements: Iterable<Statement>,
+        documentation?: string,
+        raw?: any
+    ) {
+        super(id, src, type, documentation, raw);
 
         for (const statement of statements) {
             this.appendChild(statement);

@@ -129,7 +129,7 @@ export class StructuredDocumentationReconstructingPostprocessor implements ASTNo
 
     process(node: ASTNode, context: ASTContext, sources?: Map<string, string>): void {
         if (!this.isSupportedNode(node)) {
-            throw new Error(`Supplied node "${node.constructor.name}" is not supported`);
+            return;
         }
 
         if (node.documentation instanceof StructuredDocumentation || sources === undefined) {
@@ -162,9 +162,10 @@ export class StructuredDocumentationReconstructingPostprocessor implements ASTNo
         return (
             node instanceof FunctionDefinition ||
             node instanceof ContractDefinition ||
-            node instanceof VariableDeclaration ||
             node instanceof EventDefinition ||
-            node instanceof ModifierDefinition
+            node instanceof ModifierDefinition ||
+            (node instanceof VariableDeclaration &&
+                (node.parent instanceof ContractDefinition || node.parent instanceof SourceUnit))
         );
     }
 }

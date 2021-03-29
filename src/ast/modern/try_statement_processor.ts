@@ -12,9 +12,11 @@ export class ModernTryStatementProcessor extends ModernNodeProcessor<TryStatemen
     ): ConstructorParameters<typeof TryStatement> {
         const [id, src, type] = super.process(reader, config, raw);
 
+        const documentation: string | undefined = raw.documentation;
+
         const externalCall = reader.convert(raw.externalCall, config) as FunctionCall;
         const clauses = reader.convertArray(raw.clauses, config) as TryCatchClause[];
 
-        return [id, src, type, externalCall, clauses, raw];
+        return [id, src, type, externalCall, clauses, documentation, raw];
     }
 }

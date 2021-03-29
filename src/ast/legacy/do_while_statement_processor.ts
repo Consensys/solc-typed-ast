@@ -17,6 +17,6 @@ export class LegacyDoWhileStatementProcessor extends LegacyNodeProcessor<DoWhile
             Statement
         ];
 
-        return [id, src, type, condition, body, raw];
+        return [id, src, type, condition, body, undefined, raw];
     }
 }

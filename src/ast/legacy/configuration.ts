@@ -56,7 +56,9 @@ import { LegacyArrayTypeNameProcessor } from "./array_type_name_processor";
 import { LegacyAssignmentProcessor } from "./assignment_processor";
 import { LegacyBinaryOperationProcessor } from "./binary_operation_processor";
 import { LegacyBlockProcessor } from "./block_processor";
+import { LegacyBreakProcessor } from "./break_processor";
 import { LegacyConditionalProcessor } from "./conditional_processor";
+import { LegacyContinueProcessor } from "./continue_processor";
 import { LegacyContractDefinitionProcessor } from "./contract_definition_processor";
 import { LegacyDoWhileStatementProcessor } from "./do_while_statement_processor";
 import { LegacyElementaryTypeNameExpressionProcessor } from "./elementary_type_name_expression_processor";
@@ -87,11 +89,13 @@ import { LegacyNewExpressionProcessor } from "./new_expression_processor";
 import { LegacyNodeProcessor } from "./node_processor";
 import { LegacyOverrideSpecifierProcessor } from "./override_specifier_processor";
 import { LegacyParameterListProcessor } from "./parameter_list_processor";
+import { LegacyPlaceholderStatementProcessor } from "./placeholder_statement_processor";
 import { LegacyPragmaDirectiveProcessor } from "./pragma_directive_processor";
 import { LegacyReturnProcessor } from "./return_processor";
 import { LegacySourceUnitProcessor } from "./source_unit_processor";
-import { LegacyStructDefinitionProcessor } from "./struct_definition_processor";
 import { LegacyStructuredDocumentationProcessor } from "./structured_documentation_processor";
+import { LegacyStructDefinitionProcessor } from "./struct_definition_processor";
+import { LegacyThrowProcessor } from "./throw_processor";
 import { LegacyTryCatchClauseProcessor } from "./try_catch_clause_processor";
 import { LegacyTryStatementProcessor } from "./try_statement_processor";
 import { LegacyTupleExpressionProcessor } from "./tuple_expression_processor";
@@ -158,7 +162,11 @@ const processors = {
     EmitStatement: new LegacyEmitStatementProcessor(),
     ExpressionStatement: new LegacyExpressionStatementProcessor(),
     VariableDeclarationStatement: new LegacyVariableDeclarationStatementProcessor(),
-    InlineAssembly: new LegacyInlineAssemblyProcessor()
+    InlineAssembly: new LegacyInlineAssemblyProcessor(),
+    Break: new LegacyBreakProcessor(),
+    Continue: new LegacyContinueProcessor(),
+    PlaceholderStatement: new LegacyPlaceholderStatementProcessor(),
+    Throw: new LegacyThrowProcessor()
 };
 
 export const LegacyConfiguration: ASTReaderConfiguration = {
@@ -362,12 +370,12 @@ export const LegacyConfiguration: ASTReaderConfiguration = {
 
         Continue: {
             constructor: Continue,
-            processor: processors.Default
+            processor: processors.Continue
         },
 
         Break: {
             constructor: Break,
-            processor: processors.Default
+            processor: processors.Break
         },
 
         Return: {
@@ -412,7 +420,7 @@ export const LegacyConfiguration: ASTReaderConfiguration = {
 
         PlaceholderStatement: {
             constructor: PlaceholderStatement,
-            processor: processors.Default
+            processor: processors.PlaceholderStatement
         },
 
         VariableDeclarationStatement: {
@@ -427,7 +435,7 @@ export const LegacyConfiguration: ASTReaderConfiguration = {
 
         Throw: {
             constructor: Throw,
-            processor: processors.Default
+            processor: processors.Throw
         }
     }
 };

@@ -11,9 +11,10 @@ export class ModernInlineAssemblyProcessor extends ModernNodeProcessor<InlineAss
         const [id, src, type] = super.process(reader, config, raw);
 
         const externalReferences: any[] = raw.externalReferences;
+        const documentation: string | undefined = raw.documentation;
         const operations: string | undefined = raw.operations;
         const yul: YulNode | undefined = raw.AST;
 
-        return [id, src, type, externalReferences, operations, yul, raw];
+        return [id, src, type, externalReferences, operations, yul, documentation, raw];
     }
 }

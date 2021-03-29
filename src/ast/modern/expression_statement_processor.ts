@@ -11,8 +11,10 @@ export class ModernExpressionStatementProcessor extends ModernNodeProcessor<Expr
     ): ConstructorParameters<typeof ExpressionStatement> {
         const [id, src, type] = super.process(reader, config, raw);
 
+        const documentation: string | undefined = raw.documentation;
+
         const expression = reader.convert(raw.expression, config) as Expression;
 
-        return [id, src, type, expression, raw];
+        return [id, src, type, expression, documentation, raw];
     }
 }

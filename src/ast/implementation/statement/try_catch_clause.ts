@@ -26,9 +26,10 @@ export class TryCatchClause extends Statement {
         errorName: string,
         block: Block,
         parameters?: ParameterList,
+        documentation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, type, documentation, raw);
 
         this.errorName = errorName;
         this.vParameters = parameters;

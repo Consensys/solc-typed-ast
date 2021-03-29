@@ -422,22 +422,40 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
     ],
     [
         Block,
-        (node: Block): Specific<ConstructorParameters<typeof Block>> => [node.vStatements, node.raw]
+        (node: Block): Specific<ConstructorParameters<typeof Block>> => [
+            node.vStatements,
+            node.documentation,
+            node.raw
+        ]
     ],
     [
         UncheckedBlock,
         (node: UncheckedBlock): Specific<ConstructorParameters<typeof UncheckedBlock>> => [
             node.vStatements,
+            node.documentation,
             node.raw
         ]
     ],
-    [Break, (node: Break): Specific<ConstructorParameters<typeof Break>> => [node.raw]],
-    [Continue, (node: Continue): Specific<ConstructorParameters<typeof Continue>> => [node.raw]],
+    [
+        Break,
+        (node: Break): Specific<ConstructorParameters<typeof Break>> => [
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        Continue,
+        (node: Continue): Specific<ConstructorParameters<typeof Continue>> => [
+            node.documentation,
+            node.raw
+        ]
+    ],
     [
         DoWhileStatement,
         (node: DoWhileStatement): Specific<ConstructorParameters<typeof DoWhileStatement>> => [
             node.vCondition,
             node.vBody,
+            node.documentation,
             node.raw
         ]
     ],
@@ -445,6 +463,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         EmitStatement,
         (node: EmitStatement): Specific<ConstructorParameters<typeof EmitStatement>> => [
             node.vEventCall,
+            node.documentation,
             node.raw
         ]
     ],
@@ -454,6 +473,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node: ExpressionStatement
         ): Specific<ConstructorParameters<typeof ExpressionStatement>> => [
             node.vExpression,
+            node.documentation,
             node.raw
         ]
     ],
@@ -464,6 +484,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.vInitializationExpression,
             node.vCondition,
             node.vLoopExpression,
+            node.documentation,
             node.raw
         ]
     ],
@@ -473,6 +494,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.vCondition,
             node.vTrueBody,
             node.vFalseBody,
+            node.documentation,
             node.raw
         ]
     ],
@@ -482,6 +504,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.externalReferences,
             node.operations,
             node.yul,
+            node.documentation,
             node.raw
         ]
     ],
@@ -489,24 +512,41 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         PlaceholderStatement,
         (
             node: PlaceholderStatement
-        ): Specific<ConstructorParameters<typeof PlaceholderStatement>> => [node.raw]
+        ): Specific<ConstructorParameters<typeof PlaceholderStatement>> => [
+            node.documentation,
+            node.raw
+        ]
     ],
     [
         Return,
         (node: Return): Specific<ConstructorParameters<typeof Return>> => [
             node.functionReturnParameters,
             node.vExpression,
+            node.documentation,
             node.raw
         ]
     ],
-    [Statement, (node: Statement): Specific<ConstructorParameters<typeof Statement>> => [node.raw]],
-    [Throw, (node: Throw): Specific<ConstructorParameters<typeof Throw>> => [node.raw]],
+    [
+        Statement,
+        (node: Statement): Specific<ConstructorParameters<typeof Statement>> => [
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        Throw,
+        (node: Throw): Specific<ConstructorParameters<typeof Throw>> => [
+            node.documentation,
+            node.raw
+        ]
+    ],
     [
         TryCatchClause,
         (node: TryCatchClause): Specific<ConstructorParameters<typeof TryCatchClause>> => [
             node.errorName,
             node.vBlock,
             node.vParameters,
+            node.documentation,
             node.raw
         ]
     ],
@@ -515,6 +555,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         (node: TryStatement): Specific<ConstructorParameters<typeof TryStatement>> => [
             node.vExternalCall,
             node.vClauses,
+            node.documentation,
             node.raw
         ]
     ],
@@ -526,6 +567,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.assignments,
             node.vDeclarations,
             node.vInitialValue,
+            node.documentation,
             node.raw
         ]
     ],
@@ -534,6 +576,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         (node: WhileStatement): Specific<ConstructorParameters<typeof WhileStatement>> => [
             node.vCondition,
             node.vBody,
+            node.documentation,
             node.raw
         ]
     ],

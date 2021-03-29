@@ -5,8 +5,15 @@ import { Statement, StatementWithChildren } from "./statement";
  * the underflow and overflow effects are permitted in math expressions.
  */
 export class UncheckedBlock extends StatementWithChildren<Statement> {
-    constructor(id: number, src: string, type: string, statements: Iterable<Statement>, raw?: any) {
-        super(id, src, type, raw);
+    constructor(
+        id: number,
+        src: string,
+        type: string,
+        statements: Iterable<Statement>,
+        documentation?: string,
+        raw?: any
+    ) {
+        super(id, src, type, documentation, raw);
 
         for (const statement of statements) {
             this.appendChild(statement);

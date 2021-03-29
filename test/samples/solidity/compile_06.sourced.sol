@@ -46,7 +46,7 @@ contract SampleBase is SampleAbstract {
     function testTryCatch() public alertingAfter("Other contract creation") {
         try new Empty() {
             int a = 1;
-        } catch  {
+        } catch {
             int b = 2;
         }
         try new Empty() returns (Empty x) {

@@ -20,9 +20,10 @@ export class InlineAssembly extends Statement {
         externalReferences: any[],
         operations?: string,
         yul?: YulNode,
+        documentation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, type, documentation, raw);
 
         this.externalReferences = externalReferences;
         this.operations = operations;

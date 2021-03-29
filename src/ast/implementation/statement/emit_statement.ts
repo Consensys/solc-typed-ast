@@ -8,8 +8,15 @@ export class EmitStatement extends Statement {
      */
     vEventCall: FunctionCall;
 
-    constructor(id: number, src: string, type: string, eventCall: FunctionCall, raw?: any) {
-        super(id, src, type, raw);
+    constructor(
+        id: number,
+        src: string,
+        type: string,
+        eventCall: FunctionCall,
+        documentation?: string,
+        raw?: any
+    ) {
+        super(id, src, type, documentation, raw);
 
         this.vEventCall = eventCall;
 

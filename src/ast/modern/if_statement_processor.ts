@@ -12,12 +12,14 @@ export class ModernIfStatementProcessor extends ModernNodeProcessor<IfStatement>
     ): ConstructorParameters<typeof IfStatement> {
         const [id, src, type] = super.process(reader, config, raw);
 
+        const documentation: string | undefined = raw.documentation;
+
         const condition = reader.convert(raw.condition, config) as Expression;
         const trueBody = reader.convert(raw.trueBody, config) as Statement;
         const falseBody = raw.falseBody
             ? (reader.convert(raw.falseBody, config) as Statement)
             : undefined;
 
-        return [id, src, type, condition, trueBody, falseBody, raw];
+        return [id, src, type, condition, trueBody, falseBody, documentation, raw];
     }
 }
