@@ -1,5 +1,6 @@
 import { ASTNodeFormatter } from "./ast_node_formatter";
 import { ASTContext } from "./ast_reader";
+import { parseSourceLocation, SourceLocation } from "./utils";
 
 export type ASTNodeCallback = (node: ASTNode) => void;
 export type ASTNodeSelector = (node: ASTNode) => boolean;
@@ -164,14 +165,8 @@ export class ASTNode {
     /**
      * Returns parsed parts of the `src` property value
      */
-    get sourceInfo(): { offset: number; length: number; sourceIndex: number } {
-        const parts = this.src.split(":");
-
-        const offset = parseInt(parts[0], 10);
-        const length = parseInt(parts[1], 10);
-        const sourceIndex = parseInt(parts[2], 10);
-
-        return { offset, length, sourceIndex };
+    get sourceInfo(): SourceLocation {
+        return parseSourceLocation(this.src);
     }
 
     walk(callback: ASTNodeCallback): void {

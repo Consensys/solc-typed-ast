@@ -44,6 +44,7 @@ export class LegacyModifierDefinitionProcessor extends LegacyNodeProcessor<Modif
             overrideSpecifier,
             body,
             documentation,
+            undefined,
             raw
         ];
     }

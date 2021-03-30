@@ -15,9 +15,10 @@ export class ModernStructDefinitionProcessor extends ModernNodeProcessor<StructD
         const canonicalName: string = raw.canonicalName;
         const scope: number = raw.scope;
         const visibility: string = raw.visibility;
+        const nameLocation: string | undefined = raw.nameLocation;
 
         const members = reader.convertArray(raw.members, config) as VariableDeclaration[];
 
-        return [id, src, type, name, canonicalName, scope, visibility, members, raw];
+        return [id, src, type, name, canonicalName, scope, visibility, members, nameLocation, raw];
     }
 }

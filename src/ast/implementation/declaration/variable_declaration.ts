@@ -30,6 +30,11 @@ export class VariableDeclaration extends ASTNode {
     name: string;
 
     /**
+     * The source range for name string
+     */
+    nameLocation?: string;
+
+    /**
      * Id of scoped node
      */
     scope: number;
@@ -106,6 +111,7 @@ export class VariableDeclaration extends ASTNode {
         typeName?: TypeName,
         overrideSpecifier?: OverrideSpecifier,
         value?: Expression,
+        nameLocation?: string,
         raw?: any
     ) {
         super(id, src, type, raw);
@@ -120,6 +126,7 @@ export class VariableDeclaration extends ASTNode {
         this.mutability = mutability;
         this.typeString = typeString;
         this.documentation = documentation;
+        this.nameLocation = nameLocation;
 
         this.vType = typeName;
         this.vOverrideSpecifier = overrideSpecifier;

@@ -17,6 +17,6 @@ export class LegacyModifierInvocationProcessor extends LegacyNodeProcessor<Modif
             ...Expression[]
         ];
 
-        return [id, src, type, modifierName, args, raw];
+        return [id, src, type, modifierName, args, undefined, raw];
     }
 }

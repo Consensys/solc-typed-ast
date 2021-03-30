@@ -72,7 +72,7 @@ contract Features082 {
         _;
     }
 
-    function stmtStructDocs() public {
+    function stmtStructDocs() modStructDocs() public {
         /// VariableDeclarationStatement docstring
         (uint a) = (1);
 

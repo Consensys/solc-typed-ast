@@ -42,10 +42,10 @@ const encounters = new Map<string, number>([
     ["Identifier", 15],
     ["Return", 3],
     ["InheritanceSpecifier", 1],
-    ["IdentifierPath", 10],
+    ["IdentifierPath", 11],
     ["UsingForDirective", 1],
     ["UserDefinedTypeName", 6],
-    ["ModifierInvocation", 1],
+    ["ModifierInvocation", 2],
     ["FunctionCall", 12],
     ["MemberAccess", 6],
     ["OverrideSpecifier", 1],
@@ -98,11 +98,11 @@ describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
 
         const sourceUnit = sourceUnits[0];
 
-        expect(sourceUnit.id).toEqual(225);
-        expect(sourceUnit.src).toEqual("0:3335:0");
+        expect(sourceUnit.id).toEqual(227);
+        expect(sourceUnit.src).toEqual("0:3351:0");
         expect(sourceUnit.absolutePath).toEqual(mainSample);
         expect(sourceUnit.children.length).toEqual(9);
-        expect(sourceUnit.getChildren().length).toEqual(221);
+        expect(sourceUnit.getChildren().length).toEqual(223);
     });
 
     it(`Validate parsed output (${kind})`, () => {

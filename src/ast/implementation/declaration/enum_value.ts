@@ -6,9 +6,22 @@ export class EnumValue extends ASTNode {
      */
     name: string;
 
-    constructor(id: number, src: string, type: string, name: string, raw?: any) {
+    /**
+     * The source range for name string
+     */
+    nameLocation?: string;
+
+    constructor(
+        id: number,
+        src: string,
+        type: string,
+        name: string,
+        nameLocation?: string,
+        raw?: any
+    ) {
         super(id, src, type, raw);
 
         this.name = name;
+        this.nameLocation = nameLocation;
     }
 }

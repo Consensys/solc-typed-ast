@@ -14,6 +14,7 @@ export class ModernEventDefinitionProcessor extends ModernNodeProcessor<EventDef
 
         const anonymous: boolean = raw.anonymous;
         const name: string = raw.name;
+        const nameLocation: string | undefined = raw.nameLocation;
 
         let documentation: string | StructuredDocumentation | undefined;
 
@@ -26,6 +27,6 @@ export class ModernEventDefinitionProcessor extends ModernNodeProcessor<EventDef
 
         const parameters = reader.convert(raw.parameters, config) as ParameterList;
 
-        return [id, src, type, anonymous, name, parameters, documentation, raw];
+        return [id, src, type, anonymous, name, parameters, documentation, nameLocation, raw];
     }
 }

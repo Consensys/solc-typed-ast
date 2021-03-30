@@ -98,6 +98,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.linearizedBaseContracts,
             node.documentation,
             node.children,
+            node.nameLocation,
             node.raw
         ]
     ],
@@ -107,6 +108,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.name,
             node.canonicalName,
             node.vMembers,
+            node.nameLocation,
             node.raw
         ]
     ],
@@ -114,6 +116,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         EnumValue,
         (node: EnumValue): Specific<ConstructorParameters<typeof EnumValue>> => [
             node.name,
+            node.nameLocation,
             node.raw
         ]
     ],
@@ -124,6 +127,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.name,
             node.vParameters,
             node.documentation,
+            node.nameLocation,
             node.raw
         ]
     ],
@@ -143,6 +147,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.vOverrideSpecifier,
             node.vBody,
             node.documentation,
+            node.nameLocation,
             node.raw
         ]
     ],
@@ -156,6 +161,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.vOverrideSpecifier,
             node.vBody,
             node.documentation,
+            node.nameLocation,
             node.raw
         ]
     ],
@@ -167,6 +173,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.scope,
             node.visibility,
             node.vMembers,
+            node.nameLocation,
             node.raw
         ]
     ],
@@ -188,6 +195,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.vType,
             node.vOverrideSpecifier,
             node.vValue,
+            node.nameLocation,
             node.raw
         ]
     ],
@@ -371,6 +379,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         (node: ModifierInvocation): Specific<ConstructorParameters<typeof ModifierInvocation>> => [
             node.vModifierName,
             node.vArguments,
+            node.kind,
             node.raw
         ]
     ],

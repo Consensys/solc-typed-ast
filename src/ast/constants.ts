@@ -59,6 +59,11 @@ export enum FunctionCallKind {
     StructConstructorCall = "structConstructorCall"
 }
 
+export enum ModifierInvocationKind {
+    ModifierInvocation = "modifierInvocation",
+    BaseConstructorSpecifier = "baseConstructorSpecifier"
+}
+
 export enum LiteralKind {
     Number = "number",
     Bool = "bool",

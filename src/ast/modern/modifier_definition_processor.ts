@@ -17,6 +17,7 @@ export class ModernModifierDefinitionProcessor extends ModernNodeProcessor<Modif
         const name: string = raw.name;
         const visibility: string = raw.visibility;
         const virtual: boolean = "virtual" in raw ? raw.virtual : false;
+        const nameLocation: string | undefined = raw.nameLocation;
 
         let documentation: string | StructuredDocumentation | undefined;
 
@@ -46,6 +47,7 @@ export class ModernModifierDefinitionProcessor extends ModernNodeProcessor<Modif
             overrideSpecifier,
             body,
             documentation,
+            nameLocation,
             raw
         ];
     }

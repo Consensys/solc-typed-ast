@@ -17,6 +17,11 @@ export class EventDefinition extends ASTNode {
     name: string;
 
     /**
+     * The source range for name string
+     */
+    nameLocation?: string;
+
+    /**
      * Optional documentation appearing above the event definition:
      * - Is `undefined` when not specified.
      * - Is type of `string` when specified and compiler version is older than `0.6.3`.
@@ -37,6 +42,7 @@ export class EventDefinition extends ASTNode {
         name: string,
         parameters: ParameterList,
         documentation?: string | StructuredDocumentation,
+        nameLocation?: string,
         raw?: any
     ) {
         super(id, src, type, raw);
@@ -44,6 +50,7 @@ export class EventDefinition extends ASTNode {
         this.anonymous = anonymous;
         this.name = name;
         this.documentation = documentation;
+        this.nameLocation = nameLocation;
 
         this.vParameters = parameters;
 

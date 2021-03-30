@@ -23,6 +23,7 @@ export class ModernFunctionDefinitionProcessor extends ModernNodeProcessor<Funct
         const virtual: boolean = "virtual" in raw ? raw.virtual : false;
         const name: string = raw.name;
         const stateMutability: FunctionStateMutability = raw.stateMutability;
+        const nameLocation: string | undefined = raw.nameLocation;
 
         let documentation: string | StructuredDocumentation | undefined;
 
@@ -59,6 +60,7 @@ export class ModernFunctionDefinitionProcessor extends ModernNodeProcessor<Funct
             overrideSpecifier,
             body,
             documentation,
+            nameLocation,
             raw
         ];
     }

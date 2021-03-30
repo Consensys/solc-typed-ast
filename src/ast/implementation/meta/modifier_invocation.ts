@@ -1,4 +1,5 @@
 import { ASTNode } from "../../ast_node";
+import { ModifierInvocationKind } from "../../constants";
 import { ContractDefinition } from "../declaration/contract_definition";
 import { ModifierDefinition } from "../declaration/modifier_definition";
 import { Expression } from "../expression/expression";
@@ -6,6 +7,15 @@ import { Identifier } from "../expression/identifier";
 import { IdentifierPath } from "./identifier_path";
 
 export class ModifierInvocation extends ASTNode {
+    /**
+     * Kind of invoked target modifier:
+     * - base contract constrcutor (when appled via modifier syntax);
+     * - regular modifier definition.
+     *
+     * Is `undefined` when not provided in raw AST.
+     */
+    kind?: ModifierInvocationKind;
+
     /**
      * An identifier of the referenced modifier declaration
      */
@@ -22,9 +32,12 @@ export class ModifierInvocation extends ASTNode {
         type: string,
         modifierName: Identifier | IdentifierPath,
         args: Expression[],
+        kind?: ModifierInvocationKind,
         raw?: any
     ) {
         super(id, src, type, raw);
+
+        this.kind = kind;
 
         this.vModifierName = modifierName;
         this.vArguments = args;
