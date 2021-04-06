@@ -8,6 +8,11 @@ contract SourceWriterEdgeCases {
 
     struct EmptyStruct {}
 
+    struct CustomFields {
+        uint num;
+        bool flag;
+    }
+
     bytes3 internal a = hex"00ffcc";
     string internal b = "'()";
     string internal c = "abc \"def\" ghi";
@@ -38,5 +43,9 @@ contract SourceWriterEdgeCases {
     let n := callvalue()
     extcodecopy(0, 0, 0, 0)
 }
+    }
+
+    function makeCustomFields() public {
+        CustomFields memory cf = CustomFields({flag: true, num: 10});
     }
 }

@@ -4,6 +4,11 @@ contract SourceWriterEdgeCases {
     event Foo() anonymous;
     struct EmptyStruct {}
 
+    struct CustomFields {
+        uint num;
+        bool flag;
+    }
+
     bytes3 a = hex"00ffcc";
     string b = "\x27\x28\x29";
     string c = "abc \"def\" ghi";
@@ -37,5 +42,9 @@ contract SourceWriterEdgeCases {
 
             extcodecopy(0, 0, 0, 0)
         }
+    }
+
+    function makeCustomFields() public {
+        CustomFields memory cf = CustomFields({ flag: true, num: 10 });
     }
 }
