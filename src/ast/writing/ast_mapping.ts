@@ -709,7 +709,16 @@ class TryCatchClauseWriter extends ASTNodeWriter {
             return writer.desc("returns ", node.vParameters, " ", node.vBlock);
         }
 
-        // Error clause
+        /**
+         * Empty catch clause without parameters and error name
+         */
+        if (node.errorName === "" && node.vParameters === undefined) {
+            return writer.desc("catch ", node.vBlock);
+        }
+
+        /**
+         * Catch clause with error name and parameters
+         */
         return writer.desc("catch ", node.errorName, node.vParameters, " ", node.vBlock);
     }
 }

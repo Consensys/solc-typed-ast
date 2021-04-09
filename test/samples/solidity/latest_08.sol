@@ -35,3 +35,23 @@ contract UsesNewAddressMembers {
         bytes32 codeHash = address(0).codehash;
     }
 }
+
+contract CatchPanic {
+    function test() public {
+        UsesNewAddressMembers c = new UsesNewAddressMembers();
+
+        try c.test() {
+
+        } catch Error(string memory reason) {
+            revert(reason);
+        } catch Panic(uint _code) {
+            if (_code == 0x01) {
+                revert("Assertion failed");
+            } else if (_code == 0x11) {
+                revert("Underflow/overflow");
+            }
+        } catch {
+            revert("Internal error");
+        }
+    }
+}
