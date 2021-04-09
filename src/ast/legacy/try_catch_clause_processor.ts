@@ -18,6 +18,6 @@ export class LegacyTryCatchClauseProcessor extends LegacyNodeProcessor<TryCatchC
         const block = children.pop() as Block;
         const parameters = children.length ? (children.pop() as ParameterList) : undefined;
 
-        return [id, src, type, errorName, block, parameters, raw];
+        return [id, src, type, errorName, block, parameters, undefined, raw];
     }
 }

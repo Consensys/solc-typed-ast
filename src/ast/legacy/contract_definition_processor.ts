@@ -43,6 +43,7 @@ export class LegacyContractDefinitionProcessor extends LegacyNodeProcessor<Contr
             linearizedBaseContracts,
             documentation,
             children,
+            undefined,
             raw
         ];
     }

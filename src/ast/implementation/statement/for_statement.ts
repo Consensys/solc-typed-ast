@@ -34,9 +34,10 @@ export class ForStatement extends Statement {
         initializationExpression?: VariableDeclarationStatement | ExpressionStatement,
         condition?: Expression,
         loopExpression?: ExpressionStatement,
+        documentation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, type, documentation, raw);
 
         this.vInitializationExpression = initializationExpression;
         this.vCondition = condition;

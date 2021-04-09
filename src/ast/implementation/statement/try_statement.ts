@@ -20,9 +20,10 @@ export class TryStatement extends Statement {
         type: string,
         externalCall: FunctionCall,
         clauses: TryCatchClause[],
+        documentation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, type, documentation, raw);
 
         this.vExternalCall = externalCall;
         this.vClauses = clauses;

@@ -10,6 +10,11 @@ export class EnumDefinition extends ASTNodeWithChildren<EnumValue> {
     name: string;
 
     /**
+     * The source range for name string
+     */
+    nameLocation?: string;
+
+    /**
      * Canonical name (or qualified name), e.g. `DefiningContract.SomeEnum`
      */
     canonicalName: string;
@@ -21,6 +26,7 @@ export class EnumDefinition extends ASTNodeWithChildren<EnumValue> {
         name: string,
         canonicalName: string,
         members: Iterable<EnumValue>,
+        nameLocation?: string,
         raw?: any
     ) {
         super(id, src, type, raw);
@@ -31,6 +37,8 @@ export class EnumDefinition extends ASTNodeWithChildren<EnumValue> {
         for (const member of members) {
             this.appendChild(member);
         }
+
+        this.nameLocation = nameLocation;
     }
 
     /**

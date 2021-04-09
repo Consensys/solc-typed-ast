@@ -31,6 +31,16 @@ export class LegacyForStatementProcessor extends LegacyNodeProcessor<ForStatemen
 
         const body = children.shift() as Statement;
 
-        return [id, src, type, body, initializationExpression, condition, loopExpression, raw];
+        return [
+            id,
+            src,
+            type,
+            body,
+            initializationExpression,
+            condition,
+            loopExpression,
+            undefined,
+            raw
+        ];
     }
 }

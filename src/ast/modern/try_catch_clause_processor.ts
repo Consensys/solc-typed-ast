@@ -13,6 +13,7 @@ export class ModernTryCatchClauseProcessor extends ModernNodeProcessor<TryCatchC
         const [id, src, type] = super.process(reader, config, raw);
 
         const errorName: string = raw.errorName;
+        const documentation: string | undefined = raw.documentation;
 
         const parameters = raw.parameters
             ? (reader.convert(raw.parameters, config) as ParameterList)
@@ -20,6 +21,6 @@ export class ModernTryCatchClauseProcessor extends ModernNodeProcessor<TryCatchC
 
         const block = reader.convert(raw.block, config) as Block;
 
-        return [id, src, type, errorName, block, parameters, raw];
+        return [id, src, type, errorName, block, parameters, documentation, raw];
     }
 }

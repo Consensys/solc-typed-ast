@@ -61,6 +61,7 @@ export class LegacyFunctionDefinitionProcessor extends LegacyNodeProcessor<Funct
             overrideSpecifier,
             body,
             documentation,
+            undefined,
             raw
         ];
     }

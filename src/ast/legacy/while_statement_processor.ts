@@ -17,6 +17,6 @@ export class LegacyWhileStatementProcessor extends LegacyNodeProcessor<WhileStat
             Statement
         ];
 
-        return [id, src, type, condition, body, raw];
+        return [id, src, type, condition, body, undefined, raw];
     }
 }

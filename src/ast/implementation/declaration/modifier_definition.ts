@@ -13,6 +13,11 @@ export class ModifierDefinition extends ASTNode {
     name: string;
 
     /**
+     * The source range for name string
+     */
+    nameLocation?: string;
+
+    /**
      * Is `true` if modifier is declared as possibly overridable
      * (using `virtual` keyword since Solidity 0.6.7).
      *
@@ -59,6 +64,7 @@ export class ModifierDefinition extends ASTNode {
         overrideSpecifier?: OverrideSpecifier,
         body?: Block,
         documentation?: string | StructuredDocumentation,
+        nameLocation?: string,
         raw?: any
     ) {
         super(id, src, type, raw);
@@ -67,6 +73,7 @@ export class ModifierDefinition extends ASTNode {
         this.virtual = virtual;
         this.visibility = visibility;
         this.documentation = documentation;
+        this.nameLocation = nameLocation;
 
         this.vParameters = parameters;
         this.vOverrideSpecifier = overrideSpecifier;

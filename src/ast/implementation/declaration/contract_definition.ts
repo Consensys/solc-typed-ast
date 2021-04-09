@@ -20,6 +20,11 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
     name: string;
 
     /**
+     * The source range for name string
+     */
+    nameLocation?: string;
+
+    /**
      *  Id of its scoped source unit
      */
     scope: number;
@@ -61,6 +66,7 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
         linearizedBaseContracts: number[],
         documentation?: string | StructuredDocumentation,
         children?: Iterable<ASTNode>,
+        nameLocation?: string,
         raw?: any
     ) {
         super(id, src, type, raw);
@@ -79,6 +85,7 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
         }
 
         this.documentation = documentation;
+        this.nameLocation = nameLocation;
     }
 
     /**

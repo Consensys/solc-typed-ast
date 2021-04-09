@@ -16,6 +16,6 @@ export class LegacyEnumDefinitionProcessor extends LegacyNodeProcessor<EnumDefin
         const name: string = attributes.name;
         const canonicalName: string = attributes.canonicalName;
 
-        return [id, src, type, name, canonicalName, members, raw];
+        return [id, src, type, name, canonicalName, members, undefined, raw];
     }
 }

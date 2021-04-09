@@ -16,6 +16,6 @@ export class LegacyReturnProcessor extends LegacyNodeProcessor<Return> {
 
         const [expression] = children ? (children as [Expression]) : [];
 
-        return [id, src, type, functionReturnParameters, expression, raw];
+        return [id, src, type, functionReturnParameters, expression, undefined, raw];
     }
 }

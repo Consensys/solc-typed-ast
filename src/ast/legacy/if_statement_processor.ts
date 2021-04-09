@@ -18,6 +18,6 @@ export class LegacyIfStatementProcessor extends LegacyNodeProcessor<IfStatement>
             Statement?
         ];
 
-        return [id, src, type, condition, trueBody, falseBody, raw];
+        return [id, src, type, condition, trueBody, falseBody, undefined, raw];
     }
 }

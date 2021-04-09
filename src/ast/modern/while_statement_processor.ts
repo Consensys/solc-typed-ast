@@ -12,9 +12,11 @@ export class ModernWhileStatementProcessor extends ModernNodeProcessor<WhileStat
     ): ConstructorParameters<typeof WhileStatement> {
         const [id, src, type] = super.process(reader, config, raw);
 
+        const documentation: string | undefined = raw.documentation;
+
         const condition = reader.convert(raw.condition, config) as Expression;
         const body = reader.convert(raw.body, config) as Statement;
 
-        return [id, src, type, condition, body, raw];
+        return [id, src, type, condition, body, documentation, raw];
     }
 }

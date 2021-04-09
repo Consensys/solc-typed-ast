@@ -20,9 +20,10 @@ export class Return extends Statement {
         type: string,
         functionReturnParameters: number,
         expression?: Expression,
+        documentation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, type, documentation, raw);
 
         this.functionReturnParameters = functionReturnParameters;
 

@@ -40,6 +40,11 @@ export class FunctionDefinition extends ASTNode {
     name: string;
 
     /**
+     * The source range for name string
+     */
+    nameLocation?: string;
+
+    /**
      * Function visibility, for example: `public`, `internal`, `private` or `external`.
      */
     visibility: FunctionVisibility;
@@ -106,6 +111,7 @@ export class FunctionDefinition extends ASTNode {
         overrideSpecifier?: OverrideSpecifier,
         body?: Block,
         documentation?: string | StructuredDocumentation,
+        nameLocation?: string,
         raw?: any
     ) {
         super(id, src, type, raw);
@@ -119,6 +125,7 @@ export class FunctionDefinition extends ASTNode {
         this.stateMutability = stateMutability;
         this.isConstructor = isConstructor;
         this.documentation = documentation;
+        this.nameLocation = nameLocation;
 
         this.vParameters = parameters;
         this.vReturnParameters = returnParameters;

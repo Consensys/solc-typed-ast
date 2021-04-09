@@ -17,6 +17,6 @@ export class LegacyTryStatementProcessor extends LegacyNodeProcessor<TryStatemen
             ...TryCatchClause[]
         ];
 
-        return [id, src, type, externalCall, clauses, raw];
+        return [id, src, type, externalCall, clauses, undefined, raw];
     }
 }

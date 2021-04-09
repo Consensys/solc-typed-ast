@@ -15,6 +15,7 @@ export class ModernVariableDeclarationStatementProcessor extends ModernNodeProce
         const [id, src, type] = super.process(reader, config, raw);
 
         const assignments: Array<number | null> = raw.assignments;
+        const documentation: string | undefined = raw.documentation;
 
         const declarations = reader.convertArray(
             raw.declarations.filter(declarationsFilterFn),
@@ -25,6 +26,6 @@ export class ModernVariableDeclarationStatementProcessor extends ModernNodeProce
             ? (reader.convert(raw.initialValue, config) as Expression)
             : undefined;
 
-        return [id, src, type, assignments, declarations, initialValue, raw];
+        return [id, src, type, assignments, declarations, initialValue, documentation, raw];
     }
 }

@@ -111,7 +111,7 @@ contract SampleBase is SampleAbstract(1) {
     function testTryCatch() public alertingAfter("Other contract creation") {
         try new Empty() {
             int a = 1;
-        } catch  {
+        } catch {
             int b = 2;
         }
         try new EmptyPayable{salt: 0x0, value: 1 ether}() returns (EmptyPayable x) {

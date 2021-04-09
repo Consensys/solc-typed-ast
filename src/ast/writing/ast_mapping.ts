@@ -77,13 +77,6 @@ import { SourceFormatter } from "./formatter";
 import { ASTNodeWriter, ASTWriter, DescArgs, SrcDesc, YulWriter } from "./writer";
 import { DefaultYulWriterMapping } from "./yul_mapping";
 
-type DocumentedNode =
-    | ContractDefinition
-    | VariableDeclaration
-    | FunctionDefinition
-    | ModifierDefinition
-    | EventDefinition;
-
 type CompoundStatement = IfStatement | ForStatement | WhileStatement;
 
 const RX_SPACE_OR_EMPTY = /^\s*$/;
@@ -200,6 +193,48 @@ function needsParenthesis(e: UnaryOperation | BinaryOperation | Conditional): bo
         e.parent instanceof BinaryOperation ||
         e.parent instanceof Conditional
     );
+}
+
+function wrapWithParens(
+    node: UnaryOperation | BinaryOperation | Conditional,
+    desc: SrcDesc
+): SrcDesc {
+    if (needsParenthesis(node)) {
+        desc.unshift("(");
+        desc.push(")");
+    }
+
+    return desc;
+}
+
+function writeDocs(
+    documentation: string | StructuredDocumentation | undefined,
+    writer: ASTWriter
+): SrcDesc {
+    if (documentation === undefined) {
+        return [];
+    }
+
+    if (documentation instanceof StructuredDocumentation) {
+        return writer.desc(documentation);
+    }
+
+    return [StructuredDocumentationWriter.render(documentation, writer.formatter)];
+}
+
+class StructuredDocumentationWriter extends ASTNodeWriter {
+    static render(text: string, formatter: SourceFormatter): string {
+        const indent = formatter.renderIndent();
+        const prefix = "/// ";
+
+        const documentation = text.replace(/\n/g, (sub) => sub + indent + prefix);
+
+        return prefix + documentation + "\n" + indent;
+    }
+
+    writeInner(node: StructuredDocumentation, writer: ASTWriter): SrcDesc {
+        return [StructuredDocumentationWriter.render(node.text, writer.formatter)];
+    }
 }
 
 class ElementaryTypeNameWriter extends ASTNodeWriter {
@@ -388,6 +423,7 @@ class UnaryOperationWriter extends ASTNodeWriter {
         }
 
         const elements: DescArgs = [node.vSubExpression];
+
         if (node.prefix) {
             elements.unshift(node.operator);
         } else {
@@ -400,14 +436,10 @@ class UnaryOperationWriter extends ASTNodeWriter {
     writeWhole(node: UnaryOperation, writer: ASTWriter): SrcDesc {
         const innerDesc: SrcDesc = [[node, this.writeInner(node, writer)]];
 
-        /// Don't include the implicit parenthesis in the src range for the
-        /// unary operation
-        if (needsParenthesis(node)) {
-            innerDesc.unshift("(");
-            innerDesc.push(")");
-        }
-
-        return innerDesc;
+        /**
+         * Don't include the implicit parenthesis in the src range for the unary operation
+         */
+        return wrapWithParens(node, innerDesc);
     }
 }
 
@@ -425,14 +457,10 @@ class BinaryOperationWriter extends ASTNodeWriter {
     writeWhole(node: BinaryOperation, writer: ASTWriter): SrcDesc {
         const innerDesc: SrcDesc = [[node, this.writeInner(node, writer)]];
 
-        /// Don't include the implicit parenthesis in the src range for the
-        /// conditional
-        if (needsParenthesis(node)) {
-            innerDesc.unshift("(");
-            innerDesc.push(")");
-        }
-
-        return innerDesc;
+        /**
+         * Don't include the implicit parenthesis in the src range for the binary operation
+         */
+        return wrapWithParens(node, innerDesc);
     }
 }
 
@@ -452,14 +480,10 @@ class ConditionalWriter extends ASTNodeWriter {
     writeWhole(node: Conditional, writer: ASTWriter): SrcDesc {
         const innerDesc: SrcDesc = [[node, this.writeInner(node, writer)]];
 
-        /// Don't include the implicit parenthesis in the src range for the
-        /// unary operation
-        if (needsParenthesis(node)) {
-            innerDesc.unshift("(");
-            innerDesc.push(")");
-        }
-
-        return innerDesc;
+        /**
+         * Don't include the implicit parenthesis in the src range for the conditional
+         */
+        return wrapWithParens(node, innerDesc);
     }
 }
 
@@ -497,7 +521,12 @@ class TupleExpressionWriter extends ASTNodeWriter {
  */
 abstract class SimpleStatementWriter<T extends Statement> extends ASTNodeWriter {
     writeWhole(node: T, writer: ASTWriter): SrcDesc {
-        return [[node, this.writeInner(node, writer)], ";"];
+        const stmtDesc = super.writeWhole(node, writer);
+
+        stmtDesc.unshift(...writeDocs(node.documentation, writer));
+        stmtDesc.push(";");
+
+        return stmtDesc;
     }
 }
 
@@ -512,6 +541,8 @@ class ExpressionStatementWriter extends SimpleStatementWriter<ExpressionStatemen
      */
     writeWhole(node: ExpressionStatement, writer: ASTWriter): SrcDesc {
         const stmtDesc: SrcDesc = [[node, this.writeInner(node, writer)]];
+
+        stmtDesc.unshift(...writeDocs(node.documentation, writer));
 
         if (!(node.parent instanceof ForStatement && node.parent.vLoopExpression === node)) {
             stmtDesc.push(";");
@@ -587,7 +618,7 @@ abstract class CompoundStatementWriter<
 
         pushSemicolonsDown(stmtDesc);
 
-        return wrapCompoundStatement(node, stmtDesc);
+        return writeDocs(node.documentation, writer).concat(wrapCompoundStatement(node, stmtDesc));
     }
 }
 
@@ -696,6 +727,10 @@ class InlineAssemblyWriter extends ASTNodeWriter {
 
         return ["assembly " + yul];
     }
+
+    writeWhole(node: InlineAssembly, writer: ASTWriter): SrcDesc {
+        return [...writeDocs(node.documentation, writer), [node, this.writeInner(node, writer)]];
+    }
 }
 
 class TryCatchClauseWriter extends ASTNodeWriter {
@@ -709,8 +744,21 @@ class TryCatchClauseWriter extends ASTNodeWriter {
             return writer.desc("returns ", node.vParameters, " ", node.vBlock);
         }
 
-        // Error clause
+        /**
+         * Empty catch clause without parameters and error name
+         */
+        if (node.errorName === "" && node.vParameters === undefined) {
+            return writer.desc("catch ", node.vBlock);
+        }
+
+        /**
+         * Catch clause with error name and parameters
+         */
         return writer.desc("catch ", node.errorName, node.vParameters, " ", node.vBlock);
+    }
+
+    writeWhole(node: TryCatchClause, writer: ASTWriter): SrcDesc {
+        return [...writeDocs(node.documentation, writer), [node, this.writeInner(node, writer)]];
     }
 }
 
@@ -718,42 +766,13 @@ class TryStatementWriter extends ASTNodeWriter {
     writeInner(node: TryStatement, writer: ASTWriter): SrcDesc {
         return writer.desc("try ", node.vExternalCall, " ", ...join(node.vClauses, " "));
     }
-}
 
-class StructuredDocumentationWriter extends ASTNodeWriter {
-    static render(text: string, formatter: SourceFormatter): string {
-        const indent = formatter.renderIndent();
-        const prefix = "/// ";
-
-        const documentation = text.replace(/\n/g, (sub) => sub + indent + prefix);
-
-        return prefix + documentation + "\n" + indent;
-    }
-
-    writeInner(node: StructuredDocumentation, writer: ASTWriter): SrcDesc {
-        return [StructuredDocumentationWriter.render(node.text, writer.formatter)];
+    writeWhole(node: TryStatement, writer: ASTWriter): SrcDesc {
+        return [...writeDocs(node.documentation, writer), [node, this.writeInner(node, writer)]];
     }
 }
 
-abstract class DocumentedNodeWriter<T extends DocumentedNode> extends ASTNodeWriter {
-    writeWhole(node: T, writer: ASTWriter): SrcDesc {
-        const nodeDesc: SrcDesc = [[node, this.writeInner(node, writer)]];
-
-        if (node.documentation) {
-            if (node.documentation instanceof StructuredDocumentation) {
-                nodeDesc.unshift(...writer.desc(node.documentation));
-            } else {
-                nodeDesc.unshift(
-                    StructuredDocumentationWriter.render(node.documentation, writer.formatter)
-                );
-            }
-        }
-
-        return nodeDesc;
-    }
-}
-
-class VariableDeclarationWriter extends DocumentedNodeWriter<VariableDeclaration> {
+class VariableDeclarationWriter extends ASTNodeWriter {
     writeInner(node: VariableDeclaration, writer: ASTWriter): SrcDesc {
         if (node.vScope instanceof SourceUnit) {
             return this.getUnitConstant(node, writer);
@@ -762,6 +781,10 @@ class VariableDeclarationWriter extends DocumentedNodeWriter<VariableDeclaration
         return node.stateVariable
             ? this.getStateVariable(node, writer)
             : this.getLocalVariable(node, writer);
+    }
+
+    writeWhole(node: VariableDeclaration, writer: ASTWriter): SrcDesc {
+        return [...writeDocs(node.documentation, writer), [node, this.writeInner(node, writer)]];
     }
 
     private getUnitConstant(node: VariableDeclaration, writer: ASTWriter): SrcDesc {
@@ -867,6 +890,10 @@ class BlockWriter extends ASTNodeWriter {
 
         return res;
     }
+
+    writeWhole(node: Block, writer: ASTWriter): SrcDesc {
+        return [...writeDocs(node.documentation, writer), [node, this.writeInner(node, writer)]];
+    }
 }
 
 class UncheckedBlockWriter extends ASTNodeWriter {
@@ -900,9 +927,13 @@ class UncheckedBlockWriter extends ASTNodeWriter {
 
         return res;
     }
+
+    writeWhole(node: UncheckedBlock, writer: ASTWriter): SrcDesc {
+        return [...writeDocs(node.documentation, writer), [node, this.writeInner(node, writer)]];
+    }
 }
 
-class EventDefinitionWriter extends DocumentedNodeWriter<EventDefinition> {
+class EventDefinitionWriter extends ASTNodeWriter {
     writeInner(node: EventDefinition, writer: ASTWriter): SrcDesc {
         return writer.desc(
             "event ",
@@ -911,6 +942,10 @@ class EventDefinitionWriter extends DocumentedNodeWriter<EventDefinition> {
             node.anonymous ? " anonymous" : "",
             ";"
         );
+    }
+
+    writeWhole(node: EventDefinition, writer: ASTWriter): SrcDesc {
+        return [...writeDocs(node.documentation, writer), [node, this.writeInner(node, writer)]];
     }
 }
 
@@ -948,7 +983,7 @@ class StructDefinitionWriter extends ASTNodeWriter {
     }
 }
 
-class ModifierDefinitionWriter extends DocumentedNodeWriter<ModifierDefinition> {
+class ModifierDefinitionWriter extends ASTNodeWriter {
     writeInner(node: ModifierDefinition, writer: ASTWriter): SrcDesc {
         const args: DescArgs = ["modifier ", node.name, node.vParameters];
 
@@ -970,6 +1005,10 @@ class ModifierDefinitionWriter extends DocumentedNodeWriter<ModifierDefinition> 
 
         return writer.desc(...args);
     }
+
+    writeWhole(node: ModifierDefinition, writer: ASTWriter): SrcDesc {
+        return [...writeDocs(node.documentation, writer), [node, this.writeInner(node, writer)]];
+    }
 }
 
 class ModifierInvocationWriter extends ASTNodeWriter {
@@ -988,7 +1027,7 @@ class OverrideSpecifierWriter extends ASTNodeWriter {
     }
 }
 
-class FunctionDefinitionWriter extends DocumentedNodeWriter<FunctionDefinition> {
+class FunctionDefinitionWriter extends ASTNodeWriter {
     writeInner(node: FunctionDefinition, writer: ASTWriter): SrcDesc {
         const args = this.getHeader(node, writer);
 
@@ -1001,6 +1040,10 @@ class FunctionDefinitionWriter extends DocumentedNodeWriter<FunctionDefinition> 
         result.push(" ", ...writer.desc(node.vBody));
 
         return result;
+    }
+
+    writeWhole(node: FunctionDefinition, writer: ASTWriter): SrcDesc {
+        return [...writeDocs(node.documentation, writer), [node, this.writeInner(node, writer)]];
     }
 
     private getHeader(node: FunctionDefinition, writer: ASTWriter): DescArgs {
@@ -1088,7 +1131,7 @@ class InheritanceSpecifierWriter extends ASTNodeWriter {
     }
 }
 
-class ContractDefinitionWriter extends DocumentedNodeWriter<ContractDefinition> {
+class ContractDefinitionWriter extends ASTNodeWriter {
     writeInner(node: ContractDefinition, writer: ASTWriter): SrcDesc {
         const headerArgs = this.getHeader(node, writer);
         const headerDesc = writer.desc(...headerArgs);
@@ -1100,6 +1143,10 @@ class ContractDefinitionWriter extends DocumentedNodeWriter<ContractDefinition> 
         descTrimRight(res);
 
         return res;
+    }
+
+    writeWhole(node: ContractDefinition, writer: ASTWriter): SrcDesc {
+        return [...writeDocs(node.documentation, writer), [node, this.writeInner(node, writer)]];
     }
 
     private getHeader(node: ContractDefinition, writer: ASTWriter): DescArgs {
@@ -1201,6 +1248,7 @@ class ImportDirectiveWriter extends ASTNodeWriter {
                 } else {
                     const symbol =
                         origin instanceof ImportDirective ? origin.unitAlias : origin.name;
+
                     entries.push([alias !== undefined ? symbol + " as " + alias : symbol]);
                 }
             }

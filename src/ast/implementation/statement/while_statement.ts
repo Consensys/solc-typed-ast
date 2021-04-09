@@ -19,9 +19,10 @@ export class WhileStatement extends Statement {
         type: string,
         condition: Expression,
         body: Statement,
+        documentation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, type, documentation, raw);
 
         this.vCondition = condition;
         this.vBody = body;

@@ -13,6 +13,6 @@ export class LegacyBlockProcessor extends LegacyNodeProcessor<Block> {
 
         const statements = reader.convertArray(raw.children, config) as Statement[];
 
-        return [id, src, type, statements, raw];
+        return [id, src, type, statements, undefined, raw];
     }
 }

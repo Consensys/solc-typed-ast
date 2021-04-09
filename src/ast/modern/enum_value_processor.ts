@@ -11,7 +11,8 @@ export class ModernEnumValueProcessor extends ModernNodeProcessor<EnumValue> {
         const [id, src, type] = super.process(reader, config, raw);
 
         const name: string = raw.name;
+        const nameLocation: string | undefined = raw.nameLocation;
 
-        return [id, src, type, name, raw];
+        return [id, src, type, name, nameLocation, raw];
     }
 }

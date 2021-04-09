@@ -1,5 +1,7 @@
 const AbiCoder = require("web3-eth-abi");
 
+export type SourceLocation = { offset: number; length: number; sourceIndex: number };
+
 /**
  * Splits the string using the separator.
  * If the string contains well formed parenthesized expressions
@@ -76,4 +78,14 @@ export function* sequence(start = 0, step = 1): Generator<number, number, number
     while (true) {
         yield (start += step);
     }
+}
+
+export function parseSourceLocation(range: string): SourceLocation {
+    const parts = range.split(":");
+
+    const offset = parseInt(parts[0], 10);
+    const length = parseInt(parts[1], 10);
+    const sourceIndex = parseInt(parts[2], 10);
+
+    return { offset, length, sourceIndex };
 }

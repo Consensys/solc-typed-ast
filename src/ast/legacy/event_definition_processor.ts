@@ -28,7 +28,7 @@ export class LegacyEventDefinitionProcessor extends LegacyNodeProcessor<EventDef
             documentation = attributes.documentation;
         }
 
-        return [id, src, type, anonymous, name, parameters, documentation, raw];
+        return [id, src, type, anonymous, name, parameters, documentation, undefined, raw];
     }
 
     private extract(children: ASTNode[]): [StructuredDocumentation | undefined, ParameterList] {

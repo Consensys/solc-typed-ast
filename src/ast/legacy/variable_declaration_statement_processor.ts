@@ -21,6 +21,6 @@ export class LegacyVariableDeclarationStatementProcessor extends LegacyNodeProce
 
         const declarations = children as VariableDeclaration[];
 
-        return [id, src, type, assignments, declarations, initialValue, raw];
+        return [id, src, type, assignments, declarations, initialValue, undefined, raw];
     }
 }

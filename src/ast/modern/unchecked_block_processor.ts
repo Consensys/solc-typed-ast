@@ -11,8 +11,10 @@ export class ModernUncheckedBlockProcessor extends ModernNodeProcessor<Unchecked
     ): ConstructorParameters<typeof UncheckedBlock> {
         const [id, src, type] = super.process(reader, config, raw);
 
+        const documentation: string | undefined = raw.documentation;
+
         const statements = reader.convertArray(raw.statements, config) as Statement[];
 
-        return [id, src, type, statements, raw];
+        return [id, src, type, statements, documentation, raw];
     }
 }

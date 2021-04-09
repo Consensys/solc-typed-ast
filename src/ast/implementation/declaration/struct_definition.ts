@@ -15,6 +15,11 @@ export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
     canonicalName: string;
 
     /**
+     * The source range for name string
+     */
+    nameLocation?: string;
+
+    /**
      * Node id of scoped contract or source unit
      */
     scope: number;
@@ -33,6 +38,7 @@ export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
         scope: number,
         visibility: string,
         members: Iterable<VariableDeclaration>,
+        nameLocation?: string,
         raw?: any
     ) {
         super(id, src, type, raw);
@@ -41,6 +47,7 @@ export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
         this.canonicalName = canonicalName;
         this.scope = scope;
         this.visibility = visibility;
+        this.nameLocation = nameLocation;
 
         for (const member of members) {
             this.appendChild(member);

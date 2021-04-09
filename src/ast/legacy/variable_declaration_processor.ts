@@ -54,6 +54,7 @@ export class LegacyVariableDeclarationProcessor extends LegacyNodeProcessor<Vari
             typeName,
             overrideSpecifier,
             value,
+            undefined,
             raw
         ];
     }

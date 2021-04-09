@@ -13,6 +13,6 @@ export class LegacyExpressionStatementProcessor extends LegacyNodeProcessor<Expr
 
         const [expression] = reader.convertArray(raw.children, config) as [Expression];
 
-        return [id, src, type, expression, raw];
+        return [id, src, type, expression, undefined, raw];
     }
 }

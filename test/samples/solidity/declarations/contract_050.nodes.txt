@@ -34,6 +34,7 @@ SourceUnit #146
         fullyImplemented: true
         linearizedBaseContracts: Array(1) [ 90 ]
         docString: undefined
+        nameLocation: undefined
         context: ASTContext #1000
         parent: SourceUnit #146
         <getter> documentation: undefined
@@ -70,6 +71,7 @@ SourceUnit #146
             stateMutability: "nonpayable"
             isConstructor: false
             documentation: undefined
+            nameLocation: undefined
             vParameters: ParameterList #78
             vReturnParameters: ParameterList #81
             vModifiers: Array(0)
@@ -117,6 +119,7 @@ SourceUnit #146
                     mutability: "mutable"
                     typeString: "uint256"
                     documentation: undefined
+                    nameLocation: undefined
                     vType: ElementaryTypeName #74
                     vOverrideSpecifier: undefined
                     vValue: undefined
@@ -165,6 +168,7 @@ SourceUnit #146
                     mutability: "mutable"
                     typeString: "uint256"
                     documentation: undefined
+                    nameLocation: undefined
                     vType: ElementaryTypeName #76
                     vOverrideSpecifier: undefined
                     vValue: undefined
@@ -228,6 +232,7 @@ SourceUnit #146
                     mutability: "mutable"
                     typeString: "uint256"
                     documentation: undefined
+                    nameLocation: undefined
                     vType: ElementaryTypeName #79
                     vOverrideSpecifier: undefined
                     vValue: undefined
@@ -266,6 +271,7 @@ SourceUnit #146
                 id: 88
                 src: "0:0:0"
                 type: "Block"
+                documentation: undefined
                 context: ASTContext #1000
                 parent: FunctionDefinition #89
                 <getter> vStatements: Array(1) [ ExpressionStatement #87 ]
@@ -281,6 +287,7 @@ SourceUnit #146
                     id: 87
                     src: "0:0:0"
                     type: "ExpressionStatement"
+                    documentation: undefined
                     vExpression: Assignment #86
                     context: ASTContext #1000
                     parent: Block #88
@@ -396,6 +403,7 @@ SourceUnit #146
         fullyImplemented: false
         linearizedBaseContracts: Array(1) [ 100 ]
         docString: undefined
+        nameLocation: undefined
         context: ASTContext #1000
         parent: SourceUnit #146
         <getter> documentation: undefined
@@ -432,6 +440,7 @@ SourceUnit #146
             stateMutability: "nonpayable"
             isConstructor: false
             documentation: undefined
+            nameLocation: undefined
             vParameters: ParameterList #95
             vReturnParameters: ParameterList #98
             vModifiers: Array(0)
@@ -479,6 +488,7 @@ SourceUnit #146
                     mutability: "mutable"
                     typeString: "uint256"
                     documentation: undefined
+                    nameLocation: undefined
                     vType: ElementaryTypeName #91
                     vOverrideSpecifier: undefined
                     vValue: undefined
@@ -527,6 +537,7 @@ SourceUnit #146
                     mutability: "mutable"
                     typeString: "uint256"
                     documentation: undefined
+                    nameLocation: undefined
                     vType: ElementaryTypeName #93
                     vOverrideSpecifier: undefined
                     vValue: undefined
@@ -590,6 +601,7 @@ SourceUnit #146
                     mutability: "mutable"
                     typeString: "uint256"
                     documentation: undefined
+                    nameLocation: undefined
                     vType: ElementaryTypeName #96
                     vOverrideSpecifier: undefined
                     vValue: undefined
@@ -635,6 +647,7 @@ SourceUnit #146
         fullyImplemented: true
         linearizedBaseContracts: Array(2) [ 145, 100 ]
         docString: undefined
+        nameLocation: undefined
         context: ASTContext #1000
         parent: SourceUnit #146
         <getter> documentation: undefined
@@ -700,6 +713,7 @@ SourceUnit #146
             anonymous: false
             name: "Ev"
             documentation: undefined
+            nameLocation: undefined
             vParameters: ParameterList #105
             context: ASTContext #1000
             parent: ContractDefinition #145
@@ -743,6 +757,7 @@ SourceUnit #146
                     mutability: "mutable"
                     typeString: "address"
                     documentation: undefined
+                    nameLocation: undefined
                     vType: ElementaryTypeName #103
                     vOverrideSpecifier: undefined
                     vValue: undefined
@@ -785,6 +800,7 @@ SourceUnit #146
             canonicalName: "C.St"
             scope: 145
             visibility: "public"
+            nameLocation: undefined
             context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> vMembers: Array(1) [ VariableDeclaration #108 ]
@@ -811,6 +827,7 @@ SourceUnit #146
                 mutability: "mutable"
                 typeString: "uint256"
                 documentation: undefined
+                nameLocation: undefined
                 vType: ElementaryTypeName #107
                 vOverrideSpecifier: undefined
                 vValue: undefined
@@ -851,6 +868,7 @@ SourceUnit #146
             type: "EnumDefinition"
             name: "En"
             canonicalName: "C.En"
+            nameLocation: undefined
             context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> vMembers: Array(3) [ EnumValue #110, EnumValue #111, EnumValue #112 ]
@@ -868,6 +886,7 @@ SourceUnit #146
                 src: "0:0:0"
                 type: "EnumValue"
                 name: "A"
+                nameLocation: undefined
                 context: ASTContext #1000
                 parent: EnumDefinition #113
                 <getter> children: Array(0)
@@ -883,6 +902,7 @@ SourceUnit #146
                 src: "0:0:0"
                 type: "EnumValue"
                 name: "B"
+                nameLocation: undefined
                 context: ASTContext #1000
                 parent: EnumDefinition #113
                 <getter> children: Array(0)
@@ -898,6 +918,7 @@ SourceUnit #146
                 src: "0:0:0"
                 type: "EnumValue"
                 name: "C"
+                nameLocation: undefined
                 context: ASTContext #1000
                 parent: EnumDefinition #113
                 <getter> children: Array(0)
@@ -974,6 +995,7 @@ SourceUnit #146
             mutability: "mutable"
             typeString: "uint256"
             documentation: undefined
+            nameLocation: undefined
             vType: ElementaryTypeName #117
             vOverrideSpecifier: undefined
             vValue: undefined
@@ -1021,6 +1043,7 @@ SourceUnit #146
             stateMutability: "nonpayable"
             isConstructor: true
             documentation: undefined
+            nameLocation: undefined
             vParameters: ParameterList #119
             vReturnParameters: ParameterList #120
             vModifiers: Array(0)
@@ -1073,6 +1096,7 @@ SourceUnit #146
                 id: 128
                 src: "0:0:0"
                 type: "Block"
+                documentation: undefined
                 context: ASTContext #1000
                 parent: FunctionDefinition #129
                 <getter> vStatements: Array(1) [ ExpressionStatement #127 ]
@@ -1088,6 +1112,7 @@ SourceUnit #146
                     id: 127
                     src: "0:0:0"
                     type: "ExpressionStatement"
+                    documentation: undefined
                     vExpression: Assignment #126
                     context: ASTContext #1000
                     parent: Block #128
@@ -1231,6 +1256,7 @@ SourceUnit #146
             stateMutability: "nonpayable"
             isConstructor: false
             documentation: undefined
+            nameLocation: undefined
             vParameters: ParameterList #134
             vReturnParameters: ParameterList #137
             vModifiers: Array(0)
@@ -1278,6 +1304,7 @@ SourceUnit #146
                     mutability: "mutable"
                     typeString: "uint256"
                     documentation: undefined
+                    nameLocation: undefined
                     vType: ElementaryTypeName #130
                     vOverrideSpecifier: undefined
                     vValue: undefined
@@ -1326,6 +1353,7 @@ SourceUnit #146
                     mutability: "mutable"
                     typeString: "uint256"
                     documentation: undefined
+                    nameLocation: undefined
                     vType: ElementaryTypeName #132
                     vOverrideSpecifier: undefined
                     vValue: undefined
@@ -1389,6 +1417,7 @@ SourceUnit #146
                     mutability: "mutable"
                     typeString: "uint256"
                     documentation: undefined
+                    nameLocation: undefined
                     vType: ElementaryTypeName #135
                     vOverrideSpecifier: undefined
                     vValue: undefined
@@ -1427,6 +1456,7 @@ SourceUnit #146
                 id: 143
                 src: "0:0:0"
                 type: "Block"
+                documentation: undefined
                 context: ASTContext #1000
                 parent: FunctionDefinition #144
                 <getter> vStatements: Array(1) [ Return #142 ]
@@ -1442,6 +1472,7 @@ SourceUnit #146
                     id: 142
                     src: "0:0:0"
                     type: "Return"
+                    documentation: undefined
                     functionReturnParameters: 64
                     vExpression: FunctionCall #141
                     context: ASTContext #1000

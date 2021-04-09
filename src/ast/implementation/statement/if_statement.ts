@@ -25,9 +25,10 @@ export class IfStatement extends Statement {
         condition: Expression,
         trueBody: Statement,
         falseBody?: Statement,
+        documentation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, type, documentation, raw);
 
         this.vCondition = condition;
         this.vTrueBody = trueBody;

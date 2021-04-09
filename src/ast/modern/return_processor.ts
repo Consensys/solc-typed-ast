@@ -12,11 +12,12 @@ export class ModernReturnProcessor extends ModernNodeProcessor<Return> {
         const [id, src, type] = super.process(reader, config, raw);
 
         const functionReturnParameters: number = raw.functionReturnParameters;
+        const documentation: string | undefined = raw.documentation;
 
         const expression = raw.expression
             ? (reader.convert(raw.expression, config) as Expression)
             : undefined;
 
-        return [id, src, type, functionReturnParameters, expression, raw];
+        return [id, src, type, functionReturnParameters, expression, documentation, raw];
     }
 }

@@ -30,6 +30,11 @@ export class VariableDeclaration extends ASTNode {
     name: string;
 
     /**
+     * The source range for name string
+     */
+    nameLocation?: string;
+
+    /**
      * Id of scoped node
      */
     scope: number;
@@ -61,7 +66,7 @@ export class VariableDeclaration extends ASTNode {
     typeString: string;
 
     /**
-     * Optional documentation appearing above the contract definition:
+     * Optional documentation appearing above the variable declaration:
      * - Is `undefined` when not specified.
      * - Is type of `string` for compatibility reasons.
      * - Is instance of `StructuredDocumentation` when specified and compiler version is `0.6.9` or newer.
@@ -106,6 +111,7 @@ export class VariableDeclaration extends ASTNode {
         typeName?: TypeName,
         overrideSpecifier?: OverrideSpecifier,
         value?: Expression,
+        nameLocation?: string,
         raw?: any
     ) {
         super(id, src, type, raw);
@@ -120,6 +126,7 @@ export class VariableDeclaration extends ASTNode {
         this.mutability = mutability;
         this.typeString = typeString;
         this.documentation = documentation;
+        this.nameLocation = nameLocation;
 
         this.vType = typeName;
         this.vOverrideSpecifier = overrideSpecifier;

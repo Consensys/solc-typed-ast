@@ -14,6 +14,8 @@ export class ModernForStatementProcessor extends ModernNodeProcessor<ForStatemen
     ): ConstructorParameters<typeof ForStatement> {
         const [id, src, type] = super.process(reader, config, raw);
 
+        const documentation: string | undefined = raw.documentation;
+
         const initializationExpression = raw.initializationExpression
             ? (reader.convert(raw.initializationExpression, config) as VariableDeclarationStatement)
             : undefined;
@@ -28,6 +30,16 @@ export class ModernForStatementProcessor extends ModernNodeProcessor<ForStatemen
 
         const body = reader.convert(raw.body, config) as Statement;
 
-        return [id, src, type, body, initializationExpression, condition, loopExpression, raw];
+        return [
+            id,
+            src,
+            type,
+            body,
+            initializationExpression,
+            condition,
+            loopExpression,
+            documentation,
+            raw
+        ];
     }
 }

@@ -11,8 +11,10 @@ export class ModernEmitStatementProcessor extends ModernNodeProcessor<EmitStatem
     ): ConstructorParameters<typeof EmitStatement> {
         const [id, src, type] = super.process(reader, config, raw);
 
+        const documentation: string | undefined = raw.documentation;
+
         const eventCall = reader.convert(raw.eventCall, config) as FunctionCall;
 
-        return [id, src, type, eventCall, raw];
+        return [id, src, type, eventCall, documentation, raw];
     }
 }
