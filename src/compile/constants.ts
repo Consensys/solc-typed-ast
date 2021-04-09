@@ -54,7 +54,7 @@ export const CompilerVersions06 = [
 
 export const CompilerVersions07 = ["0.7.0", "0.7.1", "0.7.2", "0.7.3", "0.7.4", "0.7.5", "0.7.6"];
 
-export const CompilerVersions08 = ["0.8.0", "0.8.2", "0.8.3"];
+export const CompilerVersions08 = ["0.8.0", "0.8.1", "0.8.2", "0.8.3"];
 
 export const CompilerSeries = [
     CompilerVersions04,
