@@ -128,7 +128,7 @@
 				<p>After the source is compiled and original compiler has provided the raw AST, the <code>ASTReader</code> could be used to read the typed universal AST:</p>
 				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">ASTReader</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;solc-typed-ast&quot;</span><span style="color: #000000">;</span>
 
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">reader</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">ASTReader</span><span style="color: #000000">();</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">reader</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">ASTReader</span><span style="color: #000000">();</span>
 <span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sourceUnits</span><span style="color: #000000"> = </span><span style="color: #001080">reader</span><span style="color: #000000">.</span><span style="color: #795E26">read</span><span style="color: #000000">(</span><span style="color: #001080">result</span><span style="color: #000000">.</span><span style="color: #001080">data</span><span style="color: #000000">);</span>
 
 <span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;Used compiler version: &quot;</span><span style="color: #000000"> + </span><span style="color: #001080">result</span><span style="color: #000000">.</span><span style="color: #001080">compilerVersion</span><span style="color: #000000">);</span>
@@ -151,8 +151,8 @@
 <span style="color: #000000">    </span><span style="color: #001080">PrettyFormatter</span>
 <span style="color: #000000">} </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;solc-typed-ast&quot;</span><span style="color: #000000">;</span>
 
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">formatter</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">PrettyFormatter</span><span style="color: #000000">(</span><span style="color: #098658">4</span><span style="color: #000000">, </span><span style="color: #098658">0</span><span style="color: #000000">);</span>
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">writer</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">ASTWriter</span><span style="color: #000000">(</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">formatter</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">PrettyFormatter</span><span style="color: #000000">(</span><span style="color: #098658">4</span><span style="color: #000000">, </span><span style="color: #098658">0</span><span style="color: #000000">);</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">writer</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">ASTWriter</span><span style="color: #000000">(</span>
 <span style="color: #000000">    </span><span style="color: #001080">DefaultASTWriterMapping</span><span style="color: #000000">,</span>
 <span style="color: #000000">    </span><span style="color: #001080">formatter</span><span style="color: #000000">,</span>
 <span style="color: #000000">    </span><span style="color: #001080">result</span><span style="color: #000000">.</span><span style="color: #001080">compilerVersion</span><span style="color: #000000"> ? </span><span style="color: #001080">result</span><span style="color: #000000">.</span><span style="color: #001080">compilerVersion</span><span style="color: #000000"> : </span><span style="color: #001080">LatestCompilerVersion</span>
@@ -461,10 +461,16 @@
 						<a href="modules/ast_legacy_block_processor.html">ast/legacy/block_<wbr>processor</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_break_processor.html">ast/legacy/break_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/ast_legacy_conditional_processor.html">ast/legacy/conditional_<wbr>processor</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/ast_legacy_configuration.html">ast/legacy/configuration</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_continue_processor.html">ast/legacy/continue_<wbr>processor</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/ast_legacy_contract_definition_processor.html">ast/legacy/contract_<wbr>definition_<wbr>processor</a>
@@ -560,6 +566,9 @@
 						<a href="modules/ast_legacy_parameter_list_processor.html">ast/legacy/parameter_<wbr>list_<wbr>processor</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_placeholder_statement_processor.html">ast/legacy/placeholder_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/ast_legacy_pragma_directive_processor.html">ast/legacy/pragma_<wbr>directive_<wbr>processor</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -573,6 +582,9 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/ast_legacy_structured_documentation_processor.html">ast/legacy/structured_<wbr>documentation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_legacy_throw_processor.html">ast/legacy/throw_<wbr>processor</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/ast_legacy_try_catch_clause_processor.html">ast/legacy/try_<wbr>catch_<wbr>clause_<wbr>processor</a>
@@ -620,10 +632,16 @@
 						<a href="modules/ast_modern_block_processor.html">ast/modern/block_<wbr>processor</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_break_processor.html">ast/modern/break_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/ast_modern_conditional_processor.html">ast/modern/conditional_<wbr>processor</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/ast_modern_configuration.html">ast/modern/configuration</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_continue_processor.html">ast/modern/continue_<wbr>processor</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/ast_modern_contract_definition_processor.html">ast/modern/contract_<wbr>definition_<wbr>processor</a>
@@ -722,6 +740,9 @@
 						<a href="modules/ast_modern_parameter_list_processor.html">ast/modern/parameter_<wbr>list_<wbr>processor</a>
 					</li>
 					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_placeholder_statement_processor.html">ast/modern/placeholder_<wbr>statement_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
 						<a href="modules/ast_modern_pragma_directive_processor.html">ast/modern/pragma_<wbr>directive_<wbr>processor</a>
 					</li>
 					<li class=" tsd-kind-module">
@@ -735,6 +756,9 @@
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/ast_modern_structured_documentation_processor.html">ast/modern/structured_<wbr>documentation_<wbr>processor</a>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/ast_modern_throw_processor.html">ast/modern/throw_<wbr>processor</a>
 					</li>
 					<li class=" tsd-kind-module">
 						<a href="modules/ast_modern_try_catch_clause_processor.html">ast/modern/try_<wbr>catch_<wbr>clause_<wbr>processor</a>

@@ -68,13 +68,47 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Type aliases</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="ast_utils.html#sourcelocation" class="tsd-kind-icon">Source<wbr>Location</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="ast_utils.html#encodesignature" class="tsd-kind-icon">encode<wbr>Signature</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="ast_utils.html#parsesourcelocation" class="tsd-kind-icon">parse<wbr>Source<wbr>Location</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="ast_utils.html#sequence" class="tsd-kind-icon">sequence</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="ast_utils.html#split" class="tsd-kind-icon">split</a></li>
 							</ul>
 						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="sourcelocation" class="tsd-anchor"></a>
+					<h3>Source<wbr>Location</h3>
+					<div class="tsd-signature tsd-kind-icon">Source<wbr>Location<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>length<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>sourceIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/utils.ts#L3">ast/utils.ts:3</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter">
+								<h5>length<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+							<li class="tsd-parameter">
+								<h5>source<wbr>Index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
+							</li>
+						</ul>
 					</div>
 				</section>
 			</section>
@@ -90,7 +124,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/utils.ts#L69">ast/utils.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/utils.ts#L71">ast/utils.ts:71</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -107,6 +141,29 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="parsesourcelocation" class="tsd-anchor"></a>
+					<h3>parse<wbr>Source<wbr>Location</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">parse<wbr>Source<wbr>Location<span class="tsd-signature-symbol">(</span>range<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ast_utils.html#sourcelocation" class="tsd-signature-type" data-tsd-kind="Type alias">SourceLocation</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/utils.ts#L83">ast/utils.ts:83</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>range: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="ast_utils.html#sourcelocation" class="tsd-signature-type" data-tsd-kind="Type alias">SourceLocation</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
 					<a name="sequence" class="tsd-anchor"></a>
 					<h3>sequence</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
@@ -116,7 +173,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/utils.ts#L75">ast/utils.ts:75</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/utils.ts#L77">ast/utils.ts:77</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -142,7 +199,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/utils.ts#L17">ast/utils.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/utils.ts#L19">ast/utils.ts:19</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -200,8 +257,14 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="ast_utils.html#sourcelocation" class="tsd-kind-icon">Source<wbr>Location</a>
+					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="ast_utils.html#encodesignature" class="tsd-kind-icon">encode<wbr>Signature</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="ast_utils.html#parsesourcelocation" class="tsd-kind-icon">parse<wbr>Source<wbr>Location</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="ast_utils.html#sequence" class="tsd-kind-icon">sequence</a>

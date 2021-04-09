@@ -86,10 +86,10 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><a href="ast_implementation_meta_parameter_list.parameterlist.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="ast_implementation_meta_parameter_list.parameterlist.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ast_implementation_meta_parameter_list.parameterlist.html#context" class="tsd-kind-icon">context</a></li>
@@ -114,7 +114,7 @@
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ast_implementation_meta_parameter_list.parameterlist.html#vparameters" class="tsd-kind-icon">v<wbr>Parameters</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section ">
+						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="ast_implementation_meta_parameter_list.parameterlist.html#acceptchildren" class="tsd-kind-icon">accept<wbr>Children</a></li>
@@ -147,16 +147,16 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 						<li class="tsd-signature tsd-kind-icon">new <wbr>Parameter<wbr>List<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, src<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, parameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="ast_implementation_declaration_variable_declaration.variabledeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a><span class="tsd-signature-symbol">&gt;</span>, raw<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ast_implementation_meta_parameter_list.parameterlist.html" class="tsd-signature-type" data-tsd-kind="Class">ParameterList</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#constructor">constructor</a></p>
+								<p>Overrides <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#constructor">constructor</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/meta/parameter_list.ts#L4">ast/implementation/meta/parameter_list.ts:4</a></li>
 								</ul>
@@ -184,16 +184,16 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="context" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> context</h3>
-					<div class="tsd-signature tsd-kind-icon">context<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="ast_ast_reader.astcontext.html" class="tsd-signature-type" data-tsd-kind="Class">ASTContext</a></div>
+					<div class="tsd-signature tsd-kind-icon">context<span class="tsd-signature-symbol">:</span> <a href="ast_ast_reader.astcontext.html" class="tsd-signature-type" data-tsd-kind="Class">ASTContext</a></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#context">context</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L13">ast/ast_node.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L14">ast/ast_node.ts:14</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -209,7 +209,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L18">ast/ast_node.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L19">ast/ast_node.ts:19</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -221,11 +221,11 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="parent" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> parent</h3>
-					<div class="tsd-signature tsd-kind-icon">parent<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a></div>
+					<div class="tsd-signature tsd-kind-icon">parent<span class="tsd-signature-symbol">:</span> <a href="ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#parent">parent</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L47">ast/ast_node.ts:47</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L48">ast/ast_node.ts:48</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -241,7 +241,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#raw">raw</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L42">ast/ast_node.ts:42</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L43">ast/ast_node.ts:43</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -257,7 +257,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#src">src</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L32">ast/ast_node.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L33">ast/ast_node.ts:33</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -282,7 +282,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#type">type</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L37">ast/ast_node.ts:37</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L38">ast/ast_node.ts:38</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -304,9 +304,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L357">ast/ast_node.ts:357</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L352">ast/ast_node.ts:352</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Returns children nodes of the current node</p>
+								</div>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">readonly </span><a href="ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
@@ -321,7 +326,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L103">ast/ast_node.ts:103</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L104">ast/ast_node.ts:104</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -344,7 +349,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L111">ast/ast_node.ts:111</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L112">ast/ast_node.ts:112</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -367,7 +372,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L140">ast/ast_node.ts:140</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L141">ast/ast_node.ts:141</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -392,7 +397,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L122">ast/ast_node.ts:122</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L123">ast/ast_node.ts:123</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -417,7 +422,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L84">ast/ast_node.ts:84</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L85">ast/ast_node.ts:85</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -439,7 +444,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L154">ast/ast_node.ts:154</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L155">ast/ast_node.ts:155</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -455,13 +460,13 @@
 					<a name="sourceinfo" class="tsd-anchor"></a>
 					<h3>source<wbr>Info</h3>
 					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> sourceInfo<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>length<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>sourceIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></li>
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> sourceInfo<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../modules/ast_utils.html#sourcelocation" class="tsd-signature-type" data-tsd-kind="Type alias">SourceLocation</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L167">ast/ast_node.ts:167</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L168">ast/ast_node.ts:168</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -469,18 +474,7 @@
 									<p>Returns parsed parts of the <code>src</code> property value</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>length<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>sourceIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></h4>
-							<ul class="tsd-parameters">
-								<li class="tsd-parameter">
-									<h5>length<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li class="tsd-parameter">
-									<h5>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li class="tsd-parameter">
-									<h5>source<wbr>Index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../modules/ast_utils.html#sourcelocation" class="tsd-signature-type" data-tsd-kind="Type alias">SourceLocation</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -507,7 +501,7 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group ">
+			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
 					<a name="acceptchildren" class="tsd-anchor"></a>
@@ -520,7 +514,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#acceptchildren">acceptChildren</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L75">ast/ast_node.ts:75</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L76">ast/ast_node.ts:76</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -543,7 +537,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#appendchild">appendChild</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L375">ast/ast_node.ts:375</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L370">ast/ast_node.ts:370</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -567,7 +561,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#extractsourcefragment">extractSourceFragment</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L335">ast/ast_node.ts:335</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L330">ast/ast_node.ts:330</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -598,7 +592,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getchildren">getChildren</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L201">ast/ast_node.ts:201</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L196">ast/ast_node.ts:196</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -622,7 +616,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getchildrenbyselector">getChildrenBySelector</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L216">ast/ast_node.ts:216</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L211">ast/ast_node.ts:211</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -655,7 +649,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getchildrenbytype">getChildrenByType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L233">ast/ast_node.ts:233</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L228">ast/ast_node.ts:228</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -688,7 +682,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getchildrenbytypestring">getChildrenByTypeString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L237">ast/ast_node.ts:237</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L232">ast/ast_node.ts:232</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -721,7 +715,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getclosestparentbyselector">getClosestParentBySelector</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L251">ast/ast_node.ts:251</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L246">ast/ast_node.ts:246</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -751,7 +745,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getclosestparentbytype">getClosestParentByType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L265">ast/ast_node.ts:265</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L260">ast/ast_node.ts:260</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -781,7 +775,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getclosestparentbytypestring">getClosestParentByTypeString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L269">ast/ast_node.ts:269</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L264">ast/ast_node.ts:264</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -811,7 +805,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getfieldvalues">getFieldValues</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L295">ast/ast_node.ts:295</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L290">ast/ast_node.ts:290</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -829,7 +823,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getgettersvalues">getGettersValues</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L299">ast/ast_node.ts:299</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L294">ast/ast_node.ts:294</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -847,7 +841,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getparents">getParents</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L241">ast/ast_node.ts:241</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L236">ast/ast_node.ts:236</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -865,7 +859,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getparentsbyselector">getParentsBySelector</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L273">ast/ast_node.ts:273</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L268">ast/ast_node.ts:268</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -895,7 +889,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#insertafter">insertAfter</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L397">ast/ast_node.ts:397</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L392">ast/ast_node.ts:392</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -922,7 +916,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#insertatbeginning">insertAtBeginning</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L407">ast/ast_node.ts:407</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L402">ast/ast_node.ts:402</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -946,7 +940,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#insertbefore">insertBefore</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L383">ast/ast_node.ts:383</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L378">ast/ast_node.ts:378</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -973,7 +967,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#print">print</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L291">ast/ast_node.ts:291</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L286">ast/ast_node.ts:286</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1005,7 +999,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#removechild">removeChild</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L361">ast/ast_node.ts:361</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L356">ast/ast_node.ts:356</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1029,7 +1023,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#replacechild">replaceChild</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L413">ast/ast_node.ts:413</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L408">ast/ast_node.ts:408</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1065,7 +1059,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#walk">walk</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L177">ast/ast_node.ts:177</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L172">ast/ast_node.ts:172</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1089,7 +1083,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#walkchildren">walkChildren</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L183">ast/ast_node.ts:183</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L178">ast/ast_node.ts:178</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1113,7 +1107,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#walkparents">walkParents</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L191">ast/ast_node.ts:191</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L186">ast/ast_node.ts:186</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1146,7 +1140,7 @@
 					<li class="current tsd-kind-class tsd-parent-kind-module">
 						<a href="ast_implementation_meta_parameter_list.parameterlist.html" class="tsd-kind-icon">Parameter<wbr>List</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 								<a href="ast_implementation_meta_parameter_list.parameterlist.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
@@ -1284,17 +1278,17 @@
 				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
 				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
-				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
