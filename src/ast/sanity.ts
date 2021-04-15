@@ -218,8 +218,7 @@ function checkFieldAndVFieldMatch<T extends ASTNode, K1 extends keyof T, K2 exte
  */
 function checkDirectChildren<T extends ASTNode>(node: T, ...fields: Array<keyof T>): void {
     const directChildren = new Set(node.children);
-
-    const computedChildren: Set<ASTNode> = new Set();
+    const computedChildren = new Set<ASTNode>();
 
     for (const field of fields) {
         const val = node[field];
@@ -236,6 +235,7 @@ function checkDirectChildren<T extends ASTNode>(node: T, ...fields: Array<keyof 
                     )} child of ${pp(val.parent)}`
                 );
             }
+
             computedChildren.add(val);
         } else if (val instanceof Array) {
             for (let i = 0; i < val.length; i++) {
@@ -249,7 +249,7 @@ function checkDirectChildren<T extends ASTNode>(node: T, ...fields: Array<keyof 
                     throw new Error(
                         `Field ${field} of ${pp(
                             node
-                        )} is neither an ASTNode nor an array of ASTNode or nulls - instead array containing ${el}`
+                        )} is expected to be ASTNode, array or map with ASTNodes - instead array containing ${el}`
                     );
                 }
 
@@ -262,6 +262,30 @@ function checkDirectChildren<T extends ASTNode>(node: T, ...fields: Array<keyof 
                 }
 
                 computedChildren.add(el);
+            }
+        } else if (val instanceof Map) {
+            for (const [k, v] of val.entries()) {
+                if (v === null) {
+                    continue;
+                }
+
+                if (!(v instanceof ASTNode)) {
+                    throw new Error(
+                        `Field ${field} of ${pp(
+                            node
+                        )} is expected to be ASTNode, array or map with ASTNodes - instead map containing ${v}`
+                    );
+                }
+
+                if (!directChildren.has(v)) {
+                    throw new InsaneASTError(
+                        `Field ${field}[${k}] of node ${pp(node)} is not a direct child: ${pp(
+                            v
+                        )} child of ${pp(v.parent)}`
+                    );
+                }
+
+                computedChildren.add(v);
             }
         } else {
             throw new Error(
@@ -438,15 +462,10 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
             }
 
             checkFieldAndVFieldMatch(node, `linearizedBaseContracts`, `vLinearizedBaseContracts`);
-
             checkVFieldCtx(node, `vLinearizedBaseContracts`, ctx);
 
-            if (node.documentation instanceof StructuredDocumentation) {
-                checkVFieldCtx(node, "documentation", ctx);
-            }
-
-            checkDirectChildren(
-                node,
+            const fields: Array<keyof ContractDefinition> = [
+                "documentation",
                 "vInheritanceSpecifiers",
                 "vStateVariables",
                 "vModifiers",
@@ -456,41 +475,66 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
                 "vStructs",
                 "vEnums",
                 "vConstructor"
-            );
+            ];
+
+            if (node.documentation instanceof StructuredDocumentation) {
+                checkVFieldCtx(node, "documentation", ctx);
+
+                fields.push("documentation");
+            }
+
+            checkDirectChildren(node, ...fields);
         } else if (node instanceof EnumDefinition) {
             checkVFieldCtx(node, "vScope", ctx);
 
             checkDirectChildren(node, "vMembers");
         } else if (node instanceof EventDefinition) {
+            checkVFieldCtx(node, "vScope", ctx);
+
+            const fields: Array<keyof EventDefinition> = ["vParameters"];
+
             if (node.documentation instanceof StructuredDocumentation) {
                 checkVFieldCtx(node, "documentation", ctx);
+
+                fields.push("documentation");
             }
 
-            checkVFieldCtx(node, "vScope", ctx);
-            checkDirectChildren(node, "vParameters");
+            checkDirectChildren(node, ...fields);
         } else if (node instanceof FunctionDefinition) {
             checkFieldAndVFieldMatch(node, "scope", "vScope");
             checkVFieldCtx(node, "vScope", ctx);
 
-            if (node.documentation instanceof StructuredDocumentation) {
-                checkVFieldCtx(node, "documentation", ctx);
-            }
-
-            checkDirectChildren(
-                node,
+            const fields: Array<keyof FunctionDefinition> = [
                 "vParameters",
                 "vOverrideSpecifier",
                 "vModifiers",
                 "vReturnParameters",
                 "vBody"
-            );
-        } else if (node instanceof ModifierDefinition) {
+            ];
+
             if (node.documentation instanceof StructuredDocumentation) {
                 checkVFieldCtx(node, "documentation", ctx);
+
+                fields.push("documentation");
             }
 
+            checkDirectChildren(node, ...fields);
+        } else if (node instanceof ModifierDefinition) {
             checkVFieldCtx(node, "vScope", ctx);
-            checkDirectChildren(node, "vParameters", "vOverrideSpecifier", "vBody");
+
+            const fields: Array<keyof ModifierDefinition> = [
+                "vParameters",
+                "vOverrideSpecifier",
+                "vBody"
+            ];
+
+            if (node.documentation instanceof StructuredDocumentation) {
+                checkVFieldCtx(node, "documentation", ctx);
+
+                fields.push("documentation");
+            }
+
+            checkDirectChildren(node, ...fields);
         } else if (node instanceof StructDefinition) {
             checkFieldAndVFieldMatch(node, "scope", "vScope");
             checkVFieldCtx(node, "vScope", ctx);
@@ -500,11 +544,19 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
             checkFieldAndVFieldMatch(node, "scope", "vScope");
             checkVFieldCtx(node, "vScope", ctx);
 
+            const fields: Array<keyof VariableDeclaration> = [
+                "vType",
+                "vOverrideSpecifier",
+                "vValue"
+            ];
+
             if (node.documentation instanceof StructuredDocumentation) {
                 checkVFieldCtx(node, "documentation", ctx);
+
+                fields.push("documentation");
             }
 
-            checkDirectChildren(node, "vType", "vOverrideSpecifier", "vValue");
+            checkDirectChildren(node, ...fields);
         } else if (node instanceof Block || node instanceof UncheckedBlock) {
             checkDirectChildren(node, "vStatements");
         } else if (node instanceof DoWhileStatement) {
@@ -566,7 +618,7 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
         } else if (node instanceof FunctionCall) {
             checkDirectChildren(node, "vExpression", "vArguments");
         } else if (node instanceof FunctionCallOptions) {
-            checkDirectChildren(node, "vExpression", "vOptions");
+            checkDirectChildren(node, "vExpression", "vOptionsMap");
         } else if (node instanceof Identifier || node instanceof IdentifierPath) {
             if (node.referencedDeclaration !== null && node.vReferencedDeclaration !== undefined) {
                 checkFieldAndVFieldMatch(node, "referencedDeclaration", "vReferencedDeclaration");

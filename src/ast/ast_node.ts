@@ -484,6 +484,18 @@ export function replaceNode(oldNode: ASTNode, newNode: ASTNode): void {
                 }
             }
         }
+
+        if (val instanceof Map) {
+            for (const [k, v] of val.entries()) {
+                if (v === oldNode) {
+                    val.set(k, newNode);
+
+                    parent.acceptChildren();
+
+                    return;
+                }
+            }
+        }
     }
 
     /**
