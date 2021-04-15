@@ -441,9 +441,6 @@ export type ASTNodeConstructor<T extends ASTNode> = new (
  * Once found, it re-assigns `p[propName] = newNode` and sets
  * `newNode.parent=p` using `acceptChildren`. Since `children` is a getter
  * there is nothing further to do.
- *
- * @param oldNode - old node to replace
- * @param newNode - new node with which we are replacing it
  */
 export function replaceNode(oldNode: ASTNode, newNode: ASTNode): void {
     if (oldNode.context !== newNode.context) {
@@ -452,34 +449,47 @@ export function replaceNode(oldNode: ASTNode, newNode: ASTNode): void {
 
     const parent = oldNode.parent;
 
-    if (!parent) return;
+    if (parent === undefined) {
+        return;
+    }
 
-    // First check if parent has an OWN property with the child
+    /**
+     * First, check if parent has an OWN property with the child.
+     */
     const ownProps = Object.getOwnPropertyDescriptors(parent);
-    for (const propName in ownProps) {
-        const propVal = ownProps[propName].value;
-        if (propVal === oldNode) {
+
+    for (const name in ownProps) {
+        const val = ownProps[name].value;
+
+        if (val === oldNode) {
             const tmpObj: any = {};
-            tmpObj[propName] = newNode;
+
+            tmpObj[name] = newNode;
 
             Object.assign(parent, tmpObj);
+
             parent.acceptChildren();
+
             return;
         }
 
-        if (propVal instanceof Array) {
-            for (let i = 0; i < propVal.length; i++) {
-                if (propVal[i] === oldNode) {
-                    propVal[i] = newNode;
+        if (val instanceof Array) {
+            for (let i = 0; i < val.length; i++) {
+                if (val[i] === oldNode) {
+                    val[i] = newNode;
+
                     parent.acceptChildren();
+
                     return;
                 }
             }
         }
     }
 
-    // If not, walk up the inheritance tree, looking for a getter/setter pair that matches
-    // this child
+    /**
+     * If not, walk up the inheritance tree,
+     * looking for a getter/setter pair that matches this child.
+     */
     let proto = Object.getPrototypeOf(parent);
 
     while (proto) {
@@ -496,9 +506,12 @@ export function replaceNode(oldNode: ASTNode, newNode: ASTNode): void {
                 typeof descriptor.set === "function"
             ) {
                 const val = descriptor.get.call(parent);
+
                 if (val === oldNode) {
                     descriptor.set.call(parent, newNode);
+
                     parent.acceptChildren();
+
                     return;
                 }
             }

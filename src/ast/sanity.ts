@@ -223,6 +223,7 @@ function checkDirectChildren<T extends ASTNode>(node: T, ...fields: Array<keyof 
 
     for (const field of fields) {
         const val = node[field];
+
         if (val === undefined) {
             continue;
         }
@@ -243,6 +244,7 @@ function checkDirectChildren<T extends ASTNode>(node: T, ...fields: Array<keyof 
                 if (el === null) {
                     continue;
                 }
+
                 if (!(el instanceof ASTNode)) {
                     throw new Error(
                         `Field ${field} of ${pp(
@@ -272,12 +274,14 @@ function checkDirectChildren<T extends ASTNode>(node: T, ...fields: Array<keyof 
 
     if (computedChildren.size < directChildren.size) {
         let missingChild: ASTNode | undefined;
+
         for (const child of directChildren) {
             if (computedChildren.has(child)) {
                 continue;
             }
 
             missingChild = child;
+
             break;
         }
 
@@ -305,34 +309,46 @@ function checkDirectChildren<T extends ASTNode>(node: T, ...fields: Array<keyof 
  * @param ctxts - `ASTContext`s for each of the groups of units
  */
 export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
-    for (const child of unit.getChildren(true)) {
-        if (!inCtx(child, ctx)) {
+    for (const node of unit.getChildren(true)) {
+        if (!inCtx(node, ctx)) {
             throw new InsaneASTError(
-                `Child ${pp(child)} in different context: ${ctx.id} from expected ${ctx.id}`
+                `Child ${pp(node)} in different context: ${ctx.id} from expected ${ctx.id}`
             );
         }
 
-        const immediateChildren = child.children;
+        const immediateChildren = node.children;
 
-        // Each direct child has us as the parent
-        for (let i = 0; i < immediateChildren.length; i++) {
-            const subChild = immediateChildren[i];
-
-            if (subChild.parent !== child) {
-                //`Node ${subChild.print()} has wrong parent.`
+        for (const child of immediateChildren) {
+            if (child.parent !== node) {
                 throw new InsaneASTError(
-                    `Child ${pp(subChild)} has wrong parent: expected ${pp(child)} got ${pp(
-                        subChild.parent
+                    `Child ${pp(child)} has wrong parent: expected ${pp(node)} got ${pp(
+                        child.parent
                     )}`
                 );
             }
         }
 
-        // Node specific checks
-        /// ======== META NODES ==========================================
-        if (child instanceof SourceUnit) {
-            // Fix `exportedSymbols' and 'vExportedSymbols'
-            for (const [name, symId] of child.exportedSymbols) {
+        if (
+            node instanceof PragmaDirective ||
+            node instanceof StructuredDocumentation ||
+            node instanceof EnumValue ||
+            node instanceof Break ||
+            node instanceof Continue ||
+            node instanceof InlineAssembly ||
+            node instanceof PlaceholderStatement ||
+            node instanceof Throw ||
+            node instanceof ElementaryTypeName ||
+            node instanceof Literal
+        ) {
+            /**
+             * These nodes do not have any children or references.
+             * There is nothing to check, so just skip them.
+             */
+            continue;
+        }
+
+        if (node instanceof SourceUnit) {
+            for (const [name, symId] of node.exportedSymbols) {
                 const symNode = ctx.locate(symId);
 
                 if (symNode === undefined) {
@@ -341,19 +357,19 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
                     );
                 }
 
-                if (symNode !== child.vExportedSymbols.get(name)) {
+                if (symNode !== node.vExportedSymbols.get(name)) {
                     throw new InsaneASTError(
                         `Exported symbol ${name} for id ${symId} (${pp(
                             symNode
                         )}) doesn't match vExportedSymbols entry: ${pp(
-                            child.vExportedSymbols.get(name)
+                            node.vExportedSymbols.get(name)
                         )}`
                     );
                 }
             }
 
             checkDirectChildren(
-                child,
+                node,
                 "vPragmaDirectives",
                 "vImportDirectives",
                 "vContracts",
@@ -362,84 +378,75 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
                 "vFunctions",
                 "vVariables"
             );
-        } else if (child instanceof ImportDirective) {
-            // Unfortunately due to compiler bugs in older compilers, when child.symbolAliases[i].foreign is a number
-            // its invalid. When its an Identifier, only its name is valid.
+        } else if (node instanceof ImportDirective) {
+            /**
+             * Unfortunately due to compiler bugs in older compilers, when child.symbolAliases[i].foreign is a number
+             * its invalid. When its an Identifier, only its name is valid.
+             */
             if (
-                child.vSymbolAliases.length !== 0 &&
-                child.vSymbolAliases.length !== child.symbolAliases.length
+                node.vSymbolAliases.length !== 0 &&
+                node.vSymbolAliases.length !== node.symbolAliases.length
             ) {
                 throw new InsaneASTError(
                     `symbolAliases.length (${
-                        child.symbolAliases.length
+                        node.symbolAliases.length
                     }) and vSymboliAliases.length ${
-                        child.vSymbolAliases.length
-                    } misamtch for import ${pp(child)}`
+                        node.vSymbolAliases.length
+                    } misamtch for import ${pp(node)}`
                 );
             }
 
-            for (let i = 0; i < child.vSymbolAliases.length; i++) {
-                const def = child.vSymbolAliases[i][0];
+            for (let i = 0; i < node.vSymbolAliases.length; i++) {
+                const def = node.vSymbolAliases[i][0];
 
                 if (!inCtx(def, ctx)) {
                     throw new InsaneASTError(
                         `Imported symbol ${pp(def)} from import ${pp(
-                            child
+                            node
                         )} not in expected context ${pp(ctx)}`
                     );
                 }
             }
 
-            // 'scope' and 'vScope'
-            checkFieldAndVFieldMatch(child, "scope", "vScope");
-            checkVFieldCtx(child, "vScope", ctx);
+            checkFieldAndVFieldMatch(node, "scope", "vScope");
+            checkVFieldCtx(node, "vScope", ctx);
 
-            // 'sourceUnit' and 'vSourceUnit'
-            checkFieldAndVFieldMatch(child, "sourceUnit", "vSourceUnit");
-            checkVFieldCtx(child, "vSourceUnit", ctx);
-        } else if (child instanceof InheritanceSpecifier) {
-            // Nothing to do
-            checkDirectChildren(child, "vBaseType", "vArguments");
-        } else if (child instanceof ModifierInvocation) {
-            checkVFieldCtx(child, "vModifier", ctx);
-            checkDirectChildren(child, "vModifierName", "vArguments");
-        } else if (child instanceof OverrideSpecifier) {
-            // Nothing to do
-            checkDirectChildren(child, "vOverrides");
-        } else if (child instanceof ParameterList) {
-            checkVFieldCtx(child, "vParameters", ctx);
-            checkDirectChildren(child, "vParameters");
-        } else if (child instanceof PragmaDirective || child instanceof StructuredDocumentation) {
-            // Nothing to do
-        } else if (child instanceof UsingForDirective) {
-            // Nothing to do
-            checkDirectChildren(child, "vLibraryName", "vTypeName");
-        } else if (child instanceof ContractDefinition) {
-            /// ======== DECLARATION NODES ==========================================
-            // 'scope' and 'vScope'
-            checkFieldAndVFieldMatch(child, "scope", "vScope");
-            checkVFieldCtx(child, "vScope", ctx);
+            checkFieldAndVFieldMatch(node, "sourceUnit", "vSourceUnit");
+            checkVFieldCtx(node, "vSourceUnit", ctx);
+        } else if (node instanceof InheritanceSpecifier) {
+            checkDirectChildren(node, "vBaseType", "vArguments");
+        } else if (node instanceof ModifierInvocation) {
+            checkVFieldCtx(node, "vModifier", ctx);
+            checkDirectChildren(node, "vModifierName", "vArguments");
+        } else if (node instanceof OverrideSpecifier) {
+            checkDirectChildren(node, "vOverrides");
+        } else if (node instanceof ParameterList) {
+            checkVFieldCtx(node, "vParameters", ctx);
+            checkDirectChildren(node, "vParameters");
+        } else if (node instanceof UsingForDirective) {
+            checkDirectChildren(node, "vLibraryName", "vTypeName");
+        } else if (node instanceof ContractDefinition) {
+            checkFieldAndVFieldMatch(node, "scope", "vScope");
+            checkVFieldCtx(node, "vScope", ctx);
 
-            if (child.vScope !== child.parent) {
+            if (node.vScope !== node.parent) {
                 throw new InsaneASTError(
-                    `Contract ${pp(child)} vScope ${pp(child.vScope)} and parent ${pp(
-                        child.parent
+                    `Contract ${pp(node)} vScope ${pp(node.vScope)} and parent ${pp(
+                        node.parent
                     )} differ`
                 );
             }
 
-            // linearizedBaseContracts and vLinearizedBaseContracts
-            checkFieldAndVFieldMatch(child, `linearizedBaseContracts`, `vLinearizedBaseContracts`);
+            checkFieldAndVFieldMatch(node, `linearizedBaseContracts`, `vLinearizedBaseContracts`);
 
-            checkVFieldCtx(child, `vLinearizedBaseContracts`, ctx);
+            checkVFieldCtx(node, `vLinearizedBaseContracts`, ctx);
 
-            // documentation
-            if (child.documentation instanceof StructuredDocumentation) {
-                checkVFieldCtx(child, "documentation", ctx);
+            if (node.documentation instanceof StructuredDocumentation) {
+                checkVFieldCtx(node, "documentation", ctx);
             }
 
             checkDirectChildren(
-                child,
+                node,
                 "vInheritanceSpecifiers",
                 "vStateVariables",
                 "vModifiers",
@@ -450,206 +457,154 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
                 "vEnums",
                 "vConstructor"
             );
-        } else if (child instanceof EnumDefinition) {
-            checkVFieldCtx(child, "vScope", ctx);
+        } else if (node instanceof EnumDefinition) {
+            checkVFieldCtx(node, "vScope", ctx);
 
-            checkDirectChildren(child, "vMembers");
-        } else if (child instanceof EnumValue) {
-            // Nothing to do
-        } else if (child instanceof EventDefinition) {
-            if (child.documentation instanceof StructuredDocumentation) {
-                checkVFieldCtx(child, "documentation", ctx);
+            checkDirectChildren(node, "vMembers");
+        } else if (node instanceof EventDefinition) {
+            if (node.documentation instanceof StructuredDocumentation) {
+                checkVFieldCtx(node, "documentation", ctx);
             }
 
-            checkVFieldCtx(child, "vScope", ctx);
-            checkDirectChildren(child, "vParameters");
-        } else if (child instanceof FunctionDefinition) {
-            // scope and vScope
-            checkFieldAndVFieldMatch(child, "scope", "vScope");
-            checkVFieldCtx(child, "vScope", ctx);
+            checkVFieldCtx(node, "vScope", ctx);
+            checkDirectChildren(node, "vParameters");
+        } else if (node instanceof FunctionDefinition) {
+            checkFieldAndVFieldMatch(node, "scope", "vScope");
+            checkVFieldCtx(node, "vScope", ctx);
 
-            if (child.documentation instanceof StructuredDocumentation) {
-                checkVFieldCtx(child, "documentation", ctx);
+            if (node.documentation instanceof StructuredDocumentation) {
+                checkVFieldCtx(node, "documentation", ctx);
             }
+
             checkDirectChildren(
-                child,
+                node,
                 "vParameters",
                 "vOverrideSpecifier",
                 "vModifiers",
                 "vReturnParameters",
                 "vBody"
             );
-        } else if (child instanceof ModifierDefinition) {
-            if (child.documentation instanceof StructuredDocumentation) {
-                checkVFieldCtx(child, "documentation", ctx);
+        } else if (node instanceof ModifierDefinition) {
+            if (node.documentation instanceof StructuredDocumentation) {
+                checkVFieldCtx(node, "documentation", ctx);
             }
 
-            checkVFieldCtx(child, "vScope", ctx);
-            checkDirectChildren(child, "vParameters", "vOverrideSpecifier", "vBody");
-        } else if (child instanceof StructDefinition) {
-            // scope and vScope
-            checkFieldAndVFieldMatch(child, "scope", "vScope");
-            checkVFieldCtx(child, "vScope", ctx);
-            checkDirectChildren(child, "vMembers");
-        } else if (child instanceof VariableDeclaration) {
-            // scope and vScope
-            checkFieldAndVFieldMatch(child, "scope", "vScope");
-            checkVFieldCtx(child, "vScope", ctx);
+            checkVFieldCtx(node, "vScope", ctx);
+            checkDirectChildren(node, "vParameters", "vOverrideSpecifier", "vBody");
+        } else if (node instanceof StructDefinition) {
+            checkFieldAndVFieldMatch(node, "scope", "vScope");
+            checkVFieldCtx(node, "vScope", ctx);
 
-            if (child.documentation instanceof StructuredDocumentation) {
-                checkVFieldCtx(child, "documentation", ctx);
+            checkDirectChildren(node, "vMembers");
+        } else if (node instanceof VariableDeclaration) {
+            checkFieldAndVFieldMatch(node, "scope", "vScope");
+            checkVFieldCtx(node, "vScope", ctx);
+
+            if (node.documentation instanceof StructuredDocumentation) {
+                checkVFieldCtx(node, "documentation", ctx);
             }
 
-            checkDirectChildren(child, "vType", "vOverrideSpecifier", "vValue");
-        } else if (child instanceof Block || child instanceof UncheckedBlock) {
-            /// ======== STATEMENT NODES ==========================================
-            // Nothing to do
-            checkDirectChildren(child, "vStatements");
-        } else if (child instanceof Break || child instanceof Continue) {
-            // Nothing to do
-        } else if (child instanceof DoWhileStatement) {
-            // Nothing to do
-            checkDirectChildren(child, "vCondition", "vBody");
-        } else if (child instanceof EmitStatement) {
-            checkDirectChildren(child, "vEventCall");
-        } else if (child instanceof ExpressionStatement) {
-            checkDirectChildren(child, "vExpression");
-        } else if (child instanceof ForStatement) {
+            checkDirectChildren(node, "vType", "vOverrideSpecifier", "vValue");
+        } else if (node instanceof Block || node instanceof UncheckedBlock) {
+            checkDirectChildren(node, "vStatements");
+        } else if (node instanceof DoWhileStatement) {
+            checkDirectChildren(node, "vCondition", "vBody");
+        } else if (node instanceof EmitStatement) {
+            checkDirectChildren(node, "vEventCall");
+        } else if (node instanceof ExpressionStatement) {
+            checkDirectChildren(node, "vExpression");
+        } else if (node instanceof ForStatement) {
             checkDirectChildren(
-                child,
+                node,
                 "vInitializationExpression",
                 "vLoopExpression",
                 "vCondition",
                 "vBody"
             );
-        } else if (child instanceof IfStatement) {
-            checkVFieldCtx(child, "vCondition", ctx);
-            checkVFieldCtx(child, "vTrueBody", ctx);
+        } else if (node instanceof IfStatement) {
+            checkVFieldCtx(node, "vCondition", ctx);
+            checkVFieldCtx(node, "vTrueBody", ctx);
 
-            if (child.vFalseBody !== undefined) {
-                checkVFieldCtx(child, "vFalseBody", ctx);
+            if (node.vFalseBody !== undefined) {
+                checkVFieldCtx(node, "vFalseBody", ctx);
             }
 
-            checkDirectChildren(child, "vCondition", "vTrueBody", "vFalseBody");
-        } else if (child instanceof InlineAssembly) {
-            // Nothing to do
-        } else if (child instanceof PlaceholderStatement) {
-            // Nothing to do
-        } else if (child instanceof Return) {
-            // functionReturnParameters and vFunctionReturnParameters
-            checkFieldAndVFieldMatch(
-                child,
-                "functionReturnParameters",
-                "vFunctionReturnParameters"
-            );
+            checkDirectChildren(node, "vCondition", "vTrueBody", "vFalseBody");
+        } else if (node instanceof Return) {
+            checkFieldAndVFieldMatch(node, "functionReturnParameters", "vFunctionReturnParameters");
 
-            checkVFieldCtx(child, "vFunctionReturnParameters", ctx);
-            checkDirectChildren(child, "vExpression");
-        } else if (child instanceof Throw) {
-            // Nothing to do
-        } else if (child instanceof TryCatchClause) {
-            // Nothing to do
-            checkDirectChildren(child, "vParameters", "vBlock");
-        } else if (child instanceof TryStatement) {
-            // Nothing to do
-            checkDirectChildren(child, "vExternalCall", "vClauses");
-        } else if (child instanceof VariableDeclarationStatement) {
-            // Nothing to do
-            checkDirectChildren(child, "vDeclarations", "vInitialValue");
-        } else if (child instanceof WhileStatement) {
-            // Nothing to do
-            checkDirectChildren(child, "vCondition", "vBody");
-        } else if (child instanceof ArrayTypeName) {
-            /// ======== TYPE NODES ==========================================
-            // Nothing to do
-            checkDirectChildren(child, "vBaseType", "vLength");
-        } else if (child instanceof ElementaryTypeName) {
-            // nothing to do
-        } else if (child instanceof FunctionTypeName) {
-            // Nothing to do
-            checkDirectChildren(child, "vParameterTypes", "vReturnParameterTypes");
-        } else if (child instanceof Mapping) {
-            // Nothing to do
-            checkDirectChildren(child, "vKeyType", "vValueType");
-        } else if (child instanceof UserDefinedTypeName) {
-            checkFieldAndVFieldMatch(child, "referencedDeclaration", "vReferencedDeclaration");
-            checkVFieldCtx(child, "vReferencedDeclaration", ctx);
-            checkDirectChildren(child, "path");
-        } else if (child instanceof Assignment) {
-            /// ======== EXPRESION NODES ==========================================
-            // Nothing to do
-            checkDirectChildren(child, "vLeftHandSide", "vRightHandSide");
-        } else if (child instanceof BinaryOperation) {
-            // Nothing to do
-            checkDirectChildren(child, "vLeftExpression", "vRightExpression");
-        } else if (child instanceof Conditional) {
-            // Nothing to do
-            checkDirectChildren(child, "vCondition", "vTrueExpression", "vFalseExpression");
-        } else if (child instanceof ElementaryTypeNameExpression) {
-            // Nothing to do
-            if (!(typeof child.typeName === "string")) {
-                checkDirectChildren(child, "typeName");
+            checkVFieldCtx(node, "vFunctionReturnParameters", ctx);
+            checkDirectChildren(node, "vExpression");
+        } else if (node instanceof TryCatchClause) {
+            checkDirectChildren(node, "vParameters", "vBlock");
+        } else if (node instanceof TryStatement) {
+            checkDirectChildren(node, "vExternalCall", "vClauses");
+        } else if (node instanceof VariableDeclarationStatement) {
+            checkDirectChildren(node, "vDeclarations", "vInitialValue");
+        } else if (node instanceof WhileStatement) {
+            checkDirectChildren(node, "vCondition", "vBody");
+        } else if (node instanceof ArrayTypeName) {
+            checkDirectChildren(node, "vBaseType", "vLength");
+        } else if (node instanceof FunctionTypeName) {
+            checkDirectChildren(node, "vParameterTypes", "vReturnParameterTypes");
+        } else if (node instanceof Mapping) {
+            checkDirectChildren(node, "vKeyType", "vValueType");
+        } else if (node instanceof UserDefinedTypeName) {
+            checkFieldAndVFieldMatch(node, "referencedDeclaration", "vReferencedDeclaration");
+            checkVFieldCtx(node, "vReferencedDeclaration", ctx);
+            checkDirectChildren(node, "path");
+        } else if (node instanceof Assignment) {
+            checkDirectChildren(node, "vLeftHandSide", "vRightHandSide");
+        } else if (node instanceof BinaryOperation) {
+            checkDirectChildren(node, "vLeftExpression", "vRightExpression");
+        } else if (node instanceof Conditional) {
+            checkDirectChildren(node, "vCondition", "vTrueExpression", "vFalseExpression");
+        } else if (node instanceof ElementaryTypeNameExpression) {
+            if (!(typeof node.typeName === "string")) {
+                checkDirectChildren(node, "typeName");
             }
-        } else if (child instanceof FunctionCall) {
-            // Nothing to do
-            checkDirectChildren(child, "vExpression", "vArguments");
-        } else if (child instanceof FunctionCallOptions) {
-            // Nothing to do
-            checkDirectChildren(child, "vExpression", "vOptions");
-        } else if (child instanceof Identifier || child instanceof IdentifierPath) {
-            if (
-                child.referencedDeclaration !== null &&
-                child.vReferencedDeclaration !== undefined
-            ) {
-                checkFieldAndVFieldMatch(child, "referencedDeclaration", "vReferencedDeclaration");
-                checkVFieldCtx(child, "vReferencedDeclaration", ctx);
+        } else if (node instanceof FunctionCall) {
+            checkDirectChildren(node, "vExpression", "vArguments");
+        } else if (node instanceof FunctionCallOptions) {
+            checkDirectChildren(node, "vExpression", "vOptions");
+        } else if (node instanceof Identifier || node instanceof IdentifierPath) {
+            if (node.referencedDeclaration !== null && node.vReferencedDeclaration !== undefined) {
+                checkFieldAndVFieldMatch(node, "referencedDeclaration", "vReferencedDeclaration");
+                checkVFieldCtx(node, "vReferencedDeclaration", ctx);
             }
-        } else if (child instanceof IndexAccess) {
-            // Nothing to do
-            checkDirectChildren(child, "vBaseExpression", "vIndexExpression");
-        } else if (child instanceof IndexRangeAccess) {
-            // Nothing to do
-            checkDirectChildren(child, "vBaseExpression", "vStartExpression", "vEndExpression");
-        } else if (child instanceof Literal) {
-            // Nothing to do
-        } else if (child instanceof MemberAccess) {
-            if (
-                child.referencedDeclaration !== null &&
-                child.vReferencedDeclaration !== undefined
-            ) {
-                checkFieldAndVFieldMatch(child, "referencedDeclaration", "vReferencedDeclaration");
-                checkVFieldCtx(child, "vReferencedDeclaration", ctx);
+        } else if (node instanceof IndexAccess) {
+            checkDirectChildren(node, "vBaseExpression", "vIndexExpression");
+        } else if (node instanceof IndexRangeAccess) {
+            checkDirectChildren(node, "vBaseExpression", "vStartExpression", "vEndExpression");
+        } else if (node instanceof MemberAccess) {
+            if (node.referencedDeclaration !== null && node.vReferencedDeclaration !== undefined) {
+                checkFieldAndVFieldMatch(node, "referencedDeclaration", "vReferencedDeclaration");
+                checkVFieldCtx(node, "vReferencedDeclaration", ctx);
             }
-            checkDirectChildren(child, "vExpression");
-        } else if (child instanceof NewExpression) {
-            // Nothing to do
-            checkDirectChildren(child, "vTypeName");
-        } else if (child instanceof TupleExpression) {
-            // Nothing to do
-            checkDirectChildren(child, "vOriginalComponents", "vComponents");
-        } else if (child instanceof UnaryOperation) {
-            checkVFieldCtx(child, "vSubExpression", ctx);
-            checkDirectChildren(child, "vSubExpression");
+            checkDirectChildren(node, "vExpression");
+        } else if (node instanceof NewExpression) {
+            checkDirectChildren(node, "vTypeName");
+        } else if (node instanceof TupleExpression) {
+            checkDirectChildren(node, "vOriginalComponents", "vComponents");
+        } else if (node instanceof UnaryOperation) {
+            checkVFieldCtx(node, "vSubExpression", ctx);
+            checkDirectChildren(node, "vSubExpression");
         } else {
-            throw new Error(`Unknown ASTNode type ${child.constructor.name}`);
+            throw new Error(`Unknown ASTNode type ${node.constructor.name}`);
         }
     }
 }
 
 /**
  * Check that a single SourceUnit has a sane structure. This checks that:
- *
- *  - all reachable nodes belong to the same context, have their parent/sibling set correctly,
- *  - all number id properties of nodes point to a node in the same context
- *  - when a number property (e.g. `scope`) has a corresponding `v` prefixed property (e.g. `vScope`)
+ *  - All reachable nodes belong to the same context, have their parent/sibling set correctly.
+ *  - All number id properties of nodes point to a node in the same context.
+ *  - When a number property (e.g. `scope`) has a corresponding `v` prefixed property (e.g. `vScope`)
  *    check that the number proerty corresponds to the id of the `v` prefixed property.
- *  - most 'v' properties point to direct children of a node
+ *  - Most 'v' properties point to direct children of a node.
  *
  * NOTE: While this code can be slightly slow, its meant to be used mostly in testing so its
  * not performance critical.
- *
- * @param unit - source unit to check
- * @param ctxts - `ASTContext`s for each of the groups of units
  */
 export function isSane(unit: SourceUnit, ctx: ASTContext): boolean {
     try {
@@ -657,6 +612,7 @@ export function isSane(unit: SourceUnit, ctx: ASTContext): boolean {
     } catch (e) {
         if (e instanceof InsaneASTError) {
             console.error(e);
+
             return false;
         }
 
