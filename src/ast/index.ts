@@ -13,3 +13,4 @@ export * from "./writing";
 export * from "./dispatch";
 export * from "./utils";
 export * from "./xpath";
+export * from "./sanity";

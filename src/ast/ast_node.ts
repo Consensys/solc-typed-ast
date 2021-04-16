@@ -427,3 +427,77 @@ export type ASTNodeConstructor<T extends ASTNode> = new (
     type: string,
     ...args: any[]
 ) => T;
+
+/**
+ * Replace the node `oldNode` in the tree with `newNode`.
+ *
+ * If `p` is the parent of `oldNode`, this function needs to find a property
+ * `propName` of `p` such that `p[propName] === oldNode`.
+ *
+ * Once found, it re-assigns `p[propName] = newNode` and sets
+ * `newNode.parent=p` using `acceptChildren`. Since `children` is a getter
+ * there is nothing further to do.
+ */
+export function replaceNode(oldNode: ASTNode, newNode: ASTNode): void {
+    if (oldNode.context !== newNode.context) {
+        throw new Error("Context mismatch");
+    }
+
+    const parent = oldNode.parent;
+
+    if (parent === undefined) {
+        return;
+    }
+
+    const ownProps = Object.getOwnPropertyDescriptors(parent);
+
+    for (const name in ownProps) {
+        const val = ownProps[name].value;
+
+        if (val === oldNode) {
+            const tmpObj: any = {};
+
+            tmpObj[name] = newNode;
+
+            Object.assign(parent, tmpObj);
+
+            oldNode.parent = undefined;
+
+            parent.acceptChildren();
+
+            return;
+        }
+
+        if (val instanceof Array) {
+            for (let i = 0; i < val.length; i++) {
+                if (val[i] === oldNode) {
+                    val[i] = newNode;
+
+                    oldNode.parent = undefined;
+
+                    parent.acceptChildren();
+
+                    return;
+                }
+            }
+        }
+
+        if (val instanceof Map) {
+            for (const [k, v] of val.entries()) {
+                if (v === oldNode) {
+                    val.set(k, newNode);
+
+                    oldNode.parent = undefined;
+
+                    parent.acceptChildren();
+
+                    return;
+                }
+            }
+        }
+    }
+
+    throw new Error(
+        `Couldn't find child ${oldNode.type}#${oldNode.id} under parent ${parent.type}#${parent.id}`
+    );
+}
