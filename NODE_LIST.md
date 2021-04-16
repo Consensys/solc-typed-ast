@@ -1,4 +1,4 @@
-# AST node types
+# A comprehensive list of known Solc AST node types
 
 ## Solidity AST
 
