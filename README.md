@@ -192,3 +192,7 @@ npm run docs:refresh
 ```
 
 It is also published here: https://consensys.github.io/solc-typed-ast/
+
+### The list of AST node types
+
+The list of known AST node types can be found [here](https://github.com/ConsenSys/solc-typed-ast/blob/master/NODE_LIST.md).
