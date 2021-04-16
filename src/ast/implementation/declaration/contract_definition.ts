@@ -114,10 +114,8 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
                 if (value !== old) {
                     this.replaceChild(value, old);
                 }
-            } else if (this.firstChild) {
-                this.insertBefore(value, this.firstChild);
             } else {
-                this.appendChild(value);
+                this.insertAtBeginning(value);
             }
         } else {
             if (old instanceof StructuredDocumentation) {

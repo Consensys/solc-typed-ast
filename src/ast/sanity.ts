@@ -49,13 +49,13 @@ import {
     TryStatement,
     TupleExpression,
     UnaryOperation,
+    UncheckedBlock,
     UserDefinedTypeName,
     UsingForDirective,
     VariableDeclaration,
     VariableDeclarationStatement,
     WhileStatement
 } from ".";
-import { UncheckedBlock } from "./implementation/statement";
 
 /**
  * Helper function to check if the node/nodes `arg` is in the `ASTContext` `ctx`.
@@ -80,7 +80,7 @@ function inCtx(arg: ASTNode | ASTNode[], ctx: ASTContext): boolean {
 export class InsaneASTError extends Error {}
 
 function pp(node: ASTNode | ASTContext | undefined): string {
-    return node === undefined ? `undefined` : `${node.constructor.name}#${node.id}`;
+    return node === undefined ? "undefined" : `${node.constructor.name}#${node.id}`;
 }
 
 /**
@@ -94,6 +94,7 @@ function checkVFieldCtx<T extends ASTNode, K extends keyof T>(
     ctx: ASTContext
 ): void {
     const val: T[K] = node[prop];
+
     if (val instanceof ASTNode) {
         if (!inCtx(val, ctx)) {
             throw new Error(
@@ -633,6 +634,7 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
                 checkFieldAndVFieldMatch(node, "referencedDeclaration", "vReferencedDeclaration");
                 checkVFieldCtx(node, "vReferencedDeclaration", ctx);
             }
+
             checkDirectChildren(node, "vExpression");
         } else if (node instanceof NewExpression) {
             checkDirectChildren(node, "vTypeName");

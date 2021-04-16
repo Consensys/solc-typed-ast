@@ -432,11 +432,7 @@ export type ASTNodeConstructor<T extends ASTNode> = new (
  * Replace the node `oldNode` in the tree with `newNode`.
  *
  * If `p` is the parent of `oldNode`, this function needs to find a property
- * `propName` of `p` such that `p[propName] === oldNode`. `ASTNode`s have both
- * own properties and getters/setters, so this function first:
- *
- * 1. Iterates over the own properties of `p`
- * 2. Walks the prototype chain of `p` iterating over all getters/setters
+ * `propName` of `p` such that `p[propName] === oldNode`.
  *
  * Once found, it re-assigns `p[propName] = newNode` and sets
  * `newNode.parent=p` using `acceptChildren`. Since `children` is a getter
@@ -444,7 +440,7 @@ export type ASTNodeConstructor<T extends ASTNode> = new (
  */
 export function replaceNode(oldNode: ASTNode, newNode: ASTNode): void {
     if (oldNode.context !== newNode.context) {
-        throw new Error(`Context mismatch`);
+        throw new Error("Context mismatch");
     }
 
     const parent = oldNode.parent;
@@ -453,9 +449,6 @@ export function replaceNode(oldNode: ASTNode, newNode: ASTNode): void {
         return;
     }
 
-    /**
-     * First, check if parent has an OWN property with the child.
-     */
     const ownProps = Object.getOwnPropertyDescriptors(parent);
 
     for (const name in ownProps) {
@@ -468,6 +461,8 @@ export function replaceNode(oldNode: ASTNode, newNode: ASTNode): void {
 
             Object.assign(parent, tmpObj);
 
+            oldNode.parent = undefined;
+
             parent.acceptChildren();
 
             return;
@@ -477,6 +472,8 @@ export function replaceNode(oldNode: ASTNode, newNode: ASTNode): void {
             for (let i = 0; i < val.length; i++) {
                 if (val[i] === oldNode) {
                     val[i] = newNode;
+
+                    oldNode.parent = undefined;
 
                     parent.acceptChildren();
 
@@ -490,37 +487,7 @@ export function replaceNode(oldNode: ASTNode, newNode: ASTNode): void {
                 if (v === oldNode) {
                     val.set(k, newNode);
 
-                    parent.acceptChildren();
-
-                    return;
-                }
-            }
-        }
-    }
-
-    /**
-     * If not, walk up the inheritance tree,
-     * looking for a getter/setter pair that matches this child.
-     */
-    let proto = Object.getPrototypeOf(parent);
-
-    while (proto) {
-        for (const name of Object.getOwnPropertyNames(proto)) {
-            if (name === "__proto__") {
-                continue;
-            }
-
-            const descriptor = Object.getOwnPropertyDescriptor(proto, name);
-
-            if (
-                descriptor &&
-                typeof descriptor.get === "function" &&
-                typeof descriptor.set === "function"
-            ) {
-                const val = descriptor.get.call(parent);
-
-                if (val === oldNode) {
-                    descriptor.set.call(parent, newNode);
+                    oldNode.parent = undefined;
 
                     parent.acceptChildren();
 
@@ -528,8 +495,6 @@ export function replaceNode(oldNode: ASTNode, newNode: ASTNode): void {
                 }
             }
         }
-
-        proto = Object.getPrototypeOf(proto);
     }
 
     throw new Error(

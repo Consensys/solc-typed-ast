@@ -108,13 +108,14 @@ describe(`replaceNode() validation`, () => {
                         ) {
                             continue;
                         }
+
                         const parent = child.parent;
                         const childCopy = factory.copy(child);
 
                         expect(childCopy.parent).not.toEqual(parent);
                         expect(child.id).not.toEqual(childCopy.id);
 
-                        expect(replaceNode.bind(replaceNode, child, childCopy)).not.toThrow();
+                        expect(() => replaceNode(child, childCopy)).not.toThrow();
                         expect(childCopy.parent == parent);
                     }
 
