@@ -9,13 +9,22 @@ import {
     CompilerVersions07,
     CompilerVersions08,
     compileSol,
+    ContractDefinition,
     detectCompileErrors,
+    EnumDefinition,
+    EventDefinition,
     ExternalReferenceType,
+    forAll,
     FunctionCall,
+    FunctionDefinition,
     Identifier,
+    IdentifierPath,
     ImportDirective,
     resolveAny,
-    UserDefinedTypeName
+    StateVariableVisibility,
+    StructDefinition,
+    UserDefinedTypeName,
+    VariableDeclaration
 } from "../../../src";
 
 const samples: Array<[string, string, ASTKind]> = [
@@ -45,12 +54,37 @@ const samples: Array<[string, string, ASTKind]> = [
         ASTKind.Modern
     ],
     [
-        "./test/samples/solidity/resolving_08.sol",
+        "./test/samples/solidity/resolving/resolving_08.sol",
         CompilerVersions08[CompilerVersions08.length - 1],
         ASTKind.Modern
     ],
     [
-        "./test/samples/solidity/resolving/resolving_08.sol",
+        "./test/samples/solidity/resolving/block_04.sol",
+        CompilerVersions04[CompilerVersions04.length - 1],
+        ASTKind.Legacy
+    ],
+    [
+        "./test/samples/solidity/resolving/block_05.sol",
+        CompilerVersions05[CompilerVersions05.length - 1],
+        ASTKind.Modern
+    ],
+    [
+        "./test/samples/solidity/resolving/imports_and_source_unit_function_overloading.sol",
+        CompilerVersions08[CompilerVersions08.length - 1],
+        ASTKind.Modern
+    ],
+    [
+        "./test/samples/solidity/resolving/inheritance_and_shadowing.sol",
+        CompilerVersions08[CompilerVersions08.length - 1],
+        ASTKind.Modern
+    ],
+    [
+        "./test/samples/solidity/resolving/shadowing_overloading_and_overriding.sol",
+        CompilerVersions08[CompilerVersions08.length - 1],
+        ASTKind.Modern
+    ],
+    [
+        "./test/samples/solidity/resolving/simple_shadowing.sol",
         CompilerVersions08[CompilerVersions08.length - 1],
         ASTKind.Modern
     ]
@@ -75,24 +109,55 @@ describe("resolveAny() correctly resolves all Identifiers/UserDefinedTypeNames/F
                 for (const node of unit.getChildrenBySelector(
                     (child) =>
                         child instanceof Identifier ||
+                        child instanceof IdentifierPath ||
                         child instanceof UserDefinedTypeName ||
-                        child instanceof FunctionCall
+                        child instanceof FunctionCall ||
+                        child instanceof StructDefinition ||
+                        child instanceof EnumDefinition
                 )) {
-                    const namedNode = node as Identifier | UserDefinedTypeName | FunctionCall;
-                    const def = namedNode.vReferencedDeclaration;
+                    const namedNode = node as
+                        | Identifier
+                        | UserDefinedTypeName
+                        | FunctionCall
+                        | IdentifierPath
+                        | StructDefinition
+                        | EnumDefinition;
+
+                    let def: ASTNode | undefined;
+
+                    if (
+                        namedNode instanceof Identifier ||
+                        namedNode instanceof UserDefinedTypeName ||
+                        namedNode instanceof IdentifierPath ||
+                        namedNode instanceof FunctionCall
+                    ) {
+                        def = namedNode.vReferencedDeclaration;
+                    } else {
+                        def = namedNode;
+                    }
                     let name: string;
                     let ctx: ASTNode;
 
                     if (namedNode instanceof FunctionCall) {
                         if (
                             namedNode.vFunctionCallType !== ExternalReferenceType.UserDefined ||
-                            namedNode.vFunctionName === ""
+                            namedNode.vFunctionName === "" ||
+                            namedNode.vReferencedDeclaration === undefined
                         ) {
                             continue;
                         }
 
                         name = namedNode.vFunctionName;
-                        ctx = namedNode.vReferencedDeclaration as ASTNode;
+                        ctx =
+                            namedNode.vReferencedDeclaration.vScope instanceof ContractDefinition
+                                ? namedNode.vReferencedDeclaration
+                                : namedNode;
+                    } else if (
+                        namedNode instanceof StructDefinition ||
+                        namedNode instanceof EnumDefinition
+                    ) {
+                        name = namedNode.canonicalName;
+                        ctx = namedNode;
                     } else {
                         if (namedNode.name === undefined) {
                             continue;
@@ -116,8 +181,24 @@ describe("resolveAny() correctly resolves all Identifiers/UserDefinedTypeNames/F
                     }
 
                     const resolved = [...resolveAny(name, ctx, compilerVersion)];
-                    expect(resolved.length).toEqual(1);
-                    expect((resolved[0] as ASTNode).id).toEqual(expectedID);
+
+                    expect(resolved.length).toBeGreaterThanOrEqual(1);
+                    if (resolved.length > 1) {
+                        const areEvents = resolved[0] instanceof EventDefinition;
+                        expect(
+                            forAll(resolved, (def) =>
+                                areEvents
+                                    ? def instanceof EventDefinition
+                                    : def instanceof FunctionDefinition ||
+                                      (def instanceof VariableDeclaration &&
+                                          def.stateVariable &&
+                                          def.visibility === StateVariableVisibility.Public)
+                            )
+                        ).toBeTruthy();
+                    }
+
+                    const resolvedIds = new Set(resolved.map((node) => node.id));
+                    expect(resolvedIds.has(expectedID)).toBeTruthy();
                 }
             }
         });
@@ -312,6 +393,79 @@ const unitSamples: Array<
                         "E",
                         [63, 67],
                         "E in Child corrseponds to the 2 overloaded event definitions. (events can't be overriden)"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "./test/samples/solidity/resolving/id_paths.sol",
+        CompilerVersions08[CompilerVersions08.length - 1],
+        ASTKind.Modern,
+        [
+            [
+                68, // ContractDefinition for "Child"
+                [
+                    ["Base.foo", [19], "Base.foo in child is the base's version of foo"],
+                    ["Child.foo", [48], "Child.foo in child is the Child's version of foo"],
+                    ["Base.S", [22], "Base.S in child is the base's struct def"],
+                    ["Base.E", [24], "Base.E in child is the base's enum def"],
+                    ["Base.E1", [26], "Base.E1 in child is the base's event def"]
+                ]
+            ],
+            [
+                45, // "Child"'s foo's body
+                [
+                    ["Base.foo", [19], "Base.foo in child is the base's version of foo"],
+                    ["Child.foo", [48], "Child.foo in child is the Child's version of foo"],
+                    ["Base.S", [22], "Base.S in child is the base's struct def"],
+                    ["Base.E", [24], "Base.E in child is the base's enum def"],
+                    ["Base.E1", [26], "Base.E1 in child is the base's event def"]
+                ]
+            ],
+            [
+                131, // Unrelated's ContractDefinition
+                [
+                    ["Base.foo", [19], "Base.foo in child is the base's version of foo"],
+                    ["Child.foo", [48], "Child.foo in child is the Child's version of foo"],
+                    ["Base.S", [22], "Base.S in child is the base's struct def"],
+                    ["L", [167], "L in Unrelated is the imported source unit for the library"],
+                    [
+                        "L.const",
+                        [153],
+                        "L.const in Unrelated is the imported const from the library"
+                    ],
+
+                    [
+                        "L.SG",
+                        [148],
+                        "L.SG in Unrelated is the imported struct def from the library"
+                    ],
+                    ["L.EG", [150], "L.EG in Unrelated is the imported enum def from the library"],
+                    [
+                        "L.foo",
+                        [145],
+                        "L.foo in Unrelated is the imported free fun from the library"
+                    ],
+                    [
+                        "L.Lib",
+                        [166],
+                        "L.Lib in Unrelated is the imported Library contract def from the library"
+                    ],
+                    [
+                        "Lib1.foo",
+                        [165],
+                        "Lib1.foo in Unrelated is the function definition iniside the imported Library contract def from the library"
+                    ],
+                    [
+                        "L.Lib.foo",
+                        [165],
+                        "L.Lib.foo in Unrelated is the function from the imported contract def from the library"
+                    ],
+                    [
+                        "L.Boo",
+                        [170],
+                        "L.Boo in Unrelated is a contract imported inside L from another file"
                     ]
                 ]
             ]

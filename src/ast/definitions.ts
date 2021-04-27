@@ -1,4 +1,5 @@
 import { gte, lt } from "semver";
+import { forAll } from "../misc";
 import { ASTNode } from "./ast_node";
 import { StateVariableVisibility } from "./constants";
 import { EnumDefinition, StructDefinition } from "./implementation/declaration";
@@ -283,6 +284,8 @@ function lookupInScope(name: string, scope: ScopeNode): Set<AnyResolvable> {
  * "0.5.0", true)` would return the state var X, and `resolveAny("x", node,
  * "0.5.0", false)` would return undefined.).
  *
+ * Note that `name` can be an identifier path (e.g `A.B.C`).
+ *
  * We return a set, since in the case where `name` resolves to a callable
  * (function/public state var) or event, there could be multiple
  * functions/events with the same name but different arguments. In all other
@@ -302,40 +305,90 @@ export function resolveAny(
         scope = getContainingScope(ctx, version);
     }
 
-    while (scope !== undefined) {
-        const inScopeRes = lookupInScope(name, scope);
-        if (inScopeRes.size > 0) {
-            // Sanity check for the case where multiple values are returned.
-            // @todo re-write - this check is ugly
-            if (inScopeRes.size > 1) {
-                let isEvents: boolean | undefined;
-                for (const def of inScopeRes) {
-                    if (isEvents === undefined) {
-                        isEvents = def instanceof EventDefinition;
-                    }
+    const elements = name.split(".");
 
-                    if (isEvents) {
-                        if (!(def instanceof EventDefinition)) {
-                            throw new Error(`Expected all overriden event definitions`);
-                        }
-                    } else {
-                        if (
-                            !(
+    for (let i = 0; i < elements.length; i++) {
+        const element = elements[i];
+        let res: Set<AnyResolvable> | undefined;
+
+        if (i == 0) {
+            // If this is the first element (e.g. `A` in `A.B.C`), walk up the
+            // stack of scopes starting from the current context, looking for `A`
+            while (scope !== undefined) {
+                res = lookupInScope(element, scope);
+                if (res.size > 0) {
+                    // Sanity check - when multiple results are found, they must either be overloaded events
+                    // or overloaded functions/public state vars.
+                    if (res.size > 1) {
+                        forAll(
+                            res,
+                            (def) =>
+                                def instanceof EventDefinition ||
+                                def instanceof Function ||
                                 (def instanceof VariableDeclaration &&
                                     def.stateVariable &&
-                                    def.visibility === StateVariableVisibility.Public) ||
-                                def instanceof FunctionDefinition
-                            )
-                        ) {
-                            throw new Error(`Expected all function/public vars`);
-                        }
+                                    def.visibility === StateVariableVisibility.Public)
+                        );
+                    }
+
+                    const first = [...res][0];
+
+                    // If we are resolving `A` in `A.B` skip anything that is
+                    // not a contract/source unit. (e.g. constructor name in
+                    // 0.4.x)
+                    if (
+                        elements.length == 1 ||
+                        first instanceof ContractDefinition ||
+                        first instanceof SourceUnit
+                    ) {
+                        break;
                     }
                 }
+
+                scope = getContainingScope(scope, version);
             }
-            return inScopeRes;
+        } else {
+            // If this is a later segment (e.g. `B` or `C` in `A.B.C`),
+            // then resolve it recursively in the current scope.
+            res = resolveAny(element, scope as ASTNode, version, true);
         }
 
-        scope = getContainingScope(scope, version);
+        // We didn't find anything - return empty set
+        if (res === undefined || res.size === 0) {
+            return new Set();
+        }
+
+        // This is the final segment of `A.B.C` - just return it.
+        if (i >= elements.length - 1) {
+            return res;
+        }
+
+        // We found multiple definitions for an intermediate segment of
+        // identifier path (e.g. multiple resolutions for `A` in `A.B`). This
+        // shouldn't happen.
+        if (res.size > 1) {
+            throw new Error(
+                `Ambigious path resolution for ${element} in ${name} in ctx ${pp(ctx)}: got ${[
+                    ...res
+                ]
+                    .map(pp)
+                    .join(",")}`
+            );
+        }
+
+        const resolvedNode = [...res][0];
+
+        // An intermediate segment in an identifier path (e.g. `A` in `A.B`) should always resolve to a
+        // single imported source unit or contract.
+        if (!(resolvedNode instanceof SourceUnit || resolvedNode instanceof ContractDefinition)) {
+            throw new Error(
+                `Unexpected non-scope node for ${element} in ${name} in ctx ${pp(ctx)}: got ${pp(
+                    resolvedNode
+                )}`
+            );
+        }
+
+        scope = resolvedNode;
     }
 
     return new Set();
