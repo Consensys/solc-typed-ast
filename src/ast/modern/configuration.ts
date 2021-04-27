@@ -3,6 +3,7 @@ import { ASTReaderConfiguration } from "../ast_reader";
 import { ContractDefinition } from "../implementation/declaration/contract_definition";
 import { EnumDefinition } from "../implementation/declaration/enum_definition";
 import { EnumValue } from "../implementation/declaration/enum_value";
+import { ErrorDefinition } from "../implementation/declaration/error_definition";
 import { EventDefinition } from "../implementation/declaration/event_definition";
 import { FunctionDefinition } from "../implementation/declaration/function_definition";
 import { ModifierDefinition } from "../implementation/declaration/modifier_definition";
@@ -43,6 +44,7 @@ import { IfStatement } from "../implementation/statement/if_statement";
 import { InlineAssembly } from "../implementation/statement/inline_assembly";
 import { PlaceholderStatement } from "../implementation/statement/placeholder_statement";
 import { Return } from "../implementation/statement/return";
+import { RevertStatement } from "../implementation/statement/revert_statement";
 import { Throw } from "../implementation/statement/throw";
 import { TryCatchClause } from "../implementation/statement/try_catch_clause";
 import { TryStatement } from "../implementation/statement/try_statement";
@@ -68,6 +70,7 @@ import { ModernElementaryTypeNameProcessor } from "./elementary_type_name_proces
 import { ModernEmitStatementProcessor } from "./emit_statement_processor";
 import { ModernEnumDefinitionProcessor } from "./enum_definition_processor";
 import { ModernEnumValueProcessor } from "./enum_value_processor";
+import { ModernErrorDefinitionProcessor } from "./error_definition_processor";
 import { ModernEventDefinitionProcessor } from "./event_definition_processor";
 import { ModernExpressionStatementProcessor } from "./expression_statement_processor";
 import { ModernForStatementProcessor } from "./for_statement_processor";
@@ -95,6 +98,7 @@ import { ModernParameterListProcessor } from "./parameter_list_processor";
 import { ModernPlaceholderStatementProcessor } from "./placeholder_statement_processor";
 import { ModernPragmaDirectiveProcessor } from "./pragma_directive_processor";
 import { ModernReturnProcessor } from "./return_processor";
+import { ModernRevertStatementProcessor } from "./revert_statement_processor";
 import { ModernSourceUnitProcessor } from "./source_unit_processor";
 import { ModernStructuredDocumentationProcessor } from "./structured_documentation_processor";
 import { ModernStructDefinitionProcessor } from "./struct_definition_processor";
@@ -127,6 +131,7 @@ const processors = {
     ContractDefinition: new ModernContractDefinitionProcessor(),
     InheritanceSpecifier: new ModernInheritanceSpecifierProcessor(),
     StructDefinition: new ModernStructDefinitionProcessor(),
+    ErrorDefinition: new ModernErrorDefinitionProcessor(),
     EventDefinition: new ModernEventDefinitionProcessor(),
     FunctionDefinition: new ModernFunctionDefinitionProcessor(),
     VariableDeclaration: new ModernVariableDeclarationProcessor(),
@@ -164,6 +169,7 @@ const processors = {
     TryCatchClause: new ModernTryCatchClauseProcessor(),
     TryStatement: new ModernTryStatementProcessor(),
     Return: new ModernReturnProcessor(),
+    RevertStatement: new ModernRevertStatementProcessor(),
     EmitStatement: new ModernEmitStatementProcessor(),
     ExpressionStatement: new ModernExpressionStatementProcessor(),
     UncheckedBlock: new ModernUncheckedBlockProcessor(),
@@ -272,6 +278,11 @@ export const ModernConfiguration: ASTReaderConfiguration = {
         Identifier: {
             constructor: Identifier,
             processor: processors.Identifier
+        },
+
+        ErrorDefinition: {
+            constructor: ErrorDefinition,
+            processor: processors.ErrorDefinition
         },
 
         EventDefinition: {
@@ -392,6 +403,11 @@ export const ModernConfiguration: ASTReaderConfiguration = {
         Return: {
             constructor: Return,
             processor: processors.Return
+        },
+
+        RevertStatement: {
+            constructor: RevertStatement,
+            processor: processors.RevertStatement
         },
 
         ForStatement: {

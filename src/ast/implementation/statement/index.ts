@@ -9,6 +9,7 @@ export * from "./if_statement";
 export * from "./inline_assembly";
 export * from "./placeholder_statement";
 export * from "./return";
+export * from "./revert_statement";
 export * from "./statement";
 export * from "./throw";
 export * from "./try_catch_clause";

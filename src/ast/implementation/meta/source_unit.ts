@@ -1,6 +1,7 @@
 import { ASTNode, ASTNodeWithChildren } from "../../ast_node";
 import { ContractDefinition } from "../declaration/contract_definition";
 import { EnumDefinition } from "../declaration/enum_definition";
+import { ErrorDefinition } from "../declaration/error_definition";
 import { FunctionDefinition } from "../declaration/function_definition";
 import { StructDefinition } from "../declaration/struct_definition";
 import { VariableDeclaration } from "../declaration/variable_declaration";
@@ -11,6 +12,7 @@ export type ExportedSymbol =
     | ContractDefinition
     | StructDefinition
     | EnumDefinition
+    | ErrorDefinition
     | FunctionDefinition
     | VariableDeclaration
     | ImportDirective;
@@ -95,6 +97,15 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
         return this.ownChildren.filter(
             (node) => node instanceof EnumDefinition
         ) as EnumDefinition[];
+    }
+
+    /**
+     * References to file-level error definitions
+     */
+    get vErrors(): readonly ErrorDefinition[] {
+        return this.ownChildren.filter(
+            (node) => node instanceof ErrorDefinition
+        ) as ErrorDefinition[];
     }
 
     /**

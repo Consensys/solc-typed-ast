@@ -15,6 +15,7 @@ import {
     EmitStatement,
     EnumDefinition,
     EnumValue,
+    ErrorDefinition,
     EventDefinition,
     ExpressionStatement,
     ForStatement,
@@ -41,6 +42,7 @@ import {
     PlaceholderStatement,
     PragmaDirective,
     Return,
+    RevertStatement,
     SourceUnit,
     StructDefinition,
     StructuredDocumentation,
@@ -401,7 +403,8 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
                 "vEnums",
                 "vStructs",
                 "vFunctions",
-                "vVariables"
+                "vVariables",
+                "vErrors"
             );
         } else if (node instanceof ImportDirective) {
             /**
@@ -462,14 +465,18 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
                 );
             }
 
-            checkFieldAndVFieldMatch(node, `linearizedBaseContracts`, `vLinearizedBaseContracts`);
-            checkVFieldCtx(node, `vLinearizedBaseContracts`, ctx);
+            checkFieldAndVFieldMatch(node, "linearizedBaseContracts", "vLinearizedBaseContracts");
+            checkVFieldCtx(node, "vLinearizedBaseContracts", ctx);
+
+            checkFieldAndVFieldMatch(node, "usedErrors", "vUsedErrors");
+            checkVFieldCtx(node, "vUsedErrors", ctx);
 
             const fields: Array<keyof ContractDefinition> = [
                 "documentation",
                 "vInheritanceSpecifiers",
                 "vStateVariables",
                 "vModifiers",
+                "vErrors",
                 "vEvents",
                 "vFunctions",
                 "vUsingForDirectives",
@@ -489,6 +496,18 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
             checkVFieldCtx(node, "vScope", ctx);
 
             checkDirectChildren(node, "vMembers");
+        } else if (node instanceof ErrorDefinition) {
+            checkVFieldCtx(node, "vScope", ctx);
+
+            const fields: Array<keyof ErrorDefinition> = ["vParameters"];
+
+            if (node.documentation instanceof StructuredDocumentation) {
+                checkVFieldCtx(node, "documentation", ctx);
+
+                fields.push("documentation");
+            }
+
+            checkDirectChildren(node, ...fields);
         } else if (node instanceof EventDefinition) {
             checkVFieldCtx(node, "vScope", ctx);
 
@@ -564,6 +583,8 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
             checkDirectChildren(node, "vCondition", "vBody");
         } else if (node instanceof EmitStatement) {
             checkDirectChildren(node, "vEventCall");
+        } else if (node instanceof RevertStatement) {
+            checkDirectChildren(node, "errorCall");
         } else if (node instanceof ExpressionStatement) {
             checkDirectChildren(node, "vExpression");
         } else if (node instanceof ForStatement) {

@@ -5,6 +5,7 @@ import { SourceUnit } from "../meta/source_unit";
 import { StructuredDocumentation } from "../meta/structured_documentation";
 import { UsingForDirective } from "../meta/using_for_directive";
 import { EnumDefinition } from "./enum_definition";
+import { ErrorDefinition } from "./error_definition";
 import { EventDefinition } from "./event_definition";
 import { FunctionDefinition } from "./function_definition";
 import { ModifierDefinition } from "./modifier_definition";
@@ -54,6 +55,11 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
      */
     linearizedBaseContracts: number[];
 
+    /**
+     * Used error definition ids (including external definition ids)
+     */
+    usedErrors: number[];
+
     constructor(
         id: number,
         src: string,
@@ -64,6 +70,7 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
         abstract: boolean,
         fullyImplemented: boolean,
         linearizedBaseContracts: number[],
+        usedErrors: number[],
         documentation?: string | StructuredDocumentation,
         children?: Iterable<ASTNode>,
         nameLocation?: string,
@@ -77,6 +84,7 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
         this.abstract = abstract;
         this.fullyImplemented = fullyImplemented;
         this.linearizedBaseContracts = linearizedBaseContracts;
+        this.usedErrors = usedErrors;
 
         if (children) {
             for (const node of children) {
@@ -151,6 +159,15 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
     }
 
     /**
+     * Used error definitions (including external definitions)
+     */
+    get vUsedErrors(): readonly ErrorDefinition[] {
+        const context = this.requiredContext;
+
+        return this.usedErrors.map((id) => context.locate(id)) as ErrorDefinition[];
+    }
+
+    /**
      * Inheritance specifiers
      */
     get vInheritanceSpecifiers(): readonly InheritanceSpecifier[] {
@@ -186,6 +203,15 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
         return this.ownChildren.filter(
             (node) => node instanceof EventDefinition
         ) as EventDefinition[];
+    }
+
+    /**
+     * Errors of the contract
+     */
+    get vErrors(): readonly ErrorDefinition[] {
+        return this.ownChildren.filter(
+            (node) => node instanceof ErrorDefinition
+        ) as ErrorDefinition[];
     }
 
     /**

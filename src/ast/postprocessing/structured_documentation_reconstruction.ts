@@ -2,6 +2,7 @@ import { ASTNode } from "../ast_node";
 import { ASTContext, ASTNodePostprocessor } from "../ast_reader";
 import {
     ContractDefinition,
+    ErrorDefinition,
     EventDefinition,
     FunctionDefinition,
     ModifierDefinition,
@@ -121,6 +122,7 @@ type SupportedNode =
     | FunctionDefinition
     | ContractDefinition
     | VariableDeclaration
+    | ErrorDefinition
     | EventDefinition
     | ModifierDefinition;
 
@@ -162,6 +164,7 @@ export class StructuredDocumentationReconstructingPostprocessor implements ASTNo
         return (
             node instanceof FunctionDefinition ||
             node instanceof ContractDefinition ||
+            node instanceof ErrorDefinition ||
             node instanceof EventDefinition ||
             node instanceof ModifierDefinition ||
             (node instanceof VariableDeclaration &&

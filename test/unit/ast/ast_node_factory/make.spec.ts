@@ -85,6 +85,7 @@ describe("ASTNodeFactory.make*()", () => {
             false,
             true,
             [],
+            [],
             "doc string"
         );
 
@@ -169,6 +170,7 @@ describe("ASTNodeFactory.make*()", () => {
             ContractKind.Contract,
             false,
             true,
+            [],
             [],
             "doc string"
         );
@@ -290,6 +292,7 @@ describe("ASTNodeFactory.make*()", () => {
             ContractKind.Contract,
             false,
             true,
+            [],
             [],
             "doc string"
         );
