@@ -49,10 +49,10 @@ function pp(n: ASTNode | undefined): string {
 
 /**
  * Given an ASTNode `node` and a compiler version `version` determine if `node` is a
- * scope node. Note that `Block` and `UncheckedBlock` are only scopes in 0.4.x
+ * scope node. Note that `Block` is only a scope in 0.4.x
  */
 function isScope(node: ASTNode, version: string): node is ScopeNode {
-    if (lt(version, "0.5.0") && (node instanceof Block || node instanceof UncheckedBlock)) {
+    if (lt(version, "0.5.0") && node instanceof Block) {
         return true;
     }
 
@@ -128,152 +128,171 @@ function getContainingScope(node: ASTNode, version: string): ScopeNode | undefin
 }
 
 /**
+ * Lookup the definition corresponding to `name` in the `SourceUnit` `scope`. Yield all matches.
+ */
+function* lookupInSourceUnit(name: string, scope: SourceUnit): Iterable<AnyResolvable> {
+    // Note order of checking SourceUnit children doesn't matter
+    // since any conflict would result in a compilation error.
+    for (const child of scope.children) {
+        if (
+            (child instanceof VariableDeclaration ||
+                child instanceof FunctionDefinition ||
+                child instanceof ContractDefinition ||
+                child instanceof StructDefinition ||
+                child instanceof EnumDefinition) &&
+            child.name === name
+        ) {
+            yield child;
+        }
+
+        if (child instanceof ImportDirective) {
+            if (child.unitAlias === name) {
+                // `import "..." as <name>`
+                yield child.vSourceUnit;
+            } else if (child.vSymbolAliases.length === 0) {
+                // import "..."
+                // @todo maybe its better to go through child.vSourceUnit.vExportedSymbols here?
+                for (const def of lookupInScope(name, child.vSourceUnit)) {
+                    yield def;
+                }
+            } else {
+                // `import {<name>} from "..."` or `import {a as <name>} from "..."`
+                for (const [foreignDef, alias] of child.vSymbolAliases) {
+                    let symImportName: string;
+                    const originalDef =
+                        foreignDef instanceof ImportDirective ? foreignDef.vSourceUnit : foreignDef;
+
+                    if (alias !== undefined) {
+                        symImportName = alias;
+                    } else {
+                        if (foreignDef instanceof ImportDirective) {
+                            symImportName = foreignDef.unitAlias;
+                            if (symImportName === "") {
+                                throw new Error(
+                                    `Unexpected ImportDirective foreign def with non-unit alias ${pp(
+                                        foreignDef
+                                    )}`
+                                );
+                            }
+                        } else {
+                            symImportName = foreignDef.name;
+                        }
+                    }
+
+                    if (alias === name) {
+                        yield originalDef;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Lookup the definition corresponding to `name` in the `ContractDefinition` `scope`. Yield all matches.
+ */
+function* lookupInContractDefinition(
+    name: string,
+    scope: ContractDefinition
+): Iterable<AnyResolvable> {
+    const overridenSigHashes = new Set<string>();
+    for (const base of scope.vLinearizedBaseContracts) {
+        for (const child of base.children) {
+            if (
+                (child instanceof VariableDeclaration ||
+                    child instanceof FunctionDefinition ||
+                    child instanceof ModifierDefinition ||
+                    child instanceof EventDefinition ||
+                    child instanceof StructDefinition ||
+                    child instanceof EnumDefinition) &&
+                child.name === name
+            ) {
+                let sigHash: string | undefined;
+                if (child instanceof FunctionDefinition) {
+                    sigHash = child.canonicalSignatureHash;
+                } else if (
+                    child instanceof VariableDeclaration &&
+                    child.visibility === StateVariableVisibility.Public
+                ) {
+                    sigHash = child.getterCanonicalSignatureHash;
+                }
+
+                if (sigHash !== undefined) {
+                    if (overridenSigHashes.has(sigHash)) {
+                        continue;
+                    }
+
+                    overridenSigHashes.add(sigHash);
+                }
+
+                yield child;
+            }
+        }
+    }
+}
+
+/**
+ * Lookup the definition corresponding to `name` in the `FunctionDefinition` `scope`. Yield all matches.
+ */
+function* lookupInFunctionDefinition(
+    name: string,
+    scope: FunctionDefinition
+): Iterable<AnyResolvable> {
+    for (const paramList of [scope.vParameters, scope.vReturnParameters]) {
+        for (const parameter of paramList.vParameters) {
+            if (parameter.name === name) {
+                yield parameter;
+            }
+        }
+    }
+}
+
+/**
+ * Lookup the definition corresponding to `name` in the `Block|UncheckedBlock` `scope`. Yield all matches.
+ */
+function* lookupInBlock(name: string, scope: Block | UncheckedBlock): Iterable<AnyResolvable> {
+    for (const node of scope.children) {
+        if (!(node instanceof VariableDeclarationStatement)) {
+            continue;
+        }
+
+        for (const decl of node.vDeclarations) {
+            if (decl.name === name) {
+                yield decl;
+            }
+        }
+    }
+}
+
+/**
  * Lookup the definition corresponding to `name` in the `ScopeNode` `node`. If no match is found return an empty set.
  * Otherwise return the set of all definitions matching by name in this scope. This function may return multuple results only in the following cases:
  * 1. Multiple FunctionDefinitions (and potentially VariableDeclarations corresponding to public state variables) with the same name and DIFFERENT SIGNATURES
  * 2. Multiple EventDefinitions with the same name and different signatures.
  */
 function lookupInScope(name: string, scope: ScopeNode): Set<AnyResolvable> {
-    const res: Set<AnyResolvable> = new Set();
-
+    let results: Iterable<AnyResolvable>;
     if (scope instanceof SourceUnit) {
-        // Note order of checking SourceUnit children doesn't matter
-        // since any conflict would result in a compilation error.
-        for (const child of scope.children) {
-            if (
-                (child instanceof VariableDeclaration ||
-                    child instanceof FunctionDefinition ||
-                    child instanceof ContractDefinition ||
-                    child instanceof StructDefinition ||
-                    child instanceof EnumDefinition) &&
-                child.name === name
-            ) {
-                res.add(child);
-            }
-
-            if (child instanceof ImportDirective) {
-                if (child.unitAlias === name) {
-                    // `import "..." as <name>`
-                    res.add(child.vSourceUnit);
-                } else if (child.vSymbolAliases.length === 0) {
-                    // import "..."
-                    // @todo maybe its better to go through child.vSourceUnit.vExportedSymbols here?
-                    for (const def of lookupInScope(name, child.vSourceUnit)) {
-                        res.add(def);
-                    }
-                } else {
-                    // `import {<name>} from "..."` or `import {a as <name>} from "..."`
-                    for (const [foreignDef, alias] of child.vSymbolAliases) {
-                        let symImportName: string;
-                        const originalDef =
-                            foreignDef instanceof ImportDirective
-                                ? foreignDef.vSourceUnit
-                                : foreignDef;
-
-                        if (alias !== undefined) {
-                            symImportName = alias;
-                        } else {
-                            if (foreignDef instanceof ImportDirective) {
-                                symImportName = foreignDef.unitAlias;
-                                if (symImportName === "") {
-                                    throw new Error(
-                                        `Unexpected ImportDirective foreign def with non-unit alias ${pp(
-                                            foreignDef
-                                        )}`
-                                    );
-                                }
-                            } else {
-                                symImportName = foreignDef.name;
-                            }
-                        }
-
-                        if (alias === name) {
-                            res.add(originalDef);
-                        }
-                    }
-                }
-            }
-        }
+        results = lookupInSourceUnit(name, scope);
     } else if (scope instanceof ContractDefinition) {
-        const overridenSigHashes = new Set<string>();
-        for (const base of scope.vLinearizedBaseContracts) {
-            for (const child of base.children) {
-                if (
-                    (child instanceof VariableDeclaration ||
-                        child instanceof FunctionDefinition ||
-                        child instanceof ModifierDefinition ||
-                        child instanceof EventDefinition ||
-                        child instanceof StructDefinition ||
-                        child instanceof EnumDefinition) &&
-                    child.name === name
-                ) {
-                    let sigHash: string | undefined;
-                    if (child instanceof FunctionDefinition) {
-                        sigHash = child.canonicalSignatureHash;
-                    } else if (
-                        child instanceof VariableDeclaration &&
-                        child.visibility === StateVariableVisibility.Public
-                    ) {
-                        sigHash = child.getterCanonicalSignatureHash;
-                    }
-
-                    if (sigHash !== undefined) {
-                        if (overridenSigHashes.has(sigHash)) {
-                            continue;
-                        }
-
-                        overridenSigHashes.add(sigHash);
-                    }
-
-                    res.add(child);
-                }
-            }
-        }
+        results = lookupInContractDefinition(name, scope);
     } else if (scope instanceof FunctionDefinition) {
-        for (const paramList of [scope.vParameters, scope.vReturnParameters]) {
-            for (const parameter of paramList.vParameters) {
-                if (parameter.name === name) {
-                    res.add(parameter);
-                }
-            }
-        }
+        results = lookupInFunctionDefinition(name, scope);
     } else if (scope instanceof ModifierDefinition) {
-        for (const parameter of scope.vParameters.vParameters) {
-            if (parameter.name === name) {
-                res.add(parameter);
-            }
-        }
+        results = scope.vParameters.vParameters.filter((parameter) => parameter.name === name);
     } else if (scope instanceof VariableDeclarationStatement) {
-        for (const decl of scope.vDeclarations) {
-            if (decl.name === name) {
-                res.add(decl);
-            }
-        }
+        results = scope.vDeclarations.filter((decl) => decl.name === name);
     } else if (scope instanceof Block || scope instanceof UncheckedBlock) {
-        for (const node of scope.children) {
-            if (!(node instanceof VariableDeclarationStatement)) {
-                continue;
-            }
-
-            for (const decl of node.vDeclarations) {
-                if (decl.name === name) {
-                    res.add(decl);
-                }
-            }
-        }
+        results = lookupInBlock(name, scope);
     } else if (scope instanceof TryCatchClause) {
-        if (scope.vParameters) {
-            for (const decl of scope.vParameters.vParameters) {
-                if (decl.name === name) {
-                    res.add(decl);
-                }
-            }
-        }
+        results = scope.vParameters
+            ? scope.vParameters.vParameters.filter((param) => param.name === name)
+            : [];
     } else {
         throw new Error(`Unknown scope node ${pp(scope)}`);
     }
 
-    return res;
+    return new Set(results);
 }
 
 /**
@@ -297,13 +316,8 @@ export function resolveAny(
     version: string,
     inclusive = false
 ): Set<AnyResolvable> {
-    let scope: ScopeNode | undefined;
-
-    if (inclusive && isScope(ctx, version)) {
-        scope = ctx;
-    } else {
-        scope = getContainingScope(ctx, version);
-    }
+    let scope: ScopeNode | undefined =
+        inclusive && isScope(ctx, version) ? ctx : getContainingScope(ctx, version);
 
     const elements = name.split(".");
 
@@ -320,15 +334,23 @@ export function resolveAny(
                     // Sanity check - when multiple results are found, they must either be overloaded events
                     // or overloaded functions/public state vars.
                     if (res.size > 1) {
-                        forAll(
-                            res,
-                            (def) =>
-                                def instanceof EventDefinition ||
-                                def instanceof Function ||
-                                (def instanceof VariableDeclaration &&
-                                    def.stateVariable &&
-                                    def.visibility === StateVariableVisibility.Public)
-                        );
+                        if (
+                            !forAll(
+                                res,
+                                (def) =>
+                                    def instanceof EventDefinition ||
+                                    def instanceof FunctionDefinition ||
+                                    (def instanceof VariableDeclaration &&
+                                        def.stateVariable &&
+                                        def.visibility === StateVariableVisibility.Public)
+                            )
+                        ) {
+                            throw new Error(
+                                `Unexpected intermediate def for ${element} in ${name}: ${[
+                                    ...res
+                                ].map((n) => `${n.constructor.name}#${n.id}`)}`
+                            );
+                        }
                     }
 
                     const first = [...res][0];
