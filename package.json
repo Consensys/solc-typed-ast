@@ -12,9 +12,10 @@
         "sol-ast-compile": "dist/bin/compile.js"
     },
     "scripts": {
-        "clean": "rm -rf dist/",
+        "clean": "rm -rf dist/ src/ast/typestrings/typeString_parser.ts",
         "transpile": "tsc",
-        "build": "npm run clean && npm run transpile",
+        "build-type-parser": "tspegjs -o src/ast/typestrings/typeString_parser.ts --custom-header-file src/ast/typestrings/typeString_parser_header.ts --cache src/ast/typestrings/typeString_grammar.pegjs",
+        "build": "npm run clean && npm run build-type-parser && npm run transpile",
         "lint": "eslint src/ test/ --ext=ts",
         "lint:fix": "eslint src/ test/ --ext=ts --fix",
         "test": "NODE_OPTIONS='--max-old-space-size=2048' nyc mocha",
@@ -107,7 +108,9 @@
         "prettier": "2.2.1",
         "ts-node": "^9.1.1",
         "typedoc": "^0.20.34",
-        "typescript": "^4.2.3"
+        "typescript": "^4.2.3",
+        "pegjs": "^0.10.0",
+        "ts-pegjs": "^0.3.1"
     },
     "homepage": "https://consensys.github.io/solc-typed-ast",
     "bugs": "https://github.com/ConsenSys/solc-typed-ast/issues",

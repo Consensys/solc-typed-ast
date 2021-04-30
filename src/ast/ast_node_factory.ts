@@ -56,6 +56,15 @@ import { WhileStatement } from "./implementation/statement/while_statement";
 import { ArrayTypeName } from "./implementation/type/array_type_name";
 import { ElementaryTypeName } from "./implementation/type/elementary_type_name";
 import { FunctionTypeName } from "./implementation/type/function_type_name";
+import {
+    BuiltinStructTypeName,
+    IntLiteralTypeName,
+    ModuleTypeName,
+    StringLiteralTypeName,
+    TypeNameTypeName
+} from "./implementation/type/internal";
+import { ReferenceTypeName } from "./implementation/type/internal/reference_type_name";
+import { TupleTypeName } from "./implementation/type/internal/tuple_type_name";
 import { Mapping } from "./implementation/type/mapping";
 import { TypeName } from "./implementation/type/type_name";
 import { UserDefinedTypeName } from "./implementation/type/user_defined_type_name";
@@ -965,6 +974,48 @@ export class ASTNodeFactory {
         ...args: Specific<ConstructorParameters<typeof UserDefinedTypeName>>
     ): UserDefinedTypeName {
         return this.make(UserDefinedTypeName, ...args);
+    }
+
+    makeIntLiteralTypeName(
+        ...args: Specific<ConstructorParameters<typeof IntLiteralTypeName>>
+    ): IntLiteralTypeName {
+        return this.make(IntLiteralTypeName, ...args);
+    }
+
+    makeStringLiteralTypeName(
+        ...args: Specific<ConstructorParameters<typeof StringLiteralTypeName>>
+    ): StringLiteralTypeName {
+        return this.make(StringLiteralTypeName, ...args);
+    }
+
+    makeTupleTypeName(
+        ...args: Specific<ConstructorParameters<typeof TupleTypeName>>
+    ): TupleTypeName {
+        return this.make(TupleTypeName, ...args);
+    }
+
+    makeTypeNameTypeName(
+        ...args: Specific<ConstructorParameters<typeof TypeNameTypeName>>
+    ): TypeNameTypeName {
+        return this.make(TypeNameTypeName, ...args);
+    }
+
+    makeReferenceTypeName(
+        ...args: Specific<ConstructorParameters<typeof ReferenceTypeName>>
+    ): ReferenceTypeName {
+        return this.make(ReferenceTypeName, ...args);
+    }
+
+    makeBuiltinStructTypeName(
+        ...args: Specific<ConstructorParameters<typeof BuiltinStructTypeName>>
+    ): BuiltinStructTypeName {
+        return this.make(BuiltinStructTypeName, ...args);
+    }
+
+    makeModuleTypeName(
+        ...args: Specific<ConstructorParameters<typeof ModuleTypeName>>
+    ): ModuleTypeName {
+        return this.make(ModuleTypeName, ...args);
     }
 
     makeNode(...args: Specific<ConstructorParameters<typeof ASTNode>>): ASTNode {
