@@ -1,4 +1,5 @@
 import { ASTNode } from "../../ast_node";
+import { SourceUnit } from "../meta";
 import { ParameterList } from "../meta/parameter_list";
 import { StructuredDocumentation } from "../meta/structured_documentation";
 import { ContractDefinition } from "./contract_definition";
@@ -17,8 +18,8 @@ export class ErrorDefinition extends ASTNode {
     /**
      * Optional documentation appearing above the error definition:
      * - Is `undefined` when not specified.
-     * - Is type of `string` when specified and compiler version is older than `0.6.3`.
-     * - Is instance of `StructuredDocumentation` when specified and compiler version is `0.6.3` or newer.
+     * - Is type of `string` for compatibility reasons (for and instance, during node creation).
+     * - Is instance of `StructuredDocumentation` by default.
      */
     documentation?: string | StructuredDocumentation;
 
@@ -53,9 +54,10 @@ export class ErrorDefinition extends ASTNode {
     }
 
     /**
-     * Reference to its scoped contract
+     * Reference to a scoped `ContractDefinition` if event is declared in contract.
+     * Reference to a scoped `SourceUnit` if event is declared on file level.
      */
-    get vScope(): ContractDefinition {
-        return this.parent as ContractDefinition;
+    get vScope(): ContractDefinition | SourceUnit {
+        return this.parent as ContractDefinition | SourceUnit;
     }
 }
