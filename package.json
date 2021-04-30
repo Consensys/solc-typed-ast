@@ -12,9 +12,10 @@
         "sol-ast-compile": "dist/bin/compile.js"
     },
     "scripts": {
-        "clean": "rm -rf dist/",
+        "clean": "rm -rf dist/ src/ast/typestrings/typeString_parser.ts",
         "transpile": "tsc",
-        "build": "npm run clean && npm run transpile",
+        "build-type-parser": "tspegjs -o src/types/typeStrings/typeString_parser.ts --custom-header-file src/types/typeStrings/typeString_parser_header.ts --cache src/types/typeStrings/typeString_grammar.pegjs",
+        "build": "npm run clean && npm run build-type-parser && npm run transpile",
         "lint": "eslint src/ test/ --ext=ts",
         "lint:fix": "eslint src/ test/ --ext=ts --fix",
         "test": "NODE_OPTIONS='--max-old-space-size=2048' nyc mocha",
@@ -105,8 +106,10 @@
         "expect": "^26.6.2",
         "mocha": "^8.3.2",
         "nyc": "^15.1.0",
+        "pegjs": "^0.10.0",
         "prettier": "2.2.1",
         "ts-node": "^9.1.1",
+        "ts-pegjs": "^0.3.1",
         "typedoc": "^0.20.36",
         "typescript": "^4.2.4"
     },

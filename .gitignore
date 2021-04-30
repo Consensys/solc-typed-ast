@@ -4,3 +4,4 @@ dist
 docs
 coverage
 *.tgz
+src/types/typeStrings/typeString_parser.ts
