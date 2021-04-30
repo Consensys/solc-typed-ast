@@ -4,6 +4,7 @@ import { ASTNode } from "./ast_node";
 import { StateVariableVisibility } from "./constants";
 import { EnumDefinition, StructDefinition } from "./implementation/declaration";
 import { ContractDefinition } from "./implementation/declaration/contract_definition";
+import { ErrorDefinition } from "./implementation/declaration/error_definition";
 import { EventDefinition } from "./implementation/declaration/event_definition";
 import { FunctionDefinition } from "./implementation/declaration/function_definition";
 import { ModifierDefinition } from "./implementation/declaration/modifier_definition";
@@ -24,6 +25,7 @@ export type AnyResolvable =
     | VariableDeclaration
     | FunctionDefinition
     | ModifierDefinition
+    | ErrorDefinition
     | EventDefinition
     | StructDefinition
     | EnumDefinition
@@ -139,7 +141,8 @@ function* lookupInSourceUnit(name: string, scope: SourceUnit): Iterable<AnyResol
                 child instanceof FunctionDefinition ||
                 child instanceof ContractDefinition ||
                 child instanceof StructDefinition ||
-                child instanceof EnumDefinition) &&
+                child instanceof EnumDefinition ||
+                child instanceof ErrorDefinition) &&
             child.name === name
         ) {
             yield child;
@@ -159,6 +162,7 @@ function* lookupInSourceUnit(name: string, scope: SourceUnit): Iterable<AnyResol
                 // `import {<name>} from "..."` or `import {a as <name>} from "..."`
                 for (const [foreignDef, alias] of child.vSymbolAliases) {
                     let symImportName: string;
+
                     const originalDef =
                         foreignDef instanceof ImportDirective ? foreignDef.vSourceUnit : foreignDef;
 
@@ -167,6 +171,7 @@ function* lookupInSourceUnit(name: string, scope: SourceUnit): Iterable<AnyResol
                     } else {
                         if (foreignDef instanceof ImportDirective) {
                             symImportName = foreignDef.unitAlias;
+
                             if (symImportName === "") {
                                 throw new Error(
                                     `Unexpected ImportDirective foreign def with non-unit alias ${pp(
@@ -204,10 +209,12 @@ function* lookupInContractDefinition(
                     child instanceof ModifierDefinition ||
                     child instanceof EventDefinition ||
                     child instanceof StructDefinition ||
-                    child instanceof EnumDefinition) &&
+                    child instanceof EnumDefinition ||
+                    child instanceof ErrorDefinition) &&
                 child.name === name
             ) {
                 let sigHash: string | undefined;
+
                 if (child instanceof FunctionDefinition) {
                     sigHash = child.canonicalSignatureHash;
                 } else if (
@@ -272,6 +279,7 @@ function* lookupInBlock(name: string, scope: Block | UncheckedBlock): Iterable<A
  */
 function lookupInScope(name: string, scope: ScopeNode): Set<AnyResolvable> {
     let results: Iterable<AnyResolvable>;
+
     if (scope instanceof SourceUnit) {
         results = lookupInSourceUnit(name, scope);
     } else if (scope instanceof ContractDefinition) {
@@ -323,6 +331,7 @@ export function resolveAny(
 
     for (let i = 0; i < elements.length; i++) {
         const element = elements[i];
+
         let res: Set<AnyResolvable> | undefined;
 
         if (i == 0) {
@@ -330,6 +339,7 @@ export function resolveAny(
             // stack of scopes starting from the current context, looking for `A`
             while (scope !== undefined) {
                 res = lookupInScope(element, scope);
+
                 if (res.size > 0) {
                     // Sanity check - when multiple results are found, they must either be overloaded events
                     // or overloaded functions/public state vars.

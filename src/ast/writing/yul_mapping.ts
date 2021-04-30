@@ -26,7 +26,7 @@ class YulBlockWriter implements YulNodeWriter {
 
 class YulLiteralWriter implements YulNodeWriter {
     write(node: YulNode): string {
-        const value = node.kind === "string" ? '"' + node.value + '"' : node.value;
+        const value = node.kind === "string" ? JSON.stringify(node.value) : node.value;
 
         return node.type !== "" ? value + ":" + node.type : value;
     }

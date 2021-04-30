@@ -4,6 +4,7 @@ import { FunctionStateMutability, FunctionVisibility } from "./constants";
 import { ContractDefinition } from "./implementation/declaration/contract_definition";
 import { EnumDefinition } from "./implementation/declaration/enum_definition";
 import { EnumValue } from "./implementation/declaration/enum_value";
+import { ErrorDefinition } from "./implementation/declaration/error_definition";
 import { EventDefinition } from "./implementation/declaration/event_definition";
 import { FunctionDefinition } from "./implementation/declaration/function_definition";
 import { ModifierDefinition } from "./implementation/declaration/modifier_definition";
@@ -46,6 +47,7 @@ import { IfStatement } from "./implementation/statement/if_statement";
 import { InlineAssembly } from "./implementation/statement/inline_assembly";
 import { PlaceholderStatement } from "./implementation/statement/placeholder_statement";
 import { Return } from "./implementation/statement/return";
+import { RevertStatement } from "./implementation/statement/revert_statement";
 import { Statement } from "./implementation/statement/statement";
 import { Throw } from "./implementation/statement/throw";
 import { TryCatchClause } from "./implementation/statement/try_catch_clause";
@@ -96,6 +98,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.abstract,
             node.fullyImplemented,
             node.linearizedBaseContracts,
+            node.usedErrors,
             node.documentation,
             node.children,
             node.nameLocation,
@@ -116,6 +119,16 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         EnumValue,
         (node: EnumValue): Specific<ConstructorParameters<typeof EnumValue>> => [
             node.name,
+            node.nameLocation,
+            node.raw
+        ]
+    ],
+    [
+        ErrorDefinition,
+        (node: ErrorDefinition): Specific<ConstructorParameters<typeof ErrorDefinition>> => [
+            node.name,
+            node.vParameters,
+            node.documentation,
             node.nameLocation,
             node.raw
         ]
@@ -536,6 +549,14 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         ]
     ],
     [
+        RevertStatement,
+        (node: RevertStatement): Specific<ConstructorParameters<typeof RevertStatement>> => [
+            node.errorCall,
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
         Statement,
         (node: Statement): Specific<ConstructorParameters<typeof Statement>> => [
             node.documentation,
@@ -675,6 +696,12 @@ export class ASTNodeFactory {
 
     makeEnumValue(...args: Specific<ConstructorParameters<typeof EnumValue>>): EnumValue {
         return this.make(EnumValue, ...args);
+    }
+
+    makeErrorDefinition(
+        ...args: Specific<ConstructorParameters<typeof ErrorDefinition>>
+    ): ErrorDefinition {
+        return this.make(ErrorDefinition, ...args);
     }
 
     makeEventDefinition(
@@ -905,6 +932,12 @@ export class ASTNodeFactory {
         return this.make(Return, ...args);
     }
 
+    makeRevertStatement(
+        ...args: Specific<ConstructorParameters<typeof RevertStatement>>
+    ): RevertStatement {
+        return this.make(RevertStatement, ...args);
+    }
+
     makeStatement(...args: Specific<ConstructorParameters<typeof Statement>>): Statement {
         return this.make(Statement, ...args);
     }
@@ -977,6 +1010,7 @@ export class ASTNodeFactory {
             | ContractDefinition
             | FunctionDefinition
             | StructDefinition
+            | ErrorDefinition
             | EventDefinition
             | EnumDefinition
             | ImportDirective
@@ -1007,7 +1041,7 @@ export class ASTNodeFactory {
             typeString = result.join(" ");
         } else if (target instanceof ContractDefinition) {
             typeString = `type(contract ${target.name})`;
-        } else if (target instanceof EventDefinition) {
+        } else if (target instanceof EventDefinition || target instanceof ErrorDefinition) {
             const args = target.vParameters.vParameters.map(this.typeExtractor);
 
             typeString = `function (${args.join(",")})`;
@@ -1092,6 +1126,7 @@ export class ASTNodeFactory {
 
         if (node instanceof ContractDefinition) {
             node.linearizedBaseContracts = node.linearizedBaseContracts.map(patch);
+            node.usedErrors = node.usedErrors.map(patch);
         }
 
         if (

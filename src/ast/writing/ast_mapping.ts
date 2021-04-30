@@ -12,6 +12,7 @@ import {
     ContractDefinition,
     EnumDefinition,
     EnumValue,
+    ErrorDefinition,
     EventDefinition,
     FunctionDefinition,
     ModifierDefinition,
@@ -58,6 +59,7 @@ import {
     InlineAssembly,
     PlaceholderStatement,
     Return,
+    RevertStatement,
     Statement,
     Throw,
     TryCatchClause,
@@ -677,6 +679,12 @@ class ReturnWriter extends SimpleStatementWriter<Return> {
     }
 }
 
+class RevertStatementWriter extends SimpleStatementWriter<RevertStatement> {
+    writeInner(node: RevertStatement, writer: ASTWriter): SrcDesc {
+        return writer.desc("revert ", node.errorCall);
+    }
+}
+
 class BreakWriter extends SimpleStatementWriter<Break> {
     writeInner(): SrcDesc {
         return ["break"];
@@ -929,6 +937,16 @@ class UncheckedBlockWriter extends ASTNodeWriter {
     }
 
     writeWhole(node: UncheckedBlock, writer: ASTWriter): SrcDesc {
+        return [...writeDocs(node.documentation, writer), [node, this.writeInner(node, writer)]];
+    }
+}
+
+class ErrorDefinitionWriter extends ASTNodeWriter {
+    writeInner(node: ErrorDefinition, writer: ASTWriter): SrcDesc {
+        return writer.desc("error ", node.name, node.vParameters, ";");
+    }
+
+    writeWhole(node: ErrorDefinition, writer: ASTWriter): SrcDesc {
         return [...writeDocs(node.documentation, writer), [node, this.writeInner(node, writer)]];
     }
 }
@@ -1187,6 +1205,10 @@ class ContractDefinitionWriter extends ASTNodeWriter {
             result.push(...flatJoin(node.vEnums.map(writeLineFn), wrap), wrap);
         }
 
+        if (node.vErrors.length) {
+            result.push(...flatJoin(node.vErrors.map(writeLineFn), wrap), wrap);
+        }
+
         if (node.vEvents.length) {
             result.push(...flatJoin(node.vEvents.map(writeLineFn), wrap), wrap);
         }
@@ -1293,7 +1315,10 @@ class SourceUnitWriter extends ASTNodeWriter {
             result.push(...flatten(node.vVariables.map((n) => [...writeFn(n), ";", wrap])), wrap);
         }
 
-        const otherDefs = (node.vFunctions as readonly ASTNode[]).concat(node.vContracts);
+        const otherDefs = (node.vErrors as readonly ASTNode[]).concat(
+            node.vFunctions,
+            node.vContracts
+        );
 
         if (otherDefs.length > 0) {
             result.push(...flatJoin(otherDefs.map(writeLineFn), wrap));
@@ -1337,6 +1362,7 @@ export const DefaultASTWriterMapping = new Map<ASTNodeConstructor<ASTNode>, ASTN
     [DoWhileStatement, new DoWhileStatementWriter()],
     [Return, new ReturnWriter()],
     [EmitStatement, new EmitStatementWriter()],
+    [RevertStatement, new RevertStatementWriter()],
     [PlaceholderStatement, new PlaceholderStatementWriter()],
     [InlineAssembly, new InlineAssemblyWriter()],
     [TryCatchClause, new TryCatchClauseWriter()],
@@ -1349,6 +1375,7 @@ export const DefaultASTWriterMapping = new Map<ASTNodeConstructor<ASTNode>, ASTN
     [OverrideSpecifier, new OverrideSpecifierWriter()],
     [FunctionDefinition, new FunctionDefinitionWriter()],
     [ModifierDefinition, new ModifierDefinitionWriter()],
+    [ErrorDefinition, new ErrorDefinitionWriter()],
     [EventDefinition, new EventDefinitionWriter()],
     [StructDefinition, new StructDefinitionWriter()],
     [EnumValue, new EnumValueWriter()],

@@ -28,28 +28,28 @@ const encounters = new Map<string, number>([
     ["ImportDirective", 1],
     ["EnumDefinition", 2],
     ["EnumValue", 6],
-    ["ContractDefinition", 5],
-    ["FunctionDefinition", 7],
-    ["ParameterList", 20],
-    ["VariableDeclaration", 15],
-    ["ElementaryTypeName", 14],
-    ["Block", 24],
-    ["VariableDeclarationStatement", 8],
-    ["Literal", 18],
+    ["ContractDefinition", 7],
+    ["FunctionDefinition", 13],
+    ["ParameterList", 35],
+    ["VariableDeclaration", 21],
+    ["ElementaryTypeName", 21],
+    ["Block", 30],
+    ["VariableDeclarationStatement", 9],
+    ["Literal", 21],
     ["UncheckedBlock", 2],
     ["ExpressionStatement", 7],
     ["UnaryOperation", 2],
-    ["Identifier", 15],
-    ["Return", 3],
+    ["Identifier", 20],
+    ["Return", 4],
     ["InheritanceSpecifier", 1],
     ["IdentifierPath", 11],
     ["UsingForDirective", 1],
     ["UserDefinedTypeName", 6],
     ["ModifierInvocation", 2],
-    ["FunctionCall", 12],
-    ["MemberAccess", 6],
+    ["FunctionCall", 16],
+    ["MemberAccess", 8],
     ["OverrideSpecifier", 1],
-    ["ElementaryTypeNameExpression", 2],
+    ["ElementaryTypeNameExpression", 3],
     ["NewExpression", 2],
     ["TryStatement", 2],
     ["TryCatchClause", 8],
@@ -65,7 +65,10 @@ const encounters = new Map<string, number>([
     ["DoWhileStatement", 1],
     ["Break", 1],
     ["ForStatement", 1],
-    ["InlineAssembly", 1]
+    ["InlineAssembly", 2],
+    ["ErrorDefinition", 3],
+    ["StructuredDocumentation", 3],
+    ["RevertStatement", 3]
 ]);
 
 describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
@@ -98,11 +101,11 @@ describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
 
         const sourceUnit = sourceUnits[0];
 
-        expect(sourceUnit.id).toEqual(227);
-        expect(sourceUnit.src).toEqual("0:3351:0");
+        expect(sourceUnit.id).toEqual(298);
+        expect(sourceUnit.src).toEqual("0:4474:0");
         expect(sourceUnit.absolutePath).toEqual(mainSample);
-        expect(sourceUnit.children.length).toEqual(9);
-        expect(sourceUnit.getChildren().length).toEqual(223);
+        expect(sourceUnit.children.length).toEqual(12);
+        expect(sourceUnit.getChildren().length).toEqual(292);
     });
 
     it(`Validate parsed output (${kind})`, () => {

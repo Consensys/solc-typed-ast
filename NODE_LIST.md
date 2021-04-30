@@ -17,6 +17,7 @@ ElementaryTypeNameExpression
 EmitStatement
 EnumDefinition
 EnumValue
+ErrorDefinition
 EventDefinition
 ExpressionStatement
 ForStatement
@@ -43,6 +44,7 @@ ParameterList
 PlaceholderStatement
 PragmaDirective
 Return
+RevertStatement
 SourceUnit
 StructDefinition
 StructuredDocumentation

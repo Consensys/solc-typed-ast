@@ -40,6 +40,7 @@ describe("ContractDefinition", () => {
             false,
             true,
             [3],
+            [],
             undefined,
             []
         );
@@ -77,6 +78,7 @@ describe("ContractDefinition", () => {
                 false,
                 true,
                 [2],
+                [],
                 undefined,
                 [myEnum1]
             );
@@ -124,6 +126,7 @@ describe("ContractDefinition", () => {
                 false,
                 true,
                 [3],
+                [],
                 undefined,
                 [myEnum1, myEnum2]
             );
@@ -174,6 +177,7 @@ describe("ContractDefinition", () => {
                 false,
                 true,
                 [3],
+                [],
                 undefined,
                 [myEnum1, myEnum2]
             );
@@ -233,6 +237,7 @@ describe("ContractDefinition", () => {
                 false,
                 true,
                 [4],
+                [],
                 undefined,
                 [myEnum1, myEnum2, myEnum3]
             );
@@ -285,6 +290,7 @@ describe("ContractDefinition", () => {
                 false,
                 true,
                 [3],
+                [],
                 undefined,
                 [myEnum1]
             );
@@ -343,6 +349,7 @@ describe("ContractDefinition", () => {
                 false,
                 true,
                 [4],
+                [],
                 undefined,
                 [myEnum1, myEnum2]
             );
@@ -395,6 +402,7 @@ describe("ContractDefinition", () => {
                 false,
                 true,
                 [3],
+                [],
                 undefined,
                 [myEnum1]
             );
@@ -453,6 +461,7 @@ describe("ContractDefinition", () => {
                 false,
                 true,
                 [4],
+                [],
                 undefined,
                 [myEnum1, myEnum2]
             );
@@ -502,6 +511,7 @@ describe("ContractDefinition", () => {
                 false,
                 true,
                 [3],
+                [],
                 undefined,
                 [myEnum1]
             );
@@ -567,6 +577,7 @@ describe("ContractDefinition", () => {
                 false,
                 true,
                 [5],
+                [],
                 undefined,
                 [myEnum1, myEnum2, myEnum3]
             );

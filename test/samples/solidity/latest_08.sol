@@ -151,3 +151,51 @@ contract Features082 {
         return;
     }
 }
+
+/// UnitLevelError error docstring
+error UnitLevelError084(uint code);
+
+library LibErrors084 {
+    /// LibErrors084.Lib error docstring
+    error Lib(bytes b);
+}
+
+contract Features084 {
+    /// Features084.Own error docstring
+    error Own();
+
+    function testAssemblyHexLiterals() public {
+        assembly {
+            let a := "test"
+            let x := hex"112233445566778899aabbccddeeff6677889900"
+            let y := hex"1234_abcd"
+
+            sstore(0, x)
+            sstore(1, y)
+
+            pop(hex"2233")
+        }
+    }
+
+    function testBytesConcatBuiltin(bytes memory a, bytes memory b) public pure returns (bytes memory c) {
+        return bytes.concat(a, b);
+    }
+
+    function testVariableDeclarationStatementDocString() public {
+        /// VariableDeclarationStatement docstring
+        uint a = 10;
+    }
+
+    function revertWithLib() public {
+        /// RevertStatement docstring
+        revert LibErrors084.Lib(hex"001122");
+    }
+
+    function revertWithOwn() public {
+        revert Own();
+    }
+
+    function revertWithUnitLevelError() public {
+        revert UnitLevelError084(1);
+    }
+}

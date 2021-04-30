@@ -18,6 +18,7 @@ export class ModernContractDefinitionProcessor extends ModernNodeProcessor<Contr
         const abstract: boolean = "abstract" in raw ? raw.abstract : false;
         const fullyImplemented: boolean = raw.fullyImplemented;
         const linearizedBaseContracts: number[] = raw.linearizedBaseContracts;
+        const usedErrors: number[] = "usedErrors" in raw ? raw.usedErrors : [];
         const nameLocation: string | undefined = raw.nameLocation;
 
         let documentation: string | StructuredDocumentation | undefined;
@@ -47,6 +48,7 @@ export class ModernContractDefinitionProcessor extends ModernNodeProcessor<Contr
             abstract,
             fullyImplemented,
             linearizedBaseContracts,
+            usedErrors,
             documentation,
             children,
             nameLocation,

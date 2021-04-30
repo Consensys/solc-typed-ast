@@ -8,6 +8,9 @@ import "./latest_imports_08.sol" as LI;
 
 enum EnumABC { A, B, C }
 
+/// UnitLevelError error docstring
+error UnitLevelError084(uint code);
+
 contract UncheckedMathExample {
     function test() public pure returns (uint) {
         uint x = 0;
@@ -103,6 +106,49 @@ contract Features082 {
         unchecked {}
         /// Return docstring
         return;
+    }
+}
+
+library LibErrors084 {
+    /// LibErrors084.Lib error docstring
+    error Lib(bytes b);
+}
+
+contract Features084 {
+    /// Features084.Own error docstring
+    error Own();
+
+    function testAssemblyHexLiterals() public {
+        assembly {
+            let a := "test"
+            let x := "\u0011\"3DUfwșʻ̝wș\u0000"
+            let y := "\u00124ˍ"
+            sstore(0, x)
+            sstore(1, y)
+            pop("\"3")
+        }
+    }
+
+    function testBytesConcatBuiltin(bytes memory a, bytes memory b) public pure returns (bytes memory c) {
+        return bytes.concat(a, b);
+    }
+
+    function testVariableDeclarationStatementDocString() public {
+        /// VariableDeclarationStatement docstring
+        uint a = 10;
+    }
+
+    function revertWithLib() public {
+        /// RevertStatement docstring
+        revert LibErrors084.Lib(hex"001122");
+    }
+
+    function revertWithOwn() public {
+        revert Own();
+    }
+
+    function revertWithUnitLevelError() public {
+        revert UnitLevelError084(1);
     }
 }
 // ------------------------------------------------------------

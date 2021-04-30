@@ -149,6 +149,7 @@ describe("ASTNodeFactory.copy()", () => {
             false,
             true,
             [],
+            [],
             "doc string"
         );
 
@@ -291,6 +292,7 @@ describe("ASTNodeFactory.copy()", () => {
             ContractKind.Contract,
             false,
             true,
+            [],
             [],
             "doc string"
         );
