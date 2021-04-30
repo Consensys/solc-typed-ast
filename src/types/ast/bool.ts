@@ -1,13 +1,8 @@
 import { TypeNode } from "./type";
-import { Range } from "../../misc";
 
 export class BoolType extends TypeNode {
-    constructor(src?: Range) {
-        super(src);
-    }
-
     pp(): string {
-        return `bool`;
+        return "bool";
     }
 
     getFields(): any[] {

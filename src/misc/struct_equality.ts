@@ -121,7 +121,7 @@ export function eq(a: any, b: any, visited?: Map<any, any>): boolean {
 
         /**
          * Note here we rely on getFields always returning fields in the same order
-         * to avoid having to sort a_fields and b_fields.
+         * to avoid having to sort fieldsA and fieldsB.
          */
         for (let i = 0; i < fieldsA.length; i++) {
             if (!eq(fieldsA[i], fieldsB[i], visited)) {

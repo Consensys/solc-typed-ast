@@ -1,5 +1,5 @@
-import { TypeNode } from "./type";
 import { Range } from "../../misc";
+import { TypeNode } from "./type";
 
 export class MappingType extends TypeNode {
     public readonly keyType: TypeNode;
@@ -7,6 +7,7 @@ export class MappingType extends TypeNode {
 
     constructor(keyType: TypeNode, valueType: TypeNode, src?: Range) {
         super(src);
+
         this.keyType = keyType;
         this.valueType = valueType;
     }

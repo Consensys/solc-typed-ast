@@ -1,5 +1,5 @@
-import { TypeNode } from "./type";
 import { Range } from "../../misc";
+import { TypeNode } from "./type";
 
 export class StringLiteralType extends TypeNode {
     public readonly literal: string;
@@ -7,6 +7,7 @@ export class StringLiteralType extends TypeNode {
 
     constructor(literal: string, isHex: boolean, src?: Range) {
         super(src);
+
         this.literal = literal;
         this.isHex = isHex;
     }
@@ -16,6 +17,6 @@ export class StringLiteralType extends TypeNode {
     }
 
     getFields(): any[] {
-        return [];
+        return [this.literal, this.isHex];
     }
 }

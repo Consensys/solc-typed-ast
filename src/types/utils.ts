@@ -42,13 +42,14 @@ import {
  *
  * @param type - general type "pattern"
  * @param loc - target location to specialize to
- * @returns - specialized type
+ * @returns specialized type
  */
 export function specializeType(type: TypeNode, loc: DataLocation): TypeNode {
     assert(
         !(type instanceof PointerType),
         `Unexpected pointer type ${type.pp()} in concretization.`
     );
+
     assert(!(type instanceof TupleType), `Unexpected tuple type ${type.pp()} in concretization.`);
 
     // bytes and string
@@ -58,11 +59,13 @@ export function specializeType(type: TypeNode, loc: DataLocation): TypeNode {
 
     if (type instanceof ArrayType) {
         const concreteElT = specializeType(type.elementT, loc);
+
         return new PointerType(new ArrayType(concreteElT, type.size), loc);
     }
 
     if (type instanceof UserDefinedType) {
         const def = type.definition;
+
         assert(
             def !== undefined,
             `Can't concretize user defined type ${type.pp()} with no corresponding definition.`
@@ -99,16 +102,18 @@ export function specializeType(type: TypeNode, loc: DataLocation): TypeNode {
  * in a variable declaration.
  *
  * @param type - specialized type
- * @returns - computed generalized type.
+ * @returns computed generalized type.
  */
 export function generalizeType(type: TypeNode): [TypeNode, DataLocation | undefined] {
     if (type instanceof PointerType) {
         const [generalizedTo] = generalizeType(type.to);
+
         return [generalizedTo, type.location];
     }
 
     if (type instanceof ArrayType) {
         const [innerT] = generalizeType(type.elementT);
+
         return [new ArrayType(innerT, type.size), undefined];
     }
 
@@ -128,9 +133,7 @@ export function generalizeType(type: TypeNode): [TypeNode, DataLocation | undefi
 function getUserDefinedTypeFQName(
     def: ContractDefinition | StructDefinition | EnumDefinition
 ): string {
-    return def.vScope instanceof ContractDefinition
-        ? `${def.vScope.name}.${def.name}`
-        : `${def.name}`;
+    return def.vScope instanceof ContractDefinition ? `${def.vScope.name}.${def.name}` : def.name;
 }
 
 /**
@@ -139,15 +142,18 @@ function getUserDefinedTypeFQName(
  */
 export function variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNode {
     assert(decl.vType !== undefined, `Decl ${decl.id} is missing type`);
+
     const rawTypeNode = typeNameToTypeNode(decl.vType);
+
     return specializeType(rawTypeNode, decl.storageLocation);
 }
 
 /**
  * Convert a given ast `TypeName` into a `TypeNode`. This produces "general
  * type patterns" without any specific storage information.
+ *
  * @param astT - original AST `TypeName`
- * @returns - equivalent `TypeNode`.
+ * @returns equivalent `TypeNode`.
  */
 export function typeNameToTypeNode(astT: TypeName): TypeNode {
     if (astT instanceof ElementaryTypeName) {
@@ -228,6 +234,7 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
         const parameters = astT.vParameterTypes.vParameters.map((param) =>
             variableDeclarationToTypeNode(param)
         );
+
         const returns = astT.vReturnParameterTypes.vParameters.map((param) =>
             variableDeclarationToTypeNode(param)
         );

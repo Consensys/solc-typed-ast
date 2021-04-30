@@ -1,6 +1,6 @@
-import { TypeNode } from "./type";
 import { DataLocation } from "../../ast";
 import { Range } from "../../misc";
+import { TypeNode } from "./type";
 
 export type PointerKind = "ref" | "pointer" | "slice";
 
@@ -11,6 +11,7 @@ export class PointerType extends TypeNode {
 
     constructor(to: TypeNode, location: DataLocation, kind?: PointerKind, src?: Range) {
         super(src);
+
         this.to = to;
         this.location = location;
         this.kind = kind;

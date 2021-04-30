@@ -1,5 +1,5 @@
-import { TypeNode } from "./type";
 import { Range } from "../../misc";
+import { TypeNode } from "./type";
 
 export class ArrayType extends TypeNode {
     elementT: TypeNode;
@@ -7,6 +7,7 @@ export class ArrayType extends TypeNode {
 
     constructor(elementT: TypeNode, size?: bigint, src?: Range) {
         super(src);
+
         this.elementT = elementT;
         this.size = size;
     }

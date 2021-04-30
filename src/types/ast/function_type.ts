@@ -1,11 +1,12 @@
-import { TypeNode } from "./type";
-import { FunctionVisibility, FunctionStateMutability } from "../../ast";
+import { FunctionStateMutability, FunctionVisibility } from "../../ast";
 import { Range } from "../../misc";
+import { Node } from "../../misc/node";
+import { TypeNode } from "./type";
 
 export class FunctionType extends TypeNode {
     /**
-     * The type for external functions includes the name, as its used for
-     * computing the canonical signature.
+     * The type for external functions includes the name,
+     * as its used for computing the canonical signature.
      */
     public readonly name: string | undefined;
     public readonly parameters: TypeNode[];
@@ -22,6 +23,7 @@ export class FunctionType extends TypeNode {
         src?: Range
     ) {
         super(src);
+
         this.name = name;
         this.parameters = parameters;
         this.returns = returns;
@@ -29,9 +31,17 @@ export class FunctionType extends TypeNode {
         this.mutability = mutability;
     }
 
+    getChildren(): Node[] {
+        return [...this.parameters, ...this.returns];
+    }
+
     pp(): string {
-        const argStr = this.parameters.map((paramT) => paramT.pp()).join(",");
-        let retStr = this.returns.map((paramT) => paramT.pp()).join(",");
+        const mapper = (node: TypeNode) => node.pp();
+
+        const argStr = this.parameters.map(mapper).join(",");
+
+        let retStr = this.returns.map(mapper).join(",");
+
         retStr = retStr !== "" ? ` returns (${retStr})` : retStr;
 
         const visStr = this.visibility !== FunctionVisibility.Internal ? ` ` + this.visibility : "";

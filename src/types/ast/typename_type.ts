@@ -1,11 +1,12 @@
-import { TypeNode } from "./type";
 import { Range } from "../../misc";
+import { TypeNode } from "./type";
 
 export class TypeNameType extends TypeNode {
     public readonly type: TypeNode;
 
     constructor(type: TypeNode, src?: Range) {
         super(src);
+
         this.type = type;
     }
 

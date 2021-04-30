@@ -1,15 +1,17 @@
-import { TypeNode } from "./type";
+import { ContractDefinition, ContractKind, EnumDefinition, StructDefinition } from "../../ast";
 import { Range } from "../../misc";
-import { ContractKind, StructDefinition, EnumDefinition, ContractDefinition } from "../../ast";
+import { TypeNode } from "./type";
 
 export type UserDefinition = StructDefinition | EnumDefinition | ContractDefinition;
 
 export class UserDefinedType extends TypeNode {
     public readonly name: string;
+
     public definition: UserDefinition;
 
     constructor(name: string, definition: UserDefinition, src?: Range) {
         super(src);
+
         this.name = name;
         this.definition = definition;
     }

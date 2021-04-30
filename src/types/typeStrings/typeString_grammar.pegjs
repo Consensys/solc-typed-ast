@@ -192,7 +192,6 @@ Number =
 MaybeNegNumber =
     sign: ("-"?) __ num: Number { return sign !== null ? -num : num; }
 
-
 SimpleType
   = BoolType
   / AddressType
@@ -206,15 +205,27 @@ SimpleType
   / UserDefinedType
 
 StringLiteralErrorMsg = "(" [^\)]* ")" { return [text(), false]; }
-StringLiteralType = LITERAL_STRING __ literal: (StringLiteral / HexLiteral / StringLiteralErrorMsg) { return new StringLiteralType(literal[0], literal[1]); }
-IntLiteralType = INT_CONST __ prefix: MaybeNegNumber rest: ("...(" [^\)]* ")..." Number)? { return new IntLiteralType(prefix); }
-RationalLiteralType = RATIONAL_CONST __ numerator: MaybeNegNumber __ "/" __ denominator: Number { throw new Error(`NYI rational literal type: ${text()}`); }
+
+StringLiteralType = LITERAL_STRING __ literal: (StringLiteral / HexLiteral / StringLiteralErrorMsg) {
+  return new StringLiteralType(literal[0], literal[1]);
+}
+
+IntLiteralType = INT_CONST __ prefix: MaybeNegNumber rest: ("...(" [^\)]* ")..." Number)? {
+  return new IntLiteralType(prefix);
+}
+
+RationalLiteralType = RATIONAL_CONST __ numerator: MaybeNegNumber __ "/" __ denominator: Number {
+  throw new Error(`NYI rational literal type: ${text()}`);
+}
 
 BoolType = BOOL { return new BoolType(); }
+
 AddressType = ADDRESS __ payable:(PAYABLE?) { return new AddressType(payable !== null); }
-IntType = unsigned:("u"?) "int" width:(Number?) {
+
+IntType = unsigned: ("u"?) "int" width: (Number?) {
   const signed = unsigned === null;
   const bitWidth = width === null ? 256 : Number(width);
+
   return new IntType(bitWidth, signed);
 }
 
@@ -258,18 +269,23 @@ FunctionMutability = PURE / VIEW / PAYABLE / NONPAYABLE / CONSTANT
 FunctionDecorator = FunctionVisibility / FunctionMutability
 
 FunctionDecoratorList
-  = head: FunctionDecorator tail: (__ FunctionDecorator)* { return tail.reduce((acc, cur) => { acc.push(cur[1]); return acc}, [head])}
+  = head: FunctionDecorator tail: (__ FunctionDecorator)* {
+    return tail.reduce(
+      (acc, cur) => { acc.push(cur[1]); return acc },
+      [head]
+    );
+  }
 
 FunctionType
-  = FUNCTION __ name: FQName? __ "(" __ args: TypeList? __ ")" __ decorators: (FunctionDecoratorList?) __ returns:(RETURNS __ "(" __ TypeList __ ")")? { 
+  = FUNCTION __ name: FQName? __ "(" __ args: TypeList? __ ")" __ decorators: (FunctionDecoratorList?) __ returns: (RETURNS __ "(" __ TypeList __ ")")? { 
     const retTypes = returns === null ? [] : returns[4];
     const [visibility, mutability] = getFunctionAttributes(decorators !== null ? decorators : []);
+
     return new FunctionType(name === null ? undefined : name, args, retTypes, visibility, mutability);
 }
 
-
 ModifierType
-  = MODIFIER __ "(" __ args: TypeList? __ ")" { throw new Error(`Shouldn't try to type Modifiers!`); }
+  = MODIFIER __ "(" __ args: TypeList? __ ")" { throw new Error("Shouldn't try to type Modifiers!"); }
 
 TupleType
   = TUPLE __ "(" __  elements: MaybeTypeList __ ")" { return new TupleType(elements); }
@@ -279,9 +295,9 @@ TypeExprType
 
 BuiltinTypes
   = name: MSG     { return new BuiltinType(name); }
-  / name: ABI     { return new BuiltinType(name);}
-  / name: BLOCK   { return new BuiltinType(name);}
-  / name: TX      { return new BuiltinType(name);}
+  / name: ABI     { return new BuiltinType(name); }
+  / name: BLOCK   { return new BuiltinType(name); }
+  / name: TX      { return new BuiltinType(name); }
 
 ModuleType
   = MODULE __ path: StringLiteral { return new ModuleType(path[0]); }
@@ -292,17 +308,22 @@ NonArrPtrType
   / FunctionType
 
 ArrayPtrType
-  = head: NonArrPtrType tail: ( __ !PointerType "[" __ size: Number? __ "]" / __ storageLocation: (DataLocation) pointerType: (__ PointerType)?)*  {
-    return tail.reduce((acc, cur) => {
-      if (cur.length > 3) {
-        const size = cur[4];
-        return new ArrayType(acc, size !== null ? size : undefined);
-      } else {
+  = head: NonArrPtrType tail: ( __ !PointerType "[" __ size: Number? __ "]" / __ storageLocation: (DataLocation) pointerType: (__ PointerType)?)* {
+    return tail.reduce(
+      (acc, cur) => {
+        if (cur.length > 3) {
+          const size = cur[4];
+
+          return new ArrayType(acc, size !== null ? size : undefined);
+        }
+
         const location = cur[1] as DataLocation;
-        const kind = cur[2] === null ? undefined : cur[2][1] 
+        const kind = cur[2] === null ? undefined : cur[2][1];
+
         return new PointerType(acc, location, kind);
-      }
-    }, head)
+      },
+      head
+    );
   }
 
 // Top-level rule

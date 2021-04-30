@@ -1,10 +1,12 @@
-import { TypeNode } from "./type";
 import { Range } from "../../misc";
+import { TypeNode } from "./type";
 
 export class IntLiteralType extends TypeNode {
     public readonly literal?: bigint;
+
     constructor(literal?: bigint, src?: Range) {
         super(src);
+
         this.literal = literal;
     }
 

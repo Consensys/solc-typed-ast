@@ -6,6 +6,7 @@ export class AddressType extends TypeNode {
 
     constructor(payable: boolean, src?: Range) {
         super(src);
+
         this.payable = payable;
     }
 
