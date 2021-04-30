@@ -19,7 +19,7 @@ export class ErrorDefinition extends ASTNode {
      * Optional documentation appearing above the error definition:
      * - Is `undefined` when not specified.
      * - Is type of `string` for compatibility reasons (for and instance, during node creation).
-     * - Is instance of `StructuredDocumentation` by default.
+     * - Is instance of `StructuredDocumentation` in other cases.
      */
     documentation?: string | StructuredDocumentation;
 
