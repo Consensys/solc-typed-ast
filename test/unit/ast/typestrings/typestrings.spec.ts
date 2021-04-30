@@ -15,7 +15,7 @@ import {
     ModifierInvocation,
     VariableDeclaration
 } from "../../../../src";
-import { parseTypeString, makeTypeString } from "../../../../src/ast/typestrings";
+import { getNodeType, makeTypeString } from "../../../../src/ast/typestrings";
 
 const samples: Array<[string, string, ASTKind]> = [
     [
@@ -113,7 +113,7 @@ describe("Round-trip tests for typestring parser/printer", () => {
                         continue;
                     }
 
-                    const typeName = parseTypeString(typedNode, factory, compilerVersion);
+                    const typeName = getNodeType(typedNode, factory, compilerVersion);
 
                     // Edge case: We don't fully model type strings for external function type names.
                     // External function type strings contain the funtion name as well, which we ignore

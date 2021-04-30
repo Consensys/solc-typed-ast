@@ -1,2 +1,2 @@
-export { parseTypeString } from "./typeString_parser";
+export { getNodeType } from "./typeString_parser";
 export { makeTypeString } from "./printer";

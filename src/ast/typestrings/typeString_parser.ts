@@ -77,7 +77,7 @@ function makeUserDefinedType<T extends ASNode>(
     return factory.makeUserDefinedTypeName(typeString, name, def.id)
 }
 
-export function parseTypeString(node: Expression | VariableDeclaration, factory: ASTNodeFactory, version: string) {
+export function getNodeType(node: Expression | VariableDeclaration, factory: ASTNodeFactory, version: string) {
     return parse(node.typeString, {factory, ctx: node, version})
 }
 
