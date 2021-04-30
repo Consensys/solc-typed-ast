@@ -1,5 +1,3 @@
-import { BigInteger } from "big-integer";
-
 export function isPrimitive(a: any): boolean {
     return (
         typeof a === "bigint" ||
@@ -13,11 +11,7 @@ export function isPrimitive(a: any): boolean {
 
 // Hack to recognize big ints
 export function isBigInt(a: any): boolean {
-    return (
-        typeof a === "number" ||
-        (typeof a === "object" && a.constructor.name === "Integer") ||
-        typeof a === "bigint"
-    );
+    return typeof a === "number" || typeof a === "bigint";
 }
 
 export function hasKeysOf(a: Record<string, any>, b: Record<string, any>): boolean {
@@ -71,7 +65,7 @@ export function eq(a: any, b: any, visited?: Map<any, any>): boolean {
     }
 
     if (isBigInt(a) && isBigInt(b)) {
-        return (a as BigInteger).eq(b);
+        return a === b;
     }
 
     if (a instanceof Array && b instanceof Array) {

@@ -1,5 +1,5 @@
 import { TypeNode } from "./type";
-import { FunctionVisibility, FunctionStateMutability } from "solc-typed-ast";
+import { FunctionVisibility, FunctionStateMutability } from "../../ast";
 import { Range } from "../../misc";
 
 export class FunctionType extends TypeNode {

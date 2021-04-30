@@ -165,18 +165,11 @@ describe("Round-trip tests for typestring parser/printer", () => {
 
                         expect(eq(compType2, typeNode)).toBeTruthy();
                         // Check that specialize and generalize are inverses
-
                         const [generalizedType, loc] = generalizeType(typeNode);
 
-                        console.error(
-                            `generalizing ${typeNode.pp()} to ${generalizedType.pp()} loc: ${loc}`
-                        );
                         const reSpecializedType = specializeType(
                             generalizedType,
                             loc === undefined ? DataLocation.Default : loc
-                        );
-                        console.error(
-                            `Comparing ${typeNode.pp()} and re-specialized ${reSpecializedType.pp()} (generalized: ${generalizedType.pp()} loc: ${loc})`
                         );
                         expect(eq(typeNode, reSpecializedType)).toBeTruthy();
                     }

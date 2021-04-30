@@ -1,5 +1,5 @@
 import { TypeNode } from "./type";
-import { DataLocation } from "solc-typed-ast";
+import { DataLocation } from "../../ast";
 import { Range } from "../../misc";
 
 export type PointerKind = "ref" | "pointer" | "slice";
