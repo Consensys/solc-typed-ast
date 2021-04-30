@@ -11,6 +11,7 @@ export * from "./constants";
 export * from "./postprocessing";
 export * from "./writing";
 export * from "./dispatch";
+export * from "./definitions";
 export * from "./utils";
 export * from "./xpath";
 export * from "./sanity";

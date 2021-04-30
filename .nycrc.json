@@ -1,6 +1,6 @@
 {
     "extension": [".ts"],
-    "exclude": ["**/*.d.ts", "**/node_modules/**", "**/test/**", "**/coverage/**", "**/docs/**"],
+    "exclude": ["**/*.d.ts", "**/node_modules/**", "**/test/**", "**/coverage/**", "**/docs/**", "src/types/typeStrings/typeString_parser*.ts"],
     "reporter": ["html", "text-summary"],
     "all": true,
     "check-coverage": true,

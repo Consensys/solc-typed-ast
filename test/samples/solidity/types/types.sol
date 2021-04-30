@@ -20,6 +20,31 @@ contract TestStorage {
     DeviceData[] deviceDataArray;
 
     mapping(address => uint) public balances;
+    mapping(address => mapping(uint => bool)) public map1;
 
     function (uint) internal returns (int) fn;
+
+    function id(uint x) internal returns (uint) { return x; }
+
+    function main() public {
+        balances;
+        map1;
+
+        mapping(address => uint) storage l1 = balances;
+        mapping(address => mapping(uint => bool)) storage l2 = map1;
+
+        l1;
+        l2;
+
+        byte b;
+        b;
+
+        function (uint) returns (uint) x = id;
+
+        x;
+
+        uint[4] memory t;
+
+        t;
+    }
 }
