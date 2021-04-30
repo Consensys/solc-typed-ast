@@ -7,3 +7,11 @@ export function forAll<T>(arr: Iterable<T> | Set<T>, cb: (arg0: T) => boolean): 
 
     return true;
 }
+
+export function assert(condition: boolean, message: string): asserts condition {
+    if (condition) {
+        return;
+    }
+
+    throw new Error(message);
+}
