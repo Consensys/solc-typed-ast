@@ -235,7 +235,12 @@ UserDefinedType
   / LIBRARY __ name: FQName             { return makeUserDefinedType(name, ContractDefinition, options.version, options.ctx); }
 
 MappingType
-  = MAPPING __ "(" __ keyType: ArrayPtrType __ "=>" __ valueType: Type __ ")"  { return new MappingType(keyType, valueType); }
+  = MAPPING __ "(" __ keyType: ArrayPtrType __ "=>" __ valueType: Type __ ")"
+  { 
+    // Identifiers refering directly to state variable maps don't have a pointer suffix.
+    // so we wrap them in a PointerType here. This means we explicitly disagree with the exact typeString.
+    return new PointerType(new MappingType(keyType, valueType), DataLocation.Storage);
+  }
 
 DataLocation = MEMORY / STORAGE / CALLDATA
 PointerType = POINTER / REF / SLICE

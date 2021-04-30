@@ -58,9 +58,6 @@ export function eq(a: any, b: any, visited?: Map<any, any>): boolean {
     visited.set(a, b);
 
     if (isPrimitive(a) || isPrimitive(b)) {
-        console.error(
-            `Comparing bigints ${a} (${typeof a}) and ${b} (${typeof b}): ${a === b} and ${a == b}`
-        );
         return a === b;
     }
 
@@ -118,8 +115,6 @@ export function eq(a: any, b: any, visited?: Map<any, any>): boolean {
         const fieldsA = a.getFields();
         const fieldsB = b.getFields();
 
-        console.error(`Comparing fields ${fieldsA} and ${fieldsB}`);
-
         if (fieldsA.length !== fieldsB.length) {
             return false;
         }
@@ -130,7 +125,6 @@ export function eq(a: any, b: any, visited?: Map<any, any>): boolean {
          */
         for (let i = 0; i < fieldsA.length; i++) {
             if (!eq(fieldsA[i], fieldsB[i], visited)) {
-                console.error(`Difference in ${i} ${fieldsA[i]} and ${fieldsB[i]}`);
                 return false;
             }
         }

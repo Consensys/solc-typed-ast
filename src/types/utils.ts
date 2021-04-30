@@ -21,7 +21,6 @@ import {
     BytesType,
     FixedBytesType,
     FunctionType,
-    IntLiteralType,
     IntType,
     MappingType,
     PackedArrayType,
@@ -164,14 +163,6 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
 
         if (m !== null) {
             return new AddressType(astT.stateMutability === "payable");
-        }
-
-        const intLiteralRE = /^int_const *([0-9]*)$/;
-
-        m = name.match(intLiteralRE);
-
-        if (m !== null) {
-            return new IntLiteralType();
         }
 
         const intTypeRE = /^(u?)int([0-9]*)$/;

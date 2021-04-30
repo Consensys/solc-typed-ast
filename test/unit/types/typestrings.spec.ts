@@ -21,6 +21,7 @@ import {
 import {
     generalizeType,
     getNodeType,
+    MappingType,
     PointerType,
     specializeType,
     variableDeclarationToTypeNode
@@ -86,6 +87,11 @@ const samples: Array<[string, string, ASTKind]> = [
         "./test/samples/solidity/resolving/simple_shadowing.sol",
         CompilerVersions08[CompilerVersions08.length - 1],
         ASTKind.Modern
+    ],
+    [
+        "./test/samples/solidity/types/types.sol",
+        CompilerVersions06[CompilerVersions06.length - 1],
+        ASTKind.Modern
     ]
 ];
 
@@ -134,16 +140,25 @@ describe("Round-trip tests for typestring parser/printer", () => {
 
                     const compTypeString = typeNode.pp();
 
+                    let skipTypeStringEqCheck = false;
+
+                    // We disagree with the normal TypeStrings for mappings - we always wrap them in a pointer.
+                    if (typeNode instanceof PointerType && typeNode.to instanceof MappingType) {
+                        skipTypeStringEqCheck = true;
+                    }
+
                     // typeStrings shorten some int_const by omitting digits.
                     // Ignore those as we can't correctly reproduce them.
                     if (
                         typedASTNode.typeString.trim() !== compTypeString &&
                         typedASTNode.typeString.includes("digits omitted")
                     ) {
-                        continue;
+                        skipTypeStringEqCheck = true;
                     }
 
-                    expect(typedASTNode.typeString.trim()).toEqual(compTypeString.trim());
+                    if (!skipTypeStringEqCheck) {
+                        expect(typedASTNode.typeString.trim()).toEqual(compTypeString.trim());
+                    }
 
                     // Check that the conversion from TypeNode ast nodes to
                     if (
