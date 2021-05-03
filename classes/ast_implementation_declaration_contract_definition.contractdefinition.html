@@ -105,6 +105,7 @@
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#scope" class="tsd-kind-icon">scope</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#src" class="tsd-kind-icon">src</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#type" class="tsd-kind-icon">type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#usederrors" class="tsd-kind-icon">used<wbr>Errors</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -122,6 +123,7 @@
 								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#sourceinfo" class="tsd-kind-icon">source<wbr>Info</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vconstructor" class="tsd-kind-icon">v<wbr>Constructor</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#venums" class="tsd-kind-icon">v<wbr>Enums</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#verrors" class="tsd-kind-icon">v<wbr>Errors</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vevents" class="tsd-kind-icon">v<wbr>Events</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vfunctions" class="tsd-kind-icon">v<wbr>Functions</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vinheritancespecifiers" class="tsd-kind-icon">v<wbr>Inheritance<wbr>Specifiers</a></li>
@@ -130,6 +132,7 @@
 								<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vscope" class="tsd-kind-icon">v<wbr>Scope</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vstatevariables" class="tsd-kind-icon">v<wbr>State<wbr>Variables</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vstructs" class="tsd-kind-icon">v<wbr>Structs</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vusederrors" class="tsd-kind-icon">v<wbr>Used<wbr>Errors</a></li>
 								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vusingfordirectives" class="tsd-kind-icon">v<wbr>Using<wbr>For<wbr>Directives</a></li>
 							</ul>
 						</section>
@@ -171,14 +174,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Contract<wbr>Definition<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, src<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, kind<span class="tsd-signature-symbol">: </span><a href="../enums/ast_constants.contractkind.html" class="tsd-signature-type" data-tsd-kind="Enumeration">ContractKind</a>, abstract<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, fullyImplemented<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, linearizedBaseContracts<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, documentation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="ast_implementation_meta_structured_documentation.structureddocumentation.html" class="tsd-signature-type" data-tsd-kind="Class">StructuredDocumentation</a>, children<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">&gt;</span>, nameLocation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, raw<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ast_implementation_declaration_contract_definition.contractdefinition.html" class="tsd-signature-type" data-tsd-kind="Class">ContractDefinition</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Contract<wbr>Definition<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, src<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, scope<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, kind<span class="tsd-signature-symbol">: </span><a href="../enums/ast_constants.contractkind.html" class="tsd-signature-type" data-tsd-kind="Enumeration">ContractKind</a>, abstract<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, fullyImplemented<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, linearizedBaseContracts<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, usedErrors<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, documentation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="ast_implementation_meta_structured_documentation.structureddocumentation.html" class="tsd-signature-type" data-tsd-kind="Class">StructuredDocumentation</a>, children<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">&gt;</span>, nameLocation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, raw<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ast_implementation_declaration_contract_definition.contractdefinition.html" class="tsd-signature-type" data-tsd-kind="Class">ContractDefinition</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L55">ast/implementation/declaration/contract_definition.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L61">src/ast/implementation/declaration/contract_definition.ts:61</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -211,6 +214,9 @@
 									<h5>linearizedBaseContracts: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
+									<h5>usedErrors: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> documentation: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="ast_implementation_meta_structured_documentation.structureddocumentation.html" class="tsd-signature-type" data-tsd-kind="Class">StructuredDocumentation</a></h5>
 								</li>
 								<li>
@@ -236,7 +242,7 @@
 					<div class="tsd-signature tsd-kind-icon">abstract<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L43">ast/implementation/declaration/contract_definition.ts:43</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L44">src/ast/implementation/declaration/contract_definition.ts:44</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -254,7 +260,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#context">context</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L14">ast/ast_node.ts:14</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L14">src/ast/ast_node.ts:14</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -269,7 +275,7 @@
 					<div class="tsd-signature tsd-kind-icon">fully<wbr>Implemented<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L50">ast/implementation/declaration/contract_definition.ts:50</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L51">src/ast/implementation/declaration/contract_definition.ts:51</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -286,7 +292,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#id">id</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L19">ast/ast_node.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L19">src/ast/ast_node.ts:19</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -301,7 +307,7 @@
 					<div class="tsd-signature tsd-kind-icon">kind<span class="tsd-signature-symbol">:</span> <a href="../enums/ast_constants.contractkind.html" class="tsd-signature-type" data-tsd-kind="Enumeration">ContractKind</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L35">ast/implementation/declaration/contract_definition.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L36">src/ast/implementation/declaration/contract_definition.ts:36</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -316,7 +322,7 @@
 					<div class="tsd-signature tsd-kind-icon">linearized<wbr>Base<wbr>Contracts<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L55">ast/implementation/declaration/contract_definition.ts:55</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L56">src/ast/implementation/declaration/contract_definition.ts:56</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -331,7 +337,7 @@
 					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L20">ast/implementation/declaration/contract_definition.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L21">src/ast/implementation/declaration/contract_definition.ts:21</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -346,7 +352,7 @@
 					<div class="tsd-signature tsd-kind-icon">name<wbr>Location<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L25">ast/implementation/declaration/contract_definition.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L26">src/ast/implementation/declaration/contract_definition.ts:26</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -362,7 +368,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#parent">parent</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L48">ast/ast_node.ts:48</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L48">src/ast/ast_node.ts:48</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -378,7 +384,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#raw">raw</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L43">ast/ast_node.ts:43</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L43">src/ast/ast_node.ts:43</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -393,7 +399,7 @@
 					<div class="tsd-signature tsd-kind-icon">scope<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L30">ast/implementation/declaration/contract_definition.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L31">src/ast/implementation/declaration/contract_definition.ts:31</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -409,7 +415,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#src">src</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L33">ast/ast_node.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L33">src/ast/ast_node.ts:33</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -434,12 +440,27 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#type">type</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L38">ast/ast_node.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L38">src/ast/ast_node.ts:38</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>Type of the AST node</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="usederrors" class="tsd-anchor"></a>
+					<h3>used<wbr>Errors</h3>
+					<div class="tsd-signature tsd-kind-icon">used<wbr>Errors<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L61">src/ast/implementation/declaration/contract_definition.ts:61</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Used error definition ids (including external definition ids)</p>
 						</div>
 					</div>
 				</section>
@@ -456,7 +477,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L352">ast/ast_node.ts:352</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L352">src/ast/ast_node.ts:352</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -479,7 +500,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L97">ast/implementation/declaration/contract_definition.ts:97</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L105">src/ast/implementation/declaration/contract_definition.ts:105</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -497,7 +518,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L107">ast/implementation/declaration/contract_definition.ts:107</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L115">src/ast/implementation/declaration/contract_definition.ts:115</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -530,7 +551,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L104">ast/ast_node.ts:104</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L104">src/ast/ast_node.ts:104</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -553,7 +574,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L236">ast/implementation/declaration/contract_definition.ts:236</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L260">src/ast/implementation/declaration/contract_definition.ts:260</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h4>
@@ -570,7 +591,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L112">ast/ast_node.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L112">src/ast/ast_node.ts:112</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -593,7 +614,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L141">ast/ast_node.ts:141</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L141">src/ast/ast_node.ts:141</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -618,7 +639,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L123">ast/ast_node.ts:123</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L123">src/ast/ast_node.ts:123</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -643,7 +664,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L85">ast/ast_node.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L85">src/ast/ast_node.ts:85</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -665,7 +686,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L155">ast/ast_node.ts:155</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L155">src/ast/ast_node.ts:155</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -687,7 +708,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L168">ast/ast_node.ts:168</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L168">src/ast/ast_node.ts:168</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -709,7 +730,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L232">ast/implementation/declaration/contract_definition.ts:232</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L256">src/ast/implementation/declaration/contract_definition.ts:256</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -731,7 +752,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L223">ast/implementation/declaration/contract_definition.ts:223</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L247">src/ast/implementation/declaration/contract_definition.ts:247</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -740,6 +761,28 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">readonly </span><a href="ast_implementation_declaration_enum_definition.enumdefinition.html" class="tsd-signature-type" data-tsd-kind="Class">EnumDefinition</a><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="verrors" class="tsd-anchor"></a>
+					<h3>v<wbr>Errors</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> vErrors<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><a href="ast_implementation_declaration_error_definition.errordefinition.html" class="tsd-signature-type" data-tsd-kind="Class">ErrorDefinition</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L211">src/ast/implementation/declaration/contract_definition.ts:211</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Errors of the contract</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">readonly </span><a href="ast_implementation_declaration_error_definition.errordefinition.html" class="tsd-signature-type" data-tsd-kind="Class">ErrorDefinition</a><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -753,7 +796,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L187">ast/implementation/declaration/contract_definition.ts:187</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L202">src/ast/implementation/declaration/contract_definition.ts:202</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -775,7 +818,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L196">ast/implementation/declaration/contract_definition.ts:196</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L220">src/ast/implementation/declaration/contract_definition.ts:220</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -797,7 +840,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L158">ast/implementation/declaration/contract_definition.ts:158</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L173">src/ast/implementation/declaration/contract_definition.ts:173</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -819,7 +862,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L149">ast/implementation/declaration/contract_definition.ts:149</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L155">src/ast/implementation/declaration/contract_definition.ts:155</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -841,7 +884,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L178">ast/implementation/declaration/contract_definition.ts:178</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L193">src/ast/implementation/declaration/contract_definition.ts:193</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -864,7 +907,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L134">ast/implementation/declaration/contract_definition.ts:134</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L140">src/ast/implementation/declaration/contract_definition.ts:140</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -877,7 +920,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L138">ast/implementation/declaration/contract_definition.ts:138</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L144">src/ast/implementation/declaration/contract_definition.ts:144</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -905,7 +948,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L169">ast/implementation/declaration/contract_definition.ts:169</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L184">src/ast/implementation/declaration/contract_definition.ts:184</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -929,7 +972,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L214">ast/implementation/declaration/contract_definition.ts:214</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L238">src/ast/implementation/declaration/contract_definition.ts:238</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -938,6 +981,28 @@
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">readonly </span><a href="ast_implementation_declaration_struct_definition.structdefinition.html" class="tsd-signature-type" data-tsd-kind="Class">StructDefinition</a><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+					<a name="vusederrors" class="tsd-anchor"></a>
+					<h3>v<wbr>Used<wbr>Errors</h3>
+					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> vUsedErrors<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">readonly </span><a href="ast_implementation_declaration_error_definition.errordefinition.html" class="tsd-signature-type" data-tsd-kind="Class">ErrorDefinition</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L164">src/ast/implementation/declaration/contract_definition.ts:164</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Used error definitions (including external definitions)</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">readonly </span><a href="ast_implementation_declaration_error_definition.errordefinition.html" class="tsd-signature-type" data-tsd-kind="Class">ErrorDefinition</a><span class="tsd-signature-symbol">[]</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -951,7 +1016,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L205">ast/implementation/declaration/contract_definition.ts:205</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L229">src/ast/implementation/declaration/contract_definition.ts:229</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -977,7 +1042,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#acceptchildren">acceptChildren</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L76">ast/ast_node.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L76">src/ast/ast_node.ts:76</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1000,7 +1065,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#appendchild">appendChild</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L370">ast/ast_node.ts:370</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L370">src/ast/ast_node.ts:370</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1024,7 +1089,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#extractsourcefragment">extractSourceFragment</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L330">ast/ast_node.ts:330</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L330">src/ast/ast_node.ts:330</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1055,7 +1120,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getchildren">getChildren</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L196">ast/ast_node.ts:196</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L196">src/ast/ast_node.ts:196</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1079,7 +1144,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getchildrenbyselector">getChildrenBySelector</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L211">ast/ast_node.ts:211</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L211">src/ast/ast_node.ts:211</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1112,7 +1177,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getchildrenbytype">getChildrenByType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L228">ast/ast_node.ts:228</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L228">src/ast/ast_node.ts:228</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1145,7 +1210,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getchildrenbytypestring">getChildrenByTypeString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L232">ast/ast_node.ts:232</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L232">src/ast/ast_node.ts:232</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1178,7 +1243,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getclosestparentbyselector">getClosestParentBySelector</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L246">ast/ast_node.ts:246</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L246">src/ast/ast_node.ts:246</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1208,7 +1273,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getclosestparentbytype">getClosestParentByType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L260">ast/ast_node.ts:260</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L260">src/ast/ast_node.ts:260</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1238,7 +1303,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getclosestparentbytypestring">getClosestParentByTypeString</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L264">ast/ast_node.ts:264</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L264">src/ast/ast_node.ts:264</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1268,7 +1333,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getfieldvalues">getFieldValues</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L290">ast/ast_node.ts:290</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L290">src/ast/ast_node.ts:290</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1286,7 +1351,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getgettersvalues">getGettersValues</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L294">ast/ast_node.ts:294</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L294">src/ast/ast_node.ts:294</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
@@ -1304,7 +1369,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getparents">getParents</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L236">ast/ast_node.ts:236</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L236">src/ast/ast_node.ts:236</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">[]</span></h4>
@@ -1322,7 +1387,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#getparentsbyselector">getParentsBySelector</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L268">ast/ast_node.ts:268</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L268">src/ast/ast_node.ts:268</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1352,7 +1417,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#insertafter">insertAfter</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L392">ast/ast_node.ts:392</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L392">src/ast/ast_node.ts:392</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1379,7 +1444,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#insertatbeginning">insertAtBeginning</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L402">ast/ast_node.ts:402</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L402">src/ast/ast_node.ts:402</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1403,7 +1468,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#insertbefore">insertBefore</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L378">ast/ast_node.ts:378</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L378">src/ast/ast_node.ts:378</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1429,7 +1494,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L255">ast/implementation/declaration/contract_definition.ts:255</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/declaration/contract_definition.ts#L279">src/ast/implementation/declaration/contract_definition.ts:279</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1459,7 +1524,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#print">print</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L286">ast/ast_node.ts:286</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L286">src/ast/ast_node.ts:286</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1491,7 +1556,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#removechild">removeChild</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L356">ast/ast_node.ts:356</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L356">src/ast/ast_node.ts:356</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1515,7 +1580,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#replacechild">replaceChild</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L408">ast/ast_node.ts:408</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L408">src/ast/ast_node.ts:408</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -1551,7 +1616,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#walk">walk</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L172">ast/ast_node.ts:172</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L172">src/ast/ast_node.ts:172</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1575,7 +1640,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#walkchildren">walkChildren</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L178">ast/ast_node.ts:178</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L178">src/ast/ast_node.ts:178</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1599,7 +1664,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="ast_ast_node.astnodewithchildren.html">ASTNodeWithChildren</a>.<a href="ast_ast_node.astnodewithchildren.html#walkparents">walkParents</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L186">ast/ast_node.ts:186</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L186">src/ast/ast_node.ts:186</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1674,6 +1739,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="ast_implementation_declaration_contract_definition.contractdefinition.html#type" class="tsd-kind-icon">type</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="ast_implementation_declaration_contract_definition.contractdefinition.html#usederrors" class="tsd-kind-icon">used<wbr>Errors</a>
+							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
 								<a href="ast_implementation_declaration_contract_definition.contractdefinition.html#children" class="tsd-kind-icon">children</a>
 							</li>
@@ -1711,6 +1779,9 @@
 								<a href="ast_implementation_declaration_contract_definition.contractdefinition.html#venums" class="tsd-kind-icon">v<wbr>Enums</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="ast_implementation_declaration_contract_definition.contractdefinition.html#verrors" class="tsd-kind-icon">v<wbr>Errors</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vevents" class="tsd-kind-icon">v<wbr>Events</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
@@ -1733,6 +1804,9 @@
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vstructs" class="tsd-kind-icon">v<wbr>Structs</a>
+							</li>
+							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
+								<a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vusederrors" class="tsd-kind-icon">v<wbr>Used<wbr>Errors</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
 								<a href="ast_implementation_declaration_contract_definition.contractdefinition.html#vusingfordirectives" class="tsd-kind-icon">v<wbr>Using<wbr>For<wbr>Directives</a>

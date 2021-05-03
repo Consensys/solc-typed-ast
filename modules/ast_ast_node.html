@@ -82,6 +82,12 @@
 								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="ast_ast_node.html#astnodeselector" class="tsd-kind-icon">ASTNode<wbr>Selector</a></li>
 							</ul>
 						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="ast_ast_node.html#replacenode" class="tsd-kind-icon">replace<wbr>Node</a></li>
+							</ul>
+						</section>
 					</div>
 				</section>
 			</section>
@@ -93,7 +99,7 @@
 					<div class="tsd-signature tsd-kind-icon">ASTNode<wbr>Callback<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L5">ast/ast_node.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L5">src/ast/ast_node.ts:5</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -124,7 +130,7 @@
 					<div class="tsd-signature tsd-kind-icon">ASTNode<wbr>Constructor&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">new </span><span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, src<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, <span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">T</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L424">ast/ast_node.ts:424</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L424">src/ast/ast_node.ts:424</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -170,7 +176,7 @@
 					<div class="tsd-signature tsd-kind-icon">ASTNode<wbr>Selector<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L6">ast/ast_node.ts:6</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L6">src/ast/ast_node.ts:6</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -194,6 +200,45 @@
 							</li>
 						</ul>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="replacenode" class="tsd-anchor"></a>
+					<h3>replace<wbr>Node</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">replace<wbr>Node<span class="tsd-signature-symbol">(</span>oldNode<span class="tsd-signature-symbol">: </span><a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a>, newNode<span class="tsd-signature-symbol">: </span><a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L441">src/ast/ast_node.ts:441</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Replace the node <code>oldNode</code> in the tree with <code>newNode</code>.</p>
+								</div>
+								<p>If <code>p</code> is the parent of <code>oldNode</code>, this function needs to find a property
+								<code>propName</code> of <code>p</code> such that <code>p[propName] === oldNode</code>.</p>
+								<p>Once found, it re-assigns <code>p[propName] = newNode</code> and sets
+									<code>newNode.parent=p</code> using <code>acceptChildren</code>. Since <code>children</code> is a getter
+								there is nothing further to do.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>oldNode: <a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a></h5>
+								</li>
+								<li>
+									<h5>newNode: <a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -224,6 +269,9 @@
 					</li>
 					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
 						<a href="ast_ast_node.html#astnodeselector" class="tsd-kind-icon">ASTNode<wbr>Selector</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="ast_ast_node.html#replacenode" class="tsd-kind-icon">replace<wbr>Node</a>
 					</li>
 				</ul>
 			</nav>
