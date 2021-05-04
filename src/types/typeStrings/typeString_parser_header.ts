@@ -1,6 +1,7 @@
 // Need the ts-nocheck to suppress the noUnusedLocals errors in the generated parser
 // @ts-nocheck
 import {
+    ASTNode,
     ContractDefinition,
     DataLocation,
     EnumDefinition,
@@ -73,11 +74,33 @@ function getFunctionAttributes(
     return [visiblity, mutability];
 }
 
+/**
+ * Return the `TypeNode` corresponding to `arg`, where `arg` is a node with a type string (`Expression` or `VariableDeclaration`).
+ * The function uses a parser to parse the type string, while resolving and user-defined type refernces in the context of `arg`.
+ * 
+ * @param arg - either a type string, or a node with a type string (`Expression` or `VariableDeclaration`)
+ * @param version - compiler version to be used. Useful as resolution rules changed betwee 0.4.x and 0.5.x
+ * @returns 
+ */
 export function getNodeType(node: Expression | VariableDeclaration, version: string): TypeNode {
     return parse(node.typeString, { ctx: node, version }) as TypeNode;
 }
 
-function makeUserDefinedType<T extends ASNode>(
+/**
+ * Return the `TypeNode` corresponding to `arg`, where `arg` is either a raw type string, or a node with a type string (`Expression` or `VariableDeclaration`).
+ * The function uses a parser to parse the type string, while resolving and user-defined type refernces in the context of `ctx`.
+ * 
+ * @param arg - either a type string, or a node with a type string (`Expression` or `VariableDeclaration`)
+ * @param version - compiler version to be used. Useful as resolution rules changed betwee 0.4.x and 0.5.x
+ * @param ctx - `ASTNode` representing the context in which a type string is to be parsed
+ * @returns 
+ */
+export function getNodeTypeInCtx(arg: Expression | VariableDeclaration | string, version: string, ctx: ASTNode): TypeNode {
+    const typeString = typeof arg === 'string' ? arg : arg.typeString;
+    return parse( typeString, { ctx, version }) as TypeNode;
+}
+
+function makeUserDefinedType<T extends ASTNode>(
     name: string,
     constructor: ASTNodeConstructor<T>,
     version: string,
