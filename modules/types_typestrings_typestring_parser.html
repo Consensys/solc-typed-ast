@@ -99,6 +99,7 @@
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_typestrings_typestring_parser.html#getnodetype" class="tsd-kind-icon">get<wbr>Node<wbr>Type</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_typestrings_typestring_parser.html#getnodetypeinctx" class="tsd-kind-icon">get<wbr>Node<wbr>Type<wbr>InCtx</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_typestrings_typestring_parser.html#parse" class="tsd-kind-icon">parse</a></li>
 							</ul>
 						</section>
@@ -113,7 +114,7 @@
 					<div class="tsd-signature tsd-kind-icon">Expectation<span class="tsd-signature-symbol">:</span> <a href="../interfaces/types_typestrings_typestring_parser.iliteralexpectation.html" class="tsd-signature-type" data-tsd-kind="Interface">ILiteralExpectation</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types_typestrings_typestring_parser.iclassexpectation.html" class="tsd-signature-type" data-tsd-kind="Interface">IClassExpectation</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types_typestrings_typestring_parser.ianyexpectation.html" class="tsd-signature-type" data-tsd-kind="Interface">IAnyExpectation</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types_typestrings_typestring_parser.iendexpectation.html" class="tsd-signature-type" data-tsd-kind="Interface">IEndExpectation</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/types_typestrings_typestring_parser.iotherexpectation.html" class="tsd-signature-type" data-tsd-kind="Interface">IOtherExpectation</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/types/typeStrings/typeString_parser.ts:151</li>
+							<li>Defined in src/types/typeStrings/typeString_parser.ts:190</li>
 						</ul>
 					</aside>
 				</section>
@@ -123,7 +124,7 @@
 					<div class="tsd-signature tsd-kind-icon">Parse<wbr>Function<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, options<span class="tsd-signature-symbol">?: </span><a href="../interfaces/types_typestrings_typestring_parser.iparseoptions.html" class="tsd-signature-type" data-tsd-kind="Interface">IParseOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">any</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in src/types/typeStrings/typeString_parser.ts:5542</li>
+							<li>Defined in src/types/typeStrings/typeString_parser.ts:5581</li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -164,9 +165,17 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/types/typeStrings/typeString_parser.ts:76</li>
+									<li>Defined in src/types/typeStrings/typeString_parser.ts:98</li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Return the <code>TypeNode</code> corresponding to <code>node</code>, where <code>node</code> is an AST node
+									with a type string (<code>Expression</code> or <code>VariableDeclaration</code>).</p>
+								</div>
+								<p>The function uses a parser to process the type string,
+								while resolving and user-defined type references in the context of <code>node</code>.</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
@@ -174,6 +183,55 @@
 								</li>
 								<li>
 									<h5>version: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>compiler version to be used. Useful as resolution rules changed between 0.4.x and 0.5.x.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="getnodetypeinctx" class="tsd-anchor"></a>
+					<h3>get<wbr>Node<wbr>Type<wbr>InCtx</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Node<wbr>Type<wbr>InCtx<span class="tsd-signature-symbol">(</span>arg<span class="tsd-signature-symbol">: </span><a href="../classes/ast_implementation_expression_expression.expression.html" class="tsd-signature-type" data-tsd-kind="Class">Expression</a><span class="tsd-signature-symbol"> | </span><a href="../classes/ast_implementation_declaration_variable_declaration.variabledeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, ctx<span class="tsd-signature-symbol">: </span><a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in src/types/typeStrings/typeString_parser.ts:113</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Return the <code>TypeNode</code> corresponding to <code>arg</code>, where <code>arg</code> is either a raw type string,
+									or an AST node with a type string (<code>Expression</code> or <code>VariableDeclaration</code>).</p>
+								</div>
+								<p>The function uses a parser to process the type string,
+								while resolving and user-defined type references in the context of <code>ctx</code>.</p>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>arg: <a href="../classes/ast_implementation_expression_expression.expression.html" class="tsd-signature-type" data-tsd-kind="Class">Expression</a><span class="tsd-signature-symbol"> | </span><a href="../classes/ast_implementation_declaration_variable_declaration.variabledeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>either a type string, or a node with a type string (<code>Expression</code> or <code>VariableDeclaration</code>)</p>
+									</div>
+								</li>
+								<li>
+									<h5>version: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>compiler version to be used. Useful as resolution rules changed between 0.4.x and 0.5.x.</p>
+									</div>
+								</li>
+								<li>
+									<h5>ctx: <a href="../classes/ast_ast_node.astnode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p><code>ASTNode</code> representing the context in which a type string is to be parsed</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4>
@@ -190,7 +248,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in src/types/typeStrings/typeString_parser.ts:5543</li>
+									<li>Defined in src/types/typeStrings/typeString_parser.ts:5582</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -262,6 +320,9 @@
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="types_typestrings_typestring_parser.html#getnodetype" class="tsd-kind-icon">get<wbr>Node<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="types_typestrings_typestring_parser.html#getnodetypeinctx" class="tsd-kind-icon">get<wbr>Node<wbr>Type<wbr>InCtx</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="types_typestrings_typestring_parser.html#parse" class="tsd-kind-icon">parse</a>
