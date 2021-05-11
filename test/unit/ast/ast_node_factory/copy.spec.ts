@@ -205,12 +205,8 @@ describe("ASTNodeFactory.copy()", () => {
         props.id = 12;
         props.children = clone.children;
 
-        [
-            props.vParameters,
-            props.vOverrideSpecifier,
-            props.vReturnParameters,
-            props.vBody
-        ] = clone.children as [OverrideSpecifier, ParameterList, ParameterList, Block];
+        [props.vParameters, props.vOverrideSpecifier, props.vReturnParameters, props.vBody] =
+            clone.children as [OverrideSpecifier, ParameterList, ParameterList, Block];
 
         for (let i = 0; i < original.children.length; i++) {
             const originalChild = original.children[i];
