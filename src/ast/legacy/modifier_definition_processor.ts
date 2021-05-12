@@ -21,9 +21,8 @@ export class LegacyModifierDefinitionProcessor extends LegacyNodeProcessor<Modif
         const visibility: string = attributes.visibility;
         const virtual: boolean = "virtual" in attributes ? attributes.virtual : false;
 
-        const [structuredDocumentation, overrideSpecifier, parameters, body] = this.extract(
-            children
-        );
+        const [structuredDocumentation, overrideSpecifier, parameters, body] =
+            this.extract(children);
 
         let documentation: string | StructuredDocumentation | undefined;
 

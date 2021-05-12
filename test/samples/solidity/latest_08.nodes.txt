@@ -938,6 +938,8 @@ SourceUnit #607
                         <getter> vMemberName: "SomeStruct"
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: StructDefinition #303
+                        <getter> referencedCanonicalSignature: undefined
+                        <getter> referencedCanonicalSignatureHash: undefined
                         <getter> vFunctionName: "SomeStruct"
                         <getter> vCallee: MemberAccess #358
                         <getter> firstChild: MemberAccess #358
@@ -1437,6 +1439,8 @@ SourceUnit #607
                             <getter> vMemberName: undefined
                             <getter> vFunctionCallType: "builtin"
                             <getter> vReferencedDeclaration: undefined
+                            <getter> referencedCanonicalSignature: undefined
+                            <getter> referencedCanonicalSignatureHash: undefined
                             <getter> vFunctionName: "address"
                             <getter> vCallee: ElementaryTypeNameExpression #380
                             <getter> firstChild: ElementaryTypeNameExpression #380
@@ -1600,6 +1604,8 @@ SourceUnit #607
                             <getter> vMemberName: undefined
                             <getter> vFunctionCallType: "builtin"
                             <getter> vReferencedDeclaration: undefined
+                            <getter> referencedCanonicalSignature: undefined
+                            <getter> referencedCanonicalSignatureHash: undefined
                             <getter> vFunctionName: "address"
                             <getter> vCallee: ElementaryTypeNameExpression #388
                             <getter> firstChild: ElementaryTypeNameExpression #388
@@ -1879,6 +1885,8 @@ SourceUnit #607
                         <getter> vMemberName: undefined
                         <getter> vFunctionCallType: "builtin"
                         <getter> vReferencedDeclaration: undefined
+                        <getter> referencedCanonicalSignature: undefined
+                        <getter> referencedCanonicalSignatureHash: undefined
                         <getter> vFunctionName: "new"
                         <getter> vCallee: NewExpression #403
                         <getter> firstChild: NewExpression #403
@@ -1973,6 +1981,8 @@ SourceUnit #607
                         <getter> vMemberName: "test"
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: FunctionDefinition #394
+                        <getter> referencedCanonicalSignature: "test()"
+                        <getter> referencedCanonicalSignatureHash: "f8a8fd6d"
                         <getter> vFunctionName: "test"
                         <getter> vCallee: MemberAccess #407
                         <getter> firstChild: MemberAccess #407
@@ -2184,6 +2194,8 @@ SourceUnit #607
                                     <getter> vMemberName: undefined
                                     <getter> vFunctionCallType: "builtin"
                                     <getter> vReferencedDeclaration: undefined
+                                    <getter> referencedCanonicalSignature: undefined
+                                    <getter> referencedCanonicalSignatureHash: undefined
                                     <getter> vFunctionName: "revert"
                                     <getter> vCallee: Identifier #411
                                     <getter> firstChild: Identifier #411
@@ -2451,6 +2463,8 @@ SourceUnit #607
                                             <getter> vMemberName: undefined
                                             <getter> vFunctionCallType: "builtin"
                                             <getter> vReferencedDeclaration: undefined
+                                            <getter> referencedCanonicalSignature: undefined
+                                            <getter> referencedCanonicalSignatureHash: undefined
                                             <getter> vFunctionName: "revert"
                                             <getter> vCallee: Identifier #423
                                             <getter> firstChild: Identifier #423
@@ -2620,6 +2634,8 @@ SourceUnit #607
                                                 <getter> vMemberName: undefined
                                                 <getter> vFunctionCallType: "builtin"
                                                 <getter> vReferencedDeclaration: undefined
+                                                <getter> referencedCanonicalSignature: undefined
+                                                <getter> referencedCanonicalSignatureHash: undefined
                                                 <getter> vFunctionName: "revert"
                                                 <getter> vCallee: Identifier #431
                                                 <getter> firstChild: Identifier #431
@@ -2733,6 +2749,8 @@ SourceUnit #607
                                     <getter> vMemberName: undefined
                                     <getter> vFunctionCallType: "builtin"
                                     <getter> vReferencedDeclaration: undefined
+                                    <getter> referencedCanonicalSignature: undefined
+                                    <getter> referencedCanonicalSignatureHash: undefined
                                     <getter> vFunctionName: "revert"
                                     <getter> vCallee: Identifier #443
                                     <getter> firstChild: Identifier #443
@@ -3343,6 +3361,8 @@ SourceUnit #607
                         <getter> vMemberName: undefined
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: EventDefinition #456
+                        <getter> referencedCanonicalSignature: "Ev(uint256)"
+                        <getter> referencedCanonicalSignatureHash: "b30c6e01"
                         <getter> vFunctionName: "Ev"
                         <getter> vCallee: Identifier #477
                         <getter> firstChild: Identifier #477
@@ -3944,6 +3964,8 @@ SourceUnit #607
                         <getter> vMemberName: undefined
                         <getter> vFunctionCallType: "builtin"
                         <getter> vReferencedDeclaration: undefined
+                        <getter> referencedCanonicalSignature: undefined
+                        <getter> referencedCanonicalSignatureHash: undefined
                         <getter> vFunctionName: "new"
                         <getter> vCallee: NewExpression #511
                         <getter> firstChild: NewExpression #511
@@ -4038,6 +4060,8 @@ SourceUnit #607
                         <getter> vMemberName: "test"
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: FunctionDefinition #451
+                        <getter> referencedCanonicalSignature: "test()"
+                        <getter> referencedCanonicalSignatureHash: "f8a8fd6d"
                         <getter> vFunctionName: "test"
                         <getter> vCallee: MemberAccess #515
                         <getter> firstChild: MemberAccess #515
@@ -4413,6 +4437,8 @@ SourceUnit #607
         parent: SourceUnit #607
         <getter> children: Array(2) [ StructuredDocumentation #541, ParameterList #540 ]
         <getter> vScope: SourceUnit #607
+        <getter> canonicalSignature: "UnitLevelError084(uint256)"
+        <getter> canonicalSignatureHash: "1d365080"
         <getter> firstChild: StructuredDocumentation #541
         <getter> lastChild: ParameterList #540
         <getter> previousSibling: ContractDefinition #537
@@ -4549,6 +4575,8 @@ SourceUnit #607
             parent: ContractDefinition #548
             <getter> children: Array(2) [ StructuredDocumentation #546, ParameterList #545 ]
             <getter> vScope: ContractDefinition #548
+            <getter> canonicalSignature: "Lib(bytes)"
+            <getter> canonicalSignatureHash: "5df9f479"
             <getter> firstChild: StructuredDocumentation #546
             <getter> lastChild: ParameterList #545
             <getter> previousSibling: undefined
@@ -4685,6 +4713,8 @@ SourceUnit #607
             parent: ContractDefinition #606
             <getter> children: Array(2) [ StructuredDocumentation #550, ParameterList #549 ]
             <getter> vScope: ContractDefinition #606
+            <getter> canonicalSignature: "Own()"
+            <getter> canonicalSignatureHash: "dc846d95"
             <getter> firstChild: StructuredDocumentation #550
             <getter> lastChild: ParameterList #549
             <getter> previousSibling: undefined
@@ -5077,6 +5107,8 @@ SourceUnit #607
                         <getter> vMemberName: "concat"
                         <getter> vFunctionCallType: "builtin"
                         <getter> vReferencedDeclaration: undefined
+                        <getter> referencedCanonicalSignature: undefined
+                        <getter> referencedCanonicalSignatureHash: undefined
                         <getter> vFunctionName: "concat"
                         <getter> vCallee: MemberAccess #567
                         <getter> firstChild: MemberAccess #567
@@ -5450,6 +5482,8 @@ SourceUnit #607
                         <getter> vMemberName: "Lib"
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: ErrorDefinition #547
+                        <getter> referencedCanonicalSignature: "Lib(bytes)"
+                        <getter> referencedCanonicalSignatureHash: "5df9f479"
                         <getter> vFunctionName: "Lib"
                         <getter> vCallee: MemberAccess #585
                         <getter> firstChild: MemberAccess #585
@@ -5626,6 +5660,8 @@ SourceUnit #607
                         <getter> vMemberName: undefined
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: ErrorDefinition #551
+                        <getter> referencedCanonicalSignature: "Own()"
+                        <getter> referencedCanonicalSignatureHash: "dc846d95"
                         <getter> vFunctionName: "Own"
                         <getter> vCallee: Identifier #593
                         <getter> firstChild: Identifier #593
@@ -5764,6 +5800,8 @@ SourceUnit #607
                         <getter> vMemberName: undefined
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: ErrorDefinition #542
+                        <getter> referencedCanonicalSignature: "UnitLevelError084(uint256)"
+                        <getter> referencedCanonicalSignatureHash: "1d365080"
                         <getter> vFunctionName: "UnitLevelError084"
                         <getter> vCallee: Identifier #600
                         <getter> firstChild: Identifier #600

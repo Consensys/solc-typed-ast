@@ -1,13 +1,21 @@
 import { ASTNode } from "../../ast_node";
 import { ExternalReferenceType, FunctionCallKind } from "../../constants";
+import { ErrorDefinition } from "../declaration/error_definition";
 import { EventDefinition } from "../declaration/event_definition";
 import { FunctionDefinition } from "../declaration/function_definition";
+import { VariableDeclaration } from "../declaration/variable_declaration";
 import { ElementaryTypeNameExpression } from "./elementary_type_name_expression";
 import { Expression } from "./expression";
 import { FunctionCallOptions } from "./function_call_options";
 import { Identifier } from "./identifier";
 import { MemberAccess } from "./member_access";
 import { NewExpression } from "./new_expression";
+
+export type CallableDefinition =
+    | FunctionDefinition
+    | EventDefinition
+    | ErrorDefinition
+    | VariableDeclaration;
 
 export class FunctionCall extends Expression {
     /**
@@ -126,14 +134,52 @@ export class FunctionCall extends Expression {
     /**
      * Called function or event definition reference
      */
-    get vReferencedDeclaration(): FunctionDefinition | EventDefinition | undefined {
+    get vReferencedDeclaration(): CallableDefinition | undefined {
         const expression = this.vCallee;
 
         if (expression instanceof MemberAccess || expression instanceof Identifier) {
-            return expression.vReferencedDeclaration as FunctionDefinition | EventDefinition;
+            return expression.vReferencedDeclaration as CallableDefinition;
         }
 
         return undefined;
+    }
+
+    /**
+     * Returns canonical signature of referenced definition,
+     * or `undefined` in case if there is callable is not
+     * a user-defined entity.
+     */
+    get referencedCanonicalSignature(): string | undefined {
+        const declaration = this.vReferencedDeclaration;
+
+        if (declaration === undefined) {
+            return undefined;
+        }
+
+        if (declaration instanceof VariableDeclaration) {
+            return declaration.getterCanonicalSignature;
+        }
+
+        return declaration.canonicalSignature;
+    }
+
+    /**
+     * Returns canonical signature hash of referenced definition,
+     * or `undefined` in case if there is callable is not
+     * a user-defined entity.
+     */
+    get referencedCanonicalSignatureHash(): string | undefined {
+        const declaration = this.vReferencedDeclaration;
+
+        if (declaration === undefined) {
+            return undefined;
+        }
+
+        if (declaration instanceof VariableDeclaration) {
+            return declaration.getterCanonicalSignatureHash;
+        }
+
+        return declaration.canonicalSignatureHash;
     }
 
     /**
