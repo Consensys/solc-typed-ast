@@ -148,7 +148,8 @@ The project have following directory structure:
 │   │   └── writing             #   - Components to convert universal AST nodes back to Solidity source code.
 │   ├── bin                     # Executable files, that are shipped with the package and deployed via "npm install" or "npm link" commands.
 │   ├── compile                 # Compile-related definitions and logic.
-│   └── misc                    # Miscellaneous functionality and utility modules.
+│   ├── misc                    # Miscellaneous functionality and utility modules.
+│   └── types                   # Solc AST typeString parser and AST.
 └── test                        # Tests:
     ├── integration             #   - Integration test suites.
     ├── samples                 #   - Solidity and compiler ourput JSON samples for the tests.

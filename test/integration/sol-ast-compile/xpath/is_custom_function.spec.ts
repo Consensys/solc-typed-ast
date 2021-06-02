@@ -30,14 +30,16 @@ describe(command, () => {
     });
 
     it("STDOUT is correct", () => {
-        const contracts = new Map<number, boolean>([
-            [42, false],
-            [51, false],
-            [76, true],
-            [78, false],
-            [83, false],
-            [521, false],
-            [646, false]
+        const contracts = new Map<string, boolean>([
+            ["42", false],
+            ["51", false],
+            ["76", true],
+            ["78", false],
+            ["83", false],
+            ["521", false],
+            ["646", false],
+            ["652", false],
+            ["663", false]
         ]);
 
         for (const [id, occurance] of contracts.entries()) {
