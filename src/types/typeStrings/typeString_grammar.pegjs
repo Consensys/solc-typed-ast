@@ -1,33 +1,35 @@
-Start
-    = __  type: Type __ { return type; }
+Start =
+    __  type: Type __ { return type; }
 
 // Terminals
-PrimitiveWhiteSpace "whitespace"
-  = "\t"
-  / "\v"
-  / "\f"
-  / " "
-  / "\u00A0"
-  / "\uFEFF"
-  / Zs
+PrimitiveWhiteSpace "whitespace" =
+    "\t"
+    / "\v"
+    / "\f"
+    / " "
+    / "\u00A0"
+    / "\uFEFF"
+    / Zs
 
-WhiteSpace "whitespace"
-  = PrimitiveWhiteSpace
+WhiteSpace "whitespace" =
+    PrimitiveWhiteSpace
 
 // Separator, Space
-Zs = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
+Zs =
+    [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
 
-LineTerminator
-  = [\n\r\u2028\u2029]
+LineTerminator =
+    [\n\r\u2028\u2029]
 
-LineTerminatorSequence "end of line"
-  = "\n"
-  / "\r\n"
-  / "\r"
-  / "\u2028"
-  / "\u2029"
-__
-  = (WhiteSpace / LineTerminator)*
+LineTerminatorSequence "end of line" =
+    "\n"
+    / "\r\n"
+    / "\r"
+    / "\u2028"
+    / "\u2029"
+
+__ =
+    (WhiteSpace / LineTerminator)*
 
 TRUE = "true"
 FALSE = "false"
@@ -73,8 +75,8 @@ CONSTANT = "constant"
 HEX = "hex"
 MODULE = "module"
 
-Keyword
-    = TRUE
+Keyword =
+    TRUE
     / FALSE
     / OLD
     / LET
@@ -114,42 +116,50 @@ Keyword
     / TX
     / CONSTANT
 
-StringLiteral
-    = "'" chars: SingleStringChar* "'" { return [chars.join(""), false]; }
-    / '"' chars: DoubleStringChar* '"' { return [chars.join(""), false]; }
+StringLiteral =
+    "'" chars: SingleStringChar* "'" {
+        return [chars.join(""), false];
+    }
+    / '"' chars: DoubleStringChar* '"' {
+        return [chars.join(""), false];
+    }
 
-HexLiteral
-    = HEX '"' val: HexDigit* '"' { return [val.join(""), true]; }
-    / HEX "'" val: HexDigit* "'" { return [val.join(""), true]; }
+HexLiteral =
+    HEX '"' val: HexDigit* '"' {
+        return [val.join(""), true];
+    }
+    / HEX "'" val: HexDigit* "'" {
+        return [val.join(""), true];
+    }
 
-AnyChar
-    = .
+AnyChar =
+    .
 
-DoubleStringChar
-    = !('"' / "\\" / LineTerminator) AnyChar { return text(); }
+DoubleStringChar =
+    !('"' / "\\" / LineTerminator) AnyChar { return text(); }
     / "\\" sequence: EscapeSequence { return sequence; }
     / LineContinuation
 
-SingleStringChar
-    = !("'" / "\\" / LineTerminator) AnyChar { return text(); }
+SingleStringChar =
+    !("'" / "\\" / LineTerminator) AnyChar { return text(); }
     / "\\" sequence: EscapeSequence { return sequence; }
     / LineContinuation
 
-LineContinuation
-    = "\\" LineTerminatorSequence { return ""; }
+LineContinuation =
+    "\\" LineTerminatorSequence { return ""; }
 
-EscapeSequence
-    = CharEscapeSequence
+EscapeSequence =
+    CharEscapeSequence
     / "0" !DecDigit { return "\0"; }
     / HexEscapeSequence
     / UnicodeEscapeSequence
 
-CharEscapeSequence
-    = SingleEscapeChar
+CharEscapeSequence =
+    SingleEscapeChar
     / NonEscapeChar
 
-SingleEscapeChar
-    = "'"
+SingleEscapeChar =
+    "'"
     / '"'
     / "\\"
     / "b"  { return "\b"; }
@@ -159,178 +169,310 @@ SingleEscapeChar
     / "t"  { return "\t"; }
     / "v"  { return "\v"; }
 
-NonEscapeChar
-    = !(EscapeChar / LineTerminator) AnyChar { return text(); }
+NonEscapeChar =
+    !(EscapeChar / LineTerminator) AnyChar { return text(); }
 
-HexDigit
-    = [0-9a-f]i
+HexDigit =
+    [0-9a-f]i
 
-DecDigit
-    = [0-9]
+DecDigit =
+    [0-9]
 
-EscapeChar
-    = SingleEscapeChar
+EscapeChar =
+    SingleEscapeChar
     / DecDigit
     / "x"
     / "u"
 
-HexEscapeSequence
-    = "x" digits:$(HexDigit HexDigit) { return String.fromCharCode(parseInt(digits, 16)); }
+HexEscapeSequence =
+    "x" digits: $(HexDigit HexDigit) {
+        return String.fromCharCode(parseInt(digits, 16));
+    }
 
-UnicodeEscapeSequence
-    = "u" digits:$(HexDigit HexDigit HexDigit HexDigit) { return String.fromCharCode(parseInt(digits, 16)); }
+UnicodeEscapeSequence =
+    "u" digits: $(HexDigit HexDigit HexDigit HexDigit) {
+        return String.fromCharCode(parseInt(digits, 16));
+    }
 
 Identifier =
     !(Keyword [^a-zA-Z0-9_]) id:([a-zA-Z_][a-zA-Z$0-9_]*) { return text(); }
 
 Word =
-    id:([a-zA-Z_][a-zA-Z0-9$_]*) { return text(); }
+    id: ([a-zA-Z_][a-zA-Z0-9$_]*) { return text(); }
 
 Number =
     [0-9]+ { return BigInt(text()); }
 
 MaybeNegNumber =
-    sign: ("-"?) __ num: Number { return sign !== null ? -num : num; }
+    sign: ("-"?) __ num: Number {
+        return sign === null ? num : -num;
+    }
 
-SimpleType
-  = BoolType
-  / AddressType
-  / IntLiteralType
-  / RationalLiteralType
-  / StringLiteralType
-  / IntType
-  / BytesType
-  / FixedizeBytesType
-  / StringType
-  / UserDefinedType
+SimpleType =
+    BoolType
+    / AddressType
+    / IntLiteralType
+    / RationalLiteralType
+    / StringLiteralType
+    / IntType
+    / BytesType
+    / FixedizeBytesType
+    / StringType
+    / UserDefinedType
 
-StringLiteralErrorMsg = "(" [^\)]* ")" { return [text(), false]; }
+StringLiteralErrorMsg =
+    "(" [^\)]* ")" {
+        return [text(), false];
+    }
 
-StringLiteralType = LITERAL_STRING __ literal: (StringLiteral / HexLiteral / StringLiteralErrorMsg) {
-  return new StringLiteralType(literal[0], literal[1]);
-}
+StringLiteralType =
+    LITERAL_STRING __ literal: (
+        StringLiteral
+        / HexLiteral
+        / StringLiteralErrorMsg
+    ) {
+        return new StringLiteralType(literal[0], literal[1]);
+    }
 
-IntLiteralType = INT_CONST __ prefix: MaybeNegNumber rest: ("...(" [^\)]* ")..." Number)? {
-  return new IntLiteralType(prefix);
-}
+IntLiteralType =
+    INT_CONST __ prefix: MaybeNegNumber rest: ("...(" [^\)]* ")..." Number)? {
+        return new IntLiteralType(prefix);
+    }
 
-RationalLiteralType = RATIONAL_CONST __ numerator: MaybeNegNumber __ "/" __ denominator: Number {
-  throw new Error(`NYI rational literal type: ${text()}`);
-}
+RationalLiteralType =
+    RATIONAL_CONST __ numerator: MaybeNegNumber __ "/" __ denominator: Number {
+        throw new Error(`NYI rational literal type: ${text()}`);
+    }
 
-BoolType = BOOL { return new BoolType(); }
+BoolType =
+    BOOL { return new BoolType(); }
 
-AddressType = ADDRESS __ payable:(PAYABLE?) { return new AddressType(payable !== null); }
+AddressType =
+    ADDRESS __ payable: (PAYABLE?) {
+        return new AddressType(payable !== null);
+    }
 
-IntType = unsigned: ("u"?) "int" width: (Number?) {
-  const signed = unsigned === null;
-  const bitWidth = width === null ? 256 : Number(width);
+IntType =
+    unsigned: ("u"?) "int" width: (Number?) {
+        const signed = unsigned === null;
+        const bitWidth = width === null ? 256 : Number(width);
 
-  return new IntType(bitWidth, signed);
-}
+        return new IntType(bitWidth, signed);
+    }
 
-FixedizeBytesType
-  = BYTES width:Number { return new FixedBytesType(Number(width)); }
-  / BYTE               { return new FixedBytesType(1); }
+FixedizeBytesType =
+    BYTES width: Number {
+        return new FixedBytesType(Number(width));
+    }
+    / BYTE {
+        return new FixedBytesType(1);
+    }
 
-BytesType = BYTES !Number { return new BytesType(); }
-StringType = STRING       { return new StringType(); }
+BytesType =
+    BYTES !Number { return new BytesType(); }
 
-FQName
-  = Identifier ( "." Word )* { return text(); }
+StringType =
+    STRING { return new StringType(); }
 
-UserDefinedType
-  = STRUCT __ name: FQName              { return makeUserDefinedType(name, StructDefinition, options.version, options.ctx); }
-  / ENUM __ name: FQName                { return makeUserDefinedType(name, EnumDefinition, options.version, options.ctx); }
-  / CONTRACT __ SUPER? __ name: FQName  { return makeUserDefinedType(name, ContractDefinition, options.version, options.ctx); }
-  / LIBRARY __ name: FQName             { return makeUserDefinedType(name, ContractDefinition, options.version, options.ctx); }
+FQName =
+    Identifier ( "." Word )* { return text(); }
 
-MappingType
-  = MAPPING __ "(" __ keyType: ArrayPtrType __ "=>" __ valueType: Type __ ")"
-  { 
-    // Identifiers refering directly to state variable maps don't have a pointer suffix.
-    // so we wrap them in a PointerType here. This means we explicitly disagree with the exact typeString.
-    return new PointerType(new MappingType(keyType, valueType), DataLocation.Storage);
-  }
+UserDefinedType =
+    STRUCT __ name: FQName {
+        return makeUserDefinedType(
+            name,
+            StructDefinition,
+            options.version,
+            options.ctx
+        );
+    }
+    / ENUM __ name: FQName {
+        return makeUserDefinedType(
+            name,
+            EnumDefinition,
+            options.version,
+            options.ctx
+        );
+    }
+    / CONTRACT __ SUPER? __ name: FQName {
+        return makeUserDefinedType(
+            name,
+            ContractDefinition,
+            options.version,
+            options.ctx
+        );
+    }
+    / LIBRARY __ name: FQName {
+        return makeUserDefinedType(
+            name,
+            ContractDefinition,
+            options.version,
+            options.ctx
+        );
+    }
 
-DataLocation = MEMORY / STORAGE / CALLDATA
-PointerType = POINTER / REF / SLICE
+MappingType =
+    MAPPING __ "(" __ keyType: ArrayPtrType __ "=>" __ valueType: Type __ ")" { 
+        // Identifiers refering directly to state variable maps
+        // don't have a pointer suffix.
+        // So we wrap them in a PointerType here.
+        // This means we explicitly disagree with the exact typeString.
+        return new PointerType(
+            new MappingType(keyType, valueType),
+            DataLocation.Storage
+        );
+    }
 
-TypeList
-  = head: Type tail: (__ "," __ Type)*   { return tail.reduce((lst, cur) => { lst.push(cur[3]); return lst; }, [head]); }
-  / __                                   { return []; }
+DataLocation =
+    MEMORY
+    / STORAGE
+    / CALLDATA
 
-MaybeTypeList
-  = head: Type? &(__ ",") tail: (__ "," __ Type?)* { return tail.reduce((lst, cur) => { lst.push(cur[3]); return lst; }, [head]); }
-  / __                                             { return []; }
+PointerType =
+    POINTER
+    / REF
+    / SLICE
 
-FunctionVisibility = EXTERNAL / INTERNAL
-FunctionMutability = PURE / VIEW / PAYABLE / NONPAYABLE / CONSTANT
-FunctionDecorator = FunctionVisibility / FunctionMutability
+TypeList =
+    head: Type tail: (__ "," __ Type)* {
+        return tail.reduce(
+            (lst, cur) => {
+                lst.push(cur[3]);
 
-FunctionDecoratorList
-  = head: FunctionDecorator tail: (__ FunctionDecorator)* {
+                return lst;
+            },
+            [head]
+        );
+    }
+    / __ {
+        return [];
+    }
+
+MaybeTypeList =
+    head: Type? &(__ ",") tail: (__ "," __ Type?)* {
+        return tail.reduce(
+            (lst, cur) => {
+                lst.push(cur[3]);
+                
+                return lst;
+            },
+            [head]
+        );
+    }
+    / __ {
+        return [];
+    }
+
+FunctionVisibility =
+    EXTERNAL
+    / INTERNAL
+
+FunctionMutability =
+    PURE
+    / VIEW
+    / PAYABLE
+    / NONPAYABLE
+    / CONSTANT
+
+FunctionDecorator =
+    FunctionVisibility
+    / FunctionMutability
+
+FunctionDecoratorList =
+    head: FunctionDecorator tail: (__ FunctionDecorator)* {
+        return tail.reduce(
+            (acc, cur) => {
+                acc.push(cur[1]);
+                
+                return acc
+            },
+            [head]
+        );
+    }
+
+FunctionType =
+    FUNCTION __ name: FQName? __ "(" __ args: TypeList? __ ")" __ decorators: (FunctionDecoratorList?) __ returns: (RETURNS __ "(" __ TypeList __ ")")? {
+        const retTypes = returns === null ? [] : returns[4];
+        const [visibility, mutability] = getFunctionAttributes(
+            decorators === null ? [] : decorators
+        );
+
+        return new FunctionType(
+            name === null ? undefined : name,
+            args,
+            retTypes,
+            visibility,
+            mutability
+        );
+    }
+
+ModifierType =
+    MODIFIER __ "(" __ args: TypeList? __ ")" {
+        throw new Error("Shouldn't try to type modifiers!");
+    }
+
+TupleType =
+    TUPLE __ "(" __  elements: MaybeTypeList __ ")" {
+        return new TupleType(elements);
+    }
+
+TypeExprType =
+    TYPE __ "(" innerT: Type ")" {
+        return new TypeNameType(innerT);
+    }
+
+BuiltinTypes =
+    name: MSG {
+        return new BuiltinType(name);
+    }
+    / name: ABI {
+        return new BuiltinType(name);
+    }
+    / name: BLOCK {
+        return new BuiltinType(name);
+    }
+    / name: TX {
+        return new BuiltinType(name);
+    }
+
+ModuleType =
+    MODULE __ path: StringLiteral {
+        return new ModuleType(path[0]);
+    }
+
+NonArrPtrType =
+    MappingType
+    / SimpleType
+    / FunctionType
+
+ArrayPtrType =
+    head: NonArrPtrType
+    tail: (
+        __ !PointerType "[" __ size: Number? __ "]"
+        / __ storageLocation: (DataLocation) pointerType: (__ PointerType)?
+    )* {
     return tail.reduce(
-      (acc, cur) => { acc.push(cur[1]); return acc },
-      [head]
-    );
-  }
+        (acc, cur) => {
+            if (cur.length > 3) {
+                const size = cur[4];
 
-FunctionType
-  = FUNCTION __ name: FQName? __ "(" __ args: TypeList? __ ")" __ decorators: (FunctionDecoratorList?) __ returns: (RETURNS __ "(" __ TypeList __ ")")? { 
-    const retTypes = returns === null ? [] : returns[4];
-    const [visibility, mutability] = getFunctionAttributes(decorators !== null ? decorators : []);
+                return new ArrayType(acc, size === null ? undefined : size);
+            }
 
-    return new FunctionType(name === null ? undefined : name, args, retTypes, visibility, mutability);
-}
+            const location = cur[1] as DataLocation;
+            const kind = cur[2] === null ? undefined : cur[2][1];
 
-ModifierType
-  = MODIFIER __ "(" __ args: TypeList? __ ")" { throw new Error("Shouldn't try to type Modifiers!"); }
-
-TupleType
-  = TUPLE __ "(" __  elements: MaybeTypeList __ ")" { return new TupleType(elements); }
-
-TypeExprType
-  = TYPE __ "(" innerT: Type ")" { return new TypeNameType(innerT) }
-
-BuiltinTypes
-  = name: MSG     { return new BuiltinType(name); }
-  / name: ABI     { return new BuiltinType(name); }
-  / name: BLOCK   { return new BuiltinType(name); }
-  / name: TX      { return new BuiltinType(name); }
-
-ModuleType
-  = MODULE __ path: StringLiteral { return new ModuleType(path[0]); }
-
-NonArrPtrType
-  = MappingType
-  / SimpleType
-  / FunctionType
-
-ArrayPtrType
-  = head: NonArrPtrType tail: ( __ !PointerType "[" __ size: Number? __ "]" / __ storageLocation: (DataLocation) pointerType: (__ PointerType)?)* {
-    return tail.reduce(
-      (acc, cur) => {
-        if (cur.length > 3) {
-          const size = cur[4];
-
-          return new ArrayType(acc, size !== null ? size : undefined);
-        }
-
-        const location = cur[1] as DataLocation;
-        const kind = cur[2] === null ? undefined : cur[2][1];
-
-        return new PointerType(acc, location, kind);
-      },
-      head
-    );
-  }
+            return new PointerType(acc, location, kind);
+        },
+        head
+        );
+    }
 
 // Top-level rule
-Type
-  = ModifierType
-  / TypeExprType
-  / TupleType
-  / BuiltinTypes
-  / ArrayPtrType
-  / ModuleType
+Type =
+    ModifierType
+    / TypeExprType
+    / TupleType
+    / BuiltinTypes
+    / ArrayPtrType
+    / ModuleType
