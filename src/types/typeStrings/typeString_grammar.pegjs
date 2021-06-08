@@ -195,7 +195,7 @@ UnicodeEscapeSequence =
     }
 
 Identifier =
-    !(Keyword [^a-zA-Z0-9_]) id:([a-zA-Z_][a-zA-Z$0-9_]*) { return text(); }
+    !(Keyword [^a-zA-Z0-9_]) id: ([a-zA-Z_][a-zA-Z$0-9_]*) { return text(); }
 
 Word =
     id: ([a-zA-Z_][a-zA-Z0-9$_]*) { return text(); }
@@ -216,7 +216,7 @@ SimpleType =
     / StringLiteralType
     / IntType
     / BytesType
-    / FixedizeBytesType
+    / FixedSizeBytesType
     / StringType
     / UserDefinedType
 
@@ -260,7 +260,7 @@ IntType =
         return new IntType(bitWidth, signed);
     }
 
-FixedizeBytesType =
+FixedSizeBytesType =
     BYTES width: Number {
         return new FixedBytesType(Number(width));
     }
