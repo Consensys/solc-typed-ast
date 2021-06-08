@@ -384,7 +384,7 @@ FunctionDecoratorList =
             (acc, cur) => {
                 acc.push(cur[1]);
                 
-                return acc
+                return acc;
             },
             [head]
         );
