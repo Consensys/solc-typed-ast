@@ -99,7 +99,7 @@ Keyword =
     / VIEW
     / NONPAYABLE
     / INT_CONST
-    / RATIONAL_CONST 
+    / RATIONAL_CONST
     / TUPLE
     / TYPE
     / LITERAL_STRING
@@ -108,7 +108,7 @@ Keyword =
     / SUPER
     / LIBRARY
     / STRUCT
-    / ENUM 
+    / ENUM
     / MSG
     / ABI
     / BLOCK
@@ -312,7 +312,7 @@ UserDefinedType =
     }
 
 MappingType =
-    MAPPING __ "(" __ keyType: ArrayPtrType __ "=>" __ valueType: Type __ ")" { 
+    MAPPING __ "(" __ keyType: ArrayPtrType __ "=>" __ valueType: Type __ ")" {
         // Identifiers refering directly to state variable maps
         // don't have a pointer suffix.
         // So we wrap them in a PointerType here.
@@ -353,7 +353,7 @@ MaybeTypeList =
         return tail.reduce(
             (lst, cur) => {
                 lst.push(cur[3]);
-                
+
                 return lst;
             },
             [head]
@@ -383,7 +383,7 @@ FunctionDecoratorList =
         return tail.reduce(
             (acc, cur) => {
                 acc.push(cur[1]);
-                
+
                 return acc;
             },
             [head]
