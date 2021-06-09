@@ -348,21 +348,6 @@ TypeList =
         return [];
     }
 
-MaybeTypeList =
-    head: Type? &(__ ",") tail: (__ "," __ Type?)* {
-        return tail.reduce(
-            (lst, cur) => {
-                lst.push(cur[3]);
-
-                return lst;
-            },
-            [head]
-        );
-    }
-    / __ {
-        return [];
-    }
-
 FunctionVisibility =
     EXTERNAL
     / INTERNAL
@@ -412,8 +397,8 @@ ModifierType =
     }
 
 TupleType =
-    TUPLE __ "(" __  elements: MaybeTypeList __ ")" {
-        return new TupleType(elements);
+    TUPLE __ "(" __  elements: TypeList? __ ")" {
+        return new TupleType(elements === null ? [] : elements);
     }
 
 TypeExprType =
