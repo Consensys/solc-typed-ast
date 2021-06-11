@@ -121,8 +121,8 @@ contract Features084 {
     function testAssemblyHexLiterals() public {
         assembly {
             let a := "test"
-            let x := "\u0011\"3DUfwșʻ̝wș\u0000"
-            let y := "\u00124ˍ"
+            let x := hex"112233445566778899aabbccddeeff6677889900"
+            let y := hex"1234abcd"
             sstore(0, x)
             sstore(1, y)
             pop("\"3")
