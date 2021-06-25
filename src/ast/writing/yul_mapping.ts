@@ -26,9 +26,21 @@ class YulBlockWriter implements YulNodeWriter {
 
 class YulLiteralWriter implements YulNodeWriter {
     write(node: YulNode): string {
-        const value = node.kind === "string" ? JSON.stringify(node.value) : node.value;
+        let result;
 
-        return node.type !== "" ? value + ":" + node.type : value;
+        if (node.kind === "string") {
+            if ("value" in node) {
+                result = JSON.stringify(node.value);
+            } else if ("hexValue" in node) {
+                result = `hex"${node.hexValue}"`;
+            } else {
+                throw new Error("Unable to pick string YulLiteral value: " + JSON.stringify(node));
+            }
+        } else {
+            result = node.value;
+        }
+
+        return node.type !== "" ? result + ":" + node.type : result;
     }
 }
 
