@@ -7,7 +7,11 @@ const cases = [
         "test/samples/solidity/declarations/interface_060.sol",
         "test/samples/solidity/declarations/interface_060.tree.txt"
     ],
-    ["test/samples/solidity/interface_id.sol", "test/samples/solidity/interface_id.tree.txt"]
+    ["test/samples/solidity/interface_id.sol", "test/samples/solidity/interface_id.tree.txt"],
+    [
+        "test/samples/solidity/library_fun_overloads.sol",
+        "test/samples/solidity/library_fun_overloads.tree.txt"
+    ]
 ];
 
 for (const [sample, snapshot] of cases) {
