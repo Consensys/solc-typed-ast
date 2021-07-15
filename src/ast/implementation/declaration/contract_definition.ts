@@ -267,9 +267,10 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
         }
 
         return this.vFunctions
-            .map((fn) => parseInt(fn.canonicalSignatureHash, 16))
+            .map((fn) => BigInt("0x" + fn.canonicalSignatureHash))
             .reduce((a, b) => a ^ b)
-            .toString(16);
+            .toString(16)
+            .padStart(8, "0");
     }
 
     /**
