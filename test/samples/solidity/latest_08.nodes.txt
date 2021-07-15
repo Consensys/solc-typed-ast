@@ -876,7 +876,7 @@ SourceUnit #607
                         parent: VariableDeclarationStatement #361
                         <getter> children: Array(1) [ UserDefinedTypeName #354 ]
                         <getter> vScope: Block #362
-                        <getter> canonicalSignatureType: "(uint256)"
+                        <getter> canonicalSignatureType: "SomeContract.SomeStruct"
                         <getter> getterCanonicalSignature: "s()"
                         <getter> getterCanonicalSignatureHash: "86b714e2"
                         <getter> firstChild: UserDefinedTypeName #354

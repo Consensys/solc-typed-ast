@@ -161,11 +161,11 @@ export class VariableDeclaration extends ASTNode {
             const declaration = type.vReferencedDeclaration;
 
             if (declaration instanceof StructDefinition) {
-                const signatures = declaration.vMembers.map(
-                    (member) => member.canonicalSignatureType
-                );
+                if (declaration.vScope instanceof ContractDefinition) {
+                    return declaration.vScope.name + "." + declaration.name;
+                }
 
-                return "(" + signatures.join(",") + ")";
+                return declaration.name;
             }
 
             if (declaration instanceof ContractDefinition) {
