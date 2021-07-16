@@ -1,5 +1,5 @@
 import { ASTNode, ASTNodeWithChildren } from "../../ast_node";
-import { ContractKind } from "../../constants";
+import { ContractKind, StateVariableVisibility } from "../../constants";
 import { InheritanceSpecifier } from "../meta/inheritance_specifier";
 import { SourceUnit } from "../meta/source_unit";
 import { StructuredDocumentation } from "../meta/structured_documentation";
@@ -258,19 +258,34 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
     }
 
     get interfaceId(): string | undefined {
-        if (this.kind !== ContractKind.Interface) {
-            return undefined;
+        if (
+            this.kind === ContractKind.Interface ||
+            (this.kind === ContractKind.Contract && this.abstract)
+        ) {
+            const selectors: string[] = [];
+
+            for (const fn of this.vFunctions) {
+                const hash = fn.canonicalSignatureHash;
+
+                if (hash) {
+                    selectors.push(hash);
+                }
+            }
+
+            for (const v of this.vStateVariables) {
+                if (v.visibility === StateVariableVisibility.Public) {
+                    selectors.push(v.getterCanonicalSignatureHash);
+                }
+            }
+
+            return selectors
+                .map((selector) => BigInt("0x" + selector))
+                .reduce((a, b) => a ^ b, BigInt(0))
+                .toString(16)
+                .padStart(8, "0");
         }
 
-        if (this.vFunctions.length === 0) {
-            return "00000000";
-        }
-
-        return this.vFunctions
-            .map((fn) => BigInt("0x" + fn.canonicalSignatureHash))
-            .reduce((a, b) => a ^ b)
-            .toString(16)
-            .padStart(8, "0");
+        return undefined;
     }
 
     /**
