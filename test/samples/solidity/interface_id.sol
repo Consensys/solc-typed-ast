@@ -22,3 +22,28 @@ interface ERC1363 is ERC20, ERC165 {
     function approveAndCall(address spender, uint256 amount) external returns (bool);
     function approveAndCall(address spender, uint256 amount, bytes calldata data) external returns (bool);
 }
+
+interface ISome {
+    function sum(uint256 a, uint256 b) pure external returns (uint256);
+}
+
+abstract contract Some is ISome {
+    function sub(uint256 a, uint256 b) pure external returns (uint256) {
+        return a - b;
+    }
+
+    function mul(uint256 a, uint256 b) virtual pure external returns (uint256);
+}
+
+abstract contract Other {
+    uint public x;
+
+    constructor(uint a) {
+        x = a;
+    }
+
+    fallback() external {}
+    receive() external payable {}
+}
+
+interface Empty {}
