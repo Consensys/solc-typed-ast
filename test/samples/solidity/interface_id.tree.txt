@@ -1,0 +1,204 @@
+SourceUnit #203 -> /test/samples/solidity/interface_id.sol
+|   ContractDefinition #67 -> interface ERC20 [id: 36372b07]
+|   |   FunctionDefinition #5 -> totalSupply() [selector: 18160ddd]
+|   |   |   ParameterList #1
+|   |   |   ParameterList #4
+|   |   |   |   VariableDeclaration #3 -> uint256
+|   |   |   |   |   ElementaryTypeName #2
+|   |   FunctionDefinition #12 -> balanceOf(address) [selector: 70a08231]
+|   |   |   ParameterList #8
+|   |   |   |   VariableDeclaration #7 -> address account
+|   |   |   |   |   ElementaryTypeName #6
+|   |   |   ParameterList #11
+|   |   |   |   VariableDeclaration #10 -> uint256
+|   |   |   |   |   ElementaryTypeName #9
+|   |   FunctionDefinition #21 -> transfer(address,uint256) [selector: a9059cbb]
+|   |   |   ParameterList #17
+|   |   |   |   VariableDeclaration #14 -> address recipient
+|   |   |   |   |   ElementaryTypeName #13
+|   |   |   |   VariableDeclaration #16 -> uint256 amount
+|   |   |   |   |   ElementaryTypeName #15
+|   |   |   ParameterList #20
+|   |   |   |   VariableDeclaration #19 -> bool
+|   |   |   |   |   ElementaryTypeName #18
+|   |   FunctionDefinition #30 -> allowance(address,address) [selector: dd62ed3e]
+|   |   |   ParameterList #26
+|   |   |   |   VariableDeclaration #23 -> address owner
+|   |   |   |   |   ElementaryTypeName #22
+|   |   |   |   VariableDeclaration #25 -> address spender
+|   |   |   |   |   ElementaryTypeName #24
+|   |   |   ParameterList #29
+|   |   |   |   VariableDeclaration #28 -> uint256
+|   |   |   |   |   ElementaryTypeName #27
+|   |   FunctionDefinition #39 -> approve(address,uint256) [selector: 095ea7b3]
+|   |   |   ParameterList #35
+|   |   |   |   VariableDeclaration #32 -> address spender
+|   |   |   |   |   ElementaryTypeName #31
+|   |   |   |   VariableDeclaration #34 -> uint256 amount
+|   |   |   |   |   ElementaryTypeName #33
+|   |   |   ParameterList #38
+|   |   |   |   VariableDeclaration #37 -> bool
+|   |   |   |   |   ElementaryTypeName #36
+|   |   FunctionDefinition #50 -> transferFrom(address,address,uint256) [selector: 23b872dd]
+|   |   |   ParameterList #46
+|   |   |   |   VariableDeclaration #41 -> address sender
+|   |   |   |   |   ElementaryTypeName #40
+|   |   |   |   VariableDeclaration #43 -> address recipient
+|   |   |   |   |   ElementaryTypeName #42
+|   |   |   |   VariableDeclaration #45 -> uint256 amount
+|   |   |   |   |   ElementaryTypeName #44
+|   |   |   ParameterList #49
+|   |   |   |   VariableDeclaration #48 -> bool
+|   |   |   |   |   ElementaryTypeName #47
+|   |   EventDefinition #58
+|   |   |   ParameterList #57
+|   |   |   |   VariableDeclaration #52 -> address from
+|   |   |   |   |   ElementaryTypeName #51
+|   |   |   |   VariableDeclaration #54 -> address to
+|   |   |   |   |   ElementaryTypeName #53
+|   |   |   |   VariableDeclaration #56 -> uint256 value
+|   |   |   |   |   ElementaryTypeName #55
+|   |   EventDefinition #66
+|   |   |   ParameterList #65
+|   |   |   |   VariableDeclaration #60 -> address owner
+|   |   |   |   |   ElementaryTypeName #59
+|   |   |   |   VariableDeclaration #62 -> address spender
+|   |   |   |   |   ElementaryTypeName #61
+|   |   |   |   VariableDeclaration #64 -> uint256 value
+|   |   |   |   |   ElementaryTypeName #63
+|   ContractDefinition #75 -> interface ERC165 [id: 01ffc9a7]
+|   |   FunctionDefinition #74 -> supportsInterface(bytes4) [selector: 01ffc9a7]
+|   |   |   ParameterList #70
+|   |   |   |   VariableDeclaration #69 -> bytes4 interfaceId
+|   |   |   |   |   ElementaryTypeName #68
+|   |   |   ParameterList #73
+|   |   |   |   VariableDeclaration #72 -> bool
+|   |   |   |   |   ElementaryTypeName #71
+|   ContractDefinition #144 -> interface ERC1363 [id: b0202a11]
+|   |   InheritanceSpecifier #77
+|   |   |   IdentifierPath #76
+|   |   InheritanceSpecifier #79
+|   |   |   IdentifierPath #78
+|   |   FunctionDefinition #88 -> transferAndCall(address,uint256) [selector: 1296ee62]
+|   |   |   ParameterList #84
+|   |   |   |   VariableDeclaration #81 -> address recipient
+|   |   |   |   |   ElementaryTypeName #80
+|   |   |   |   VariableDeclaration #83 -> uint256 amount
+|   |   |   |   |   ElementaryTypeName #82
+|   |   |   ParameterList #87
+|   |   |   |   VariableDeclaration #86 -> bool
+|   |   |   |   |   ElementaryTypeName #85
+|   |   FunctionDefinition #99 -> transferAndCall(address,uint256,bytes) [selector: 4000aea0]
+|   |   |   ParameterList #95
+|   |   |   |   VariableDeclaration #90 -> address recipient
+|   |   |   |   |   ElementaryTypeName #89
+|   |   |   |   VariableDeclaration #92 -> uint256 amount
+|   |   |   |   |   ElementaryTypeName #91
+|   |   |   |   VariableDeclaration #94 -> bytes data
+|   |   |   |   |   ElementaryTypeName #93
+|   |   |   ParameterList #98
+|   |   |   |   VariableDeclaration #97 -> bool
+|   |   |   |   |   ElementaryTypeName #96
+|   |   FunctionDefinition #110 -> transferFromAndCall(address,address,uint256) [selector: d8fbe994]
+|   |   |   ParameterList #106
+|   |   |   |   VariableDeclaration #101 -> address sender
+|   |   |   |   |   ElementaryTypeName #100
+|   |   |   |   VariableDeclaration #103 -> address recipient
+|   |   |   |   |   ElementaryTypeName #102
+|   |   |   |   VariableDeclaration #105 -> uint256 amount
+|   |   |   |   |   ElementaryTypeName #104
+|   |   |   ParameterList #109
+|   |   |   |   VariableDeclaration #108 -> bool
+|   |   |   |   |   ElementaryTypeName #107
+|   |   FunctionDefinition #123 -> transferFromAndCall(address,address,uint256,bytes) [selector: c1d34b89]
+|   |   |   ParameterList #119
+|   |   |   |   VariableDeclaration #112 -> address sender
+|   |   |   |   |   ElementaryTypeName #111
+|   |   |   |   VariableDeclaration #114 -> address recipient
+|   |   |   |   |   ElementaryTypeName #113
+|   |   |   |   VariableDeclaration #116 -> uint256 amount
+|   |   |   |   |   ElementaryTypeName #115
+|   |   |   |   VariableDeclaration #118 -> bytes data
+|   |   |   |   |   ElementaryTypeName #117
+|   |   |   ParameterList #122
+|   |   |   |   VariableDeclaration #121 -> bool
+|   |   |   |   |   ElementaryTypeName #120
+|   |   FunctionDefinition #132 -> approveAndCall(address,uint256) [selector: 3177029f]
+|   |   |   ParameterList #128
+|   |   |   |   VariableDeclaration #125 -> address spender
+|   |   |   |   |   ElementaryTypeName #124
+|   |   |   |   VariableDeclaration #127 -> uint256 amount
+|   |   |   |   |   ElementaryTypeName #126
+|   |   |   ParameterList #131
+|   |   |   |   VariableDeclaration #130 -> bool
+|   |   |   |   |   ElementaryTypeName #129
+|   |   FunctionDefinition #143 -> approveAndCall(address,uint256,bytes) [selector: cae9ca51]
+|   |   |   ParameterList #139
+|   |   |   |   VariableDeclaration #134 -> address spender
+|   |   |   |   |   ElementaryTypeName #133
+|   |   |   |   VariableDeclaration #136 -> uint256 amount
+|   |   |   |   |   ElementaryTypeName #135
+|   |   |   |   VariableDeclaration #138 -> bytes data
+|   |   |   |   |   ElementaryTypeName #137
+|   |   |   ParameterList #142
+|   |   |   |   VariableDeclaration #141 -> bool
+|   |   |   |   |   ElementaryTypeName #140
+|   ContractDefinition #154 -> interface ISome [id: cad0899b]
+|   |   FunctionDefinition #153 -> sum(uint256,uint256) [selector: cad0899b]
+|   |   |   ParameterList #149
+|   |   |   |   VariableDeclaration #146 -> uint256 a
+|   |   |   |   |   ElementaryTypeName #145
+|   |   |   |   VariableDeclaration #148 -> uint256 b
+|   |   |   |   |   ElementaryTypeName #147
+|   |   |   ParameterList #152
+|   |   |   |   VariableDeclaration #151 -> uint256
+|   |   |   |   |   ElementaryTypeName #150
+|   ContractDefinition #180 -> contract Some [id: 7ed9db59]
+|   |   InheritanceSpecifier #156
+|   |   |   IdentifierPath #155
+|   |   FunctionDefinition #170 -> sub(uint256,uint256) [selector: b67d77c5]
+|   |   |   ParameterList #161
+|   |   |   |   VariableDeclaration #158 -> uint256 a
+|   |   |   |   |   ElementaryTypeName #157
+|   |   |   |   VariableDeclaration #160 -> uint256 b
+|   |   |   |   |   ElementaryTypeName #159
+|   |   |   ParameterList #164
+|   |   |   |   VariableDeclaration #163 -> uint256
+|   |   |   |   |   ElementaryTypeName #162
+|   |   |   Block #169
+|   |   |   |   Return #168
+|   |   |   |   |   BinaryOperation #167
+|   |   |   |   |   |   Identifier #165
+|   |   |   |   |   |   Identifier #166
+|   |   FunctionDefinition #179 -> mul(uint256,uint256) [selector: c8a4ac9c]
+|   |   |   ParameterList #175
+|   |   |   |   VariableDeclaration #172 -> uint256 a
+|   |   |   |   |   ElementaryTypeName #171
+|   |   |   |   VariableDeclaration #174 -> uint256 b
+|   |   |   |   |   ElementaryTypeName #173
+|   |   |   ParameterList #178
+|   |   |   |   VariableDeclaration #177 -> uint256
+|   |   |   |   |   ElementaryTypeName #176
+|   ContractDefinition #201 -> contract Other [id: 0c55699c]
+|   |   VariableDeclaration #182 -> uint256 public x [getter: x(), selector: 0c55699c]
+|   |   |   ElementaryTypeName #181
+|   |   FunctionDefinition #192 -> constructor
+|   |   |   ParameterList #185
+|   |   |   |   VariableDeclaration #184 -> uint256 a
+|   |   |   |   |   ElementaryTypeName #183
+|   |   |   ParameterList #186
+|   |   |   Block #191
+|   |   |   |   ExpressionStatement #190
+|   |   |   |   |   Assignment #189
+|   |   |   |   |   |   Identifier #187
+|   |   |   |   |   |   Identifier #188
+|   |   FunctionDefinition #196 -> fallback
+|   |   |   ParameterList #193
+|   |   |   ParameterList #194
+|   |   |   Block #195
+|   |   FunctionDefinition #200 -> receive
+|   |   |   ParameterList #197
+|   |   |   ParameterList #198
+|   |   |   Block #199
+|   ContractDefinition #202 -> interface Empty [id: 00000000]
+
