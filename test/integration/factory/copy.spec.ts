@@ -51,6 +51,9 @@ describe(`ASTNodeFactory.copy() validation`, () => {
                     .join("\n")
                     .replace(new RegExp(process.cwd(), "g"), ".");
 
+                // Uncomment next line to update snapshots
+                // fse.writeFileSync(snapshot, result, { encoding: "utf-8" });
+
                 const content = fse.readFileSync(snapshot, { encoding: "utf-8" });
 
                 expect(result).toEqual(content);

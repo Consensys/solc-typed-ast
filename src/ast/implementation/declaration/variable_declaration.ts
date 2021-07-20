@@ -1,5 +1,6 @@
+import { getUserDefinedTypeFQName } from "../../../types";
 import { ASTNode } from "../../ast_node";
-import { DataLocation, Mutability, StateVariableVisibility } from "../../constants";
+import { ContractKind, DataLocation, Mutability, StateVariableVisibility } from "../../constants";
 import { encodeSignature } from "../../utils";
 import { Expression } from "../expression/expression";
 import { OverrideSpecifier } from "../meta/override_specifier";
@@ -158,33 +159,55 @@ export class VariableDeclaration extends ASTNode {
         const type = this.vType;
 
         if (type instanceof UserDefinedTypeName) {
+            const site = this.getClosestParentByType(ContractDefinition);
+
+            if (site === undefined) {
+                throw new Error(
+                    `Unable to compute canonical signature type for variables outside of contract: ${this.print()}`
+                );
+            }
+
             const declaration = type.vReferencedDeclaration;
 
-            if (declaration instanceof StructDefinition) {
-                const signatures = declaration.vMembers.map(
-                    (member) => member.canonicalSignatureType
-                );
+            if (site.kind === ContractKind.Library) {
+                if (
+                    declaration instanceof ContractDefinition ||
+                    declaration instanceof StructDefinition ||
+                    declaration instanceof EnumDefinition
+                ) {
+                    return getUserDefinedTypeFQName(declaration);
+                }
+            } else {
+                if (declaration instanceof StructDefinition) {
+                    const types = declaration.vMembers.map(
+                        (member) => member.canonicalSignatureType
+                    );
 
-                return "(" + signatures.join(",") + ")";
-            }
-
-            if (declaration instanceof ContractDefinition) {
-                return "address";
-            }
-
-            if (declaration instanceof EnumDefinition) {
-                const length = declaration.children.length;
-
-                for (let n = 8; n <= 32; n += 8) {
-                    if (length < 2 ** n) {
-                        return "uint" + n;
-                    }
+                    return "(" + types.join(",") + ")";
                 }
 
-                throw new Error("Unable to detect enum type size - member count exceeds 2 ** 32");
+                if (declaration instanceof ContractDefinition) {
+                    return "address";
+                }
+
+                if (declaration instanceof EnumDefinition) {
+                    const length = declaration.children.length;
+
+                    for (let n = 8; n <= 32; n += 8) {
+                        if (length < 2 ** n) {
+                            return "uint" + n;
+                        }
+                    }
+
+                    throw new Error(
+                        "Unable to detect enum type size - member count exceeds 2 ** 32"
+                    );
+                }
             }
 
-            throw new Error("Unknown user defined type");
+            throw new Error(
+                `Unhandled user-defined type when computing canonical signature type: ${declaration.print()}`
+            );
         }
 
         return this.typeString;

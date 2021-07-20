@@ -130,7 +130,7 @@ export function generalizeType(type: TypeNode): [TypeNode, DataLocation | undefi
     return [type, undefined];
 }
 
-function getUserDefinedTypeFQName(
+export function getUserDefinedTypeFQName(
     def: ContractDefinition | StructDefinition | EnumDefinition
 ): string {
     return def.vScope instanceof ContractDefinition ? `${def.vScope.name}.${def.name}` : def.name;

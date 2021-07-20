@@ -1,0 +1,91 @@
+SourceUnit #94 -> /test/samples/solidity/library_fun_overloads.sol
+|   ContractDefinition #38 -> library Some
+|   |   StructDefinition #3
+|   |   |   VariableDeclaration #2 -> uint256 id
+|   |   |   |   ElementaryTypeName #1
+|   |   StructDefinition #7
+|   |   |   VariableDeclaration #6 -> struct Some.Item item
+|   |   |   |   UserDefinedTypeName #5
+|   |   |   |   |   IdentifierPath #4
+|   |   StructDefinition #11
+|   |   |   VariableDeclaration #10 -> struct Some.Item item
+|   |   |   |   UserDefinedTypeName #9
+|   |   |   |   |   IdentifierPath #8
+|   |   FunctionDefinition #24 -> id(Some.Abc) [selector: 7c503cd6]
+|   |   |   ParameterList #15
+|   |   |   |   VariableDeclaration #14 -> struct Some.Abc data
+|   |   |   |   |   UserDefinedTypeName #13
+|   |   |   |   |   |   IdentifierPath #12
+|   |   |   ParameterList #18
+|   |   |   |   VariableDeclaration #17 -> uint256
+|   |   |   |   |   ElementaryTypeName #16
+|   |   |   Block #23
+|   |   |   |   Return #22
+|   |   |   |   |   MemberAccess #21
+|   |   |   |   |   |   MemberAccess #20
+|   |   |   |   |   |   |   Identifier #19
+|   |   FunctionDefinition #37 -> id(Some.Def) [selector: 9c9d982f]
+|   |   |   ParameterList #28
+|   |   |   |   VariableDeclaration #27 -> struct Some.Def data
+|   |   |   |   |   UserDefinedTypeName #26
+|   |   |   |   |   |   IdentifierPath #25
+|   |   |   ParameterList #31
+|   |   |   |   VariableDeclaration #30 -> uint256
+|   |   |   |   |   ElementaryTypeName #29
+|   |   |   Block #36
+|   |   |   |   Return #35
+|   |   |   |   |   MemberAccess #34
+|   |   |   |   |   |   MemberAccess #33
+|   |   |   |   |   |   |   Identifier #32
+|   ContractDefinition #93 -> contract Test
+|   |   UsingForDirective #42
+|   |   |   IdentifierPath #39
+|   |   |   UserDefinedTypeName #41
+|   |   |   |   IdentifierPath #40
+|   |   UsingForDirective #46
+|   |   |   IdentifierPath #43
+|   |   |   UserDefinedTypeName #45
+|   |   |   |   IdentifierPath #44
+|   |   FunctionDefinition #92 -> verify() [selector: fc735e99]
+|   |   |   ParameterList #47
+|   |   |   ParameterList #48
+|   |   |   Block #91
+|   |   |   |   VariableDeclarationStatement #61
+|   |   |   |   |   VariableDeclaration #53 -> struct Some.Abc a
+|   |   |   |   |   |   UserDefinedTypeName #52
+|   |   |   |   |   |   |   IdentifierPath #51
+|   |   |   |   |   FunctionCall #60
+|   |   |   |   |   |   MemberAccess #55
+|   |   |   |   |   |   |   Identifier #54
+|   |   |   |   |   |   FunctionCall #59
+|   |   |   |   |   |   |   MemberAccess #57
+|   |   |   |   |   |   |   |   Identifier #56
+|   |   |   |   |   |   |   Literal #58
+|   |   |   |   VariableDeclarationStatement #74
+|   |   |   |   |   VariableDeclaration #66 -> struct Some.Def b
+|   |   |   |   |   |   UserDefinedTypeName #65
+|   |   |   |   |   |   |   IdentifierPath #64
+|   |   |   |   |   FunctionCall #73
+|   |   |   |   |   |   MemberAccess #68
+|   |   |   |   |   |   |   Identifier #67
+|   |   |   |   |   |   FunctionCall #72
+|   |   |   |   |   |   |   MemberAccess #70
+|   |   |   |   |   |   |   |   Identifier #69
+|   |   |   |   |   |   |   Literal #71
+|   |   |   |   ExpressionStatement #82
+|   |   |   |   |   FunctionCall #81
+|   |   |   |   |   |   Identifier #75
+|   |   |   |   |   |   BinaryOperation #80
+|   |   |   |   |   |   |   FunctionCall #78
+|   |   |   |   |   |   |   |   MemberAccess #77
+|   |   |   |   |   |   |   |   |   Identifier #76
+|   |   |   |   |   |   |   Literal #79
+|   |   |   |   ExpressionStatement #90
+|   |   |   |   |   FunctionCall #89
+|   |   |   |   |   |   Identifier #83
+|   |   |   |   |   |   BinaryOperation #88
+|   |   |   |   |   |   |   FunctionCall #86
+|   |   |   |   |   |   |   |   MemberAccess #85
+|   |   |   |   |   |   |   |   |   Identifier #84
+|   |   |   |   |   |   |   Literal #87
+
