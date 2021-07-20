@@ -1,3 +1,4 @@
+import { getUserDefinedTypeFQName } from "../../../types";
 import { ASTNode } from "../../ast_node";
 import { ContractKind, DataLocation, Mutability, StateVariableVisibility } from "../../constants";
 import { encodeSignature } from "../../utils";
@@ -169,17 +170,12 @@ export class VariableDeclaration extends ASTNode {
             const declaration = type.vReferencedDeclaration;
 
             if (site.kind === ContractKind.Library) {
-                if (declaration instanceof ContractDefinition) {
-                    return declaration.name;
-                }
-
                 if (
+                    declaration instanceof ContractDefinition ||
                     declaration instanceof StructDefinition ||
                     declaration instanceof EnumDefinition
                 ) {
-                    return declaration.vScope instanceof ContractDefinition
-                        ? declaration.vScope.name + "." + declaration.name
-                        : declaration.name;
+                    return getUserDefinedTypeFQName(declaration);
                 }
             } else {
                 if (declaration instanceof StructDefinition) {
