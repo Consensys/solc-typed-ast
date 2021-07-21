@@ -70,10 +70,11 @@
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#generalizetype" class="tsd-kind-icon">generalize<wbr>Type</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#specializetype" class="tsd-kind-icon">specialize<wbr>Type</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#typenametotypenode" class="tsd-kind-icon">type<wbr>Name<wbr>ToType<wbr>Node</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#variabledeclarationtotypenode" class="tsd-kind-icon">variable<wbr>Declaration<wbr>ToType<wbr>Node</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#generalizeType" class="tsd-kind-icon">generalize<wbr>Type</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#getUserDefinedTypeFQName" class="tsd-kind-icon">get<wbr>User<wbr>Defined<wbr>TypeFQName</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#specializeType" class="tsd-kind-icon">specialize<wbr>Type</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#typeNameToTypeNode" class="tsd-kind-icon">type<wbr>Name<wbr>ToType<wbr>Node</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#variableDeclarationToTypeNode" class="tsd-kind-icon">variable<wbr>Declaration<wbr>ToType<wbr>Node</a></li>
 							</ul>
 						</section>
 					</div>
@@ -82,10 +83,10 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
-					<a name="generalizetype" class="tsd-anchor"></a>
+					<a name="generalizeType" class="tsd-anchor"></a>
 					<h3>generalize<wbr>Type</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">generalize<wbr>Type<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol">, </span><a href="../enums/ast_constants.datalocation.html" class="tsd-signature-type" data-tsd-kind="Enumeration">DataLocation</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">]</span></li>
+						<li class="tsd-signature tsd-kind-icon">generalize<wbr>Type<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol">, </span><a href="../enums/ast_constants.DataLocation.html" class="tsd-signature-type" data-tsd-kind="Enumeration">DataLocation</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">]</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -105,22 +106,45 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>type: <a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h5>
+									<h5>type: <a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>specialized type</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol">, </span><a href="../enums/ast_constants.datalocation.html" class="tsd-signature-type" data-tsd-kind="Enumeration">DataLocation</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">]</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol">, </span><a href="../enums/ast_constants.DataLocation.html" class="tsd-signature-type" data-tsd-kind="Enumeration">DataLocation</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">]</span></h4>
 							<p>computed generalized type.</p>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
-					<a name="specializetype" class="tsd-anchor"></a>
+					<a name="getUserDefinedTypeFQName" class="tsd-anchor"></a>
+					<h3>get<wbr>User<wbr>Defined<wbr>TypeFQName</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>User<wbr>Defined<wbr>TypeFQName<span class="tsd-signature-symbol">(</span>def<span class="tsd-signature-symbol">: </span><a href="../classes/ast_implementation_declaration_contract_definition.ContractDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">ContractDefinition</a><span class="tsd-signature-symbol"> | </span><a href="../classes/ast_implementation_declaration_struct_definition.StructDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">StructDefinition</a><span class="tsd-signature-symbol"> | </span><a href="../classes/ast_implementation_declaration_enum_definition.EnumDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">EnumDefinition</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L133">src/types/utils.ts:133</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>def: <a href="../classes/ast_implementation_declaration_contract_definition.ContractDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">ContractDefinition</a><span class="tsd-signature-symbol"> | </span><a href="../classes/ast_implementation_declaration_struct_definition.StructDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">StructDefinition</a><span class="tsd-signature-symbol"> | </span><a href="../classes/ast_implementation_declaration_enum_definition.EnumDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">EnumDefinition</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="specializeType" class="tsd-anchor"></a>
 					<h3>specialize<wbr>Type</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">specialize<wbr>Type<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a>, loc<span class="tsd-signature-symbol">: </span><a href="../enums/ast_constants.datalocation.html" class="tsd-signature-type" data-tsd-kind="Enumeration">DataLocation</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></li>
+						<li class="tsd-signature tsd-kind-icon">specialize<wbr>Type<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a>, loc<span class="tsd-signature-symbol">: </span><a href="../enums/ast_constants.DataLocation.html" class="tsd-signature-type" data-tsd-kind="Enumeration">DataLocation</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -142,28 +166,28 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>type: <a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h5>
+									<h5>type: <a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>general type &quot;pattern&quot;</p>
 									</div>
 								</li>
 								<li>
-									<h5>loc: <a href="../enums/ast_constants.datalocation.html" class="tsd-signature-type" data-tsd-kind="Enumeration">DataLocation</a></h5>
+									<h5>loc: <a href="../enums/ast_constants.DataLocation.html" class="tsd-signature-type" data-tsd-kind="Enumeration">DataLocation</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>target location to specialize to</p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4>
 							<p>specialized type</p>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
-					<a name="typenametotypenode" class="tsd-anchor"></a>
+					<a name="typeNameToTypeNode" class="tsd-anchor"></a>
 					<h3>type<wbr>Name<wbr>ToType<wbr>Node</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">type<wbr>Name<wbr>ToType<wbr>Node<span class="tsd-signature-symbol">(</span>astT<span class="tsd-signature-symbol">: </span><a href="../classes/ast_implementation_type_type_name.typename.html" class="tsd-signature-type" data-tsd-kind="Class">TypeName</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></li>
+						<li class="tsd-signature tsd-kind-icon">type<wbr>Name<wbr>ToType<wbr>Node<span class="tsd-signature-symbol">(</span>astT<span class="tsd-signature-symbol">: </span><a href="../classes/ast_implementation_type_type_name.TypeName.html" class="tsd-signature-type" data-tsd-kind="Class">TypeName</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -181,22 +205,22 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>astT: <a href="../classes/ast_implementation_type_type_name.typename.html" class="tsd-signature-type" data-tsd-kind="Class">TypeName</a></h5>
+									<h5>astT: <a href="../classes/ast_implementation_type_type_name.TypeName.html" class="tsd-signature-type" data-tsd-kind="Class">TypeName</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>original AST <code>TypeName</code></p>
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4>
 							<p>equivalent <code>TypeNode</code>.</p>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
-					<a name="variabledeclarationtotypenode" class="tsd-anchor"></a>
+					<a name="variableDeclarationToTypeNode" class="tsd-anchor"></a>
 					<h3>variable<wbr>Declaration<wbr>ToType<wbr>Node</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">variable<wbr>Declaration<wbr>ToType<wbr>Node<span class="tsd-signature-symbol">(</span>decl<span class="tsd-signature-symbol">: </span><a href="../classes/ast_implementation_declaration_variable_declaration.variabledeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></li>
+						<li class="tsd-signature tsd-kind-icon">variable<wbr>Declaration<wbr>ToType<wbr>Node<span class="tsd-signature-symbol">(</span>decl<span class="tsd-signature-symbol">: </span><a href="../classes/ast_implementation_declaration_variable_declaration.VariableDeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -214,10 +238,10 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>decl: <a href="../classes/ast_implementation_declaration_variable_declaration.variabledeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a></h5>
+									<h5>decl: <a href="../classes/ast_implementation_declaration_variable_declaration.VariableDeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="../classes/types_ast_type.typenode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -237,16 +261,19 @@
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="types_utils.html#generalizetype" class="tsd-kind-icon">generalize<wbr>Type</a>
+						<a href="types_utils.html#generalizeType" class="tsd-kind-icon">generalize<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="types_utils.html#specializetype" class="tsd-kind-icon">specialize<wbr>Type</a>
+						<a href="types_utils.html#getUserDefinedTypeFQName" class="tsd-kind-icon">get<wbr>User<wbr>Defined<wbr>TypeFQName</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="types_utils.html#typenametotypenode" class="tsd-kind-icon">type<wbr>Name<wbr>ToType<wbr>Node</a>
+						<a href="types_utils.html#specializeType" class="tsd-kind-icon">specialize<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
-						<a href="types_utils.html#variabledeclarationtotypenode" class="tsd-kind-icon">variable<wbr>Declaration<wbr>ToType<wbr>Node</a>
+						<a href="types_utils.html#typeNameToTypeNode" class="tsd-kind-icon">type<wbr>Name<wbr>ToType<wbr>Node</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="types_utils.html#variableDeclarationToTypeNode" class="tsd-kind-icon">variable<wbr>Declaration<wbr>ToType<wbr>Node</a>
 					</li>
 				</ul>
 			</nav>
