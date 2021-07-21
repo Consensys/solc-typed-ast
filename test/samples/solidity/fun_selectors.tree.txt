@@ -1,145 +1,145 @@
-SourceUnit #445 -> /test/samples/solidity/fun_selectors.sol
+SourceUnit #466 -> /test/samples/solidity/fun_selectors.sol
 |   ContractDefinition #3 -> contract D
-|   |   VariableDeclaration #2 -> uint256 internal a
+|   |   VariableDeclaration #2 -> uint256 public a [getter: a(), selector: 0dbe671f]
 |   |   |   ElementaryTypeName #1
 |   StructDefinition #6
 |   |   VariableDeclaration #5 -> address y
 |   |   |   ElementaryTypeName #4
 |   EnumDefinition #8
 |   |   EnumValue #7
-|   ContractDefinition #49 -> library Foo
-|   |   EnumDefinition #10
-|   |   |   EnumValue #9
-|   |   StructDefinition #13
-|   |   |   VariableDeclaration #12 -> uint256 x
-|   |   |   |   ElementaryTypeName #11
-|   |   FunctionDefinition #20 -> funD(D) [selector: 46467911]
-|   |   |   ParameterList #17
-|   |   |   |   VariableDeclaration #16 -> contract D d
-|   |   |   |   |   UserDefinedTypeName #15
-|   |   |   |   |   |   IdentifierPath #14
-|   |   |   ParameterList #18
-|   |   |   Block #19
-|   |   FunctionDefinition #27 -> funS(Foo.S) [selector: 2d9de9c3]
-|   |   |   ParameterList #24
-|   |   |   |   VariableDeclaration #23 -> struct Foo.S s
-|   |   |   |   |   UserDefinedTypeName #22
-|   |   |   |   |   |   IdentifierPath #21
-|   |   |   ParameterList #25
-|   |   |   Block #26
-|   |   FunctionDefinition #34 -> funT(T) [selector: 8c551140]
-|   |   |   ParameterList #31
-|   |   |   |   VariableDeclaration #30 -> struct T t
-|   |   |   |   |   UserDefinedTypeName #29
-|   |   |   |   |   |   IdentifierPath #28
-|   |   |   ParameterList #32
-|   |   |   Block #33
-|   |   FunctionDefinition #41 -> funX(X) [selector: 20c5a75c]
+|   FunctionDefinition #15 -> handleD(D) [selector: 6c91cb1a]
+|   |   ParameterList #12
+|   |   |   VariableDeclaration #11 -> contract D d
+|   |   |   |   UserDefinedTypeName #10
+|   |   |   |   |   IdentifierPath #9
+|   |   ParameterList #13
+|   |   Block #14
+|   FunctionDefinition #22 -> handleX(X) [selector: 78fc2009]
+|   |   ParameterList #19
+|   |   |   VariableDeclaration #18 -> enum X x
+|   |   |   |   UserDefinedTypeName #17
+|   |   |   |   |   IdentifierPath #16
+|   |   ParameterList #20
+|   |   Block #21
+|   FunctionDefinition #29 -> handleT(T) [selector: 89ff4196]
+|   |   ParameterList #26
+|   |   |   VariableDeclaration #25 -> struct T t
+|   |   |   |   UserDefinedTypeName #24
+|   |   |   |   |   IdentifierPath #23
+|   |   ParameterList #27
+|   |   Block #28
+|   ContractDefinition #70 -> library Foo
+|   |   EnumDefinition #31
+|   |   |   EnumValue #30
+|   |   StructDefinition #34
+|   |   |   VariableDeclaration #33 -> uint256 x
+|   |   |   |   ElementaryTypeName #32
+|   |   FunctionDefinition #41 -> funD(D) [selector: 46467911]
 |   |   |   ParameterList #38
-|   |   |   |   VariableDeclaration #37 -> enum X x
+|   |   |   |   VariableDeclaration #37 -> contract D d
 |   |   |   |   |   UserDefinedTypeName #36
 |   |   |   |   |   |   IdentifierPath #35
 |   |   |   ParameterList #39
 |   |   |   Block #40
-|   |   FunctionDefinition #48 -> funY(Foo.Y) [selector: c79a4d37]
+|   |   FunctionDefinition #48 -> funS(Foo.S) [selector: 2d9de9c3]
 |   |   |   ParameterList #45
-|   |   |   |   VariableDeclaration #44 -> enum Foo.Y y
+|   |   |   |   VariableDeclaration #44 -> struct Foo.S s
 |   |   |   |   |   UserDefinedTypeName #43
 |   |   |   |   |   |   IdentifierPath #42
 |   |   |   ParameterList #46
 |   |   |   Block #47
-|   ContractDefinition #80 -> interface Bar [id: 9a812b72]
-|   |   FunctionDefinition #55 -> funD(address) [selector: 4e209091]
+|   |   FunctionDefinition #55 -> funT(T) [selector: 8c551140]
+|   |   |   ParameterList #52
+|   |   |   |   VariableDeclaration #51 -> struct T t
+|   |   |   |   |   UserDefinedTypeName #50
+|   |   |   |   |   |   IdentifierPath #49
 |   |   |   ParameterList #53
-|   |   |   |   VariableDeclaration #52 -> contract D d
-|   |   |   |   |   UserDefinedTypeName #51
-|   |   |   |   |   |   IdentifierPath #50
-|   |   |   ParameterList #54
-|   |   FunctionDefinition #61 -> funS((uint256)) [selector: e373f962]
+|   |   |   Block #54
+|   |   FunctionDefinition #62 -> funX(X) [selector: 20c5a75c]
 |   |   |   ParameterList #59
-|   |   |   |   VariableDeclaration #58 -> struct Foo.S s
+|   |   |   |   VariableDeclaration #58 -> enum X x
 |   |   |   |   |   UserDefinedTypeName #57
 |   |   |   |   |   |   IdentifierPath #56
 |   |   |   ParameterList #60
-|   |   FunctionDefinition #67 -> funT((address)) [selector: 3793b6f0]
-|   |   |   ParameterList #65
-|   |   |   |   VariableDeclaration #64 -> struct T s
-|   |   |   |   |   UserDefinedTypeName #63
-|   |   |   |   |   |   IdentifierPath #62
+|   |   |   Block #61
+|   |   FunctionDefinition #69 -> funY(Foo.Y) [selector: c79a4d37]
 |   |   |   ParameterList #66
-|   |   FunctionDefinition #73 -> funX(uint8) [selector: 0a42a215]
-|   |   |   ParameterList #71
-|   |   |   |   VariableDeclaration #70 -> enum X x
-|   |   |   |   |   UserDefinedTypeName #69
-|   |   |   |   |   |   IdentifierPath #68
-|   |   |   ParameterList #72
-|   |   FunctionDefinition #79 -> funY(uint8) [selector: 0a035664]
-|   |   |   ParameterList #77
-|   |   |   |   VariableDeclaration #76 -> enum Foo.Y y
-|   |   |   |   |   UserDefinedTypeName #75
-|   |   |   |   |   |   IdentifierPath #74
-|   |   |   ParameterList #78
-|   ContractDefinition #444 -> contract Baz
-|   |   FunctionDefinition #87 -> funD(address) [selector: 4e209091]
-|   |   |   ParameterList #84
-|   |   |   |   VariableDeclaration #83 -> contract D d
-|   |   |   |   |   UserDefinedTypeName #82
-|   |   |   |   |   |   IdentifierPath #81
-|   |   |   ParameterList #85
-|   |   |   Block #86
-|   |   FunctionDefinition #94 -> funS((uint256)) [selector: e373f962]
-|   |   |   ParameterList #91
-|   |   |   |   VariableDeclaration #90 -> struct Foo.S s
-|   |   |   |   |   UserDefinedTypeName #89
-|   |   |   |   |   |   IdentifierPath #88
+|   |   |   |   VariableDeclaration #65 -> enum Foo.Y y
+|   |   |   |   |   UserDefinedTypeName #64
+|   |   |   |   |   |   IdentifierPath #63
+|   |   |   ParameterList #67
+|   |   |   Block #68
+|   ContractDefinition #101 -> interface Bar [id: 9a812b72]
+|   |   FunctionDefinition #76 -> funD(address) [selector: 4e209091]
+|   |   |   ParameterList #74
+|   |   |   |   VariableDeclaration #73 -> contract D d
+|   |   |   |   |   UserDefinedTypeName #72
+|   |   |   |   |   |   IdentifierPath #71
+|   |   |   ParameterList #75
+|   |   FunctionDefinition #82 -> funS((uint256)) [selector: e373f962]
+|   |   |   ParameterList #80
+|   |   |   |   VariableDeclaration #79 -> struct Foo.S s
+|   |   |   |   |   UserDefinedTypeName #78
+|   |   |   |   |   |   IdentifierPath #77
+|   |   |   ParameterList #81
+|   |   FunctionDefinition #88 -> funT((address)) [selector: 3793b6f0]
+|   |   |   ParameterList #86
+|   |   |   |   VariableDeclaration #85 -> struct T s
+|   |   |   |   |   UserDefinedTypeName #84
+|   |   |   |   |   |   IdentifierPath #83
+|   |   |   ParameterList #87
+|   |   FunctionDefinition #94 -> funX(uint8) [selector: 0a42a215]
 |   |   |   ParameterList #92
-|   |   |   Block #93
-|   |   FunctionDefinition #101 -> funT((address)) [selector: 3793b6f0]
+|   |   |   |   VariableDeclaration #91 -> enum X x
+|   |   |   |   |   UserDefinedTypeName #90
+|   |   |   |   |   |   IdentifierPath #89
+|   |   |   ParameterList #93
+|   |   FunctionDefinition #100 -> funY(uint8) [selector: 0a035664]
 |   |   |   ParameterList #98
-|   |   |   |   VariableDeclaration #97 -> struct T s
+|   |   |   |   VariableDeclaration #97 -> enum Foo.Y y
 |   |   |   |   |   UserDefinedTypeName #96
 |   |   |   |   |   |   IdentifierPath #95
 |   |   |   ParameterList #99
-|   |   |   Block #100
-|   |   FunctionDefinition #108 -> funX(uint8) [selector: 0a42a215]
+|   ContractDefinition #465 -> contract Baz
+|   |   FunctionDefinition #108 -> funD(address) [selector: 4e209091]
 |   |   |   ParameterList #105
-|   |   |   |   VariableDeclaration #104 -> enum X x
+|   |   |   |   VariableDeclaration #104 -> contract D d
 |   |   |   |   |   UserDefinedTypeName #103
 |   |   |   |   |   |   IdentifierPath #102
 |   |   |   ParameterList #106
 |   |   |   Block #107
-|   |   FunctionDefinition #115 -> funY(uint8) [selector: 0a035664]
+|   |   FunctionDefinition #115 -> funS((uint256)) [selector: e373f962]
 |   |   |   ParameterList #112
-|   |   |   |   VariableDeclaration #111 -> enum Foo.Y y
+|   |   |   |   VariableDeclaration #111 -> struct Foo.S s
 |   |   |   |   |   UserDefinedTypeName #110
 |   |   |   |   |   |   IdentifierPath #109
 |   |   |   ParameterList #113
 |   |   |   Block #114
-|   |   FunctionDefinition #443 -> main() [selector: dffeadd0]
-|   |   |   ParameterList #116
-|   |   |   ParameterList #117
-|   |   |   Block #442
-|   |   |   |   ExpressionStatement #130
-|   |   |   |   |   FunctionCall #129
-|   |   |   |   |   |   Identifier #118
-|   |   |   |   |   |   BinaryOperation #128
-|   |   |   |   |   |   |   MemberAccess #121
-|   |   |   |   |   |   |   |   MemberAccess #120
-|   |   |   |   |   |   |   |   |   Identifier #119
-|   |   |   |   |   |   |   FunctionCall #127
-|   |   |   |   |   |   |   |   ElementaryTypeNameExpression #123
-|   |   |   |   |   |   |   |   |   ElementaryTypeName #122
-|   |   |   |   |   |   |   |   FunctionCall #126
-|   |   |   |   |   |   |   |   |   Identifier #124
-|   |   |   |   |   |   |   |   |   Literal #125
-|   |   |   |   ExpressionStatement #138
-|   |   |   |   |   FunctionCall #137
-|   |   |   |   |   |   Identifier #131
-|   |   |   |   |   |   BinaryOperation #136
-|   |   |   |   |   |   |   MemberAccess #134
-|   |   |   |   |   |   |   |   MemberAccess #133
-|   |   |   |   |   |   |   |   |   Identifier #132
-|   |   |   |   |   |   |   Literal #135
+|   |   FunctionDefinition #122 -> funT((address)) [selector: 3793b6f0]
+|   |   |   ParameterList #119
+|   |   |   |   VariableDeclaration #118 -> struct T s
+|   |   |   |   |   UserDefinedTypeName #117
+|   |   |   |   |   |   IdentifierPath #116
+|   |   |   ParameterList #120
+|   |   |   Block #121
+|   |   FunctionDefinition #129 -> funX(uint8) [selector: 0a42a215]
+|   |   |   ParameterList #126
+|   |   |   |   VariableDeclaration #125 -> enum X x
+|   |   |   |   |   UserDefinedTypeName #124
+|   |   |   |   |   |   IdentifierPath #123
+|   |   |   ParameterList #127
+|   |   |   Block #128
+|   |   FunctionDefinition #136 -> funY(uint8) [selector: 0a035664]
+|   |   |   ParameterList #133
+|   |   |   |   VariableDeclaration #132 -> enum Foo.Y y
+|   |   |   |   |   UserDefinedTypeName #131
+|   |   |   |   |   |   IdentifierPath #130
+|   |   |   ParameterList #134
+|   |   |   Block #135
+|   |   FunctionDefinition #464 -> main() [selector: dffeadd0]
+|   |   |   ParameterList #137
+|   |   |   ParameterList #138
+|   |   |   Block #463
 |   |   |   |   ExpressionStatement #151
 |   |   |   |   |   FunctionCall #150
 |   |   |   |   |   |   Identifier #139
@@ -329,34 +329,34 @@ SourceUnit #445 -> /test/samples/solidity/fun_selectors.sol
 |   |   |   |   |   |   |   |   MemberAccess #322
 |   |   |   |   |   |   |   |   |   Identifier #321
 |   |   |   |   |   |   |   Literal #324
-|   |   |   |   ExpressionStatement #336
-|   |   |   |   |   FunctionCall #335
+|   |   |   |   ExpressionStatement #340
+|   |   |   |   |   FunctionCall #339
 |   |   |   |   |   |   Identifier #328
-|   |   |   |   |   |   BinaryOperation #334
-|   |   |   |   |   |   |   MemberAccess #332
-|   |   |   |   |   |   |   |   FunctionCall #331
+|   |   |   |   |   |   BinaryOperation #338
+|   |   |   |   |   |   |   MemberAccess #331
+|   |   |   |   |   |   |   |   MemberAccess #330
 |   |   |   |   |   |   |   |   |   Identifier #329
-|   |   |   |   |   |   |   |   |   Identifier #330
-|   |   |   |   |   |   |   Literal #333
-|   |   |   |   ExpressionStatement #349
-|   |   |   |   |   FunctionCall #348
-|   |   |   |   |   |   Identifier #337
-|   |   |   |   |   |   BinaryOperation #347
-|   |   |   |   |   |   |   MemberAccess #340
-|   |   |   |   |   |   |   |   MemberAccess #339
-|   |   |   |   |   |   |   |   |   Identifier #338
-|   |   |   |   |   |   |   FunctionCall #346
-|   |   |   |   |   |   |   |   ElementaryTypeNameExpression #342
-|   |   |   |   |   |   |   |   |   ElementaryTypeName #341
-|   |   |   |   |   |   |   |   FunctionCall #345
-|   |   |   |   |   |   |   |   |   Identifier #343
-|   |   |   |   |   |   |   |   |   Literal #344
+|   |   |   |   |   |   |   FunctionCall #337
+|   |   |   |   |   |   |   |   ElementaryTypeNameExpression #333
+|   |   |   |   |   |   |   |   |   ElementaryTypeName #332
+|   |   |   |   |   |   |   |   FunctionCall #336
+|   |   |   |   |   |   |   |   |   Identifier #334
+|   |   |   |   |   |   |   |   |   Literal #335
+|   |   |   |   ExpressionStatement #348
+|   |   |   |   |   FunctionCall #347
+|   |   |   |   |   |   Identifier #341
+|   |   |   |   |   |   BinaryOperation #346
+|   |   |   |   |   |   |   MemberAccess #344
+|   |   |   |   |   |   |   |   MemberAccess #343
+|   |   |   |   |   |   |   |   |   Identifier #342
+|   |   |   |   |   |   |   Literal #345
 |   |   |   |   ExpressionStatement #357
 |   |   |   |   |   FunctionCall #356
-|   |   |   |   |   |   Identifier #350
+|   |   |   |   |   |   Identifier #349
 |   |   |   |   |   |   BinaryOperation #355
 |   |   |   |   |   |   |   MemberAccess #353
-|   |   |   |   |   |   |   |   MemberAccess #352
+|   |   |   |   |   |   |   |   FunctionCall #352
+|   |   |   |   |   |   |   |   |   Identifier #350
 |   |   |   |   |   |   |   |   |   Identifier #351
 |   |   |   |   |   |   |   Literal #354
 |   |   |   |   ExpressionStatement #370
@@ -443,4 +443,25 @@ SourceUnit #445 -> /test/samples/solidity/fun_selectors.sol
 |   |   |   |   |   |   |   |   MemberAccess #436
 |   |   |   |   |   |   |   |   |   Identifier #435
 |   |   |   |   |   |   |   Literal #438
+|   |   |   |   ExpressionStatement #454
+|   |   |   |   |   FunctionCall #453
+|   |   |   |   |   |   Identifier #442
+|   |   |   |   |   |   BinaryOperation #452
+|   |   |   |   |   |   |   MemberAccess #445
+|   |   |   |   |   |   |   |   MemberAccess #444
+|   |   |   |   |   |   |   |   |   Identifier #443
+|   |   |   |   |   |   |   FunctionCall #451
+|   |   |   |   |   |   |   |   ElementaryTypeNameExpression #447
+|   |   |   |   |   |   |   |   |   ElementaryTypeName #446
+|   |   |   |   |   |   |   |   FunctionCall #450
+|   |   |   |   |   |   |   |   |   Identifier #448
+|   |   |   |   |   |   |   |   |   Literal #449
+|   |   |   |   ExpressionStatement #462
+|   |   |   |   |   FunctionCall #461
+|   |   |   |   |   |   Identifier #455
+|   |   |   |   |   |   BinaryOperation #460
+|   |   |   |   |   |   |   MemberAccess #458
+|   |   |   |   |   |   |   |   MemberAccess #457
+|   |   |   |   |   |   |   |   |   Identifier #456
+|   |   |   |   |   |   |   Literal #459
 
