@@ -160,16 +160,9 @@ export class VariableDeclaration extends ASTNode {
 
         if (type instanceof UserDefinedTypeName) {
             const site = this.getClosestParentByType(ContractDefinition);
-
-            if (site === undefined) {
-                throw new Error(
-                    `Unable to compute canonical signature type for variables outside of contract: ${this.print()}`
-                );
-            }
-
             const declaration = type.vReferencedDeclaration;
 
-            if (site.kind === ContractKind.Library) {
+            if (site === undefined || site.kind === ContractKind.Library) {
                 if (
                     declaration instanceof ContractDefinition ||
                     declaration instanceof StructDefinition ||

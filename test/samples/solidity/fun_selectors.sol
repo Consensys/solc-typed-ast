@@ -1,5 +1,5 @@
 contract D {
-    uint a;
+    uint public a;
 }
 
 struct T {
@@ -9,6 +9,10 @@ struct T {
 enum X {
     A
 }
+
+function handleD(D d) {}
+function handleX(X x) {}
+function handleT(T memory t) {}
 
 library Foo {
     enum Y {
