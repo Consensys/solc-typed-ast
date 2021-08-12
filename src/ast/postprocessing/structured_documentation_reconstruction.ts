@@ -10,7 +10,7 @@ import {
 } from "../implementation/declaration";
 import { SourceUnit } from "../implementation/meta/source_unit";
 import { StructuredDocumentation } from "../implementation/meta/structured_documentation";
-import { ASTNodePostprocessor } from "./postprocessor";
+import { NodePostprocessor } from "./node_postprocessor";
 
 export class StructuredDocumentationReconstructor {
     process(node: ASTNode, source: string): StructuredDocumentation | undefined {
@@ -127,7 +127,7 @@ type SupportedNode =
     | EventDefinition
     | ModifierDefinition;
 
-export class StructuredDocumentationReconstructingPostprocessor extends ASTNodePostprocessor {
+export class StructuredDocumentationReconstructingPostprocessor extends NodePostprocessor {
     private reconstructor = new StructuredDocumentationReconstructor();
 
     process(node: ASTNode, context: ASTContext, sources?: Map<string, string>): void {

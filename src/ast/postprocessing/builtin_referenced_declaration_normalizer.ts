@@ -4,11 +4,11 @@ import { Identifier } from "../implementation/expression/identifier";
 import { MemberAccess } from "../implementation/expression/member_access";
 import { IdentifierPath } from "../implementation/meta/identifier_path";
 import { UserDefinedTypeName } from "../implementation/type/user_defined_type_name";
-import { ASTNodePostprocessor } from "./postprocessor";
+import { NodePostprocessor } from "./node_postprocessor";
 
 type SupportedNode = Identifier | MemberAccess | IdentifierPath | UserDefinedTypeName;
 
-export class BuiltinReferencedDeclarationNormalizer extends ASTNodePostprocessor {
+export class BuiltinReferencedDeclarationNormalizer extends NodePostprocessor {
     process(node: ASTNode, context: ASTContext): void {
         if (!this.isSupportedNode(node)) {
             throw new Error(`Supplied node "${node.constructor.name}" is not supported`);

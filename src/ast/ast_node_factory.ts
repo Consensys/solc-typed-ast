@@ -1,5 +1,5 @@
 import { ASTNode, ASTNodeConstructor } from "./ast_node";
-import { ASTContext } from "./ast_reader";
+import { ASTContext, ASTPostprocessor } from "./ast_reader";
 import { FunctionStateMutability, FunctionVisibility } from "./constants";
 import { ContractDefinition } from "./implementation/declaration/contract_definition";
 import { EnumDefinition } from "./implementation/declaration/enum_definition";
@@ -61,7 +61,6 @@ import { FunctionTypeName } from "./implementation/type/function_type_name";
 import { Mapping } from "./implementation/type/mapping";
 import { TypeName } from "./implementation/type/type_name";
 import { UserDefinedTypeName } from "./implementation/type/user_defined_type_name";
-import { ASTPostprocessor } from "./postprocessing";
 
 /**
  * When applied to following tuple type:
