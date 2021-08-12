@@ -1,13 +1,14 @@
 import { ASTNode } from "../ast_node";
-import { ASTContext, ASTNodePostprocessor } from "../ast_reader";
+import { ASTContext } from "../ast_reader";
 import { Identifier } from "../implementation/expression/identifier";
 import { MemberAccess } from "../implementation/expression/member_access";
 import { IdentifierPath } from "../implementation/meta/identifier_path";
 import { UserDefinedTypeName } from "../implementation/type/user_defined_type_name";
+import { ASTNodePostprocessor } from "./postprocessor";
 
 type SupportedNode = Identifier | MemberAccess | IdentifierPath | UserDefinedTypeName;
 
-export class BuiltinReferencedDeclarationNormalizer implements ASTNodePostprocessor {
+export class BuiltinReferencedDeclarationNormalizer extends ASTNodePostprocessor {
     process(node: ASTNode, context: ASTContext): void {
         if (!this.isSupportedNode(node)) {
             throw new Error(`Supplied node "${node.constructor.name}" is not supported`);

@@ -2,7 +2,7 @@ import { ASTNode, ASTNodeConstructor } from "./ast_node";
 import { SourceUnit } from "./implementation/meta/source_unit";
 import { LegacyConfiguration } from "./legacy";
 import { ModernConfiguration } from "./modern";
-import { DefaultPostprocessorMapping } from "./postprocessing/mapping";
+import { ASTPostprocessor } from "./postprocessing/postprocessor";
 import { sequence } from "./utils";
 
 export interface ASTNodeProcessor<T extends ASTNode> {
@@ -115,30 +115,6 @@ export class ASTContext {
     }
 }
 
-export interface ASTNodePostprocessor {
-    process(node: ASTNode, context: ASTContext, sources?: Map<string, string>): void;
-}
-
-export class ASTPostprocessor {
-    mapping: Map<ASTNodeConstructor<ASTNode>, ASTNodePostprocessor[]>;
-
-    constructor(mapping = DefaultPostprocessorMapping) {
-        this.mapping = mapping;
-    }
-
-    process(node: ASTNode, context: ASTContext, sources?: Map<string, string>): void {
-        const postprocessors = this.mapping.get(node.constructor as ASTNodeConstructor<ASTNode>);
-
-        if (postprocessors === undefined) {
-            return;
-        }
-
-        for (const postprocessor of postprocessors) {
-            postprocessor.process(node, context, sources);
-        }
-    }
-}
-
 export enum ASTKind {
     Any = "any",
     Modern = "modern",
@@ -209,12 +185,7 @@ export class ASTReader {
             result.push(sourceUnit);
         }
 
-        const context = this.context;
-        const postprocessor = this.postprocessor;
-
-        for (const node of context.nodes) {
-            postprocessor.process(node, context, sources);
-        }
+        this.postprocessor.processContext(this.context, sources);
 
         return result;
     }
