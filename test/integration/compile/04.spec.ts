@@ -54,7 +54,7 @@ describe(`Compile ${sample} with any available 0.4.x compiler`, () => {
             let data: any = {};
             let sourceUnits: SourceUnit[];
 
-            before("Compile", (done) => {
+            before("Compile", () => {
                 const result = compileSol(sample, version, []);
 
                 expect(result.compilerVersion).toEqual(version);
@@ -65,8 +65,6 @@ describe(`Compile ${sample} with any available 0.4.x compiler`, () => {
                 expect(errors).toHaveLength(0);
 
                 data = result.data;
-
-                done();
             });
 
             it("Process compiler output", () => {

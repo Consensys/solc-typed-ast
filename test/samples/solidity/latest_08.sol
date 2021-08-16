@@ -199,3 +199,15 @@ contract Features084 {
         revert UnitLevelError084(1);
     }
 }
+
+contract Features087 {
+    function basefeeGlobal() external view returns (uint) {
+        return block.basefee;
+    }
+
+    function basefeeInlineAssembly() external view returns (uint ret) {
+        assembly {
+            ret := basefee()
+        }
+    }
+}
