@@ -28,26 +28,26 @@ const encounters = new Map<string, number>([
     ["ImportDirective", 1],
     ["EnumDefinition", 2],
     ["EnumValue", 6],
-    ["ContractDefinition", 7],
-    ["FunctionDefinition", 13],
-    ["ParameterList", 35],
-    ["VariableDeclaration", 21],
-    ["ElementaryTypeName", 21],
-    ["Block", 30],
+    ["ContractDefinition", 8],
+    ["FunctionDefinition", 15],
+    ["ParameterList", 39],
+    ["VariableDeclaration", 23],
+    ["ElementaryTypeName", 23],
+    ["Block", 32],
     ["VariableDeclarationStatement", 9],
     ["Literal", 21],
     ["UncheckedBlock", 2],
     ["ExpressionStatement", 7],
     ["UnaryOperation", 2],
-    ["Identifier", 20],
-    ["Return", 4],
+    ["Identifier", 21],
+    ["Return", 5],
     ["InheritanceSpecifier", 1],
     ["IdentifierPath", 11],
     ["UsingForDirective", 1],
     ["UserDefinedTypeName", 6],
     ["ModifierInvocation", 2],
     ["FunctionCall", 16],
-    ["MemberAccess", 8],
+    ["MemberAccess", 9],
     ["OverrideSpecifier", 1],
     ["ElementaryTypeNameExpression", 3],
     ["NewExpression", 2],
@@ -65,7 +65,7 @@ const encounters = new Map<string, number>([
     ["DoWhileStatement", 1],
     ["Break", 1],
     ["ForStatement", 1],
-    ["InlineAssembly", 2],
+    ["InlineAssembly", 3],
     ["ErrorDefinition", 3],
     ["StructuredDocumentation", 3],
     ["RevertStatement", 3]
@@ -77,7 +77,7 @@ describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
     let data: any = {};
     let sourceUnits: SourceUnit[];
 
-    before("Compile", (done) => {
+    before("Compile", () => {
         const result = compileSol(mainSample, "auto", []);
 
         expect(result.compilerVersion).toEqual(compilerVersion);
@@ -88,8 +88,6 @@ describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
         expect(errors).toHaveLength(0);
 
         data = result.data;
-
-        done();
     });
 
     it(`Parse compiler output (${kind})`, () => {
@@ -101,11 +99,11 @@ describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
 
         const sourceUnit = sourceUnits[0];
 
-        expect(sourceUnit.id).toEqual(298);
-        expect(sourceUnit.src).toEqual("0:4474:0");
+        expect(sourceUnit.id).toEqual(315);
+        expect(sourceUnit.src).toEqual("0:4733:0");
         expect(sourceUnit.absolutePath).toEqual(mainSample);
-        expect(sourceUnit.children.length).toEqual(12);
-        expect(sourceUnit.getChildren().length).toEqual(292);
+        expect(sourceUnit.children.length).toEqual(13);
+        expect(sourceUnit.getChildren().length).toEqual(309);
     });
 
     it(`Validate parsed output (${kind})`, () => {

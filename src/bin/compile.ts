@@ -27,6 +27,8 @@ import {
     XPath
 } from "..";
 
+const modes = ["auto", "sol", "json"];
+
 const cli = {
     boolean: [
         "version",
@@ -42,12 +44,10 @@ const cli = {
     string: ["mode", "compiler-version", "path-remapping", "xpath"],
     default: {
         depth: Number.MAX_SAFE_INTEGER,
-        mode: "auto",
+        mode: modes[0],
         "compiler-version": "auto"
     }
 };
-
-const modes = ["auto", "sol", "json"];
 
 const args = minimist(process.argv.slice(2), cli);
 
@@ -78,14 +78,14 @@ OPTIONS:
     --stdin                 Read input from STDIN instead of files.
                             Requires "mode" to be explicitly set to "sol" or "json".
     --mode                  One of the following input types:
-                                - sol (Solidity source)
-                                - json (JSON compiler artifact)
-                                - auto (try to detect by file extension)
-                            Default value: auto
+                                - ${modes[1]} (Solidity source)
+                                - ${modes[2]} (JSON compiler artifact)
+                                - ${modes[0]} (try to detect by file extension)
+                            Default value: ${cli.default.mode}
     --compiler-version      Solc version to use:
                                 - ${LatestCompilerVersion} (exact SemVer version specifier)
                                 - auto (try to detect suitable compiler version)
-                            Default value: auto
+                            Default value: ${cli.default["compiler-version"]}
     --path-remapping        Path remapping input for Solc.
     --raw                   Print raw Solc compilation output.
     --with-sources          When used with "raw", adds "source" property with 
@@ -95,7 +95,7 @@ OPTIONS:
     --xpath                 XPath selector to perform for each source unit.
     --depth                 Number of children for each of AST node to print.
                             Minimum value is 0. Not affects "raw", "tree" and "source".
-                            Default value: ${Number.MAX_SAFE_INTEGER}
+                            Default value: ${cli.default.depth}
 `;
 
     console.log(message);
@@ -135,20 +135,19 @@ OPTIONS:
 
             const content = fse.readFileSync(0, { encoding: "utf-8" });
 
-            if (mode === "json") {
-                const data = JSON.parse(content);
-
-                result = compileJsonData(fileName, data, compilerVersion, pathRemapping);
-            } else {
-                result = compileSourceString(fileName, content, compilerVersion, pathRemapping);
-            }
+            result =
+                mode === "json"
+                    ? compileJsonData(fileName, JSON.parse(content), compilerVersion, pathRemapping)
+                    : compileSourceString(fileName, content, compilerVersion, pathRemapping);
         } else {
             fileName = path.resolve(process.cwd(), args._[0]);
 
             if (mode === "auto") {
-                if (fileName.toLowerCase().endsWith(".sol")) {
+                const iFileName = fileName.toLowerCase();
+
+                if (iFileName.endsWith(".sol")) {
                     result = compileSol(fileName, compilerVersion, pathRemapping);
-                } else if (fileName.toLowerCase().endsWith(".json")) {
+                } else if (iFileName.endsWith(".json")) {
                     result = compileJson(fileName, compilerVersion, pathRemapping);
                 } else {
                     throw new Error("Unable to auto-detect mode for the file name: " + fileName);
@@ -291,12 +290,18 @@ OPTIONS:
     }
 
     if (args.source) {
+        let targetCompilerVersion: string;
+
+        if (result.compilerVersion) {
+            targetCompilerVersion = result.compilerVersion;
+        } else if (compilerVersion !== "auto") {
+            targetCompilerVersion = compilerVersion;
+        } else {
+            targetCompilerVersion = LatestCompilerVersion;
+        }
+
         const formatter = new PrettyFormatter(4, 0);
-        const writer = new ASTWriter(
-            DefaultASTWriterMapping,
-            formatter,
-            result.compilerVersion ? result.compilerVersion : LatestCompilerVersion
-        );
+        const writer = new ASTWriter(DefaultASTWriterMapping, formatter, targetCompilerVersion);
 
         for (const unit of units) {
             console.log("// " + separator);

@@ -55,7 +55,7 @@ describe(`Compile ${sample} with ${compilerVersion} compiler`, () => {
     let data: any = {};
     let sourceUnits: SourceUnit[];
 
-    before("Compile", (done) => {
+    before("Compile", () => {
         const result = compileSol(sample, "auto", []);
 
         expect(result.compilerVersion).toEqual(compilerVersion);
@@ -66,8 +66,6 @@ describe(`Compile ${sample} with ${compilerVersion} compiler`, () => {
         expect(errors).toHaveLength(0);
 
         data = result.data;
-
-        done();
     });
 
     for (const kind of [ASTKind.Modern, ASTKind.Legacy]) {
