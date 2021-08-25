@@ -1,5 +1,5 @@
 import { ASTNode } from "../ast_node";
-import { ASTContext } from "../ast_reader";
+import { ASTContext, ASTNodePostprocessor } from "../ast_reader";
 import {
     ContractDefinition,
     ErrorDefinition,
@@ -10,7 +10,6 @@ import {
 } from "../implementation/declaration";
 import { SourceUnit } from "../implementation/meta/source_unit";
 import { StructuredDocumentation } from "../implementation/meta/structured_documentation";
-import { NodePostprocessor } from "./node_postprocessor";
 
 export class StructuredDocumentationReconstructor {
     process(node: ASTNode, source: string): StructuredDocumentation | undefined {
@@ -127,7 +126,9 @@ type SupportedNode =
     | EventDefinition
     | ModifierDefinition;
 
-export class StructuredDocumentationReconstructingPostprocessor extends NodePostprocessor<SupportedNode> {
+export class StructuredDocumentationReconstructingPostprocessor
+    implements ASTNodePostprocessor<SupportedNode>
+{
     private reconstructor = new StructuredDocumentationReconstructor();
 
     process(node: SupportedNode, context: ASTContext, sources?: Map<string, string>): void {

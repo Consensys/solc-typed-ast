@@ -14,8 +14,6 @@ export interface ASTNodeProcessor<T extends ASTNode> {
 }
 
 export interface ASTNodePostprocessor<T extends ASTNode> {
-    readonly priority: number;
-
     process(node: T, context: ASTContext, sources?: Map<string, string>): void;
     isSupportedNode(node: ASTNode): node is T;
 }
@@ -123,10 +121,10 @@ export class ASTContext {
 }
 
 export class ASTPostprocessor {
-    nodePostprocessors: ReadonlyArray<ASTNodePostprocessor<ASTNode>>;
+    nodePostprocessors: Array<ASTNodePostprocessor<ASTNode>>;
 
     constructor(nodePostProcessors = DefaultNodePostprocessorList) {
-        this.nodePostprocessors = nodePostProcessors.sort((a, b) => b.priority - a.priority);
+        this.nodePostprocessors = nodePostProcessors;
     }
 
     getPostprocessorsForNode(node: ASTNode): Array<ASTNodePostprocessor<ASTNode>> {
@@ -144,20 +142,11 @@ export class ASTPostprocessor {
     }
 
     processContext(context: ASTContext, sources?: Map<string, string>): void {
-        const groups: Array<[ASTNodePostprocessor<ASTNode>, ASTNode[]]> =
-            this.nodePostprocessors.map((postprocessor) => [postprocessor, []]);
-
-        for (const [postprocessor, nodes] of groups) {
+        for (const postprocessor of this.nodePostprocessors) {
             for (const node of context.nodes) {
                 if (postprocessor.isSupportedNode(node)) {
-                    nodes.push(node);
+                    postprocessor.process(node, context, sources);
                 }
-            }
-        }
-
-        for (const [postprocessor, nodes] of groups) {
-            for (const node of nodes) {
-                postprocessor.process(node, context, sources);
             }
         }
     }
