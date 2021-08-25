@@ -77,7 +77,7 @@
 			<section class="tsd-panel">
 				<h3>Implements</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../interfaces/ast_ast_reader.ASTNodePostprocessor.html" class="tsd-signature-type" data-tsd-kind="Interface">ASTNodePostprocessor</a></li>
+					<li><a href="../interfaces/ast_ast_reader.ASTNodePostprocessor.html" class="tsd-signature-type" data-tsd-kind="Interface">ASTNodePostprocessor</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SupportedNode</span><span class="tsd-signature-symbol">&gt;</span></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -93,6 +93,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ast_postprocessing_structured_documentation_reconstruction.StructuredDocumentationReconstructingPostprocessor.html#isSupportedNode" class="tsd-kind-icon">is<wbr>Supported<wbr>Node</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="ast_postprocessing_structured_documentation_reconstruction.StructuredDocumentationReconstructingPostprocessor.html#process" class="tsd-kind-icon">process</a></li>
 							</ul>
 						</section>
@@ -119,23 +120,47 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="process" class="tsd-anchor"></a>
-					<h3>process</h3>
+					<a name="isSupportedNode" class="tsd-anchor"></a>
+					<h3>is<wbr>Supported<wbr>Node</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="ast_ast_node.ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a>, context<span class="tsd-signature-symbol">: </span><a href="ast_ast_reader.ASTContext.html" class="tsd-signature-type" data-tsd-kind="Class">ASTContext</a>, sources<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Supported<wbr>Node<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="ast_ast_node.ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">node</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">SupportedNode</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Implementation of <a href="../interfaces/ast_ast_reader.ASTNodePostprocessor.html">ASTNodePostprocessor</a>.<a href="../interfaces/ast_ast_reader.ASTNodePostprocessor.html#process">process</a></p>
+								<p>Implementation of <a href="../interfaces/ast_ast_reader.ASTNodePostprocessor.html">ASTNodePostprocessor</a>.<a href="../interfaces/ast_ast_reader.ASTNodePostprocessor.html#isSupportedNode">isSupportedNode</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/postprocessing/structured_documentation_reconstruction.ts#L132">src/ast/postprocessing/structured_documentation_reconstruction.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/postprocessing/structured_documentation_reconstruction.ts#L161">src/ast/postprocessing/structured_documentation_reconstruction.ts:161</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>node: <a href="ast_ast_node.ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">node</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">SupportedNode</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="process" class="tsd-anchor"></a>
+					<h3>process</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">SupportedNode</span>, context<span class="tsd-signature-symbol">: </span><a href="ast_ast_reader.ASTContext.html" class="tsd-signature-type" data-tsd-kind="Class">ASTContext</a>, sources<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Implementation of <a href="../interfaces/ast_ast_reader.ASTNodePostprocessor.html">ASTNodePostprocessor</a>.<a href="../interfaces/ast_ast_reader.ASTNodePostprocessor.html#process">process</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/postprocessing/structured_documentation_reconstruction.ts#L134">src/ast/postprocessing/structured_documentation_reconstruction.ts:134</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>node: <span class="tsd-signature-type">SupportedNode</span></h5>
 								</li>
 								<li>
 									<h5>context: <a href="ast_ast_reader.ASTContext.html" class="tsd-signature-type" data-tsd-kind="Class">ASTContext</a></h5>
@@ -170,6 +195,9 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="ast_postprocessing_structured_documentation_reconstruction.StructuredDocumentationReconstructingPostprocessor.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="ast_postprocessing_structured_documentation_reconstruction.StructuredDocumentationReconstructingPostprocessor.html#isSupportedNode" class="tsd-kind-icon">is<wbr>Supported<wbr>Node</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="ast_postprocessing_structured_documentation_reconstruction.StructuredDocumentationReconstructingPostprocessor.html#process" class="tsd-kind-icon">process</a>

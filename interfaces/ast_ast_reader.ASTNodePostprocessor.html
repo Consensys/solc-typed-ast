@@ -59,13 +59,21 @@
 					<a href="ast_ast_reader.ASTNodePostprocessor.html">ASTNodePostprocessor</a>
 				</li>
 			</ul>
-			<h1>Interface ASTNodePostprocessor</h1>
+			<h1>Interface ASTNodePostprocessor&lt;T&gt;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-type-parameters">
+				<h3>Type parameters</h3>
+				<ul class="tsd-type-parameters">
+					<li>
+						<h4>T<span class="tsd-signature-symbol">: </span><a href="../classes/ast_ast_node.ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a></h4>
+					</li>
+				</ul>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -88,6 +96,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ast_ast_reader.ASTNodePostprocessor.html#isSupportedNode" class="tsd-kind-icon">is<wbr>Supported<wbr>Node</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="ast_ast_reader.ASTNodePostprocessor.html#process" class="tsd-kind-icon">process</a></li>
 							</ul>
 						</section>
@@ -97,22 +106,45 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="process" class="tsd-anchor"></a>
-					<h3>process</h3>
+					<a name="isSupportedNode" class="tsd-anchor"></a>
+					<h3>is<wbr>Supported<wbr>Node</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="../classes/ast_ast_node.ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a>, context<span class="tsd-signature-symbol">: </span><a href="../classes/ast_ast_reader.ASTContext.html" class="tsd-signature-type" data-tsd-kind="Class">ASTContext</a>, sources<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Supported<wbr>Node<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="../classes/ast_ast_node.ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">node</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">T</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_reader.ts#L119">src/ast/ast_reader.ts:119</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_reader.ts#L18">src/ast/ast_reader.ts:18</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>node: <a href="../classes/ast_ast_node.ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">node</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">T</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
+					<a name="process" class="tsd-anchor"></a>
+					<h3>process</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
+						<li class="tsd-signature tsd-kind-icon">process<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, context<span class="tsd-signature-symbol">: </span><a href="../classes/ast_ast_reader.ASTContext.html" class="tsd-signature-type" data-tsd-kind="Class">ASTContext</a>, sources<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">Map</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_reader.ts#L17">src/ast/ast_reader.ts:17</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>node: <span class="tsd-signature-type">T</span></h5>
 								</li>
 								<li>
 									<h5>context: <a href="../classes/ast_ast_reader.ASTContext.html" class="tsd-signature-type" data-tsd-kind="Class">ASTContext</a></h5>
@@ -154,9 +186,12 @@
 					</li>
 				</ul>
 				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-module">
+					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-has-type-parameter">
 						<a href="ast_ast_reader.ASTNodePostprocessor.html" class="tsd-kind-icon">ASTNode<wbr>Postprocessor</a>
 						<ul>
+							<li class=" tsd-kind-method tsd-parent-kind-interface">
+								<a href="ast_ast_reader.ASTNodePostprocessor.html#isSupportedNode" class="tsd-kind-icon">is<wbr>Supported<wbr>Node</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
 								<a href="ast_ast_reader.ASTNodePostprocessor.html#process" class="tsd-kind-icon">process</a>
 							</li>
