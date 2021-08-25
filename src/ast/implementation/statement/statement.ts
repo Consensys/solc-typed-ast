@@ -1,4 +1,5 @@
 import { ASTNode, ASTNodeWithChildren } from "../../ast_node";
+import { StructuredDocumentation } from "../meta";
 
 export class Statement extends ASTNode {
     /**
@@ -6,9 +7,15 @@ export class Statement extends ASTNode {
      * - Is `undefined` when not specified.
      * - Is type of `string` for compatibility reasons.
      */
-    documentation?: string;
+    documentation?: string | StructuredDocumentation;
 
-    constructor(id: number, src: string, type: string, documentation?: string, raw?: any) {
+    constructor(
+        id: number,
+        src: string,
+        type: string,
+        documentation?: string | StructuredDocumentation,
+        raw?: any
+    ) {
         super(id, src, type, raw);
 
         this.documentation = documentation;
@@ -21,9 +28,15 @@ export class StatementWithChildren<T extends ASTNode> extends ASTNodeWithChildre
      * - Is `undefined` when not specified.
      * - Is type of `string` for compatibility reasons.
      */
-    documentation?: string;
+    documentation?: string | StructuredDocumentation;
 
-    constructor(id: number, src: string, type: string, documentation?: string, raw?: any) {
+    constructor(
+        id: number,
+        src: string,
+        type: string,
+        documentation?: string | StructuredDocumentation,
+        raw?: any
+    ) {
         super(id, src, type, raw);
 
         this.documentation = documentation;

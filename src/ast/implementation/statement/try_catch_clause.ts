@@ -1,4 +1,5 @@
 import { ASTNode } from "../../ast_node";
+import { StructuredDocumentation } from "../meta";
 import { ParameterList } from "../meta/parameter_list";
 import { Block } from "./block";
 import { Statement } from "./statement";
@@ -26,7 +27,7 @@ export class TryCatchClause extends Statement {
         errorName: string,
         block: Block,
         parameters?: ParameterList,
-        documentation?: string,
+        documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
         super(id, src, type, documentation, raw);

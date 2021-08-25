@@ -1,5 +1,6 @@
 import { ASTNode } from "../../ast_node";
 import { FunctionCall } from "../expression/function_call";
+import { StructuredDocumentation } from "../meta";
 import { Statement } from "./statement";
 import { TryCatchClause } from "./try_catch_clause";
 
@@ -20,7 +21,7 @@ export class TryStatement extends Statement {
         type: string,
         externalCall: FunctionCall,
         clauses: TryCatchClause[],
-        documentation?: string,
+        documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
         super(id, src, type, documentation, raw);

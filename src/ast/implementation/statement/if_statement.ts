@@ -1,5 +1,6 @@
 import { ASTNode } from "../../ast_node";
 import { Expression } from "../expression/expression";
+import { StructuredDocumentation } from "../meta";
 import { Statement } from "./statement";
 
 export class IfStatement extends Statement {
@@ -25,7 +26,7 @@ export class IfStatement extends Statement {
         condition: Expression,
         trueBody: Statement,
         falseBody?: Statement,
-        documentation?: string,
+        documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
         super(id, src, type, documentation, raw);

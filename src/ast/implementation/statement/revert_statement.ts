@@ -1,5 +1,6 @@
 import { ASTNode } from "../../ast_node";
 import { FunctionCall } from "../expression/function_call";
+import { StructuredDocumentation } from "../meta";
 import { Statement } from "./statement";
 
 export class RevertStatement extends Statement {
@@ -13,7 +14,7 @@ export class RevertStatement extends Statement {
         src: string,
         type: string,
         errorCall: FunctionCall,
-        documentation?: string,
+        documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
         super(id, src, type, documentation, raw);

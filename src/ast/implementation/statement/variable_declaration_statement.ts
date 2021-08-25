@@ -1,6 +1,7 @@
 import { ASTNode } from "../../ast_node";
 import { VariableDeclaration } from "../declaration/variable_declaration";
 import { Expression } from "../expression/expression";
+import { StructuredDocumentation } from "../meta";
 import { Statement } from "./statement";
 
 export class VariableDeclarationStatement extends Statement {
@@ -28,7 +29,7 @@ export class VariableDeclarationStatement extends Statement {
         assignments: Array<number | null>,
         declarations: VariableDeclaration[],
         initialValue?: Expression,
-        documentation?: string,
+        documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
         super(id, src, type, documentation, raw);

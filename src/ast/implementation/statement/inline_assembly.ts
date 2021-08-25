@@ -1,3 +1,4 @@
+import { StructuredDocumentation } from "../meta";
 import { Statement } from "./statement";
 
 export interface YulNode {
@@ -20,7 +21,7 @@ export class InlineAssembly extends Statement {
         externalReferences: any[],
         operations?: string,
         yul?: YulNode,
-        documentation?: string,
+        documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
         super(id, src, type, documentation, raw);

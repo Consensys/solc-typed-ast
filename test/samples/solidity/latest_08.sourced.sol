@@ -91,7 +91,9 @@ contract Features082 {
             break;
         } while(true);
         /// ForStatement docstring
-        for (uint n = (1); n < 1; n++) /// Body Block docstring
+        for (/// Init VariableDeclarationStatement docstring
+        uint n = (1); n < 1; /// Post-loop ExpressionStatement docstring
+        n++) /// Body Block docstring
         {}
         /// IfStatement docstring
         if (false) /// True body Block docstring
@@ -99,7 +101,14 @@ contract Features082 {
         {}
         CatchPanic cp = new CatchPanic();
         /// TryStatement docstring
-        try cp.test() {} catch Error(string memory reason) {} catch Panic(uint _code) {} catch {}
+        try cp.test() /// Call TryCatchClause Block docstring
+        {} /// Error TryCatchClause docstring
+        catch Error(string memory reason) /// Error TryCatchClause Block docstring
+        {} /// Panic TryCatchClause docstring
+        catch Panic(uint _code) /// Panic TryCatchClause Block docstring
+        {} /// Fallback TryCatchClause docstring
+        catch /// Fallback TryCatchClause Block docstring
+        {}
         /// InlineAssembly docstring
         assembly {}
         /// UncheckedBlock docstring
