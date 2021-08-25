@@ -7,12 +7,8 @@ import { UserDefinedTypeName } from "../implementation/type/user_defined_type_na
 
 type SupportedNode = Identifier | MemberAccess | IdentifierPath | UserDefinedTypeName;
 
-export class BuiltinReferencedDeclarationNormalizer implements ASTNodePostprocessor {
-    process(node: ASTNode, context: ASTContext): void {
-        if (!this.isSupportedNode(node)) {
-            throw new Error(`Supplied node "${node.constructor.name}" is not supported`);
-        }
-
+export class BuiltinReferencedDeclarationNormalizer implements ASTNodePostprocessor<SupportedNode> {
+    process(node: SupportedNode, context: ASTContext): void {
         if (
             node.referencedDeclaration >= 0 &&
             context.locate(node.referencedDeclaration) === undefined
@@ -21,7 +17,7 @@ export class BuiltinReferencedDeclarationNormalizer implements ASTNodePostproces
         }
     }
 
-    private isSupportedNode(node: ASTNode): node is SupportedNode {
+    isSupportedNode(node: ASTNode): node is SupportedNode {
         return (
             node instanceof Identifier ||
             node instanceof MemberAccess ||

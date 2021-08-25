@@ -2,7 +2,7 @@ import { ASTNode, ASTNodeConstructor } from "./ast_node";
 import { SourceUnit } from "./implementation/meta/source_unit";
 import { LegacyConfiguration } from "./legacy";
 import { ModernConfiguration } from "./modern";
-import { DefaultPostprocessorMapping } from "./postprocessing/mapping";
+import { DefaultNodePostprocessorList } from "./postprocessing";
 import { sequence } from "./utils";
 
 export interface ASTNodeProcessor<T extends ASTNode> {
@@ -11,6 +11,11 @@ export interface ASTNodeProcessor<T extends ASTNode> {
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<ASTNodeConstructor<T>>;
+}
+
+export interface ASTNodePostprocessor<T extends ASTNode> {
+    process(node: T, context: ASTContext, sources?: Map<string, string>): void;
+    isSupportedNode(node: ASTNode): node is T;
 }
 
 export interface ASTReadingRule {
@@ -115,26 +120,34 @@ export class ASTContext {
     }
 }
 
-export interface ASTNodePostprocessor {
-    process(node: ASTNode, context: ASTContext, sources?: Map<string, string>): void;
-}
-
 export class ASTPostprocessor {
-    mapping: Map<ASTNodeConstructor<ASTNode>, ASTNodePostprocessor[]>;
+    nodePostprocessors: Array<ASTNodePostprocessor<ASTNode>>;
 
-    constructor(mapping = DefaultPostprocessorMapping) {
-        this.mapping = mapping;
+    constructor(nodePostProcessors = DefaultNodePostprocessorList) {
+        this.nodePostprocessors = nodePostProcessors;
     }
 
-    process(node: ASTNode, context: ASTContext, sources?: Map<string, string>): void {
-        const postprocessors = this.mapping.get(node.constructor as ASTNodeConstructor<ASTNode>);
+    getPostprocessorsForNode(node: ASTNode): Array<ASTNodePostprocessor<ASTNode>> {
+        return this.nodePostprocessors.filter((postprocessor) =>
+            postprocessor.isSupportedNode(node)
+        );
+    }
 
-        if (postprocessors === undefined) {
-            return;
-        }
+    processNode(node: ASTNode, context: ASTContext, sources?: Map<string, string>): void {
+        const postprocessors = this.getPostprocessorsForNode(node);
 
         for (const postprocessor of postprocessors) {
             postprocessor.process(node, context, sources);
+        }
+    }
+
+    processContext(context: ASTContext, sources?: Map<string, string>): void {
+        for (const postprocessor of this.nodePostprocessors) {
+            for (const node of context.nodes) {
+                if (postprocessor.isSupportedNode(node)) {
+                    postprocessor.process(node, context, sources);
+                }
+            }
         }
     }
 }
@@ -209,12 +222,7 @@ export class ASTReader {
             result.push(sourceUnit);
         }
 
-        const context = this.context;
-        const postprocessor = this.postprocessor;
-
-        for (const node of context.nodes) {
-            postprocessor.process(node, context, sources);
-        }
+        this.postprocessor.processContext(this.context, sources);
 
         return result;
     }

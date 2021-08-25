@@ -1305,7 +1305,7 @@ class SourceUnitWriter extends ASTNodeWriter {
             result.push(...flatten(node.vImportDirectives.map(writeLineFn)), wrap);
         }
 
-        const typeDefs = node.vEnums.concat(node.vStructs);
+        const typeDefs = [...node.vEnums, ...node.vStructs];
 
         if (typeDefs.length > 0) {
             result.push(...flatJoin(typeDefs.map(writeLineFn), wrap), wrap);
@@ -1315,10 +1315,7 @@ class SourceUnitWriter extends ASTNodeWriter {
             result.push(...flatten(node.vVariables.map((n) => [...writeFn(n), ";", wrap])), wrap);
         }
 
-        const otherDefs = (node.vErrors as readonly ASTNode[]).concat(
-            node.vFunctions,
-            node.vContracts
-        );
+        const otherDefs = [...node.vErrors, ...node.vFunctions, ...node.vContracts];
 
         if (otherDefs.length > 0) {
             result.push(...flatJoin(otherDefs.map(writeLineFn), wrap));

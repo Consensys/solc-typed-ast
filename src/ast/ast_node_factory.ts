@@ -1087,7 +1087,7 @@ export class ASTNodeFactory {
     ): T {
         const node = this.makeUnfinalized(type, ...args);
 
-        this.postprocessor.process(node, this.context);
+        this.postprocessor.processNode(node, this.context);
 
         return node;
     }
@@ -1101,7 +1101,7 @@ export class ASTNodeFactory {
         for (const child of clone.getChildren(true)) {
             this.patchIds(child, cache);
 
-            postprocessor.process(child, context);
+            postprocessor.processNode(child, context);
         }
 
         return clone;

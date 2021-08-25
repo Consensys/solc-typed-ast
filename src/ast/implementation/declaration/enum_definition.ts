@@ -54,4 +54,16 @@ export class EnumDefinition extends ASTNodeWithChildren<EnumValue> {
     get vScope(): ContractDefinition | SourceUnit {
         return this.parent as ContractDefinition | SourceUnit;
     }
+
+    toUintTypeString(): string {
+        const length = this.children.length;
+
+        for (let n = 8; n <= 32; n += 8) {
+            if (length < 2 ** n) {
+                return "uint" + n;
+            }
+        }
+
+        throw new Error("Unable to detect enum type size - member count exceeds 2 ** 32");
+    }
 }

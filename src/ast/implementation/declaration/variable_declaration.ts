@@ -184,17 +184,7 @@ export class VariableDeclaration extends ASTNode {
                 }
 
                 if (declaration instanceof EnumDefinition) {
-                    const length = declaration.children.length;
-
-                    for (let n = 8; n <= 32; n += 8) {
-                        if (length < 2 ** n) {
-                            return "uint" + n;
-                        }
-                    }
-
-                    throw new Error(
-                        "Unable to detect enum type size - member count exceeds 2 ** 32"
-                    );
+                    return declaration.toUintTypeString();
                 }
             }
 
