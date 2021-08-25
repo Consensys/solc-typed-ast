@@ -127,14 +127,10 @@ type SupportedNode =
     | EventDefinition
     | ModifierDefinition;
 
-export class StructuredDocumentationReconstructingPostprocessor extends NodePostprocessor {
+export class StructuredDocumentationReconstructingPostprocessor extends NodePostprocessor<SupportedNode> {
     private reconstructor = new StructuredDocumentationReconstructor();
 
-    process(node: ASTNode, context: ASTContext, sources?: Map<string, string>): void {
-        if (!this.isSupportedNode(node)) {
-            return;
-        }
-
+    process(node: SupportedNode, context: ASTContext, sources?: Map<string, string>): void {
         if (node.documentation instanceof StructuredDocumentation || sources === undefined) {
             return;
         }
@@ -161,7 +157,7 @@ export class StructuredDocumentationReconstructingPostprocessor extends NodePost
         structDocNode.parent = node;
     }
 
-    private isSupportedNode(node: ASTNode): node is SupportedNode {
+    isSupportedNode(node: ASTNode): node is SupportedNode {
         return (
             node instanceof FunctionDefinition ||
             node instanceof ContractDefinition ||

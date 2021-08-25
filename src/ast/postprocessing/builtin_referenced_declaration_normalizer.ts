@@ -8,12 +8,8 @@ import { NodePostprocessor } from "./node_postprocessor";
 
 type SupportedNode = Identifier | MemberAccess | IdentifierPath | UserDefinedTypeName;
 
-export class BuiltinReferencedDeclarationNormalizer extends NodePostprocessor {
-    process(node: ASTNode, context: ASTContext): void {
-        if (!this.isSupportedNode(node)) {
-            throw new Error(`Supplied node "${node.constructor.name}" is not supported`);
-        }
-
+export class BuiltinReferencedDeclarationNormalizer extends NodePostprocessor<SupportedNode> {
+    process(node: SupportedNode, context: ASTContext): void {
         if (
             node.referencedDeclaration >= 0 &&
             context.locate(node.referencedDeclaration) === undefined
@@ -22,7 +18,7 @@ export class BuiltinReferencedDeclarationNormalizer extends NodePostprocessor {
         }
     }
 
-    private isSupportedNode(node: ASTNode): node is SupportedNode {
+    isSupportedNode(node: ASTNode): node is SupportedNode {
         return (
             node instanceof Identifier ||
             node instanceof MemberAccess ||
