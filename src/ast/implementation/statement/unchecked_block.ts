@@ -1,3 +1,4 @@
+import { StructuredDocumentation } from "../meta";
 import { Statement, StatementWithChildren } from "./statement";
 
 /**
@@ -10,7 +11,7 @@ export class UncheckedBlock extends StatementWithChildren<Statement> {
         src: string,
         type: string,
         statements: Iterable<Statement>,
-        documentation?: string,
+        documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
         super(id, src, type, documentation, raw);

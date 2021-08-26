@@ -1,5 +1,6 @@
 import { ASTNode } from "../../ast_node";
 import { Expression } from "../expression/expression";
+import { StructuredDocumentation } from "../meta";
 import { ExpressionStatement } from "./expression_statement";
 import { Statement } from "./statement";
 import { VariableDeclarationStatement } from "./variable_declaration_statement";
@@ -34,7 +35,7 @@ export class ForStatement extends Statement {
         initializationExpression?: VariableDeclarationStatement | ExpressionStatement,
         condition?: Expression,
         loopExpression?: ExpressionStatement,
-        documentation?: string,
+        documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
         super(id, src, type, documentation, raw);

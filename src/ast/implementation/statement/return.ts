@@ -1,5 +1,6 @@
 import { ASTNode } from "../../ast_node";
 import { Expression } from "../expression/expression";
+import { StructuredDocumentation } from "../meta";
 import { ParameterList } from "../meta/parameter_list";
 import { Statement } from "./statement";
 
@@ -20,7 +21,7 @@ export class Return extends Statement {
         type: string,
         functionReturnParameters: number,
         expression?: Expression,
-        documentation?: string,
+        documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
         super(id, src, type, documentation, raw);

@@ -10,6 +10,7 @@ import {
 } from "../implementation/declaration";
 import { SourceUnit } from "../implementation/meta/source_unit";
 import { StructuredDocumentation } from "../implementation/meta/structured_documentation";
+import { Statement, StatementWithChildren } from "../implementation/statement/statement";
 
 export class StructuredDocumentationReconstructor {
     process(node: ASTNode, source: string): StructuredDocumentation | undefined {
@@ -124,7 +125,9 @@ type SupportedNode =
     | VariableDeclaration
     | ErrorDefinition
     | EventDefinition
-    | ModifierDefinition;
+    | ModifierDefinition
+    | Statement
+    | StatementWithChildren<any>;
 
 export class StructuredDocumentationReconstructingPostprocessor
     implements ASTNodePostprocessor<SupportedNode>
@@ -166,7 +169,9 @@ export class StructuredDocumentationReconstructingPostprocessor
             node instanceof EventDefinition ||
             node instanceof ModifierDefinition ||
             (node instanceof VariableDeclaration &&
-                (node.parent instanceof ContractDefinition || node.parent instanceof SourceUnit))
+                (node.parent instanceof ContractDefinition || node.parent instanceof SourceUnit)) ||
+            node instanceof Statement ||
+            node instanceof StatementWithChildren
         );
     }
 }
