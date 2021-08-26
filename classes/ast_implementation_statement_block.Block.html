@@ -159,14 +159,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Block<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, src<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, statements<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="ast_implementation_statement_statement.Statement.html" class="tsd-signature-type" data-tsd-kind="Class">Statement</a><span class="tsd-signature-symbol">&gt;</span>, documentation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, raw<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ast_implementation_statement_block.Block.html" class="tsd-signature-type" data-tsd-kind="Class">Block</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Block<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, src<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, statements<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="ast_implementation_statement_statement.Statement.html" class="tsd-signature-type" data-tsd-kind="Class">Statement</a><span class="tsd-signature-symbol">&gt;</span>, documentation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="ast_implementation_meta_structured_documentation.StructuredDocumentation.html" class="tsd-signature-type" data-tsd-kind="Class">StructuredDocumentation</a>, raw<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="ast_implementation_statement_block.Block.html" class="tsd-signature-type" data-tsd-kind="Class">Block</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="ast_implementation_statement_statement.StatementWithChildren.html">StatementWithChildren</a>.<a href="ast_implementation_statement_statement.StatementWithChildren.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/statement/block.ts#L7">src/ast/implementation/statement/block.ts:7</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/statement/block.ts#L8">src/ast/implementation/statement/block.ts:8</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -184,7 +184,7 @@
 									<h5>statements: <span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="ast_implementation_statement_statement.Statement.html" class="tsd-signature-type" data-tsd-kind="Class">Statement</a><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> documentation: <span class="tsd-signature-type">string</span></h5>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> documentation: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="ast_implementation_meta_structured_documentation.StructuredDocumentation.html" class="tsd-signature-type" data-tsd-kind="Class">StructuredDocumentation</a></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> raw: <span class="tsd-signature-type">any</span></h5>
@@ -216,11 +216,11 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="documentation" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> documentation</h3>
-					<div class="tsd-signature tsd-kind-icon">documentation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<div class="tsd-signature tsd-kind-icon">documentation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="ast_implementation_meta_structured_documentation.StructuredDocumentation.html" class="tsd-signature-type" data-tsd-kind="Class">StructuredDocumentation</a></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="ast_implementation_statement_statement.StatementWithChildren.html">StatementWithChildren</a>.<a href="ast_implementation_statement_statement.StatementWithChildren.html#documentation">documentation</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/statement/statement.ts#L24">src/ast/implementation/statement/statement.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/statement/statement.ts#L31">src/ast/implementation/statement/statement.ts:31</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -514,7 +514,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/statement/block.ts#L25">src/ast/implementation/statement/block.ts:25</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/statement/block.ts#L26">src/ast/implementation/statement/block.ts:26</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
