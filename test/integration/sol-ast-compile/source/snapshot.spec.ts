@@ -56,7 +56,12 @@ const cases: Array<[string, string]> = [
     [
         "test/samples/solidity/meta/complex_imports/c.sol",
         "test/samples/solidity/meta/complex_imports/c.sourced.sol"
-    ]
+    ],
+    [
+        "test/samples/solidity/struct_docs_04.sol",
+        "test/samples/solidity/struct_docs_04.sourced.sol"
+    ],
+    ["test/samples/solidity/struct_docs_05.sol", "test/samples/solidity/struct_docs_05.sourced.sol"]
 ];
 
 for (const [fileName, sample] of cases) {
