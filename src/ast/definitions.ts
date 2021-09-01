@@ -30,7 +30,7 @@ export type AnyResolvable =
     | StructDefinition
     | EnumDefinition
     | ContractDefinition
-    | SourceUnit;
+    | ImportDirective;
 
 /**
  * Type describing all the ASTNodes that are scopes that can define new names
@@ -151,7 +151,7 @@ function* lookupInSourceUnit(name: string, scope: SourceUnit): Iterable<AnyResol
         if (child instanceof ImportDirective) {
             if (child.unitAlias === name) {
                 // `import "..." as <name>`
-                yield child.vSourceUnit;
+                yield child;
             } else if (child.vSymbolAliases.length === 0) {
                 // import "..."
                 // @todo maybe its better to go through child.vSourceUnit.vExportedSymbols here?
@@ -162,9 +162,6 @@ function* lookupInSourceUnit(name: string, scope: SourceUnit): Iterable<AnyResol
                 // `import {<name>} from "..."` or `import {a as <name>} from "..."`
                 for (const [foreignDef, alias] of child.vSymbolAliases) {
                     let symImportName: string;
-
-                    const originalDef =
-                        foreignDef instanceof ImportDirective ? foreignDef.vSourceUnit : foreignDef;
 
                     if (alias !== undefined) {
                         symImportName = alias;
@@ -185,7 +182,7 @@ function* lookupInSourceUnit(name: string, scope: SourceUnit): Iterable<AnyResol
                     }
 
                     if (alias === name) {
-                        yield originalDef;
+                        yield foreignDef;
                     }
                 }
             }
@@ -412,7 +409,9 @@ export function resolveAny(
 
         // An intermediate segment in an identifier path (e.g. `A` in `A.B`) should always resolve to a
         // single imported source unit or contract.
-        if (!(resolvedNode instanceof SourceUnit || resolvedNode instanceof ContractDefinition)) {
+        if (
+            !(resolvedNode instanceof ImportDirective || resolvedNode instanceof ContractDefinition)
+        ) {
             throw new Error(
                 `Unexpected non-scope node for ${element} in ${name} in ctx ${pp(ctx)}: got ${pp(
                     resolvedNode
@@ -420,7 +419,7 @@ export function resolveAny(
             );
         }
 
-        scope = resolvedNode;
+        scope = resolvedNode instanceof ImportDirective ? resolvedNode.vSourceUnit : resolvedNode;
     }
 
     return new Set();
