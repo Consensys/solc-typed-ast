@@ -19,7 +19,6 @@ import {
     FunctionDefinition,
     Identifier,
     IdentifierPath,
-    ImportDirective,
     resolveAny,
     StateVariableVisibility,
     StructDefinition,
@@ -171,15 +170,7 @@ describe("resolveAny() correctly resolves all Identifiers/UserDefinedTypeNames/F
                         continue;
                     }
 
-                    let expectedID: number;
-                    // When the reference is an ImportDirective we resolve to the referenced SourceUnit
-                    if (def instanceof ImportDirective) {
-                        expect(def.unitAlias).not.toEqual("");
-                        expectedID = def.vSourceUnit.id;
-                    } else {
-                        expectedID = def.id;
-                    }
-
+                    const expectedID = def.id;
                     const resolved = [...resolveAny(name, ctx, compilerVersion)];
 
                     expect(resolved.length).toBeGreaterThanOrEqual(1);
@@ -429,7 +420,7 @@ const unitSamples: Array<
                     ["Base.foo", [19], "Base.foo in child is the base's version of foo"],
                     ["Child.foo", [48], "Child.foo in child is the Child's version of foo"],
                     ["Base.S", [22], "Base.S in child is the base's struct def"],
-                    ["L", [167], "L in Unrelated is the imported source unit for the library"],
+                    ["L", [2], "L in Unrelated is the right import directive"],
                     [
                         "L.const",
                         [153],
