@@ -1,12 +1,4 @@
-import { assert } from "../../../misc";
-import {
-    getUserDefinedTypeFQName,
-    IntType,
-    specializeType,
-    TupleType,
-    typeNameToTypeNode,
-    TypeNode
-} from "../../../types";
+import { getUserDefinedTypeFQName } from "../../../types";
 import { ASTNode } from "../../ast_node";
 import { ContractKind, DataLocation, Mutability, StateVariableVisibility } from "../../constants";
 import { encodeSignature } from "../../utils";
@@ -224,55 +216,6 @@ export class VariableDeclaration extends ASTNode {
         }
 
         return this.name + "(" + argTypes.join(",") + ")";
-    }
-
-    get accessorArgsAndReturn(): [TypeNode[], TypeNode] {
-        const argTypes: TypeNode[] = [];
-
-        let type = this.vType;
-
-        assert(
-            type !== undefined,
-            `Called accessorArgsAndReturn() on variable declaration without type ${type?.print()}`
-        );
-
-        while (true) {
-            if (type instanceof ArrayTypeName) {
-                argTypes.push(new IntType(256, false));
-
-                type = type.vBaseType;
-            } else if (type instanceof Mapping) {
-                argTypes.push(
-                    specializeType(typeNameToTypeNode(type.vKeyType), DataLocation.Memory)
-                );
-
-                type = type.vValueType;
-            } else {
-                break;
-            }
-        }
-
-        let retType: TypeNode;
-
-        if (
-            type instanceof UserDefinedTypeName &&
-            type.vReferencedDeclaration instanceof StructDefinition
-        ) {
-            retType = new TupleType([]);
-            for (const field of type.vReferencedDeclaration.vMembers) {
-                if (field instanceof ArrayTypeName || field instanceof Mapping) {
-                    continue;
-                }
-
-                (retType as TupleType).elements.push(
-                    specializeType(typeNameToTypeNode(field.vType as TypeName), DataLocation.Memory)
-                );
-            }
-        } else {
-            retType = specializeType(typeNameToTypeNode(type), DataLocation.Memory);
-        }
-
-        return [argTypes, retType];
     }
 
     get getterCanonicalSignatureHash(): string {
