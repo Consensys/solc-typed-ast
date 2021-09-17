@@ -1,3 +1,4 @@
+import { enumToIntType } from "../../..";
 import { ASTNodeWithChildren } from "../../ast_node";
 import { SourceUnit } from "../meta/source_unit";
 import { ContractDefinition } from "./contract_definition";
@@ -56,14 +57,6 @@ export class EnumDefinition extends ASTNodeWithChildren<EnumValue> {
     }
 
     toUintTypeString(): string {
-        const length = this.children.length;
-
-        for (let n = 8; n <= 32; n += 8) {
-            if (length < 2 ** n) {
-                return "uint" + n;
-            }
-        }
-
-        throw new Error("Unable to detect enum type size - member count exceeds 2 ** 32");
+        return enumToIntType(this).pp();
     }
 }

@@ -4,7 +4,9 @@ import {
     DataLocation,
     ElementaryTypeName,
     EnumDefinition,
+    FunctionStateMutability,
     FunctionTypeName,
+    FunctionVisibility,
     Literal,
     LiteralKind,
     Mapping,
@@ -220,7 +222,7 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
             return new UserDefinedType(getUserDefinedTypeFQName(def), def);
         }
 
-        throw new Error(`NYI typecheckin of user-defined type ${def.print()}`);
+        throw new Error(`NYI typechecking of user-defined type ${def.print()}`);
     }
 
     if (astT instanceof FunctionTypeName) {
@@ -262,6 +264,82 @@ export function variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNo
     return typeNameToSpecializedTypeNode(decl.vType, decl.storageLocation);
 }
 
+export function enumToIntType(decl: EnumDefinition): IntType {
+    const length = decl.children.length;
+
+    let size: number | undefined;
+
+    for (let n = 8; n <= 32; n += 8) {
+        if (length < 2 ** n) {
+            size = n;
+
+            break;
+        }
+    }
+
+    assert(
+        size !== undefined,
+        "Unable to detect enum type size - member count exceeds 2 ** 32",
+        decl
+    );
+
+    return new IntType(size, false);
+}
+
+/**
+ * Converts `type` to value type. Following rules are applied:
+ * 1. Contract definitions turned to address.
+ * 2. Enum definitions turned to uint of minimal fitting size.
+ * 3. Struct definitions turned to tuples.
+ *   3.1. Mappings are completely ommited.
+ *   3.2. Arrays of root structs are ommited, while preserved for nested structs.
+ * 4. Data locations are skipped.
+ */
+function toValueType(type: TypeNode, depth = 0): TypeNode {
+    if (type instanceof PointerType) {
+        return toValueType(type.to, depth);
+    }
+
+    if (type instanceof UserDefinedType) {
+        if (type.definition instanceof ContractDefinition) {
+            return new AddressType(false);
+        }
+
+        if (type.definition instanceof EnumDefinition) {
+            return enumToIntType(type.definition);
+        }
+
+        if (type.definition instanceof StructDefinition) {
+            const elements: TypeNode[] = [];
+
+            for (const member of type.definition.vMembers) {
+                const memberT = member.vType;
+
+                assert(memberT !== undefined, "Unexpected untyped struct member", type.definition);
+
+                if (memberT instanceof Mapping) {
+                    continue;
+                }
+
+                if (memberT instanceof ArrayTypeName && depth === 0) {
+                    continue;
+                }
+
+                elements.push(
+                    toValueType(
+                        typeNameToSpecializedTypeNode(memberT, DataLocation.Memory),
+                        depth + 1
+                    )
+                );
+            }
+
+            return new TupleType(elements);
+        }
+    }
+
+    return type;
+}
+
 /**
  * For given variable declaration `decl` computes accessor arguments and return types.
  * Usage:
@@ -287,7 +365,9 @@ export function getterArgsAndReturn(decl: VariableDeclaration): [TypeNode[], Typ
 
             type = type.vBaseType;
         } else if (type instanceof Mapping) {
-            argTypes.push(typeNameToSpecializedTypeNode(type.vKeyType, DataLocation.Memory));
+            argTypes.push(
+                toValueType(typeNameToSpecializedTypeNode(type.vKeyType, DataLocation.Memory))
+            );
 
             type = type.vValueType;
         } else {
@@ -295,28 +375,22 @@ export function getterArgsAndReturn(decl: VariableDeclaration): [TypeNode[], Typ
         }
     }
 
-    let retType: TypeNode;
-
-    if (
-        type instanceof UserDefinedTypeName &&
-        type.vReferencedDeclaration instanceof StructDefinition
-    ) {
-        const elements: TypeNode[] = [];
-
-        for (const field of type.vReferencedDeclaration.vMembers) {
-            if (field instanceof ArrayTypeName || field instanceof Mapping) {
-                continue;
-            }
-
-            assert(field.vType !== undefined, "Unexpected struct member without type", type);
-
-            elements.push(typeNameToSpecializedTypeNode(field.vType, DataLocation.Memory));
-        }
-
-        retType = new TupleType(elements);
-    } else {
-        retType = typeNameToSpecializedTypeNode(type, DataLocation.Memory);
-    }
+    const retType = toValueType(typeNameToSpecializedTypeNode(type, DataLocation.Memory));
 
     return [argTypes, retType];
+}
+
+/**
+ * For given variable declaration `decl` computes accessor function type
+ */
+export function getterTypeForVar(decl: VariableDeclaration): FunctionType {
+    const [args, ret] = getterArgsAndReturn(decl);
+
+    return new FunctionType(
+        decl.name,
+        args,
+        ret instanceof TupleType ? ret.elements : [ret],
+        FunctionVisibility.Public,
+        FunctionStateMutability.View
+    );
 }
