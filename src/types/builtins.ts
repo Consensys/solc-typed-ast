@@ -97,7 +97,7 @@ export const BuiltinSymbols = new Map<string, VersionDependentType>([
                 FunctionVisibility.Default,
                 FunctionStateMutability.View
             ),
-            ">=0.4.13"
+            ">=0.4.22"
         ]
     ],
     [
@@ -110,7 +110,7 @@ export const BuiltinSymbols = new Map<string, VersionDependentType>([
                 FunctionVisibility.Default,
                 FunctionStateMutability.View
             ),
-            ">=0.4.13"
+            ">=0.4.21"
         ]
     ],
     [
