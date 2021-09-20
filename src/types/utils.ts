@@ -1,3 +1,4 @@
+import { satisfies } from "semver";
 import {
     ArrayTypeName,
     ContractDefinition,
@@ -30,6 +31,17 @@ import {
     TypeNode,
     UserDefinedType
 } from "./ast";
+
+export type VersionDependentType = [TypeNode, string];
+
+export function getTypeForCompilerVersion(
+    typing: VersionDependentType,
+    compilerVersion: string
+): TypeNode | undefined {
+    const [type, version] = typing;
+
+    return satisfies(compilerVersion, version) ? type : undefined;
+}
 
 /**
  * Given a general type 'pattern' that doesn't contain any data locations, and a data location,
