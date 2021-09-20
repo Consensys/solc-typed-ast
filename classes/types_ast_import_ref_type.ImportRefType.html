@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>BuiltinType | solc-typed-ast</title>
+	<title>ImportRefType | solc-typed-ast</title>
 	<meta name="description" content="Documentation for solc-typed-ast">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -53,19 +53,27 @@
 					<a href="../modules.html">solc-typed-ast</a>
 				</li>
 				<li>
-					<a href="../modules/types_ast_builtin_type.html">types/ast/builtin_type</a>
+					<a href="../modules/types_ast_import_ref_type.html">types/ast/import_ref_type</a>
 				</li>
 				<li>
-					<a href="types_ast_builtin_type.BuiltinType.html">BuiltinType</a>
+					<a href="types_ast_import_ref_type.ImportRefType.html">ImportRefType</a>
 				</li>
 			</ul>
-			<h1>Class BuiltinType</h1>
+			<h1>Class ImportRefType</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>A utility type for referencing aliased unit member access.
+						It is not directly referenced in typeString parser grammar.</p>
+					</div>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -73,12 +81,7 @@
 						<a href="types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">BuiltinType</span>
-								<ul class="tsd-hierarchy">
-									<li>
-										<a href="types_ast_builtin_struct_type.BuiltinStructType.html" class="tsd-signature-type" data-tsd-kind="Class">BuiltinStructType</a>
-									</li>
-								</ul>
+								<span class="target">ImportRefType</span>
 							</li>
 						</ul>
 					</li>
@@ -91,31 +94,31 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="types_ast_builtin_type.BuiltinType.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="types_ast_import_ref_type.ImportRefType.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="types_ast_builtin_type.BuiltinType.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="types_ast_builtin_type.BuiltinType.html#name" class="tsd-kind-icon">name</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="types_ast_builtin_type.BuiltinType.html#src" class="tsd-kind-icon">src</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="types_ast_import_ref_type.ImportRefType.html#id" class="tsd-kind-icon">id</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="types_ast_import_ref_type.ImportRefType.html#importStmt" class="tsd-kind-icon">import<wbr>Stmt</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="types_ast_import_ref_type.ImportRefType.html#src" class="tsd-kind-icon">src</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Accessors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="types_ast_builtin_type.BuiltinType.html#requiredSrc" class="tsd-kind-icon">required<wbr>Src</a></li>
+								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited"><a href="types_ast_import_ref_type.ImportRefType.html#requiredSrc" class="tsd-kind-icon">required<wbr>Src</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="types_ast_builtin_type.BuiltinType.html#getChildren" class="tsd-kind-icon">get<wbr>Children</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="types_ast_builtin_type.BuiltinType.html#getFields" class="tsd-kind-icon">get<wbr>Fields</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="types_ast_builtin_type.BuiltinType.html#getSourceFragment" class="tsd-kind-icon">get<wbr>Source<wbr>Fragment</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="types_ast_builtin_type.BuiltinType.html#pp" class="tsd-kind-icon">pp</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="types_ast_builtin_type.BuiltinType.html#walk" class="tsd-kind-icon">walk</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="types_ast_import_ref_type.ImportRefType.html#getChildren" class="tsd-kind-icon">get<wbr>Children</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="types_ast_import_ref_type.ImportRefType.html#getFields" class="tsd-kind-icon">get<wbr>Fields</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="types_ast_import_ref_type.ImportRefType.html#getSourceFragment" class="tsd-kind-icon">get<wbr>Source<wbr>Fragment</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="types_ast_import_ref_type.ImportRefType.html#pp" class="tsd-kind-icon">pp</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="types_ast_import_ref_type.ImportRefType.html#walk" class="tsd-kind-icon">walk</a></li>
 							</ul>
 						</section>
 					</div>
@@ -127,26 +130,26 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Builtin<wbr>Type<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, src<span class="tsd-signature-symbol">?: </span><a href="../modules/misc_node.html#Range" class="tsd-signature-type" data-tsd-kind="Type alias">Range</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="types_ast_builtin_type.BuiltinType.html" class="tsd-signature-type" data-tsd-kind="Class">BuiltinType</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Import<wbr>Ref<wbr>Type<span class="tsd-signature-symbol">(</span>importStmt<span class="tsd-signature-symbol">: </span><a href="ast_implementation_meta_import_directive.ImportDirective.html" class="tsd-signature-type" data-tsd-kind="Class">ImportDirective</a>, src<span class="tsd-signature-symbol">?: </span><a href="../modules/misc_node.html#Range" class="tsd-signature-type" data-tsd-kind="Type alias">Range</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="types_ast_import_ref_type.ImportRefType.html" class="tsd-signature-type" data-tsd-kind="Class">ImportRefType</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="types_ast_type.TypeNode.html">TypeNode</a>.<a href="types_ast_type.TypeNode.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/ast/builtin_type.ts#L7">src/types/ast/builtin_type.ts:7</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/ast/import_ref_type.ts#L12">src/types/ast/import_ref_type.ts:12</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
+									<h5>importStmt: <a href="ast_implementation_meta_import_directive.ImportDirective.html" class="tsd-signature-type" data-tsd-kind="Class">ImportDirective</a></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> src: <a href="../modules/misc_node.html#Range" class="tsd-signature-type" data-tsd-kind="Type alias">Range</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="types_ast_builtin_type.BuiltinType.html" class="tsd-signature-type" data-tsd-kind="Class">BuiltinType</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="types_ast_import_ref_type.ImportRefType.html" class="tsd-signature-type" data-tsd-kind="Class">ImportRefType</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -165,12 +168,12 @@
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="name" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> name</h3>
-					<div class="tsd-signature tsd-kind-icon">name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<a name="importStmt" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> import<wbr>Stmt</h3>
+					<div class="tsd-signature tsd-kind-icon">import<wbr>Stmt<span class="tsd-signature-symbol">:</span> <a href="ast_implementation_meta_import_directive.ImportDirective.html" class="tsd-signature-type" data-tsd-kind="Class">ImportDirective</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/ast/builtin_type.ts#L5">src/types/ast/builtin_type.ts:5</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/ast/import_ref_type.ts#L10">src/types/ast/import_ref_type.ts:10</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -237,7 +240,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="types_ast_type.TypeNode.html">TypeNode</a>.<a href="types_ast_type.TypeNode.html#getFields">getFields</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/ast/builtin_type.ts#L17">src/types/ast/builtin_type.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/ast/import_ref_type.ts#L23">src/types/ast/import_ref_type.ts:23</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h4>
@@ -279,7 +282,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="types_ast_type.TypeNode.html">TypeNode</a>.<a href="types_ast_type.TypeNode.html#pp">pp</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/ast/builtin_type.ts#L13">src/types/ast/builtin_type.ts:13</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/ast/import_ref_type.ts#L27">src/types/ast/import_ref_type.ts:27</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4>
@@ -337,7 +340,7 @@
 						<a href="../modules.html">Modules</a>
 					</li>
 					<li class="current tsd-kind-module">
-						<a href="../modules/types_ast_builtin_type.html">types/ast/builtin_<wbr>type</a>
+						<a href="../modules/types_ast_import_ref_type.html">types/ast/import_<wbr>ref_<wbr>type</a>
 					</li>
 				</ul>
 			</nav>
@@ -346,37 +349,37 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-parent-kind-module">
-						<a href="types_ast_builtin_type.BuiltinType.html" class="tsd-kind-icon">Builtin<wbr>Type</a>
+						<a href="types_ast_import_ref_type.ImportRefType.html" class="tsd-kind-icon">Import<wbr>Ref<wbr>Type</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-								<a href="types_ast_builtin_type.BuiltinType.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="types_ast_import_ref_type.ImportRefType.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="types_ast_builtin_type.BuiltinType.html#id" class="tsd-kind-icon">id</a>
+								<a href="types_ast_import_ref_type.ImportRefType.html#id" class="tsd-kind-icon">id</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="types_ast_builtin_type.BuiltinType.html#name" class="tsd-kind-icon">name</a>
+								<a href="types_ast_import_ref_type.ImportRefType.html#importStmt" class="tsd-kind-icon">import<wbr>Stmt</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="types_ast_builtin_type.BuiltinType.html#src" class="tsd-kind-icon">src</a>
+								<a href="types_ast_import_ref_type.ImportRefType.html#src" class="tsd-kind-icon">src</a>
 							</li>
 							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-inherited">
-								<a href="types_ast_builtin_type.BuiltinType.html#requiredSrc" class="tsd-kind-icon">required<wbr>Src</a>
+								<a href="types_ast_import_ref_type.ImportRefType.html#requiredSrc" class="tsd-kind-icon">required<wbr>Src</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="types_ast_builtin_type.BuiltinType.html#getChildren" class="tsd-kind-icon">get<wbr>Children</a>
+								<a href="types_ast_import_ref_type.ImportRefType.html#getChildren" class="tsd-kind-icon">get<wbr>Children</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="types_ast_builtin_type.BuiltinType.html#getFields" class="tsd-kind-icon">get<wbr>Fields</a>
+								<a href="types_ast_import_ref_type.ImportRefType.html#getFields" class="tsd-kind-icon">get<wbr>Fields</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="types_ast_builtin_type.BuiltinType.html#getSourceFragment" class="tsd-kind-icon">get<wbr>Source<wbr>Fragment</a>
+								<a href="types_ast_import_ref_type.ImportRefType.html#getSourceFragment" class="tsd-kind-icon">get<wbr>Source<wbr>Fragment</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="types_ast_builtin_type.BuiltinType.html#pp" class="tsd-kind-icon">pp</a>
+								<a href="types_ast_import_ref_type.ImportRefType.html#pp" class="tsd-kind-icon">pp</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="types_ast_builtin_type.BuiltinType.html#walk" class="tsd-kind-icon">walk</a>
+								<a href="types_ast_import_ref_type.ImportRefType.html#walk" class="tsd-kind-icon">walk</a>
 							</li>
 						</ul>
 					</li>

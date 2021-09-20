@@ -68,9 +68,16 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Type aliases</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias tsd-parent-kind-module"><a href="types_utils.html#VersionDependentType" class="tsd-kind-icon">Version<wbr>Dependent<wbr>Type</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#generalizeType" class="tsd-kind-icon">generalize<wbr>Type</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#getTypeForCompilerVersion" class="tsd-kind-icon">get<wbr>Type<wbr>For<wbr>Compiler<wbr>Version</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#getUserDefinedTypeFQName" class="tsd-kind-icon">get<wbr>User<wbr>Defined<wbr>TypeFQName</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#specializeType" class="tsd-kind-icon">specialize<wbr>Type</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#typeNameToTypeNode" class="tsd-kind-icon">type<wbr>Name<wbr>ToType<wbr>Node</a></li>
@@ -78,6 +85,19 @@
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-module">
+					<a name="VersionDependentType" class="tsd-anchor"></a>
+					<h3>Version<wbr>Dependent<wbr>Type</h3>
+					<div class="tsd-signature tsd-kind-icon">Version<wbr>Dependent<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">[</span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L35">src/types/utils.ts:35</a></li>
+						</ul>
+					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -92,7 +112,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L107">src/types/utils.ts:107</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L119">src/types/utils.ts:119</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -118,6 +138,32 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="getTypeForCompilerVersion" class="tsd-anchor"></a>
+					<h3>get<wbr>Type<wbr>For<wbr>Compiler<wbr>Version</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Type<wbr>For<wbr>Compiler<wbr>Version<span class="tsd-signature-symbol">(</span>typing<span class="tsd-signature-symbol">: </span><a href="types_utils.html#VersionDependentType" class="tsd-signature-type" data-tsd-kind="Type alias">VersionDependentType</a>, compilerVersion<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L37">src/types/utils.ts:37</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>typing: <a href="types_utils.html#VersionDependentType" class="tsd-signature-type" data-tsd-kind="Type alias">VersionDependentType</a></h5>
+								</li>
+								<li>
+									<h5>compilerVersion: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
 					<a name="getUserDefinedTypeFQName" class="tsd-anchor"></a>
 					<h3>get<wbr>User<wbr>Defined<wbr>TypeFQName</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
@@ -127,7 +173,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L133">src/types/utils.ts:133</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L145">src/types/utils.ts:145</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -150,7 +196,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L47">src/types/utils.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L59">src/types/utils.ts:59</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -193,7 +239,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L158">src/types/utils.ts:158</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L170">src/types/utils.ts:170</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -226,7 +272,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L143">src/types/utils.ts:143</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L155">src/types/utils.ts:155</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -260,8 +306,14 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-type-alias tsd-parent-kind-module">
+						<a href="types_utils.html#VersionDependentType" class="tsd-kind-icon">Version<wbr>Dependent<wbr>Type</a>
+					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="types_utils.html#generalizeType" class="tsd-kind-icon">generalize<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="types_utils.html#getTypeForCompilerVersion" class="tsd-kind-icon">get<wbr>Type<wbr>For<wbr>Compiler<wbr>Version</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="types_utils.html#getUserDefinedTypeFQName" class="tsd-kind-icon">get<wbr>User<wbr>Defined<wbr>TypeFQName</a>
