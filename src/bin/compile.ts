@@ -41,7 +41,7 @@ const cli = {
         "source"
     ],
     number: ["depth"],
-    string: ["mode", "compiler-version", "path-remapping", "xpath"],
+    string: ["mode", "compiler-version", "path-remapping", "xpath", "compiler-settings"],
     default: {
         depth: Number.MAX_SAFE_INTEGER,
         mode: modes[0],
@@ -87,6 +87,9 @@ OPTIONS:
                                 - auto (try to detect suitable compiler version)
                             Default value: ${cli.default["compiler-version"]}
     --path-remapping        Path remapping input for Solc.
+    --compiler-settings     Additional settings passed to the solc compiler in the form of a
+                            JSON string (e.g. '{"optimizer": {"enabled": true, "runs": 200}}').
+                            Note the double quotes. For more details see https://docs.soliditylang.org/en/latest/using-the-compiler.html#input-description.
     --raw                   Print raw Solc compilation output.
     --with-sources          When used with "raw", adds "source" property with 
                             source files content to the compiler artifact.
@@ -119,6 +122,17 @@ OPTIONS:
     }
 
     const pathRemapping: string[] = args["path-remapping"] ? args["path-remapping"].split(";") : [];
+    let compilerSettings: any = undefined;
+
+    if (args["compiler-settings"]) {
+        try {
+            compilerSettings = JSON.parse(args["compiler-settings"]);
+        } catch (e) {
+            throw new Error(
+                `Invalid compiler settings '${args["compiler-settings"]}'. Compiler settings must be a valid JSON object.(${e})`
+            );
+        }
+    }
 
     let fileName = args._[0];
     let result: CompileResult;
@@ -137,8 +151,20 @@ OPTIONS:
 
             result =
                 mode === "json"
-                    ? compileJsonData(fileName, JSON.parse(content), compilerVersion, pathRemapping)
-                    : compileSourceString(fileName, content, compilerVersion, pathRemapping);
+                    ? compileJsonData(
+                          fileName,
+                          JSON.parse(content),
+                          compilerVersion,
+                          pathRemapping,
+                          compilerSettings
+                      )
+                    : compileSourceString(
+                          fileName,
+                          content,
+                          compilerVersion,
+                          pathRemapping,
+                          compilerSettings
+                      );
         } else {
             fileName = path.resolve(process.cwd(), args._[0]);
 
@@ -146,17 +172,22 @@ OPTIONS:
                 const iFileName = fileName.toLowerCase();
 
                 if (iFileName.endsWith(".sol")) {
-                    result = compileSol(fileName, compilerVersion, pathRemapping);
+                    result = compileSol(fileName, compilerVersion, pathRemapping, compilerSettings);
                 } else if (iFileName.endsWith(".json")) {
-                    result = compileJson(fileName, compilerVersion, pathRemapping);
+                    result = compileJson(
+                        fileName,
+                        compilerVersion,
+                        pathRemapping,
+                        compilerSettings
+                    );
                 } else {
                     throw new Error("Unable to auto-detect mode for the file name: " + fileName);
                 }
             } else {
                 result =
                     mode === "json"
-                        ? compileJson(fileName, compilerVersion, pathRemapping)
-                        : compileSol(fileName, compilerVersion, pathRemapping);
+                        ? compileJson(fileName, compilerVersion, pathRemapping, compilerSettings)
+                        : compileSol(fileName, compilerVersion, pathRemapping, compilerSettings);
             }
         }
     } catch (e) {

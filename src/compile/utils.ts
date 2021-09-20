@@ -55,41 +55,90 @@ export function getCompilerForVersion(version: string): any {
     );
 }
 
-type CompilerInputCreator = (fileName: string, content: string, remappings?: string[]) => any;
+type Solc04Input = {
+    language: "Solidity";
+    sources: { [fileName: string]: string };
+    settings: { remappings: string[]; outputSelection: any; [otherKeys: string]: any };
+};
 
-const createCompiler04Input: CompilerInputCreator = (fileName, content, remappings?) => ({
-    language: "Solidity",
-    sources: {
-        [fileName]: content
-    },
-    settings: {
-        remappings,
-        outputSelection: {
-            "*": {
-                "*": ["*"],
-                "": ["*"]
+type Solc05Input = {
+    language: "Solidity";
+    sources: { [fileName: string]: { content: string } };
+    settings: { remappings: string[]; outputSelection: any; [otherKeys: string]: any };
+};
+
+function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, settings: any): T {
+    if (settings !== undefined) {
+        for (const key in settings) {
+            if (key === "remappings" || key === "outputSelection") {
+                continue;
             }
+
+            input.settings[key] = settings[key];
         }
     }
-});
 
-const createCompiler05Input: CompilerInputCreator = (fileName, content, remappings?) => ({
-    language: "Solidity",
-    sources: {
-        [fileName]: {
-            content
-        }
-    },
-    settings: {
-        remappings,
-        outputSelection: {
-            "*": {
-                "*": ["*"],
-                "": ["*"]
+    return input;
+}
+
+type CompilerInputCreator = (
+    fileName: string,
+    content: string,
+    remappings: string[],
+    compilerSettings: any
+) => Solc04Input | Solc05Input;
+
+const createCompiler04Input: CompilerInputCreator = (
+    fileName,
+    content,
+    remappings,
+    compilerSettings
+) =>
+    mergeCompilerSettings(
+        {
+            language: "Solidity",
+            sources: {
+                [fileName]: content
+            },
+            settings: {
+                remappings,
+                outputSelection: {
+                    "*": {
+                        "*": ["*"],
+                        "": ["*"]
+                    }
+                }
             }
-        }
-    }
-});
+        },
+        compilerSettings
+    );
+
+const createCompiler05Input: CompilerInputCreator = (
+    fileName,
+    content,
+    remappings,
+    compilerSettings
+) =>
+    mergeCompilerSettings(
+        {
+            language: "Solidity",
+            sources: {
+                [fileName]: {
+                    content
+                }
+            },
+            settings: {
+                remappings,
+                outputSelection: {
+                    "*": {
+                        "*": ["*"],
+                        "": ["*"]
+                    }
+                }
+            }
+        },
+        compilerSettings
+    );
 
 function consistentlyContainsOneOf(
     sources: { [key: string]: any },
@@ -234,26 +283,27 @@ export function compile(
     content: string,
     version: string,
     finder: ImportFinder,
-    remapping: string[]
+    remapping: string[],
+    compilerSettings?: any
 ): any {
     const compiler = getCompilerForVersion(version);
 
     if (satisfies(version, "0.4")) {
-        const input = createCompiler04Input(fileName, content, remapping);
+        const input = createCompiler04Input(fileName, content, remapping, compilerSettings);
         const output = compiler.compile(input, 1, finder);
 
         return output;
     }
 
     if (satisfies(version, "0.5")) {
-        const input = createCompiler05Input(fileName, content, remapping);
+        const input = createCompiler05Input(fileName, content, remapping, compilerSettings);
         const output = compiler.compile(JSON.stringify(input), finder);
 
         return JSON.parse(output);
     }
 
     const callbacks = { import: finder };
-    const input = createCompiler05Input(fileName, content, remapping);
+    const input = createCompiler05Input(fileName, content, remapping, compilerSettings);
     const output = compiler.compile(JSON.stringify(input), callbacks);
 
     return JSON.parse(output);
@@ -291,7 +341,8 @@ export function compileSourceString(
     fileName: string,
     sourceCode: string,
     version: string | CompilerVersionSelectionStrategy,
-    remapping: string[]
+    remapping: string[],
+    compilerSettings?: any
 ): CompileResult {
     const compilerVersionStrategy = getCompilerVersionStrategy(sourceCode, version);
     const files = new Map([[fileName, sourceCode]]);
@@ -304,7 +355,14 @@ export function compileSourceString(
             satisfies(compilerVersion, "0.4") ? parsePathRemapping(remapping) : []
         );
 
-        const data = compile(fileName, sourceCode, compilerVersion, finder, remapping);
+        const data = compile(
+            fileName,
+            sourceCode,
+            compilerVersion,
+            finder,
+            remapping,
+            compilerSettings
+        );
         const errors = detectCompileErrors(data);
 
         if (errors.length === 0) {
@@ -320,18 +378,20 @@ export function compileSourceString(
 export function compileSol(
     fileName: string,
     version: string | CompilerVersionSelectionStrategy,
-    remapping: string[]
+    remapping: string[],
+    compilerSettings?: any
 ): CompileResult {
     const source = fse.readFileSync(fileName, { encoding: "utf-8" });
 
-    return compileSourceString(fileName, source, version, remapping);
+    return compileSourceString(fileName, source, version, remapping, compilerSettings);
 }
 
 export function compileJsonData(
     fileName: string,
     data: any,
     version: string | CompilerVersionSelectionStrategy,
-    remapping: string[]
+    remapping: string[],
+    compilerSettings?: any
 ): CompileResult {
     const files = new Map<string, string>();
 
@@ -377,7 +437,8 @@ export function compileJsonData(
                 sourceCode,
                 compilerVersion,
                 finder,
-                remapping
+                remapping,
+                compilerSettings
             );
 
             const errors = detectCompileErrors(compileData);
@@ -400,9 +461,10 @@ export function compileJsonData(
 export function compileJson(
     fileName: string,
     version: string | CompilerVersionSelectionStrategy,
-    remapping: string[]
+    remapping: string[],
+    compilerSettings?: any
 ): CompileResult {
     const data = fse.readJSONSync(fileName);
 
-    return compileJsonData(fileName, data, version, remapping);
+    return compileJsonData(fileName, data, version, remapping, compilerSettings);
 }
