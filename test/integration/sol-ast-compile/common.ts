@@ -24,6 +24,7 @@ export const options = [
     "mode",
     "compiler-version",
     "path-remapping",
+    "compiler-settings",
     "raw",
     "with-sources",
     "tree",
