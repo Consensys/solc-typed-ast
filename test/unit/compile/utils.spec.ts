@@ -5,27 +5,27 @@ import {
     createFileSystemImportFinder,
     createMemoryImportFinder,
     detectCompileErrors,
-    getCompilerForVersion,
+    getWasmCompilerForVersion,
     LatestAndFirstVersionInEachSeriesStrategy,
     LatestCompilerVersion,
     parsePathRemapping
 } from "../../../src";
 
 describe("Compile general utils", () => {
-    describe("getCompilerForVersion()", () => {
+    describe("getWasmCompilerForVersion()", () => {
         it("Non-exact version of compiler triggers an error", () => {
-            expect(() => getCompilerForVersion("^0.5.0")).toThrow();
+            expect(() => getWasmCompilerForVersion("^0.5.0")).toThrow();
         });
 
         it("Unsupported version of compiler triggers an error", () => {
-            expect(() => getCompilerForVersion("0.4.10")).toThrow();
+            expect(() => getWasmCompilerForVersion("0.4.10")).toThrow();
         });
 
         const strategy = new LatestAndFirstVersionInEachSeriesStrategy();
 
         for (const version of strategy.select()) {
             it(`Compiler ${version} is accessible`, () => {
-                expect(getCompilerForVersion(version)).toBeInstanceOf(Object);
+                expect(getWasmCompilerForVersion(version)).toBeInstanceOf(Object);
             });
         }
     });

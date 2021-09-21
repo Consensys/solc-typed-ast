@@ -1,6 +1,7 @@
 import fse from "fs-extra";
 import path from "path";
 import { lt, satisfies } from "semver";
+import { CompilationFrontend } from "../ast";
 import {
     CompilerVersionSelectionStrategy,
     LatestVersionInEachSeriesStrategy,
@@ -15,6 +16,7 @@ import {
     Remapping,
     RemappingResolver
 } from "./import_resolver";
+import { getNativeCompilerForVersion } from "./native_compilers";
 import { isExact } from "./version";
 
 export interface MemoryStorage {
@@ -46,7 +48,7 @@ export class CompileFailedError extends Error {
 
 export type ImportFinder = (filePath: string) => { contents: string } | { error: string };
 
-export function getCompilerForVersion(version: string): any {
+export function getWasmCompilerForVersion(version: string): any {
     if (isExact(version)) {
         return require("solc-" + version);
     }
@@ -282,9 +284,9 @@ export function compile(
     finder: ImportFinder,
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
-    compilerSettings?: any
+    compilerSettings?: any,
+    frontend = CompilationFrontend.Default
 ): any {
-    const compiler = getCompilerForVersion(version);
     const input = createCompilerInput(
         fileName,
         version,
@@ -293,23 +295,35 @@ export function compile(
         remapping,
         compilerSettings
     );
-
-    if (satisfies(version, "0.4")) {
-        const output = compiler.compile(input, 1, finder);
-
-        return output;
+    if (frontend === CompilationFrontend.Default) {
+        frontend = CompilationFrontend.WASM;
     }
 
-    if (satisfies(version, "0.5")) {
-        const output = compiler.compile(JSON.stringify(input), finder);
+    if (frontend === CompilationFrontend.WASM) {
+        const compiler = getWasmCompilerForVersion(version);
+
+        if (satisfies(version, "0.4")) {
+            const output = compiler.compile(input, 1, finder);
+
+            return output;
+        }
+
+        if (satisfies(version, "0.5")) {
+            const output = compiler.compile(JSON.stringify(input), finder);
+
+            return JSON.parse(output);
+        }
+
+        const callbacks = { import: finder };
+        const output = compiler.compile(JSON.stringify(input), callbacks);
 
         return JSON.parse(output);
+    } else if (frontend === CompilationFrontend.Native) {
+        getNativeCompilerForVersion();
+        throw new Error("NYI Native compiler");
+    } else {
+        throw new Error(`NYI Compiler Frontend ${frontend}`);
     }
-
-    const callbacks = { import: finder };
-    const output = compiler.compile(JSON.stringify(input), callbacks);
-
-    return JSON.parse(output);
 }
 
 export function detectCompileErrors(data: any): string[] {
@@ -346,7 +360,8 @@ export function compileSourceString(
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
-    compilerSettings?: any
+    compilerSettings?: any,
+    frontend = CompilationFrontend.Default
 ): CompileResult {
     const compilerVersionStrategy = getCompilerVersionStrategy(sourceCode, version);
     const files = new Map([[fileName, sourceCode]]);
@@ -366,7 +381,8 @@ export function compileSourceString(
             finder,
             remapping,
             compilationOutput,
-            compilerSettings
+            compilerSettings,
+            frontend
         );
         const errors = detectCompileErrors(data);
 
@@ -385,7 +401,8 @@ export function compileSol(
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
-    compilerSettings?: any
+    compilerSettings?: any,
+    frontend = CompilationFrontend.Default
 ): CompileResult {
     const source = fse.readFileSync(fileName, { encoding: "utf-8" });
 
@@ -395,7 +412,8 @@ export function compileSol(
         version,
         remapping,
         compilationOutput,
-        compilerSettings
+        compilerSettings,
+        frontend
     );
 }
 
@@ -405,7 +423,8 @@ export function compileJsonData(
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
-    compilerSettings?: any
+    compilerSettings?: any,
+    frontend = CompilationFrontend.Default
 ): CompileResult {
     const files = new Map<string, string>();
 
@@ -453,7 +472,8 @@ export function compileJsonData(
                 finder,
                 remapping,
                 compilationOutput,
-                compilerSettings
+                compilerSettings,
+                frontend
             );
 
             const errors = detectCompileErrors(compileData);
@@ -478,9 +498,18 @@ export function compileJson(
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
-    compilerSettings?: any
+    compilerSettings?: any,
+    frontend = CompilationFrontend.Default
 ): CompileResult {
     const data = fse.readJSONSync(fileName);
 
-    return compileJsonData(fileName, data, version, remapping, compilationOutput, compilerSettings);
+    return compileJsonData(
+        fileName,
+        data,
+        version,
+        remapping,
+        compilationOutput,
+        compilerSettings,
+        frontend
+    );
 }

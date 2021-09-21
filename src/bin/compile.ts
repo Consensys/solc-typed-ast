@@ -29,6 +29,7 @@ import {
     VariableDeclaration,
     XPath
 } from "..";
+import { CompilationFrontend, PossibleCompilationFrontends } from "../ast";
 
 const modes = ["auto", "sol", "json"];
 
@@ -44,11 +45,19 @@ const cli = {
         "source"
     ],
     number: ["depth"],
-    string: ["mode", "compiler-version", "path-remapping", "xpath", "compiler-settings"],
+    string: [
+        "mode",
+        "compiler-version",
+        "path-remapping",
+        "xpath",
+        "compiler-settings",
+        "frontend"
+    ],
     default: {
         depth: Number.MAX_SAFE_INTEGER,
         mode: modes[0],
-        "compiler-version": "auto"
+        "compiler-version": "auto",
+        frontend: "default"
     }
 };
 
@@ -109,6 +118,16 @@ OPTIONS:
     const stdin: boolean = args.stdin;
     const mode: string = args.mode;
 
+    if (!PossibleCompilationFrontends.has(args.frontend)) {
+        throw new Error(
+            `Invalid frontend "${args.frontend}". Possible values: ${[
+                ...PossibleCompilationFrontends.values()
+            ].join(", ")}.`
+        );
+    }
+
+    const frontend = args.frontend as CompilationFrontend;
+
     if (!modes.includes(mode)) {
         throw new Error(`Invalid mode "${mode}". Possible values: ${modes.join(", ")}.`);
     }
@@ -161,7 +180,8 @@ OPTIONS:
                           compilerVersion,
                           pathRemapping,
                           compilationOutput,
-                          compilerSettings
+                          compilerSettings,
+                          frontend
                       )
                     : compileSourceString(
                           fileName,
@@ -169,7 +189,8 @@ OPTIONS:
                           compilerVersion,
                           pathRemapping,
                           compilationOutput,
-                          compilerSettings
+                          compilerSettings,
+                          frontend
                       );
         } else {
             fileName = path.resolve(process.cwd(), args._[0]);
@@ -183,7 +204,8 @@ OPTIONS:
                         compilerVersion,
                         pathRemapping,
                         compilationOutput,
-                        compilerSettings
+                        compilerSettings,
+                        frontend
                     );
                 } else if (iFileName.endsWith(".json")) {
                     result = compileJson(
@@ -191,7 +213,8 @@ OPTIONS:
                         compilerVersion,
                         pathRemapping,
                         compilationOutput,
-                        compilerSettings
+                        compilerSettings,
+                        frontend
                     );
                 } else {
                     throw new Error("Unable to auto-detect mode for the file name: " + fileName);
