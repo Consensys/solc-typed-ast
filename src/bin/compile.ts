@@ -8,6 +8,7 @@ import {
     ASTNodeFormatter,
     ASTReader,
     ASTWriter,
+    CompilationOutput,
     CompileFailedError,
     compileJson,
     compileJsonData,
@@ -26,7 +27,6 @@ import {
     VariableDeclaration,
     XPath
 } from "..";
-import { CompilationOutput } from "../ast";
 
 const modes = ["auto", "sol", "json"];
 

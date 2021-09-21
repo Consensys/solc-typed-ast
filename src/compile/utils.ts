@@ -1,13 +1,13 @@
 import fse from "fs-extra";
 import path from "path";
 import { lt, satisfies } from "semver";
-import { CompilationOutput } from "../ast";
 import {
     CompilerVersionSelectionStrategy,
     LatestVersionInEachSeriesStrategy,
     RangeVersionStrategy,
     VersionDetectionStrategy
 } from "./compiler_selection";
+import { CompilationOutput } from "./constants";
 import {
     FileSystemResolver,
     ImportResolver,
@@ -56,25 +56,19 @@ export function getCompilerForVersion(version: string): any {
     );
 }
 
-type PartialSolcInput = {
+interface PartialSolcInput {
     language: "Solidity";
     settings: { remappings: string[]; outputSelection: any; [otherKeys: string]: any };
     [otherKeys: string]: any;
-};
+}
 
-type Solc04Input = {
-    language: "Solidity";
+interface Solc04Input extends PartialSolcInput {
     sources: { [fileName: string]: string };
-    settings: { remappings: string[]; outputSelection: any; [otherKeys: string]: any };
-    [otherKeys: string]: any;
-};
+}
 
-type Solc05Input = {
-    language: "Solidity";
+interface Solc05Input extends PartialSolcInput {
     sources: { [fileName: string]: { content: string } };
-    settings: { remappings: string[]; outputSelection: any; [otherKeys: string]: any };
-    [otherKeys: string]: any;
-};
+}
 
 function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, settings: any): T {
     if (settings !== undefined) {
@@ -128,20 +122,17 @@ function createCompilerInput(
         }
     };
 
-    let inp: Solc04Input | Solc05Input;
-
     if (lt(version, "0.5.0")) {
         partialInp.sources = {
             [fileName]: content
         };
-
-        inp = partialInp as Solc04Input;
     } else {
         partialInp.sources = {
             [fileName]: { content }
         };
-        inp = partialInp as Solc05Input;
     }
+
+    const inp = partialInp as Solc04Input | Solc05Input;
 
     return mergeCompilerSettings(inp, compilerSettings);
 }

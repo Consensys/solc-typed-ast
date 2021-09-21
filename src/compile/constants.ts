@@ -82,3 +82,33 @@ export const CompilerVersions = [
 ];
 
 export const LatestCompilerVersion = CompilerVersions[CompilerVersions.length - 1];
+
+/**
+ * Corresponds to the string constants used in "outputSelection" as described in
+ * https://docs.soliditylang.org/en/latest/using-the-compiler.html#input-description
+ */
+export enum CompilationOutput {
+    AST = "ast",
+    ABI = "abi",
+    DEVDOC = "devdoc",
+    USERDOC = "userdoc",
+    METADATA = "metadata",
+    IR = "ir",
+    IR_OPTIMIZED = "irOptimized",
+    STORAGE_LAYOUT = "storageLayout",
+    EVM = "evm",
+    EVM_ASSEMBLY = "evm.assembly",
+    EVM_LEGACY_ASSEMBLY = "evm.legacyAssembly",
+    EVM_BYTECODE = "evm.bytecode",
+    EVM_BYTECODE_OBJECT = "evm.bytecode.object",
+    EVM_BYTECODE_OPCODES = "evm.bytecode.opcodes",
+    EVM_BYTECODE_SOURCEMAP = "evm.bytecode.sourceMap",
+    EVM_BYTECODE_LINKREFERENCES = "evm.bytecode.linkReferences",
+    EVM_BYTECODE_GENERATEDSOURCES = "evm.bytecode.generatedSources",
+    EVM_DEPLOYEDBYTECODE_IMMUTABLEREFERENCES = "evm.deployedBytecode.immutableReferences",
+    EVM_METHODIDENTIFIERS = "evm.methodIdentifiers",
+    EVM_GASESTIMATES = "evm.gasEstimates",
+    EWASM_WAST = "ewasm.wast",
+    EWASM_WASM = "ewasm.wasm",
+    ALL = "*"
+}
