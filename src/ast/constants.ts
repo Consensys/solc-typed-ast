@@ -89,6 +89,32 @@ export enum TimeUnit {
     Years = "years"
 }
 
+export enum CompilationOutput {
+    AST = "ast",
+    ABI = "abi",
+    DEVDOC = "devdoc",
+    USERDOC = "userdoc",
+    METADATA = "metadata",
+    IR = "ir",
+    IR_OPTIMIZED = "irOptimized",
+    STORAGE_LAYOUT = "storageLayout",
+    EVM = "evm",
+    EVM_ASSEMBLY = "evm.assembly",
+    EVM_LEGACY_ASSEMBLY = "evm.legacyAssembly",
+    EVM_BYTECODE = "evm.bytecode",
+    EVM_BYTECODE_OBJECT = "evm.bytecode.object",
+    EVM_BYTECODE_OPCODES = "evm.bytecode.opcodes",
+    EVM_BYTECODE_SOURCEMAP = "evm.bytecode.sourceMap",
+    EVM_BYTECODE_LINKREFERENCES = "evm.bytecode.linkReferences",
+    EVM_BYTECODE_GENERATEDSOURCES = "evm.bytecode.generatedSources",
+    EVM_DEPLOYEDBYTECODE_IMMUTABLEREFERENCES = "evm.deployedBytecode.immutableReferences",
+    EVM_METHODIDENTIFIERS = "evm.methodIdentifiers",
+    EVM_GASESTIMATES = "evm.gasEstimates",
+    EWASM_WAST = "ewasm.wast",
+    EWASM_WASM = "ewasm.wasm",
+    ALL = "*"
+}
+
 export const PossibleDataLocations = new Set<string>(Object.values(DataLocation));
 
 export const PossibleFunctionVisibilities = new Set<string>(Object.values(FunctionVisibility));
@@ -114,3 +140,5 @@ export const PossibleLiteralKinds = new Set<string>(Object.values(LiteralKind));
 export const PossibleEtherUnits = new Set<string>(Object.values(EtherUnit));
 
 export const PossibleTimeUnits = new Set<string>(Object.values(TimeUnit));
+
+export const PossibleCompilationOutputs = new Set<string>(Object.values(CompilationOutput));
