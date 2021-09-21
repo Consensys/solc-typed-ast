@@ -8,6 +8,7 @@ import {
     ASTNodeFormatter,
     ASTReader,
     ASTWriter,
+    CompilationOutput,
     CompileFailedError,
     compileJson,
     compileJsonData,
@@ -136,6 +137,7 @@ OPTIONS:
 
     let fileName = args._[0];
     let result: CompileResult;
+    const compilationOutput: CompilationOutput[] = [CompilationOutput.ALL];
 
     try {
         if (stdin) {
@@ -156,6 +158,7 @@ OPTIONS:
                           JSON.parse(content),
                           compilerVersion,
                           pathRemapping,
+                          compilationOutput,
                           compilerSettings
                       )
                     : compileSourceString(
@@ -163,6 +166,7 @@ OPTIONS:
                           content,
                           compilerVersion,
                           pathRemapping,
+                          compilationOutput,
                           compilerSettings
                       );
         } else {
@@ -172,12 +176,19 @@ OPTIONS:
                 const iFileName = fileName.toLowerCase();
 
                 if (iFileName.endsWith(".sol")) {
-                    result = compileSol(fileName, compilerVersion, pathRemapping, compilerSettings);
+                    result = compileSol(
+                        fileName,
+                        compilerVersion,
+                        pathRemapping,
+                        compilationOutput,
+                        compilerSettings
+                    );
                 } else if (iFileName.endsWith(".json")) {
                     result = compileJson(
                         fileName,
                         compilerVersion,
                         pathRemapping,
+                        compilationOutput,
                         compilerSettings
                     );
                 } else {
@@ -186,8 +197,20 @@ OPTIONS:
             } else {
                 result =
                     mode === "json"
-                        ? compileJson(fileName, compilerVersion, pathRemapping, compilerSettings)
-                        : compileSol(fileName, compilerVersion, pathRemapping, compilerSettings);
+                        ? compileJson(
+                              fileName,
+                              compilerVersion,
+                              pathRemapping,
+                              compilationOutput,
+                              compilerSettings
+                          )
+                        : compileSol(
+                              fileName,
+                              compilerVersion,
+                              pathRemapping,
+                              compilationOutput,
+                              compilerSettings
+                          );
             }
         }
     } catch (e) {
