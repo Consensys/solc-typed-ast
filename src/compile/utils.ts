@@ -277,7 +277,7 @@ export function createMemoryImportFinder(
     };
 }
 
-export function compile(
+export async function compile(
     fileName: string,
     content: string,
     version: string,
@@ -286,7 +286,7 @@ export function compile(
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
     frontend = CompilationFrontend.Default
-): any {
+): Promise<any> {
     const input = createCompilerInput(
         fileName,
         version,
@@ -319,7 +319,7 @@ export function compile(
 
         return JSON.parse(output);
     } else if (frontend === CompilationFrontend.Native) {
-        getNativeCompilerForVersion();
+        await getNativeCompilerForVersion(version);
         throw new Error("NYI Native compiler");
     } else {
         throw new Error(`NYI Compiler Frontend ${frontend}`);
@@ -354,7 +354,7 @@ export function detectCompileErrors(data: any): string[] {
     return errors;
 }
 
-export function compileSourceString(
+export async function compileSourceString(
     fileName: string,
     sourceCode: string,
     version: string | CompilerVersionSelectionStrategy,
@@ -362,7 +362,7 @@ export function compileSourceString(
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
     frontend = CompilationFrontend.Default
-): CompileResult {
+): Promise<CompileResult> {
     const compilerVersionStrategy = getCompilerVersionStrategy(sourceCode, version);
     const files = new Map([[fileName, sourceCode]]);
     const failures: CompileFailure[] = [];
@@ -374,7 +374,7 @@ export function compileSourceString(
             satisfies(compilerVersion, "0.4") ? parsePathRemapping(remapping) : []
         );
 
-        const data = compile(
+        const data = await compile(
             fileName,
             sourceCode,
             compilerVersion,
@@ -396,17 +396,17 @@ export function compileSourceString(
     throw new CompileFailedError(failures);
 }
 
-export function compileSol(
+export async function compileSol(
     fileName: string,
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
     frontend = CompilationFrontend.Default
-): CompileResult {
+): Promise<CompileResult> {
     const source = fse.readFileSync(fileName, { encoding: "utf-8" });
 
-    return compileSourceString(
+    return await compileSourceString(
         fileName,
         source,
         version,
@@ -417,7 +417,7 @@ export function compileSol(
     );
 }
 
-export function compileJsonData(
+export async function compileJsonData(
     fileName: string,
     data: any,
     version: string | CompilerVersionSelectionStrategy,
@@ -425,7 +425,7 @@ export function compileJsonData(
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
     frontend = CompilationFrontend.Default
-): CompileResult {
+): Promise<CompileResult> {
     const files = new Map<string, string>();
 
     if (!(data instanceof Object && data.sources instanceof Object)) {
@@ -465,7 +465,7 @@ export function compileJsonData(
         const failures: CompileFailure[] = [];
 
         for (const compilerVersion of compilerVersionStrategy.select()) {
-            const compileData = compile(
+            const compileData = await compile(
                 mainFileName,
                 sourceCode,
                 compilerVersion,
@@ -493,14 +493,14 @@ export function compileJsonData(
     );
 }
 
-export function compileJson(
+export async function compileJson(
     fileName: string,
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
     frontend = CompilationFrontend.Default
-): CompileResult {
+): Promise<CompileResult> {
     const data = fse.readJSONSync(fileName);
 
     return compileJsonData(
