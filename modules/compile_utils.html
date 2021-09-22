@@ -113,7 +113,7 @@
 					<div class="tsd-signature tsd-kind-icon">Import<wbr>Finder<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>filePath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-symbol">{ </span>contents<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L46">src/compile/utils.ts:46</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L47">src/compile/utils.ts:47</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -145,13 +145,13 @@
 					<a name="compile" class="tsd-anchor"></a>
 					<h3>compile</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">compile<span class="tsd-signature-symbol">(</span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, finder<span class="tsd-signature-symbol">: </span><a href="compile_utils.html#ImportFinder" class="tsd-signature-type" data-tsd-kind="Type alias">ImportFinder</a>, remapping<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, compilerSettings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">compile<span class="tsd-signature-symbol">(</span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, content<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, finder<span class="tsd-signature-symbol">: </span><a href="compile_utils.html#ImportFinder" class="tsd-signature-type" data-tsd-kind="Type alias">ImportFinder</a>, remapping<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, compilationOutput<span class="tsd-signature-symbol">?: </span><a href="../enums/compile_constants.CompilationOutput.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CompilationOutput</a><span class="tsd-signature-symbol">[]</span>, compilerSettings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L281">src/compile/utils.ts:281</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L278">src/compile/utils.ts:278</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -172,6 +172,9 @@
 									<h5>remapping: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
+									<h5>compilationOutput: <a href="../enums/compile_constants.CompilationOutput.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CompilationOutput</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ...</span></h5>
+								</li>
+								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> compilerSettings: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
@@ -183,13 +186,13 @@
 					<a name="compileJson" class="tsd-anchor"></a>
 					<h3>compile<wbr>Json</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">compile<wbr>Json<span class="tsd-signature-symbol">(</span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/compile_compiler_selection.CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a>, remapping<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, compilerSettings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/compile_utils.CompileResult.html" class="tsd-signature-type" data-tsd-kind="Interface">CompileResult</a></li>
+						<li class="tsd-signature tsd-kind-icon">compile<wbr>Json<span class="tsd-signature-symbol">(</span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/compile_compiler_selection.CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a>, remapping<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, compilationOutput<span class="tsd-signature-symbol">?: </span><a href="../enums/compile_constants.CompilationOutput.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CompilationOutput</a><span class="tsd-signature-symbol">[]</span>, compilerSettings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/compile_utils.CompileResult.html" class="tsd-signature-type" data-tsd-kind="Interface">CompileResult</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L461">src/compile/utils.ts:461</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L476">src/compile/utils.ts:476</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -204,6 +207,9 @@
 									<h5>remapping: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
+									<h5>compilationOutput: <a href="../enums/compile_constants.CompilationOutput.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CompilationOutput</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ...</span></h5>
+								</li>
+								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> compilerSettings: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
@@ -215,13 +221,13 @@
 					<a name="compileJsonData" class="tsd-anchor"></a>
 					<h3>compile<wbr>Json<wbr>Data</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">compile<wbr>Json<wbr>Data<span class="tsd-signature-symbol">(</span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/compile_compiler_selection.CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a>, remapping<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, compilerSettings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/compile_utils.CompileResult.html" class="tsd-signature-type" data-tsd-kind="Interface">CompileResult</a></li>
+						<li class="tsd-signature tsd-kind-icon">compile<wbr>Json<wbr>Data<span class="tsd-signature-symbol">(</span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/compile_compiler_selection.CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a>, remapping<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, compilationOutput<span class="tsd-signature-symbol">?: </span><a href="../enums/compile_constants.CompilationOutput.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CompilationOutput</a><span class="tsd-signature-symbol">[]</span>, compilerSettings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/compile_utils.CompileResult.html" class="tsd-signature-type" data-tsd-kind="Interface">CompileResult</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L389">src/compile/utils.ts:389</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L402">src/compile/utils.ts:402</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -239,6 +245,9 @@
 									<h5>remapping: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
+									<h5>compilationOutput: <a href="../enums/compile_constants.CompilationOutput.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CompilationOutput</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ...</span></h5>
+								</li>
+								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> compilerSettings: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
@@ -250,13 +259,13 @@
 					<a name="compileSol" class="tsd-anchor"></a>
 					<h3>compile<wbr>Sol</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">compile<wbr>Sol<span class="tsd-signature-symbol">(</span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/compile_compiler_selection.CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a>, remapping<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, compilerSettings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/compile_utils.CompileResult.html" class="tsd-signature-type" data-tsd-kind="Interface">CompileResult</a></li>
+						<li class="tsd-signature tsd-kind-icon">compile<wbr>Sol<span class="tsd-signature-symbol">(</span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/compile_compiler_selection.CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a>, remapping<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, compilationOutput<span class="tsd-signature-symbol">?: </span><a href="../enums/compile_constants.CompilationOutput.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CompilationOutput</a><span class="tsd-signature-symbol">[]</span>, compilerSettings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/compile_utils.CompileResult.html" class="tsd-signature-type" data-tsd-kind="Interface">CompileResult</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L378">src/compile/utils.ts:378</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L383">src/compile/utils.ts:383</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -271,6 +280,9 @@
 									<h5>remapping: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 								<li>
+									<h5>compilationOutput: <a href="../enums/compile_constants.CompilationOutput.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CompilationOutput</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ...</span></h5>
+								</li>
+								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> compilerSettings: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
@@ -282,13 +294,13 @@
 					<a name="compileSourceString" class="tsd-anchor"></a>
 					<h3>compile<wbr>Source<wbr>String</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
-						<li class="tsd-signature tsd-kind-icon">compile<wbr>Source<wbr>String<span class="tsd-signature-symbol">(</span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, sourceCode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/compile_compiler_selection.CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a>, remapping<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, compilerSettings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/compile_utils.CompileResult.html" class="tsd-signature-type" data-tsd-kind="Interface">CompileResult</a></li>
+						<li class="tsd-signature tsd-kind-icon">compile<wbr>Source<wbr>String<span class="tsd-signature-symbol">(</span>fileName<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, sourceCode<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../interfaces/compile_compiler_selection.CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a>, remapping<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, compilationOutput<span class="tsd-signature-symbol">?: </span><a href="../enums/compile_constants.CompilationOutput.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CompilationOutput</a><span class="tsd-signature-symbol">[]</span>, compilerSettings<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/compile_utils.CompileResult.html" class="tsd-signature-type" data-tsd-kind="Interface">CompileResult</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L340">src/compile/utils.ts:340</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L343">src/compile/utils.ts:343</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -304,6 +316,9 @@
 								</li>
 								<li>
 									<h5>remapping: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>compilationOutput: <a href="../enums/compile_constants.CompilationOutput.html" class="tsd-signature-type" data-tsd-kind="Enumeration">CompilationOutput</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ...</span></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> compilerSettings: <span class="tsd-signature-type">any</span></h5>
@@ -323,7 +338,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L221">src/compile/utils.ts:221</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L218">src/compile/utils.ts:218</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -352,7 +367,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L254">src/compile/utils.ts:254</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L251">src/compile/utils.ts:251</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -378,7 +393,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L312">src/compile/utils.ts:312</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L315">src/compile/utils.ts:315</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -401,7 +416,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L48">src/compile/utils.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L49">src/compile/utils.ts:49</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -424,7 +439,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L206">src/compile/utils.ts:206</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/utils.ts#L203">src/compile/utils.ts:203</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
