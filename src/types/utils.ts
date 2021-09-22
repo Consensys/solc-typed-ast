@@ -305,11 +305,14 @@ export function enumToIntType(decl: EnumDefinition): IntType {
  * 3. Struct definitions turned to tuples.
  *   3.1. Mappings are completely ommited.
  *   3.2. Arrays of root structs are ommited, while preserved for nested structs.
- * 4. Data locations are skipped.
  */
 function toValueType(type: TypeNode, depth = 0): TypeNode {
     if (type instanceof PointerType) {
-        return toValueType(type.to, depth);
+        if (type.to instanceof UserDefinedType) {
+            return toValueType(type.to, depth);
+        }
+
+        return new PointerType(type.to, DataLocation.Memory);
     }
 
     if (type instanceof UserDefinedType) {

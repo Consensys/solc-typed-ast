@@ -4,6 +4,7 @@ import {
     ArrayType,
     ASTReader,
     compileSol,
+    DataLocation,
     detectCompileErrors,
     eq,
     FixedBytesType,
@@ -12,6 +13,7 @@ import {
     FunctionVisibility,
     getterTypeForVar,
     IntType,
+    PointerType,
     SourceUnit,
     StringType,
     TupleType,
@@ -80,10 +82,13 @@ const cases: Array<[string, Array<[string, TypeNode]>]> = [
                     [new IntType(256, false)],
                     [
                         new IntType(8, true),
-                        new StringType(),
+                        new PointerType(new StringType(), DataLocation.Memory),
                         new TupleType([
                             new IntType(8, false),
-                            new ArrayType(new IntType(256, false)),
+                            new PointerType(
+                                new ArrayType(new IntType(256, false)),
+                                DataLocation.Memory
+                            ),
                             new FixedBytesType(1)
                         ])
                     ],
@@ -137,7 +142,9 @@ describe("getterTypeForVar() and getterArgsAndReturn()", () => {
 
                     const resultType = getterTypeForVar(vars[0]);
 
-                    expect(eq(resultType, expectedType)).toBeTruthy();
+                    if (!eq(resultType, expectedType)) {
+                        throw new Error(`Expected ${expectedType.pp()}, got ${resultType.pp()}`);
+                    }
                 });
             }
         });
