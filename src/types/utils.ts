@@ -36,6 +36,11 @@ import {
 
 export type VersionDependentType = [TypeNode, string];
 
+export enum ABIEncoderVersion {
+    V1,
+    V2
+}
+
 export function getTypeForCompilerVersion(
     typing: VersionDependentType,
     compilerVersion: string
@@ -302,17 +307,12 @@ export function enumToIntType(decl: EnumDefinition): IntType {
  * Converts `type` to value type. Following rules are applied:
  * 1. Contract definitions turned to address.
  * 2. Enum definitions turned to uint of minimal fitting size.
- * 3. Struct definitions turned to tuples.
- *   3.1. Mappings are completely ommited.
- *   3.2. Arrays of root structs are ommited, while preserved for nested structs.
  */
-function toValueType(type: TypeNode, depth = 0): TypeNode {
+function toValueType(type: TypeNode, encoderVersion: ABIEncoderVersion): TypeNode {
     if (type instanceof PointerType) {
-        if (type.to instanceof UserDefinedType) {
-            return toValueType(type.to, depth);
-        }
+        const toT = toValueType(type.to, encoderVersion);
 
-        return new PointerType(type.to, DataLocation.Memory);
+        return specializeType(toT, DataLocation.Memory);
     }
 
     if (type instanceof UserDefinedType) {
@@ -325,30 +325,10 @@ function toValueType(type: TypeNode, depth = 0): TypeNode {
         }
 
         if (type.definition instanceof StructDefinition) {
-            const elements: TypeNode[] = [];
-
-            for (const member of type.definition.vMembers) {
-                const memberT = member.vType;
-
-                assert(memberT !== undefined, "Unexpected untyped struct member", type.definition);
-
-                if (memberT instanceof Mapping) {
-                    continue;
-                }
-
-                if (memberT instanceof ArrayTypeName && depth === 0) {
-                    continue;
-                }
-
-                elements.push(
-                    toValueType(
-                        typeNameToSpecializedTypeNode(memberT, DataLocation.Memory),
-                        depth + 1
-                    )
-                );
-            }
-
-            return new TupleType(elements);
+            assert(
+                encoderVersion !== ABIEncoderVersion.V1,
+                "Getters of struct return type are not supported by ABI encoder v1"
+            );
         }
     }
 
@@ -362,8 +342,14 @@ function toValueType(type: TypeNode, depth = 0): TypeNode {
  * const [argTs, retT] = getterArgsAndReturn(v);
  * ```
  * Where `argsTs` is an array of computed argument types and `retT` is computed return type.
+ *
+ * @see https://docs.soliditylang.org/en/latest/contracts.html#getter-functions
+ * @see https://github.com/ethereum/solidity/blob/72fc34494acfcce1ead7da6b63cb03ea9a8da9a3/libsolidity/ast/Types.cpp#L2682-L2745
  */
-export function getterArgsAndReturn(decl: VariableDeclaration): [TypeNode[], TypeNode] {
+export function getterArgsAndReturn(
+    decl: VariableDeclaration,
+    encoderVersion: ABIEncoderVersion
+): [TypeNode[], TypeNode] {
     const argTypes: TypeNode[] = [];
 
     let type = decl.vType;
@@ -381,7 +367,10 @@ export function getterArgsAndReturn(decl: VariableDeclaration): [TypeNode[], Typ
             type = type.vBaseType;
         } else if (type instanceof Mapping) {
             argTypes.push(
-                toValueType(typeNameToSpecializedTypeNode(type.vKeyType, DataLocation.Memory))
+                toValueType(
+                    typeNameToSpecializedTypeNode(type.vKeyType, DataLocation.Memory),
+                    encoderVersion
+                )
             );
 
             type = type.vValueType;
@@ -390,7 +379,44 @@ export function getterArgsAndReturn(decl: VariableDeclaration): [TypeNode[], Typ
         }
     }
 
-    const retType = toValueType(typeNameToSpecializedTypeNode(type, DataLocation.Memory));
+    let retType = typeNameToSpecializedTypeNode(type, DataLocation.Memory);
+
+    if (
+        retType instanceof PointerType &&
+        retType.to instanceof UserDefinedType &&
+        retType.to.definition instanceof StructDefinition
+    ) {
+        const elements: TypeNode[] = [];
+
+        for (const member of retType.to.definition.vMembers) {
+            const memberT = member.vType;
+
+            assert(
+                memberT !== undefined,
+                "Unexpected untyped struct member",
+                retType.to.definition
+            );
+
+            if (memberT instanceof Mapping) {
+                continue;
+            }
+
+            if (memberT instanceof ArrayTypeName) {
+                continue;
+            }
+
+            const elementT = toValueType(
+                typeNameToSpecializedTypeNode(memberT, DataLocation.Memory),
+                encoderVersion
+            );
+
+            elements.push(elementT);
+        }
+
+        retType = new TupleType(elements);
+    } else {
+        retType = toValueType(retType, encoderVersion);
+    }
 
     return [argTypes, retType];
 }
@@ -398,14 +424,17 @@ export function getterArgsAndReturn(decl: VariableDeclaration): [TypeNode[], Typ
 /**
  * For given variable declaration `decl` computes accessor function type
  */
-export function getterTypeForVar(decl: VariableDeclaration): FunctionType {
-    const [args, ret] = getterArgsAndReturn(decl);
+export function getterTypeForVar(
+    decl: VariableDeclaration,
+    encoderVersion: ABIEncoderVersion
+): FunctionType {
+    const [args, ret] = getterArgsAndReturn(decl, encoderVersion);
 
     return new FunctionType(
         decl.name,
         args,
         ret instanceof TupleType ? ret.elements : [ret],
-        FunctionVisibility.Public,
+        FunctionVisibility.External,
         FunctionStateMutability.View
     );
 }

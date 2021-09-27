@@ -1,7 +1,8 @@
 import expect from "expect";
 import {
+    ABIEncoderVersion,
     AddressType,
-    ArrayType,
+    assert,
     ASTReader,
     compileSol,
     DataLocation,
@@ -16,14 +17,37 @@ import {
     PointerType,
     SourceUnit,
     StringType,
-    TupleType,
+    StructDefinition,
     TypeNode,
+    UserDefinedType,
     VariableDeclaration
 } from "../../../src";
 
-const cases: Array<[string, Array<[string, TypeNode]>]> = [
+type DeferredTypeNode = (unit: SourceUnit) => TypeNode;
+
+function getStateVar(unit: SourceUnit, name: string): VariableDeclaration {
+    const vars: VariableDeclaration[] = unit.getChildrenBySelector(
+        (node) => node instanceof VariableDeclaration && node.stateVariable && node.name === name
+    );
+
+    assert(vars.length === 1, `Unable to get state variable with name "${name}"`);
+
+    return vars[0];
+}
+
+function getStruct(unit: SourceUnit, canonicalName: string): StructDefinition {
+    const defs = unit.getChildrenBySelector<StructDefinition>(
+        (node) => node instanceof StructDefinition && node.canonicalName === canonicalName
+    );
+
+    assert(defs.length === 1, `Unable get structured definition with name "${canonicalName}"`);
+
+    return defs[0];
+}
+
+const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
     [
-        "test/samples/solidity/getters.sol",
+        "test/samples/solidity/getters_08.sol",
         [
             [
                 "a",
@@ -31,7 +55,7 @@ const cases: Array<[string, Array<[string, TypeNode]>]> = [
                     "a",
                     [new IntType(256, false)],
                     [new IntType(256, false)],
-                    FunctionVisibility.Public,
+                    FunctionVisibility.External,
                     FunctionStateMutability.View
                 )
             ],
@@ -41,7 +65,7 @@ const cases: Array<[string, Array<[string, TypeNode]>]> = [
                     "b",
                     [new AddressType(false)],
                     [new IntType(256, false)],
-                    FunctionVisibility.Public,
+                    FunctionVisibility.External,
                     FunctionStateMutability.View
                 )
             ],
@@ -51,7 +75,7 @@ const cases: Array<[string, Array<[string, TypeNode]>]> = [
                     "c",
                     [],
                     [new IntType(8, false)],
-                    FunctionVisibility.Public,
+                    FunctionVisibility.External,
                     FunctionStateMutability.View
                 )
             ],
@@ -61,7 +85,7 @@ const cases: Array<[string, Array<[string, TypeNode]>]> = [
                     "d",
                     [],
                     [new IntType(8, false), new FixedBytesType(1)],
-                    FunctionVisibility.Public,
+                    FunctionVisibility.External,
                     FunctionStateMutability.View
                 )
             ],
@@ -71,30 +95,30 @@ const cases: Array<[string, Array<[string, TypeNode]>]> = [
                     "e",
                     [],
                     [new AddressType(false)],
-                    FunctionVisibility.Public,
+                    FunctionVisibility.External,
                     FunctionStateMutability.View
                 )
             ],
             [
                 "f",
-                new FunctionType(
-                    "f",
-                    [new IntType(256, false)],
-                    [
-                        new IntType(8, true),
-                        new PointerType(new StringType(), DataLocation.Memory),
-                        new TupleType([
-                            new IntType(8, false),
+                (unit: SourceUnit) => {
+                    const def = getStruct(unit, "AccessorReturns.S1");
+
+                    return new FunctionType(
+                        "f",
+                        [new IntType(256, false)],
+                        [
+                            new IntType(8, true),
+                            new PointerType(new StringType(), DataLocation.Memory),
                             new PointerType(
-                                new ArrayType(new IntType(256, false)),
+                                new UserDefinedType(def.canonicalName, def),
                                 DataLocation.Memory
-                            ),
-                            new FixedBytesType(1)
-                        ])
-                    ],
-                    FunctionVisibility.Public,
-                    FunctionStateMutability.View
-                )
+                            )
+                        ],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
             ],
             [
                 "g",
@@ -102,9 +126,34 @@ const cases: Array<[string, Array<[string, TypeNode]>]> = [
                     "g",
                     [new IntType(256, false)],
                     [new AddressType(false)],
-                    FunctionVisibility.Public,
+                    FunctionVisibility.External,
                     FunctionStateMutability.View
                 )
+            ]
+        ]
+    ],
+    [
+        "test/samples/solidity/getters_07.sol",
+        [
+            [
+                "s",
+                (unit: SourceUnit) => {
+                    const def = getStruct(unit, "AccessorReturns.S2");
+
+                    return new FunctionType(
+                        "s",
+                        [],
+                        [
+                            new PointerType(
+                                new UserDefinedType(def.canonicalName, def),
+                                DataLocation.Memory
+                            ),
+                            new IntType(256, false)
+                        ],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
             ]
         ]
     ]
@@ -129,22 +178,20 @@ describe("getterTypeForVar() and getterArgsAndReturn()", () => {
                 unit = units[0];
             });
 
-            for (const [varName, expectedType] of mapping) {
-                it(`${varName} -> ${expectedType.pp()}`, () => {
-                    const vars: VariableDeclaration[] = unit.getChildrenBySelector(
-                        (node) =>
-                            node instanceof VariableDeclaration &&
-                            node.stateVariable &&
-                            node.name === varName
+            for (const [stateVarName, typing] of mapping) {
+                it(`${stateVarName} -> ${
+                    typing instanceof TypeNode ? typing.pp() : "(deferred)"
+                }`, () => {
+                    const expectedType = typing instanceof TypeNode ? typing : typing(unit);
+                    const stateVar = getStateVar(unit, stateVarName);
+                    const resultType = getterTypeForVar(stateVar, ABIEncoderVersion.V2);
+
+                    assert(
+                        eq(resultType, expectedType),
+                        "Expected {0}, got {1}",
+                        expectedType,
+                        resultType
                     );
-
-                    expect(vars.length).toEqual(1);
-
-                    const resultType = getterTypeForVar(vars[0]);
-
-                    if (!eq(resultType, expectedType)) {
-                        throw new Error(`Expected ${expectedType.pp()}, got ${resultType.pp()}`);
-                    }
                 });
             }
         });

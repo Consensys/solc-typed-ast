@@ -16,6 +16,7 @@ contract AccessorReturns {
     struct S2 {
         uint[] a;
         address b;
+        mapping(address => uint) map;
     }
 
     struct S {
