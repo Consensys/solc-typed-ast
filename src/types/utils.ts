@@ -36,11 +36,6 @@ import {
 
 export type VersionDependentType = [TypeNode, string];
 
-export enum ABIEncoderVersion {
-    V1,
-    V2
-}
-
 export function getTypeForCompilerVersion(
     typing: VersionDependentType,
     compilerVersion: string
@@ -304,38 +299,6 @@ export function enumToIntType(decl: EnumDefinition): IntType {
 }
 
 /**
- * Converts `type` to value type. Following rules are applied:
- * 1. Contract definitions turned to address.
- * 2. Enum definitions turned to uint of minimal fitting size.
- */
-function toValueType(type: TypeNode, encoderVersion: ABIEncoderVersion): TypeNode {
-    if (type instanceof PointerType) {
-        const toT = toValueType(type.to, encoderVersion);
-
-        return specializeType(toT, DataLocation.Memory);
-    }
-
-    if (type instanceof UserDefinedType) {
-        if (type.definition instanceof ContractDefinition) {
-            return new AddressType(false);
-        }
-
-        if (type.definition instanceof EnumDefinition) {
-            return enumToIntType(type.definition);
-        }
-
-        if (type.definition instanceof StructDefinition) {
-            assert(
-                encoderVersion !== ABIEncoderVersion.V1,
-                "Getters of struct return type are not supported by ABI encoder v1"
-            );
-        }
-    }
-
-    return type;
-}
-
-/**
  * For given variable declaration `decl` computes accessor arguments and return types.
  * Usage:
  * ```
@@ -346,10 +309,7 @@ function toValueType(type: TypeNode, encoderVersion: ABIEncoderVersion): TypeNod
  * @see https://docs.soliditylang.org/en/latest/contracts.html#getter-functions
  * @see https://github.com/ethereum/solidity/blob/72fc34494acfcce1ead7da6b63cb03ea9a8da9a3/libsolidity/ast/Types.cpp#L2682-L2745
  */
-export function getterArgsAndReturn(
-    decl: VariableDeclaration,
-    encoderVersion: ABIEncoderVersion
-): [TypeNode[], TypeNode] {
+export function getterArgsAndReturn(decl: VariableDeclaration): [TypeNode[], TypeNode] {
     const argTypes: TypeNode[] = [];
 
     let type = decl.vType;
@@ -366,12 +326,7 @@ export function getterArgsAndReturn(
 
             type = type.vBaseType;
         } else if (type instanceof Mapping) {
-            argTypes.push(
-                toValueType(
-                    typeNameToSpecializedTypeNode(type.vKeyType, DataLocation.Memory),
-                    encoderVersion
-                )
-            );
+            argTypes.push(typeNameToSpecializedTypeNode(type.vKeyType, DataLocation.Memory));
 
             type = type.vValueType;
         } else {
@@ -405,17 +360,12 @@ export function getterArgsAndReturn(
                 continue;
             }
 
-            const elementT = toValueType(
-                typeNameToSpecializedTypeNode(memberT, DataLocation.Memory),
-                encoderVersion
-            );
+            const elementT = typeNameToSpecializedTypeNode(memberT, DataLocation.Memory);
 
             elements.push(elementT);
         }
 
         retType = new TupleType(elements);
-    } else {
-        retType = toValueType(retType, encoderVersion);
     }
 
     return [argTypes, retType];
@@ -424,11 +374,8 @@ export function getterArgsAndReturn(
 /**
  * For given variable declaration `decl` computes accessor function type
  */
-export function getterTypeForVar(
-    decl: VariableDeclaration,
-    encoderVersion: ABIEncoderVersion
-): FunctionType {
-    const [args, ret] = getterArgsAndReturn(decl, encoderVersion);
+export function getterTypeForVar(decl: VariableDeclaration): FunctionType {
+    const [args, ret] = getterArgsAndReturn(decl);
 
     return new FunctionType(
         decl.name,

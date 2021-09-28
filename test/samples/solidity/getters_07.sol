@@ -15,15 +15,6 @@ contract AccessorReturns {
     S1 public s;
 
     function main() public {
-        uint x;
-        uint y;
-        uint[] memory z;
-
-        S2 memory w;
-
-        (w, x) = this.s();
-
-        z = w.y;
-        y = w.x;
+        function () external view returns (S2 memory, uint) s1 = this.s;
     }
 }

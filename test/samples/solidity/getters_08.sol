@@ -33,14 +33,16 @@ contract AccessorReturns {
     S2 public e;
     S[] public f;
     Some[] public g;
+    Some public h;
 
     function main() public {
-        uint256[] memory arr = new uint[](3);
-        arr[0] = 1;
-
-        f.push(S(arr, 1, "abc", S1(E.B, arr, bytes1(0x13))));
-        (int8 x, string memory y, S1 memory z) = this.f(0);
-
-        assert(z.t.length == 3 && z.t[0] == 1);
+        function (uint256) external view returns (uint) a1 = this.a;
+        function (address) external view returns (uint) b1 = this.b;
+        function () external view returns (E) c1 = this.c;
+        function () external view returns (E, bytes1) d1 = this.d;
+        function () external view returns (address) e1 = this.e;
+        function (uint256) external view returns (int8, string memory, S1 memory) f1 = this.f;
+        function (uint256) external view returns (Some) g1 = this.g;
+        function () external view returns (Some) h1 = this.h;
     }
 }

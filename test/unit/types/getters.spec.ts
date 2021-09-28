@@ -1,12 +1,14 @@
 import expect from "expect";
 import {
-    ABIEncoderVersion,
     AddressType,
     assert,
+    ASTNodeConstructor,
     ASTReader,
     compileSol,
+    ContractDefinition,
     DataLocation,
     detectCompileErrors,
+    EnumDefinition,
     eq,
     FixedBytesType,
     FunctionStateMutability,
@@ -35,12 +37,16 @@ function getStateVar(unit: SourceUnit, name: string): VariableDeclaration {
     return vars[0];
 }
 
-function getStruct(unit: SourceUnit, canonicalName: string): StructDefinition {
-    const defs = unit.getChildrenBySelector<StructDefinition>(
-        (node) => node instanceof StructDefinition && node.canonicalName === canonicalName
+function getDef<T extends ContractDefinition | EnumDefinition | StructDefinition>(
+    unit: SourceUnit,
+    constr: ASTNodeConstructor<T>,
+    name: string
+): T {
+    const defs = unit.getChildrenBySelector<T>(
+        (node) => node instanceof constr && node.name === name
     );
 
-    assert(defs.length === 1, `Unable get structured definition with name "${canonicalName}"`);
+    assert(defs.length === 1, `Unable get definition with name "${name}"`);
 
     return defs[0];
 }
@@ -71,23 +77,31 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
             ],
             [
                 "c",
-                new FunctionType(
-                    "c",
-                    [],
-                    [new IntType(8, false)],
-                    FunctionVisibility.External,
-                    FunctionStateMutability.View
-                )
+                (unit: SourceUnit) => {
+                    const def = getDef(unit, EnumDefinition, "E");
+
+                    return new FunctionType(
+                        "c",
+                        [],
+                        [new UserDefinedType(def.canonicalName, def)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
             ],
             [
                 "d",
-                new FunctionType(
-                    "d",
-                    [],
-                    [new IntType(8, false), new FixedBytesType(1)],
-                    FunctionVisibility.External,
-                    FunctionStateMutability.View
-                )
+                (unit: SourceUnit) => {
+                    const def = getDef(unit, EnumDefinition, "E");
+
+                    return new FunctionType(
+                        "d",
+                        [],
+                        [new UserDefinedType(def.canonicalName, def), new FixedBytesType(1)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
             ],
             [
                 "e",
@@ -102,7 +116,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
             [
                 "f",
                 (unit: SourceUnit) => {
-                    const def = getStruct(unit, "AccessorReturns.S1");
+                    const def = getDef(unit, StructDefinition, "S1");
 
                     return new FunctionType(
                         "f",
@@ -122,13 +136,31 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
             ],
             [
                 "g",
-                new FunctionType(
-                    "g",
-                    [new IntType(256, false)],
-                    [new AddressType(false)],
-                    FunctionVisibility.External,
-                    FunctionStateMutability.View
-                )
+                (unit: SourceUnit) => {
+                    const def = getDef(unit, ContractDefinition, "Some");
+
+                    return new FunctionType(
+                        "g",
+                        [new IntType(256, false)],
+                        [new UserDefinedType(def.name, def)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
+            ],
+            [
+                "h",
+                (unit: SourceUnit) => {
+                    const def = getDef(unit, ContractDefinition, "Some");
+
+                    return new FunctionType(
+                        "h",
+                        [],
+                        [new UserDefinedType(def.name, def)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
             ]
         ]
     ],
@@ -138,7 +170,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
             [
                 "s",
                 (unit: SourceUnit) => {
-                    const def = getStruct(unit, "AccessorReturns.S2");
+                    const def = getDef(unit, StructDefinition, "S2");
 
                     return new FunctionType(
                         "s",
@@ -184,7 +216,7 @@ describe("getterTypeForVar() and getterArgsAndReturn()", () => {
                 }`, () => {
                     const expectedType = typing instanceof TypeNode ? typing : typing(unit);
                     const stateVar = getStateVar(unit, stateVarName);
-                    const resultType = getterTypeForVar(stateVar, ABIEncoderVersion.V2);
+                    const resultType = getterTypeForVar(stateVar);
 
                     assert(
                         eq(resultType, expectedType),
