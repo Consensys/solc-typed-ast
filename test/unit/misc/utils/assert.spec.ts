@@ -29,7 +29,7 @@ const cases: Array<[boolean, string, Array<string | ASTNode | TypeNode>, string 
         false,
         "Test not mentioned AST node",
         [astNode],
-        "Test not mentioned AST node.\n\nElementaryTypeName#1"
+        "Test not mentioned AST node.\n\nElementaryTypeName #1"
     ]
 ];
 
