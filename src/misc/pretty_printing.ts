@@ -1,0 +1,71 @@
+import { ASTNode } from "../ast/ast_node";
+
+export interface PPAble {
+    pp(): string;
+}
+
+export type PPIsh = PPAble | ASTNode | string | number | boolean | bigint | null | undefined;
+
+export function isPPAble(value: any): value is PPAble {
+    return value ? typeof value.pp === "function" : false;
+}
+
+export function pp(value: PPIsh): string {
+    if (value instanceof ASTNode) {
+        return value.type + "#" + value.id;
+    }
+
+    if (value === undefined) {
+        return "<undefined>";
+    }
+
+    if (
+        value === null ||
+        typeof value === "string" ||
+        typeof value === "number" ||
+        typeof value === "boolean" ||
+        typeof value === "bigint"
+    ) {
+        return String(value);
+    }
+
+    if (isPPAble(value)) {
+        return value.pp();
+    }
+
+    throw new Error("Unhandled value in pp(): " + String(value));
+}
+
+export function ppArr(array: PPIsh[], separator = ",", start = "[", end = "]"): string {
+    return start + array.map(pp).join(separator) + end;
+}
+
+export function ppIter(iter: Iterable<PPIsh>, separator = ",", start = "[", end = "]"): string {
+    const parts: string[] = [];
+
+    for (const part of iter) {
+        parts.push(pp(part));
+    }
+
+    return start + parts.join(separator) + end;
+}
+
+export function ppSet(set: Set<PPIsh>, separator = ",", start = "{", end = "}"): string {
+    return ppIter(set, separator, start, end);
+}
+
+export function ppMap(
+    map: Map<PPIsh, PPAble>,
+    separator = ",",
+    keyValueSeparator = ":",
+    start = "{",
+    end = "}"
+): string {
+    const parts: string[] = [];
+
+    for (const [name, val] of map.entries()) {
+        parts.push(pp(name) + keyValueSeparator + pp(val));
+    }
+
+    return start + parts.join(separator) + end;
+}

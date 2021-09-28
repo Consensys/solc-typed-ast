@@ -1,4 +1,5 @@
 export * from "./location";
-export * from "./utils";
-export * from "./struct_equality";
 export * from "./node";
+export * from "./pretty_printing";
+export * from "./struct_equality";
+export * from "./utils";
