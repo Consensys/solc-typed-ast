@@ -1,5 +1,5 @@
 import expect from "expect";
-import { ASTNode, isPPAble, pp, ppArr, ppIter, ppMap, ppSet } from "../../../src";
+import { ElementaryTypeName, isPPAble, pp, ppArr, ppIter, ppMap, ppSet } from "../../../src";
 
 describe("Utility formatting routines", () => {
     describe("isPPAble()", () => {
@@ -38,7 +38,10 @@ describe("Utility formatting routines", () => {
                 },
                 "PPAble object"
             ],
-            [new ASTNode(1, "0:0:0", "CustomNode"), "CustomNode#1"]
+            [
+                new ElementaryTypeName(1, "0:0:0", "ElementaryTypeName", "uint8", "uint8"),
+                "ElementaryTypeName#1"
+            ]
         ];
 
         for (const [value, result] of cases) {
