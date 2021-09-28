@@ -1,3 +1,4 @@
+import { ABIEncoderVersion } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
 import { FunctionKind, FunctionStateMutability, FunctionVisibility } from "../../constants";
 import { encodeSignature } from "../../utils";
@@ -169,12 +170,14 @@ export class FunctionDefinition extends ASTNode {
      *
      * NOTE: This property will contain empty strings for fallback functions and constructors.
      */
-    get canonicalSignature(): string {
+    canonicalSignature(encoderVersion: ABIEncoderVersion): string {
         if (this.name === "" || this.isConstructor) {
             return "";
         }
 
-        const args = this.vParameters.vParameters.map((arg) => arg.canonicalSignatureType);
+        const args = this.vParameters.vParameters.map((arg) =>
+            arg.canonicalSignatureType(encoderVersion)
+        );
 
         return this.name + "(" + args.join(",") + ")";
     }
@@ -185,8 +188,8 @@ export class FunctionDefinition extends ASTNode {
      *
      * NOTE: This property will contain empty strings for fallback functions and constructors.
      */
-    get canonicalSignatureHash(): string {
-        const signature = this.canonicalSignature;
+    canonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
+        const signature = this.canonicalSignature(encoderVersion);
 
         return signature ? encodeSignature(signature) : "";
     }

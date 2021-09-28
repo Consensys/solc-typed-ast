@@ -1,3 +1,4 @@
+import { ABIEncoderVersion } from "../types/abi";
 import { ASTNodeConstructor } from "./ast_node";
 import { StateVariableVisibility } from "./constants";
 import { ContractDefinition } from "./implementation/declaration/contract_definition";
@@ -103,11 +104,13 @@ export function resolveByName<T extends Resolvable>(
             /**
              * We use `resolvableIdentifier` to avoid adding already-overloaded functions
              * into the resolved set.
+             * (Its safe to assume ABIEncoderVersionV2 as its backwards
+             * compatible, and we only use it internally here.)
              */
             const resolvableIdentifier =
                 resolvable instanceof VariableDeclaration
                     ? resolvable.name
-                    : resolvable.canonicalSignatureHash;
+                    : resolvable.canonicalSignatureHash(ABIEncoderVersion.V2);
 
             if (resolvable.name === name && !found.has(resolvableIdentifier)) {
                 result.push(resolvable as T);

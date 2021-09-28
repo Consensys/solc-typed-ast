@@ -5,9 +5,7 @@ import {
     DataLocation,
     ElementaryTypeName,
     EnumDefinition,
-    FunctionStateMutability,
     FunctionTypeName,
-    FunctionVisibility,
     Literal,
     LiteralKind,
     Mapping,
@@ -296,92 +294,4 @@ export function enumToIntType(decl: EnumDefinition): IntType {
     );
 
     return new IntType(size, false);
-}
-
-/**
- * For given variable declaration `decl` computes accessor arguments and return types.
- * Usage:
- * ```
- * const [argTs, retT] = getterArgsAndReturn(v);
- * ```
- * Where `argsTs` is an array of computed argument types and `retT` is computed return type.
- *
- * @see https://docs.soliditylang.org/en/latest/contracts.html#getter-functions
- * @see https://github.com/ethereum/solidity/blob/72fc34494acfcce1ead7da6b63cb03ea9a8da9a3/libsolidity/ast/Types.cpp#L2682-L2745
- */
-export function getterArgsAndReturn(decl: VariableDeclaration): [TypeNode[], TypeNode] {
-    const argTypes: TypeNode[] = [];
-
-    let type = decl.vType;
-
-    assert(
-        type !== undefined,
-        "Called getterArgsAndReturn() on variable declaration without type",
-        decl
-    );
-
-    while (true) {
-        if (type instanceof ArrayTypeName) {
-            argTypes.push(new IntType(256, false));
-
-            type = type.vBaseType;
-        } else if (type instanceof Mapping) {
-            argTypes.push(typeNameToSpecializedTypeNode(type.vKeyType, DataLocation.Memory));
-
-            type = type.vValueType;
-        } else {
-            break;
-        }
-    }
-
-    let retType = typeNameToSpecializedTypeNode(type, DataLocation.Memory);
-
-    if (
-        retType instanceof PointerType &&
-        retType.to instanceof UserDefinedType &&
-        retType.to.definition instanceof StructDefinition
-    ) {
-        const elements: TypeNode[] = [];
-
-        for (const member of retType.to.definition.vMembers) {
-            const memberT = member.vType;
-
-            assert(
-                memberT !== undefined,
-                "Unexpected untyped struct member",
-                retType.to.definition
-            );
-
-            if (memberT instanceof Mapping) {
-                continue;
-            }
-
-            if (memberT instanceof ArrayTypeName) {
-                continue;
-            }
-
-            const elementT = typeNameToSpecializedTypeNode(memberT, DataLocation.Memory);
-
-            elements.push(elementT);
-        }
-
-        retType = new TupleType(elements);
-    }
-
-    return [argTypes, retType];
-}
-
-/**
- * For given variable declaration `decl` computes accessor function type
- */
-export function getterTypeForVar(decl: VariableDeclaration): FunctionType {
-    const [args, ret] = getterArgsAndReturn(decl);
-
-    return new FunctionType(
-        decl.name,
-        args,
-        ret instanceof TupleType ? ret.elements : [ret],
-        FunctionVisibility.External,
-        FunctionStateMutability.View
-    );
 }

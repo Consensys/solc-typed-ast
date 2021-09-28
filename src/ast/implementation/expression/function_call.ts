@@ -1,3 +1,4 @@
+import { ABIEncoderVersion } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
 import { ExternalReferenceType, FunctionCallKind } from "../../constants";
 import { ErrorDefinition } from "../declaration/error_definition";
@@ -149,7 +150,7 @@ export class FunctionCall extends Expression {
      * or `undefined` in case if there is callable is not
      * a user-defined entity.
      */
-    get referencedCanonicalSignature(): string | undefined {
+    referencedCanonicalSignature(encoderVersion: ABIEncoderVersion): string | undefined {
         const declaration = this.vReferencedDeclaration;
 
         if (declaration === undefined) {
@@ -157,10 +158,10 @@ export class FunctionCall extends Expression {
         }
 
         if (declaration instanceof VariableDeclaration) {
-            return declaration.getterCanonicalSignature;
+            return declaration.getterCanonicalSignature(encoderVersion);
         }
 
-        return declaration.canonicalSignature;
+        return declaration.canonicalSignature(encoderVersion);
     }
 
     /**
@@ -168,7 +169,7 @@ export class FunctionCall extends Expression {
      * or `undefined` in case if there is callable is not
      * a user-defined entity.
      */
-    get referencedCanonicalSignatureHash(): string | undefined {
+    referencedCanonicalSignatureHash(encoderVersion: ABIEncoderVersion): string | undefined {
         const declaration = this.vReferencedDeclaration;
 
         if (declaration === undefined) {
@@ -176,10 +177,10 @@ export class FunctionCall extends Expression {
         }
 
         if (declaration instanceof VariableDeclaration) {
-            return declaration.getterCanonicalSignatureHash;
+            return declaration.getterCanonicalSignatureHash(encoderVersion);
         }
 
-        return declaration.canonicalSignatureHash;
+        return declaration.canonicalSignatureHash(encoderVersion);
     }
 
     /**
