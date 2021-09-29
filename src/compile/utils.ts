@@ -1,15 +1,13 @@
 import fse from "fs-extra";
 import path from "path";
 import { lt, satisfies } from "semver";
-import { PragmaDirective, SourceUnit } from "../ast";
-import { assert } from "../misc";
-import { ABIEncoderVersion, ABIEncoderVersions } from "../types/abi";
 import {
     CompilerVersionSelectionStrategy,
     LatestVersionInEachSeriesStrategy,
     RangeVersionStrategy,
     VersionDetectionStrategy
 } from "./compiler_selection";
+import { CompilationOutput } from "./constants";
 import {
     FileSystemResolver,
     ImportResolver,
@@ -58,17 +56,19 @@ export function getCompilerForVersion(version: string): any {
     );
 }
 
-type Solc04Input = {
+interface PartialSolcInput {
     language: "Solidity";
-    sources: { [fileName: string]: string };
     settings: { remappings: string[]; outputSelection: any; [otherKeys: string]: any };
-};
+    [otherKeys: string]: any;
+}
 
-type Solc05Input = {
-    language: "Solidity";
+interface Solc04Input extends PartialSolcInput {
+    sources: { [fileName: string]: string };
+}
+
+interface Solc05Input extends PartialSolcInput {
     sources: { [fileName: string]: { content: string } };
-    settings: { remappings: string[]; outputSelection: any; [otherKeys: string]: any };
-};
+}
 
 function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, settings: any): T {
     if (settings !== undefined) {
@@ -84,64 +84,58 @@ function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, se
     return input;
 }
 
-type CompilerInputCreator = (
+function createCompilerInput(
     fileName: string,
+    version: string,
     content: string,
+    output: CompilationOutput[],
     remappings: string[],
     compilerSettings: any
-) => Solc04Input | Solc05Input;
+): Solc04Input | Solc05Input {
+    let fileOutput: string[] = [];
+    let contractOutput: string[] = [];
 
-const createCompiler04Input: CompilerInputCreator = (
-    fileName,
-    content,
-    remappings,
-    compilerSettings
-) =>
-    mergeCompilerSettings(
-        {
-            language: "Solidity",
-            sources: {
-                [fileName]: content
-            },
-            settings: {
-                remappings,
-                outputSelection: {
-                    "*": {
-                        "*": ["*"],
-                        "": ["*"]
-                    }
+    for (const outputSel of output) {
+        if (outputSel === CompilationOutput.ALL) {
+            fileOutput = [CompilationOutput.ALL];
+            contractOutput = [CompilationOutput.ALL];
+            break;
+        }
+
+        if (outputSel === CompilationOutput.AST) {
+            fileOutput.push(outputSel);
+        } else {
+            contractOutput.push(outputSel);
+        }
+    }
+
+    const partialInp: PartialSolcInput = {
+        language: "Solidity",
+        settings: {
+            remappings,
+            outputSelection: {
+                "*": {
+                    "*": contractOutput,
+                    "": fileOutput
                 }
             }
-        },
-        compilerSettings
-    );
+        }
+    };
 
-const createCompiler05Input: CompilerInputCreator = (
-    fileName,
-    content,
-    remappings,
-    compilerSettings
-) =>
-    mergeCompilerSettings(
-        {
-            language: "Solidity",
-            sources: {
-                [fileName]: {
-                    content
-                }
-            },
-            settings: {
-                remappings,
-                outputSelection: {
-                    "*": {
-                        "*": ["*"],
-                        "": ["*"]
-                    }
-                }
-            }
-        },
-        compilerSettings
-    );
+    if (lt(version, "0.5.0")) {
+        partialInp.sources = {
+            [fileName]: content
+        };
+    } else {
+        partialInp.sources = {
+            [fileName]: { content }
+        };
+    }
+
+    const inp = partialInp as Solc04Input | Solc05Input;
+
+    return mergeCompilerSettings(inp, compilerSettings);
+}
 
 function consistentlyContainsOneOf(
     sources: { [key: string]: any },
@@ -287,26 +281,32 @@ export function compile(
     version: string,
     finder: ImportFinder,
     remapping: string[],
+    compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any
 ): any {
     const compiler = getCompilerForVersion(version);
+    const input = createCompilerInput(
+        fileName,
+        version,
+        content,
+        compilationOutput,
+        remapping,
+        compilerSettings
+    );
 
     if (satisfies(version, "0.4")) {
-        const input = createCompiler04Input(fileName, content, remapping, compilerSettings);
         const output = compiler.compile(input, 1, finder);
 
         return output;
     }
 
     if (satisfies(version, "0.5")) {
-        const input = createCompiler05Input(fileName, content, remapping, compilerSettings);
         const output = compiler.compile(JSON.stringify(input), finder);
 
         return JSON.parse(output);
     }
 
     const callbacks = { import: finder };
-    const input = createCompiler05Input(fileName, content, remapping, compilerSettings);
     const output = compiler.compile(JSON.stringify(input), callbacks);
 
     return JSON.parse(output);
@@ -345,6 +345,7 @@ export function compileSourceString(
     sourceCode: string,
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
+    compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any
 ): CompileResult {
     const compilerVersionStrategy = getCompilerVersionStrategy(sourceCode, version);
@@ -364,6 +365,7 @@ export function compileSourceString(
             compilerVersion,
             finder,
             remapping,
+            compilationOutput,
             compilerSettings
         );
         const errors = detectCompileErrors(data);
@@ -382,11 +384,19 @@ export function compileSol(
     fileName: string,
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
+    compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any
 ): CompileResult {
     const source = fse.readFileSync(fileName, { encoding: "utf-8" });
 
-    return compileSourceString(fileName, source, version, remapping, compilerSettings);
+    return compileSourceString(
+        fileName,
+        source,
+        version,
+        remapping,
+        compilationOutput,
+        compilerSettings
+    );
 }
 
 export function compileJsonData(
@@ -394,6 +404,7 @@ export function compileJsonData(
     data: any,
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
+    compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any
 ): CompileResult {
     const files = new Map<string, string>();
@@ -441,6 +452,7 @@ export function compileJsonData(
                 compilerVersion,
                 finder,
                 remapping,
+                compilationOutput,
                 compilerSettings
             );
 
@@ -465,59 +477,10 @@ export function compileJson(
     fileName: string,
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
+    compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any
 ): CompileResult {
     const data = fse.readJSONSync(fileName);
 
-    return compileJsonData(fileName, data, version, remapping, compilerSettings);
-}
-
-/**
- * Given a set of compiled units and their corresponding compiler version, determine the
- * correct ABIEncoder version for these units. If mulitple incompatible explicit pragmas are found,
- * throw an error.
- */
-export function getABIEncoderVersion(
-    units: SourceUnit[],
-    compilerVersion: string
-): ABIEncoderVersion {
-    const explicitEncoderVersions = new Set<ABIEncoderVersion>();
-
-    for (const unit of units) {
-        for (const nd of unit.getChildrenByType(PragmaDirective)) {
-            if (
-                nd.vIdentifier === "experimental" &&
-                nd.literals.length === 2 &&
-                ABIEncoderVersions.has(nd.literals[1])
-            ) {
-                explicitEncoderVersions.add(nd.literals[1] as ABIEncoderVersion);
-            }
-
-            if (nd.vIdentifier === "abicoder") {
-                let version: ABIEncoderVersion;
-                const rawVer = nd.literals[1];
-
-                if (rawVer === "v1") {
-                    version = ABIEncoderVersion.V1;
-                } else if (rawVer === "v2") {
-                    version = ABIEncoderVersion.V2;
-                } else {
-                    throw new Error(`Unknown abicoder pragma version ${rawVer}`);
-                }
-
-                explicitEncoderVersions.add(version);
-            }
-        }
-    }
-
-    assert(
-        explicitEncoderVersions.size < 2,
-        `Multiple encoder versions found: ${[...explicitEncoderVersions].join(", ")}`
-    );
-
-    if (explicitEncoderVersions.size === 1) {
-        return [...explicitEncoderVersions][0];
-    }
-
-    return lt(compilerVersion, "0.8.0") ? ABIEncoderVersion.V1 : ABIEncoderVersion.V2;
+    return compileJsonData(fileName, data, version, remapping, compilationOutput, compilerSettings);
 }
