@@ -40,14 +40,30 @@ describe("Utility formatting routines", () => {
             ],
             [
                 new ElementaryTypeName(1, "0:0:0", "ElementaryTypeName", "uint8", "uint8"),
-                "ElementaryTypeName#1"
+                "ElementaryTypeName #1"
+            ],
+            [["x", 1, true, null], "[x,1,true,null]"],
+            [new Set(["a", 2, false, null]), "{a,2,false,null}"],
+            [
+                new Map<string, boolean | number>([
+                    ["x", true],
+                    ["y", 100],
+                    ["z", false]
+                ]),
+                "{x:true,y:100,z:false}"
+            ],
+            [
+                (function* gen() {
+                    yield 10;
+                    yield 20;
+                    yield 30;
+                })(),
+                "[10,20,30]"
             ]
         ];
 
         for (const [value, result] of cases) {
-            it(`${
-                typeof value === "bigint" ? value.toString() + "n" : JSON.stringify(value)
-            } results ${result}`, () => {
+            it(`${value} results ${result}`, () => {
                 expect(pp(value)).toEqual(result);
             });
         }
@@ -60,9 +76,7 @@ describe("Utility formatting routines", () => {
         ];
 
         for (const [value, options, result] of cases) {
-            it(`${JSON.stringify(value)} with options ${JSON.stringify(
-                options
-            )} results ${result}`, () => {
+            it(`${value} with options ${JSON.stringify(options)} results ${result}`, () => {
                 expect(ppArr(value, ...options)).toEqual(result);
             });
         }
@@ -103,9 +117,7 @@ describe("Utility formatting routines", () => {
         ];
 
         for (const [value, options, result] of cases) {
-            it(`${JSON.stringify(value)} with options ${JSON.stringify(
-                options
-            )} results ${result}`, () => {
+            it(`${value} with options ${JSON.stringify(options)} results ${result}`, () => {
                 expect(ppSet(value, ...options)).toEqual(result);
             });
         }
@@ -124,9 +136,7 @@ describe("Utility formatting routines", () => {
         ];
 
         for (const [value, options, result] of cases) {
-            it(`${JSON.stringify(value)} with options ${JSON.stringify(
-                options
-            )} results ${result}`, () => {
+            it(`${value} with options ${JSON.stringify(options)} results ${result}`, () => {
                 expect(ppMap(value, ...options)).toEqual(result);
             });
         }

@@ -4,7 +4,19 @@ export interface PPAble {
     pp(): string;
 }
 
-export type PPIsh = PPAble | ASTNode | string | number | boolean | bigint | null | undefined;
+export type PPIsh =
+    | PPAble
+    | ASTNode
+    | string
+    | number
+    | boolean
+    | bigint
+    | null
+    | undefined
+    | PPIsh[]
+    | Set<PPIsh>
+    | Map<PPIsh, PPIsh>
+    | Iterable<PPIsh>;
 
 export function isPPAble(value: any): value is PPAble {
     return value ? typeof value.pp === "function" : false;
@@ -12,7 +24,7 @@ export function isPPAble(value: any): value is PPAble {
 
 export function pp(value: PPIsh): string {
     if (value instanceof ASTNode) {
-        return value.type + "#" + value.id;
+        return value.type + " #" + value.id;
     }
 
     if (value === undefined) {
@@ -31,6 +43,22 @@ export function pp(value: PPIsh): string {
 
     if (isPPAble(value)) {
         return value.pp();
+    }
+
+    if (value instanceof Array) {
+        return ppArr(value);
+    }
+
+    if (value instanceof Set) {
+        return ppSet(value);
+    }
+
+    if (value instanceof Map) {
+        return ppMap(value);
+    }
+
+    if (typeof value[Symbol.iterator] === "function") {
+        return ppIter(value);
     }
 
     throw new Error("Unhandled value in pp(): " + String(value));
@@ -55,7 +83,7 @@ export function ppSet(set: Set<PPIsh>, separator = ",", start = "{", end = "}"):
 }
 
 export function ppMap(
-    map: Map<PPIsh, PPAble>,
+    map: Map<PPIsh, PPIsh>,
     separator = ",",
     keyValueSeparator = ":",
     start = "{",

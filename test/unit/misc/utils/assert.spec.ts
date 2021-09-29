@@ -17,13 +17,13 @@ ctx.register(astNode);
 const cases: Array<[boolean, string, Array<string | ASTNode | TypeNode>, string | undefined]> = [
     [true, "Test none", [], undefined],
     [false, "Test string {0}, {1}, {2}", ["x", "y", "z"], "Test string x, y, z"],
-    [false, "Test {0} AST node", [astNode], "Test ElementaryTypeName#1 AST node"],
+    [false, "Test {0} AST node", [astNode], "Test ElementaryTypeName #1 AST node"],
     [false, "Test {0} type node", [typeNode], "Test uint256 type node"],
     [
         false,
         "Test {0} combined {1} parts {2}",
         [astNode, typeNode, "xyz"],
-        "Test ElementaryTypeName#1 combined uint256 parts xyz"
+        "Test ElementaryTypeName #1 combined uint256 parts xyz"
     ],
     [
         false,
