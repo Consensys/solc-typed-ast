@@ -1,3 +1,4 @@
+import { PPAble } from "./pretty_printing";
 import { StructEqualityComparable } from "./struct_equality";
 import { assert } from "./utils";
 
@@ -10,7 +11,7 @@ let nNodes = 0;
  * Generic tree node with pretty-printer, optional source tripple information
  * and structural equality comparison. Useful for building ASTs.
  */
-export abstract class Node implements StructEqualityComparable {
+export abstract class Node implements StructEqualityComparable, PPAble {
     readonly id: number;
     readonly src?: Range;
 

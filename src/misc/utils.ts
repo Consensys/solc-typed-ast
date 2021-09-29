@@ -1,4 +1,4 @@
-import { TypeNode } from "..";
+import { pp, PPIsh } from "..";
 import { ASTNode } from "../ast/ast_node";
 
 export function forAll<T>(iterable: Iterable<T>, cb: (v: T) => boolean): boolean {
@@ -14,7 +14,7 @@ export function forAll<T>(iterable: Iterable<T>, cb: (v: T) => boolean): boolean
 export function assert(
     condition: boolean,
     message: string,
-    ...details: Array<ASTNode | TypeNode | string>
+    ...details: PPIsh[]
 ): asserts condition {
     if (condition) {
         return;
@@ -25,17 +25,10 @@ export function assert(
 
         for (let i = 0; i < details.length; i++) {
             const detail = details[i];
-
-            let part: string;
+            const part = pp(detail);
 
             if (detail instanceof ASTNode) {
-                part = detail.type + " #" + detail.id;
-
                 nodes.push(detail);
-            } else if (detail instanceof TypeNode) {
-                part = detail.pp();
-            } else {
-                part = detail;
             }
 
             message = message.replace(new RegExp("\\{" + i + "\\}", "g"), part);
