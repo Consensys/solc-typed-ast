@@ -270,7 +270,9 @@ OPTIONS:
     if (args.tree) {
         const INDENT = "|   ";
 
-        const encoderVersion = getABIEncoderVersion(units, result.compilerVersion as string);
+        const encoderVersion = result.compilerVersion
+            ? getABIEncoderVersion(units, result.compilerVersion as string)
+            : undefined;
 
         const walker: ASTNodeCallback = (node) => {
             const level = node.getParents().length;
@@ -283,7 +285,7 @@ OPTIONS:
             } else if (node instanceof ContractDefinition) {
                 message += " -> " + node.kind + " " + node.name;
 
-                const interfaceId = node.interfaceId(encoderVersion);
+                const interfaceId = encoderVersion ? node.interfaceId(encoderVersion) : undefined;
 
                 if (interfaceId !== undefined) {
                     message += ` [id: ${interfaceId}]`;
@@ -292,11 +294,12 @@ OPTIONS:
                 const signature =
                     node.vScope instanceof ContractDefinition &&
                     (node.visibility === FunctionVisibility.Public ||
-                        node.visibility === FunctionVisibility.External)
+                        node.visibility === FunctionVisibility.External) &&
+                    encoderVersion
                         ? node.canonicalSignature(encoderVersion)
                         : undefined;
 
-                if (signature) {
+                if (signature && encoderVersion) {
                     const selector = node.canonicalSignatureHash(encoderVersion);
 
                     message += ` -> ${signature} [selector: ${selector}]`;
@@ -307,7 +310,7 @@ OPTIONS:
                 if (node.stateVariable) {
                     message += ` -> ${node.typeString} ${node.visibility} ${node.name}`;
 
-                    if (node.visibility === StateVariableVisibility.Public) {
+                    if (node.visibility === StateVariableVisibility.Public && encoderVersion) {
                         const signature = node.getterCanonicalSignature(encoderVersion);
                         const selector = node.getterCanonicalSignatureHash(encoderVersion);
 

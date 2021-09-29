@@ -34,15 +34,11 @@ contract AccessorReturns {
     Some[] public f;
 
     function main() public {
-        uint256[] memory arr = new uint[](3);
-        arr[0] = 1;
-        
-        uint x = this.a(0);
-        uint y = this.b(address(0x0));
-        E z  = this.c();
-        (E u, bytes1 v) = this.d();
-        address w = this.e();
-
-        Some t = this.f(0);
+        function (uint256) external view returns (uint) a1 = this.a;
+        function (address) external view returns (uint) b1 = this.b;
+        function () external view returns (E) c1 = this.c;
+        function () external view returns (E, bytes1) d1 = this.d;
+        function () external view returns (address) e1 = this.e;
+        function (uint256) external view returns (Some) f1 = this.f;
     }
 }

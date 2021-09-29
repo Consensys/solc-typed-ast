@@ -214,14 +214,14 @@ function* lookupInContractDefinition(
                 let sigHash: string | undefined;
 
                 if (child instanceof FunctionDefinition) {
-                    // Its a safe to assume V2 as its abackward-compatible and
+                    // Its a safe to assume V2 as its backward-compatible and
                     // we only use it internally here
                     sigHash = child.canonicalSignatureHash(ABIEncoderVersion.V2);
                 } else if (
                     child instanceof VariableDeclaration &&
                     child.visibility === StateVariableVisibility.Public
                 ) {
-                    // Its a safe to assume V2 as its abackward-compatible and
+                    // Its a safe to assume V2 as its backward-compatible and
                     // we only use it internally here
                     sigHash = child.getterCanonicalSignatureHash(ABIEncoderVersion.V2);
                 }

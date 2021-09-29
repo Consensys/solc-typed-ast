@@ -187,7 +187,7 @@ export class VariableDeclaration extends ASTNode {
 
         assert(
             type !== undefined,
-            "Called getterArgsAndReturn() on variable thisaration without type",
+            "Called getterArgsAndReturn() on variable declaration without type",
             this
         );
 
