@@ -1,6 +1,7 @@
 import { assert } from "../../../misc/utils";
 import {
     FunctionType,
+    generalizeType,
     IntType,
     PointerType,
     TupleType,
@@ -9,7 +10,7 @@ import {
     UserDefinedType,
     variableDeclarationToTypeNode
 } from "../../../types";
-import { ABIEncoderVersion, toABIEncodedType } from "../../../types/abi";
+import { ABIEncoderVersion, abiTypeToCanonicalName, toABIEncodedType } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
 import {
     DataLocation,
@@ -172,7 +173,7 @@ export class VariableDeclaration extends ASTNode {
     canonicalSignatureType(encoderVersion: ABIEncoderVersion): string {
         const type = variableDeclarationToTypeNode(this);
         const abiType = toABIEncodedType(type, encoderVersion);
-        return abiType.pp();
+        return abiTypeToCanonicalName(generalizeType(abiType)[0]);
     }
 
     /**
@@ -257,9 +258,9 @@ export class VariableDeclaration extends ASTNode {
      */
     getterCanonicalSignature(encoderVersion: ABIEncoderVersion): string {
         const [internalArgTypes] = this.getterArgsAndReturn();
-        const argTypes = internalArgTypes.map((typ) => toABIEncodedType(typ, encoderVersion));
+        const argTypes = internalArgTypes.map((typ) => toABIEncodedType(typ, encoderVersion, true));
 
-        return this.name + "(" + argTypes.map((typ) => typ.pp()).join(",") + ")";
+        return this.name + "(" + argTypes.map(abiTypeToCanonicalName).join(",") + ")";
     }
 
     /**

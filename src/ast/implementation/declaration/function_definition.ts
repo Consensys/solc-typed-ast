@@ -1,6 +1,12 @@
-import { ABIEncoderVersion } from "../../../types/abi";
+import { variableDeclarationToTypeNode } from "../../../types";
+import { ABIEncoderVersion, abiTypeToLibraryCanonicalName } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
-import { FunctionKind, FunctionStateMutability, FunctionVisibility } from "../../constants";
+import {
+    ContractKind,
+    FunctionKind,
+    FunctionStateMutability,
+    FunctionVisibility
+} from "../../constants";
 import { encodeSignature } from "../../utils";
 import { ModifierInvocation } from "../meta/modifier_invocation";
 import { OverrideSpecifier } from "../meta/override_specifier";
@@ -175,9 +181,22 @@ export class FunctionDefinition extends ASTNode {
             return "";
         }
 
-        const args = this.vParameters.vParameters.map((arg) =>
-            arg.canonicalSignatureType(encoderVersion)
-        );
+        let args: string[];
+
+        // Signatures are computed differently depending on whether this is a library function
+        // or a contract method
+        if (
+            this.vScope instanceof ContractDefinition &&
+            this.vScope.kind === ContractKind.Library
+        ) {
+            args = this.vParameters.vParameters.map((arg) =>
+                abiTypeToLibraryCanonicalName(variableDeclarationToTypeNode(arg))
+            );
+        } else {
+            args = this.vParameters.vParameters.map((arg) =>
+                arg.canonicalSignatureType(encoderVersion)
+            );
+        }
 
         return this.name + "(" + args.join(",") + ")";
     }

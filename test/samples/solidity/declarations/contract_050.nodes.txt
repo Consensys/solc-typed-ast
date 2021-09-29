@@ -53,7 +53,6 @@ SourceUnit #146
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(0)
         <getter> vConstructor: undefined
-        <getter> interfaceId: undefined
         <getter> children: Array(1) [ FunctionDefinition #89 ]
         <getter> firstChild: FunctionDefinition #89
         <getter> lastChild: FunctionDefinition #89
@@ -85,8 +84,6 @@ SourceUnit #146
             parent: ContractDefinition #90
             <getter> children: Array(3) [ ParameterList #78, ParameterList #81, Block #88 ]
             <getter> vScope: ContractDefinition #90
-            <getter> canonicalSignature: "add(uint256,uint256)"
-            <getter> canonicalSignatureHash: "771602f7"
             <getter> firstChild: ParameterList #78
             <getter> lastChild: Block #88
             <getter> previousSibling: undefined
@@ -131,9 +128,6 @@ SourceUnit #146
                     parent: ParameterList #78
                     <getter> children: Array(1) [ ElementaryTypeName #74 ]
                     <getter> vScope: FunctionDefinition #89
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "a()"
-                    <getter> getterCanonicalSignatureHash: "0dbe671f"
                     <getter> firstChild: ElementaryTypeName #74
                     <getter> lastChild: ElementaryTypeName #74
                     <getter> previousSibling: undefined
@@ -180,9 +174,6 @@ SourceUnit #146
                     parent: ParameterList #78
                     <getter> children: Array(1) [ ElementaryTypeName #76 ]
                     <getter> vScope: FunctionDefinition #89
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "b()"
-                    <getter> getterCanonicalSignatureHash: "4df7e3d0"
                     <getter> firstChild: ElementaryTypeName #76
                     <getter> lastChild: ElementaryTypeName #76
                     <getter> previousSibling: VariableDeclaration #75
@@ -244,9 +235,6 @@ SourceUnit #146
                     parent: ParameterList #81
                     <getter> children: Array(1) [ ElementaryTypeName #79 ]
                     <getter> vScope: FunctionDefinition #89
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "c()"
-                    <getter> getterCanonicalSignatureHash: "c3da42b8"
                     <getter> firstChild: ElementaryTypeName #79
                     <getter> lastChild: ElementaryTypeName #79
                     <getter> previousSibling: undefined
@@ -425,7 +413,6 @@ SourceUnit #146
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(0)
         <getter> vConstructor: undefined
-        <getter> interfaceId: "cdb3deb6"
         <getter> children: Array(1) [ FunctionDefinition #99 ]
         <getter> firstChild: FunctionDefinition #99
         <getter> lastChild: FunctionDefinition #99
@@ -457,8 +444,6 @@ SourceUnit #146
             parent: ContractDefinition #100
             <getter> children: Array(2) [ ParameterList #95, ParameterList #98 ]
             <getter> vScope: ContractDefinition #100
-            <getter> canonicalSignature: "some(uint256,uint256)"
-            <getter> canonicalSignatureHash: "cdb3deb6"
             <getter> firstChild: ParameterList #95
             <getter> lastChild: ParameterList #98
             <getter> previousSibling: undefined
@@ -503,9 +488,6 @@ SourceUnit #146
                     parent: ParameterList #95
                     <getter> children: Array(1) [ ElementaryTypeName #91 ]
                     <getter> vScope: FunctionDefinition #99
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "a()"
-                    <getter> getterCanonicalSignatureHash: "0dbe671f"
                     <getter> firstChild: ElementaryTypeName #91
                     <getter> lastChild: ElementaryTypeName #91
                     <getter> previousSibling: undefined
@@ -552,9 +534,6 @@ SourceUnit #146
                     parent: ParameterList #95
                     <getter> children: Array(1) [ ElementaryTypeName #93 ]
                     <getter> vScope: FunctionDefinition #99
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "b()"
-                    <getter> getterCanonicalSignatureHash: "4df7e3d0"
                     <getter> firstChild: ElementaryTypeName #93
                     <getter> lastChild: ElementaryTypeName #93
                     <getter> previousSibling: VariableDeclaration #92
@@ -616,9 +595,6 @@ SourceUnit #146
                     parent: ParameterList #98
                     <getter> children: Array(1) [ ElementaryTypeName #96 ]
                     <getter> vScope: FunctionDefinition #99
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "()"
-                    <getter> getterCanonicalSignatureHash: "861731d5"
                     <getter> firstChild: ElementaryTypeName #96
                     <getter> lastChild: ElementaryTypeName #96
                     <getter> previousSibling: undefined
@@ -672,7 +648,6 @@ SourceUnit #146
         <getter> vStructs: Array(1) [ StructDefinition #109 ]
         <getter> vEnums: Array(1) [ EnumDefinition #113 ]
         <getter> vConstructor: FunctionDefinition #129
-        <getter> interfaceId: undefined
         <getter> children: Array(8) [ InheritanceSpecifier #102, EventDefinition #106, StructDefinition #109, EnumDefinition #113, UsingForDirective #116, VariableDeclaration #118, FunctionDefinition #129, FunctionDefinition #144 ]
         <getter> firstChild: InheritanceSpecifier #102
         <getter> lastChild: FunctionDefinition #144
@@ -729,8 +704,6 @@ SourceUnit #146
             parent: ContractDefinition #145
             <getter> children: Array(1) [ ParameterList #105 ]
             <getter> vScope: ContractDefinition #145
-            <getter> canonicalSignature: "Ev(address)"
-            <getter> canonicalSignatureHash: "a3cf4ddf"
             <getter> firstChild: ParameterList #105
             <getter> lastChild: ParameterList #105
             <getter> previousSibling: InheritanceSpecifier #102
@@ -775,9 +748,6 @@ SourceUnit #146
                     parent: ParameterList #105
                     <getter> children: Array(1) [ ElementaryTypeName #103 ]
                     <getter> vScope: EventDefinition #106
-                    <getter> canonicalSignatureType: "address"
-                    <getter> getterCanonicalSignature: "addr()"
-                    <getter> getterCanonicalSignatureHash: "767800de"
                     <getter> firstChild: ElementaryTypeName #103
                     <getter> lastChild: ElementaryTypeName #103
                     <getter> previousSibling: undefined
@@ -845,9 +815,6 @@ SourceUnit #146
                 parent: StructDefinition #109
                 <getter> children: Array(1) [ ElementaryTypeName #107 ]
                 <getter> vScope: StructDefinition #109
-                <getter> canonicalSignatureType: "uint256"
-                <getter> getterCanonicalSignature: "a()"
-                <getter> getterCanonicalSignatureHash: "0dbe671f"
                 <getter> firstChild: ElementaryTypeName #107
                 <getter> lastChild: ElementaryTypeName #107
                 <getter> previousSibling: undefined
@@ -1013,9 +980,6 @@ SourceUnit #146
             parent: ContractDefinition #145
             <getter> children: Array(1) [ ElementaryTypeName #117 ]
             <getter> vScope: ContractDefinition #145
-            <getter> canonicalSignatureType: "uint256"
-            <getter> getterCanonicalSignature: "val()"
-            <getter> getterCanonicalSignatureHash: "3c6bb436"
             <getter> firstChild: ElementaryTypeName #117
             <getter> lastChild: ElementaryTypeName #117
             <getter> previousSibling: UsingForDirective #116
@@ -1063,8 +1027,6 @@ SourceUnit #146
             parent: ContractDefinition #145
             <getter> children: Array(3) [ ParameterList #119, ParameterList #120, Block #128 ]
             <getter> vScope: ContractDefinition #145
-            <getter> canonicalSignature: ""
-            <getter> canonicalSignatureHash: ""
             <getter> firstChild: ParameterList #119
             <getter> lastChild: Block #128
             <getter> previousSibling: VariableDeclaration #118
@@ -1187,8 +1149,6 @@ SourceUnit #146
                             <getter> vMemberName: undefined
                             <getter> vFunctionCallType: "userDefined"
                             <getter> vReferencedDeclaration: FunctionDefinition #144
-                            <getter> referencedCanonicalSignature: "some(uint256,uint256)"
-                            <getter> referencedCanonicalSignatureHash: "cdb3deb6"
                             <getter> vFunctionName: "some"
                             <getter> vCallee: Identifier #122
                             <getter> firstChild: Identifier #122
@@ -1278,8 +1238,6 @@ SourceUnit #146
             parent: ContractDefinition #145
             <getter> children: Array(3) [ ParameterList #134, ParameterList #137, Block #143 ]
             <getter> vScope: ContractDefinition #145
-            <getter> canonicalSignature: "some(uint256,uint256)"
-            <getter> canonicalSignatureHash: "cdb3deb6"
             <getter> firstChild: ParameterList #134
             <getter> lastChild: Block #143
             <getter> previousSibling: FunctionDefinition #129
@@ -1324,9 +1282,6 @@ SourceUnit #146
                     parent: ParameterList #134
                     <getter> children: Array(1) [ ElementaryTypeName #130 ]
                     <getter> vScope: FunctionDefinition #144
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "a()"
-                    <getter> getterCanonicalSignatureHash: "0dbe671f"
                     <getter> firstChild: ElementaryTypeName #130
                     <getter> lastChild: ElementaryTypeName #130
                     <getter> previousSibling: undefined
@@ -1373,9 +1328,6 @@ SourceUnit #146
                     parent: ParameterList #134
                     <getter> children: Array(1) [ ElementaryTypeName #132 ]
                     <getter> vScope: FunctionDefinition #144
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "b()"
-                    <getter> getterCanonicalSignatureHash: "4df7e3d0"
                     <getter> firstChild: ElementaryTypeName #132
                     <getter> lastChild: ElementaryTypeName #132
                     <getter> previousSibling: VariableDeclaration #131
@@ -1437,9 +1389,6 @@ SourceUnit #146
                     parent: ParameterList #137
                     <getter> children: Array(1) [ ElementaryTypeName #135 ]
                     <getter> vScope: FunctionDefinition #144
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "()"
-                    <getter> getterCanonicalSignatureHash: "861731d5"
                     <getter> firstChild: ElementaryTypeName #135
                     <getter> lastChild: ElementaryTypeName #135
                     <getter> previousSibling: undefined
@@ -1514,8 +1463,6 @@ SourceUnit #146
                         <getter> vMemberName: "add"
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: FunctionDefinition #89
-                        <getter> referencedCanonicalSignature: "add(uint256,uint256)"
-                        <getter> referencedCanonicalSignatureHash: "771602f7"
                         <getter> vFunctionName: "add"
                         <getter> vCallee: MemberAccess #139
                         <getter> firstChild: MemberAccess #139

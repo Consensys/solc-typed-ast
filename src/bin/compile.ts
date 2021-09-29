@@ -26,6 +26,8 @@ import {
     VariableDeclaration,
     XPath
 } from "..";
+import { FunctionVisibility } from "../ast";
+import { getABIEncoderVersion } from "../compile";
 
 const modes = ["auto", "sol", "json"];
 
@@ -244,6 +246,9 @@ OPTIONS:
 
     if (args.tree) {
         const INDENT = "|   ";
+
+        const encoderVersion = getABIEncoderVersion(units, result.compilerVersion as string);
+
         const walker: ASTNodeCallback = (node) => {
             const level = node.getParents().length;
             const indent = INDENT.repeat(level);
@@ -255,16 +260,21 @@ OPTIONS:
             } else if (node instanceof ContractDefinition) {
                 message += " -> " + node.kind + " " + node.name;
 
-                const interfaceId = node.interfaceId;
+                const interfaceId = node.interfaceId(encoderVersion);
 
                 if (interfaceId !== undefined) {
                     message += ` [id: ${interfaceId}]`;
                 }
             } else if (node instanceof FunctionDefinition) {
-                const signature = node.canonicalSignature;
+                const signature =
+                    node.vScope instanceof ContractDefinition &&
+                    (node.visibility === FunctionVisibility.Public ||
+                        node.visibility === FunctionVisibility.External)
+                        ? node.canonicalSignature(encoderVersion)
+                        : undefined;
 
                 if (signature) {
-                    const selector = node.canonicalSignatureHash;
+                    const selector = node.canonicalSignatureHash(encoderVersion);
 
                     message += ` -> ${signature} [selector: ${selector}]`;
                 } else {
@@ -275,8 +285,8 @@ OPTIONS:
                     message += ` -> ${node.typeString} ${node.visibility} ${node.name}`;
 
                     if (node.visibility === StateVariableVisibility.Public) {
-                        const signature = node.getterCanonicalSignature;
-                        const selector = node.getterCanonicalSignatureHash;
+                        const signature = node.getterCanonicalSignature(encoderVersion);
+                        const selector = node.getterCanonicalSignatureHash(encoderVersion);
 
                         message += ` [getter: ${signature}, selector: ${selector}]`;
                     }

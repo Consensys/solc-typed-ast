@@ -47,10 +47,13 @@ export function resolve<T extends Resolvable>(
     if (target instanceof VariableDeclaration) {
         finder = (candidate) => candidate.name === target.name;
     } else {
-        const signatureHash = (target as FunctionLikeResolvable).canonicalSignatureHash;
+        const signatureHash = (target as FunctionLikeResolvable).canonicalSignatureHash(
+            ABIEncoderVersion.V2
+        );
 
         finder = (candidate) =>
-            signatureHash === (candidate as FunctionLikeResolvable).canonicalSignatureHash;
+            signatureHash ===
+            (candidate as FunctionLikeResolvable).canonicalSignatureHash(ABIEncoderVersion.V2);
     }
 
     for (const base of scope.vLinearizedBaseContracts) {
@@ -160,8 +163,8 @@ export function resolveCallable(
 ): FunctionDefinition | VariableDeclaration | undefined {
     const selector =
         definition instanceof FunctionDefinition
-            ? definition.canonicalSignatureHash
-            : definition.getterCanonicalSignatureHash;
+            ? definition.canonicalSignatureHash(ABIEncoderVersion.V2)
+            : definition.getterCanonicalSignatureHash(ABIEncoderVersion.V2);
 
     for (const base of scope.vLinearizedBaseContracts) {
         if (onlyParents && base === scope) {
@@ -169,14 +172,14 @@ export function resolveCallable(
         }
 
         for (const fn of base.vFunctions) {
-            if (fn.canonicalSignatureHash === selector) {
+            if (fn.canonicalSignatureHash(ABIEncoderVersion.V2) === selector) {
                 return fn;
             }
         }
 
         for (const v of base.vStateVariables) {
             if (v.visibility === StateVariableVisibility.Public) {
-                if (v.getterCanonicalSignatureHash === selector) {
+                if (v.getterCanonicalSignatureHash(ABIEncoderVersion.V2) === selector) {
                     return v;
                 }
             }
