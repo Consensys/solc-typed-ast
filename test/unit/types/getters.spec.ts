@@ -49,7 +49,7 @@ function getDef<T extends StructDefinition | EnumDefinition | ContractDefinition
                 : (node as EnumDefinition | StructDefinition).canonicalName) === canonicalName
     );
 
-    assert(defs.length === 1, `Unable get definition with name "${name}"`);
+    assert(defs.length === 1, `Unable get definition with name "${canonicalName}"`);
 
     return defs[0];
 }
