@@ -76,10 +76,14 @@
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#enumToIntType" class="tsd-kind-icon">enum<wbr>ToInt<wbr>Type</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#generalizeType" class="tsd-kind-icon">generalize<wbr>Type</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#getTypeForCompilerVersion" class="tsd-kind-icon">get<wbr>Type<wbr>For<wbr>Compiler<wbr>Version</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#getUserDefinedTypeFQName" class="tsd-kind-icon">get<wbr>User<wbr>Defined<wbr>TypeFQName</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#getterArgsAndReturn" class="tsd-kind-icon">getter<wbr>Args<wbr>And<wbr>Return</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#getterTypeForVar" class="tsd-kind-icon">getter<wbr>Type<wbr>For<wbr>Var</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#specializeType" class="tsd-kind-icon">specialize<wbr>Type</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#typeNameToSpecializedTypeNode" class="tsd-kind-icon">type<wbr>Name<wbr>ToSpecialized<wbr>Type<wbr>Node</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#typeNameToTypeNode" class="tsd-kind-icon">type<wbr>Name<wbr>ToType<wbr>Node</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-module"><a href="types_utils.html#variableDeclarationToTypeNode" class="tsd-kind-icon">variable<wbr>Declaration<wbr>ToType<wbr>Node</a></li>
 							</ul>
@@ -95,13 +99,36 @@
 					<div class="tsd-signature tsd-kind-icon">Version<wbr>Dependent<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">[</span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L35">src/types/utils.ts:35</a></li>
+							<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L37">src/types/utils.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="enumToIntType" class="tsd-anchor"></a>
+					<h3>enum<wbr>ToInt<wbr>Type</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">enum<wbr>ToInt<wbr>Type<span class="tsd-signature-symbol">(</span>decl<span class="tsd-signature-symbol">: </span><a href="../classes/ast_implementation_declaration_enum_definition.EnumDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">EnumDefinition</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_int_type.IntType.html" class="tsd-signature-type" data-tsd-kind="Class">IntType</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L279">src/types/utils.ts:279</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>decl: <a href="../classes/ast_implementation_declaration_enum_definition.EnumDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">EnumDefinition</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/types_ast_int_type.IntType.html" class="tsd-signature-type" data-tsd-kind="Class">IntType</a></h4>
+						</li>
+					</ul>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
 					<a name="generalizeType" class="tsd-anchor"></a>
 					<h3>generalize<wbr>Type</h3>
@@ -117,8 +144,9 @@
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Given a <code>TypeNode</code> <code>type</code> that is specialized to some storage location, compute the original &#39;general&#39; type that is
-									independent of location. This is the inverse of <code>specializeType()</code></p>
+									<p>Given a <code>TypeNode</code> <code>type</code> that is specialized to some storage location,
+										compute the original &#39;general&#39; type that is independent of location.
+									This is the inverse of <code>specializeType()</code></p>
 								</div>
 								<p>Note that this doesn&#39;t handle all possible expression types - just the ones that that may appear
 								in a variable declaration.</p>
@@ -147,7 +175,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L37">src/types/utils.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L39">src/types/utils.ts:39</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -187,6 +215,74 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="getterArgsAndReturn" class="tsd-anchor"></a>
+					<h3>getter<wbr>Args<wbr>And<wbr>Return</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">getter<wbr>Args<wbr>And<wbr>Return<span class="tsd-signature-symbol">(</span>decl<span class="tsd-signature-symbol">: </span><a href="../classes/ast_implementation_declaration_variable_declaration.VariableDeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">[</span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">, </span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol">]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L312">src/types/utils.ts:312</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>For given variable declaration <code>decl</code> computes accessor arguments and return types.
+									Usage:</p>
+									<pre><code><span style="color: #0000FF">const</span><span style="color: #000000"> [</span><span style="color: #0070C1">argTs</span><span style="color: #000000">, </span><span style="color: #0070C1">retT</span><span style="color: #000000">] = </span><span style="color: #795E26">getterArgsAndReturn</span><span style="color: #000000">(</span><span style="color: #001080">v</span><span style="color: #000000">);</span>
+</code></pre>
+									<p>Where <code>argsTs</code> is an array of computed argument types and <code>retT</code> is computed return type.</p>
+								</div>
+								<dl class="tsd-comment-tags">
+									<dt>see</dt>
+									<dd><p><a href="https://docs.soliditylang.org/en/latest/contracts.html#getter-functions">https://docs.soliditylang.org/en/latest/contracts.html#getter-functions</a></p>
+									</dd>
+									<dt>see</dt>
+									<dd><p><a href="https://github.com/ethereum/solidity/blob/72fc34494acfcce1ead7da6b63cb03ea9a8da9a3/libsolidity/ast/Types.cpp#L2682-L2745">https://github.com/ethereum/solidity/blob/72fc34494acfcce1ead7da6b63cb03ea9a8da9a3/libsolidity/ast/Types.cpp#L2682-L2745</a></p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>decl: <a href="../classes/ast_implementation_declaration_variable_declaration.VariableDeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">[</span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">, </span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><span class="tsd-signature-symbol">]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="getterTypeForVar" class="tsd-anchor"></a>
+					<h3>getter<wbr>Type<wbr>For<wbr>Var</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">getter<wbr>Type<wbr>For<wbr>Var<span class="tsd-signature-symbol">(</span>decl<span class="tsd-signature-symbol">: </span><a href="../classes/ast_implementation_declaration_variable_declaration.VariableDeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_function_type.FunctionType.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionType</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L377">src/types/utils.ts:377</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>For given variable declaration <code>decl</code> computes accessor function type</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>decl: <a href="../classes/ast_implementation_declaration_variable_declaration.VariableDeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/types_ast_function_type.FunctionType.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionType</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
 					<a name="specializeType" class="tsd-anchor"></a>
 					<h3>specialize<wbr>Type</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
@@ -196,7 +292,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L59">src/types/utils.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L61">src/types/utils.ts:61</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -230,6 +326,38 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
+					<a name="typeNameToSpecializedTypeNode" class="tsd-anchor"></a>
+					<h3>type<wbr>Name<wbr>ToSpecialized<wbr>Type<wbr>Node</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
+						<li class="tsd-signature tsd-kind-icon">type<wbr>Name<wbr>ToSpecialized<wbr>Type<wbr>Node<span class="tsd-signature-symbol">(</span>astT<span class="tsd-signature-symbol">: </span><a href="../classes/ast_implementation_type_type_name.TypeName.html" class="tsd-signature-type" data-tsd-kind="Class">TypeName</a>, loc<span class="tsd-signature-symbol">: </span><a href="../enums/ast_constants.DataLocation.html" class="tsd-signature-type" data-tsd-kind="Enumeration">DataLocation</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L265">src/types/utils.ts:265</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Computes a <code>TypeNode</code> equivalent of given <code>astT</code>,
+									specialized for location <code>loc</code> (if applicable).</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>astT: <a href="../classes/ast_implementation_type_type_name.TypeName.html" class="tsd-signature-type" data-tsd-kind="Class">TypeName</a></h5>
+								</li>
+								<li>
+									<h5>loc: <a href="../enums/ast_constants.DataLocation.html" class="tsd-signature-type" data-tsd-kind="Enumeration">DataLocation</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../classes/types_ast_type.TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-module">
 					<a name="typeNameToTypeNode" class="tsd-anchor"></a>
 					<h3>type<wbr>Name<wbr>ToType<wbr>Node</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-module">
@@ -239,7 +367,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L170">src/types/utils.ts:170</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L158">src/types/utils.ts:158</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -272,13 +400,13 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L155">src/types/utils.ts:155</a></li>
+									<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/utils.ts#L273">src/types/utils.ts:273</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Given a <code>VariableDeclaration</code> node <code>decl</code> compute the <code>TypeNode</code> that corresponds to the variable. This takes into account
-									the storage location of the <code>decl</code>.</p>
+									<p>Given a <code>VariableDeclaration</code> node <code>decl</code> compute the <code>TypeNode</code> that corresponds to the variable.
+									This takes into account the storage location of the <code>decl</code>.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -310,6 +438,9 @@
 						<a href="types_utils.html#VersionDependentType" class="tsd-kind-icon">Version<wbr>Dependent<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="types_utils.html#enumToIntType" class="tsd-kind-icon">enum<wbr>ToInt<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="types_utils.html#generalizeType" class="tsd-kind-icon">generalize<wbr>Type</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
@@ -319,7 +450,16 @@
 						<a href="types_utils.html#getUserDefinedTypeFQName" class="tsd-kind-icon">get<wbr>User<wbr>Defined<wbr>TypeFQName</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="types_utils.html#getterArgsAndReturn" class="tsd-kind-icon">getter<wbr>Args<wbr>And<wbr>Return</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="types_utils.html#getterTypeForVar" class="tsd-kind-icon">getter<wbr>Type<wbr>For<wbr>Var</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="types_utils.html#specializeType" class="tsd-kind-icon">specialize<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-module">
+						<a href="types_utils.html#typeNameToSpecializedTypeNode" class="tsd-kind-icon">type<wbr>Name<wbr>ToSpecialized<wbr>Type<wbr>Node</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-module">
 						<a href="types_utils.html#typeNameToTypeNode" class="tsd-kind-icon">type<wbr>Name<wbr>ToType<wbr>Node</a>
