@@ -12,9 +12,3 @@ export function verify<T extends ASTNode>(
         expect(node[p]).toEqual(properties[p]);
     }
 }
-
-export function assert(condition: boolean, message: string): asserts condition {
-    if (condition === false) {
-        throw new Error(message);
-    }
-}

@@ -5,7 +5,9 @@ import {
     DataLocation,
     ElementaryTypeName,
     EnumDefinition,
+    FunctionStateMutability,
     FunctionTypeName,
+    FunctionVisibility,
     Literal,
     LiteralKind,
     Mapping,
@@ -57,12 +59,8 @@ export function getTypeForCompilerVersion(
  * @returns specialized type
  */
 export function specializeType(type: TypeNode, loc: DataLocation): TypeNode {
-    assert(
-        !(type instanceof PointerType),
-        `Unexpected pointer type ${type.pp()} in concretization.`
-    );
-
-    assert(!(type instanceof TupleType), `Unexpected tuple type ${type.pp()} in concretization.`);
+    assert(!(type instanceof PointerType), "Unexpected pointer type {0} in concretization.", type);
+    assert(!(type instanceof TupleType), "Unexpected tuple type {0} in concretization.", type);
 
     // bytes and string
     if (type instanceof PackedArrayType) {
@@ -80,7 +78,8 @@ export function specializeType(type: TypeNode, loc: DataLocation): TypeNode {
 
         assert(
             def !== undefined,
-            `Can't concretize user defined type ${type.pp()} with no corresponding definition.`
+            "Can't concretize user defined type {0} with no corresponding definition.",
+            type
         );
 
         if (def instanceof StructDefinition) {
@@ -107,8 +106,9 @@ export function specializeType(type: TypeNode, loc: DataLocation): TypeNode {
 }
 
 /**
- * Given a `TypeNode` `type` that is specialized to some storage location, compute the original 'general' type that is
- * independent of location. This is the inverse of `specializeType()`
+ * Given a `TypeNode` `type` that is specialized to some storage location,
+ * compute the original 'general' type that is independent of location.
+ * This is the inverse of `specializeType()`
  *
  * Note that this doesn't handle all possible expression types - just the ones that that may appear
  * in a variable declaration.
@@ -149,18 +149,6 @@ export function getUserDefinedTypeFQName(
 }
 
 /**
- * Given a `VariableDeclaration` node `decl` compute the `TypeNode` that corresponds to the variable. This takes into account
- * the storage location of the `decl`.
- */
-export function variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNode {
-    assert(decl.vType !== undefined, `Decl ${decl.id} is missing type`);
-
-    const rawTypeNode = typeNameToTypeNode(decl.vType);
-
-    return specializeType(rawTypeNode, decl.storageLocation);
-}
-
-/**
  * Convert a given ast `TypeName` into a `TypeNode`. This produces "general
  * type patterns" without any specific storage information.
  *
@@ -175,17 +163,15 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
             return new BoolType();
         }
 
-        const addressRE = /^address *(payable)?$/;
+        const rxAddress = /^address *(payable)?$/;
 
-        let m = name.match(addressRE);
-
-        if (m !== null) {
+        if (rxAddress.test(name)) {
             return new AddressType(astT.stateMutability === "payable");
         }
 
-        const intTypeRE = /^(u?)int([0-9]*)$/;
+        const rxInt = /^(u?)int([0-9]*)$/;
 
-        m = name.match(intTypeRE);
+        let m = name.match(rxInt);
 
         if (m !== null) {
             const signed = m[1] !== "u";
@@ -194,18 +180,26 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
             return new IntType(nBits, signed);
         }
 
-        const bytesRE = /^bytes([0-9]+)$/;
+        const rxFixedBytes = /^bytes([0-9]+)$/;
 
-        m = name.match(bytesRE);
+        m = name.match(rxFixedBytes);
 
-        if (name == "byte" || m !== null) {
-            const size = m !== null ? parseInt(m[1]) : 1;
+        if (m !== null) {
+            const size = parseInt(m[1]);
 
             return new FixedBytesType(size);
         }
 
-        if (name === "bytes" || name === "string") {
-            return name === "bytes" ? new BytesType() : new StringType();
+        if (name === "byte") {
+            return new FixedBytesType(1);
+        }
+
+        if (name === "bytes") {
+            return new BytesType();
+        }
+
+        if (name === "string") {
+            return new StringType();
         }
 
         throw new Error(`NYI converting elementary AST Type ${name}`);
@@ -217,9 +211,11 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
         let size: bigint | undefined;
 
         if (astT.vLength !== undefined) {
-            if (!(astT.vLength instanceof Literal && astT.vLength.kind == LiteralKind.Number)) {
-                throw new Error(`NYI non-literal array type sizes`);
-            }
+            assert(
+                astT.vLength instanceof Literal && astT.vLength.kind == LiteralKind.Number,
+                "NYI non-literal array type sizes",
+                astT
+            );
 
             size = BigInt(astT.vLength.value);
         }
@@ -238,26 +234,18 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
             return new UserDefinedType(getUserDefinedTypeFQName(def), def);
         }
 
-        throw new Error(`NYI typecheckin of user-defined type ${def.print()}`);
+        throw new Error(`NYI typechecking of user-defined type ${def.print()}`);
     }
 
     if (astT instanceof FunctionTypeName) {
-        // param.vType is always defined here. Even in 0.4.x can't have function declarations with `var` args
-        const parameters = astT.vParameterTypes.vParameters.map((param) =>
-            variableDeclarationToTypeNode(param)
-        );
+        /**
+         * `vType` is always defined here for parameters if a function type.
+         * Even in 0.4.x can't have function declarations with `var` args.
+         */
+        const args = astT.vParameterTypes.vParameters.map(variableDeclarationToTypeNode);
+        const rets = astT.vReturnParameterTypes.vParameters.map(variableDeclarationToTypeNode);
 
-        const returns = astT.vReturnParameterTypes.vParameters.map((param) =>
-            variableDeclarationToTypeNode(param)
-        );
-
-        return new FunctionType(
-            undefined,
-            parameters,
-            returns,
-            astT.visibility,
-            astT.stateMutability
-        );
+        return new FunctionType(undefined, args, rets, astT.visibility, astT.stateMutability);
     }
 
     if (astT instanceof Mapping) {
@@ -268,4 +256,132 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
     }
 
     throw new Error(`NYI converting AST Type ${astT.print()} to SType`);
+}
+
+/**
+ * Computes a `TypeNode` equivalent of given `astT`,
+ * specialized for location `loc` (if applicable).
+ */
+export function typeNameToSpecializedTypeNode(astT: TypeName, loc: DataLocation): TypeNode {
+    return specializeType(typeNameToTypeNode(astT), loc);
+}
+
+/**
+ * Given a `VariableDeclaration` node `decl` compute the `TypeNode` that corresponds to the variable.
+ * This takes into account the storage location of the `decl`.
+ */
+export function variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNode {
+    assert(decl.vType !== undefined, "Expected {0} to have type", decl);
+
+    return typeNameToSpecializedTypeNode(decl.vType, decl.storageLocation);
+}
+
+export function enumToIntType(decl: EnumDefinition): IntType {
+    const length = decl.children.length;
+
+    let size: number | undefined;
+
+    for (let n = 8; n <= 32; n += 8) {
+        if (length < 2 ** n) {
+            size = n;
+
+            break;
+        }
+    }
+
+    assert(
+        size !== undefined,
+        "Unable to detect enum type size - member count exceeds 2 ** 32",
+        decl
+    );
+
+    return new IntType(size, false);
+}
+
+/**
+ * For given variable declaration `decl` computes accessor arguments and return types.
+ * Usage:
+ * ```
+ * const [argTs, retT] = getterArgsAndReturn(v);
+ * ```
+ * Where `argsTs` is an array of computed argument types and `retT` is computed return type.
+ *
+ * @see https://docs.soliditylang.org/en/latest/contracts.html#getter-functions
+ * @see https://github.com/ethereum/solidity/blob/72fc34494acfcce1ead7da6b63cb03ea9a8da9a3/libsolidity/ast/Types.cpp#L2682-L2745
+ */
+export function getterArgsAndReturn(decl: VariableDeclaration): [TypeNode[], TypeNode] {
+    const argTypes: TypeNode[] = [];
+
+    let type = decl.vType;
+
+    assert(
+        type !== undefined,
+        "Called getterArgsAndReturn() on variable declaration without type",
+        decl
+    );
+
+    while (true) {
+        if (type instanceof ArrayTypeName) {
+            argTypes.push(new IntType(256, false));
+
+            type = type.vBaseType;
+        } else if (type instanceof Mapping) {
+            argTypes.push(typeNameToSpecializedTypeNode(type.vKeyType, DataLocation.Memory));
+
+            type = type.vValueType;
+        } else {
+            break;
+        }
+    }
+
+    let retType = typeNameToSpecializedTypeNode(type, DataLocation.Memory);
+
+    if (
+        retType instanceof PointerType &&
+        retType.to instanceof UserDefinedType &&
+        retType.to.definition instanceof StructDefinition
+    ) {
+        const elements: TypeNode[] = [];
+
+        for (const member of retType.to.definition.vMembers) {
+            const memberT = member.vType;
+
+            assert(
+                memberT !== undefined,
+                "Unexpected untyped struct member",
+                retType.to.definition
+            );
+
+            if (memberT instanceof Mapping) {
+                continue;
+            }
+
+            if (memberT instanceof ArrayTypeName) {
+                continue;
+            }
+
+            const elementT = typeNameToSpecializedTypeNode(memberT, DataLocation.Memory);
+
+            elements.push(elementT);
+        }
+
+        retType = new TupleType(elements);
+    }
+
+    return [argTypes, retType];
+}
+
+/**
+ * For given variable declaration `decl` computes accessor function type
+ */
+export function getterTypeForVar(decl: VariableDeclaration): FunctionType {
+    const [args, ret] = getterArgsAndReturn(decl);
+
+    return new FunctionType(
+        decl.name,
+        args,
+        ret instanceof TupleType ? ret.elements : [ret],
+        FunctionVisibility.External,
+        FunctionStateMutability.View
+    );
 }

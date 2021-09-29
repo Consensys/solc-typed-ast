@@ -29,9 +29,10 @@ import {
     StructuredDocumentation,
     TimeUnit,
     UnaryOperation,
-    VariableDeclaration
+    VariableDeclaration,
+    assert
 } from "../../../../src";
-import { assert, verify } from "../common";
+import { verify } from "../common";
 
 describe("ASTNodeFactory.copy()", () => {
     it("ASTNode", () => {
