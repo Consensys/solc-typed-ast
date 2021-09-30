@@ -1,3 +1,4 @@
+import { ABIEncoderVersion } from "../../../types/abi";
 import { ASTNode, ASTNodeWithChildren } from "../../ast_node";
 import { ContractKind, StateVariableVisibility } from "../../constants";
 import { InheritanceSpecifier } from "../meta/inheritance_specifier";
@@ -257,7 +258,7 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
         return this.vFunctions.find((fn) => fn.isConstructor);
     }
 
-    get interfaceId(): string | undefined {
+    interfaceId(encoderVersion: ABIEncoderVersion): string | undefined {
         if (
             this.kind === ContractKind.Interface ||
             (this.kind === ContractKind.Contract && this.abstract)
@@ -265,7 +266,7 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
             const selectors: string[] = [];
 
             for (const fn of this.vFunctions) {
-                const hash = fn.canonicalSignatureHash;
+                const hash = fn.canonicalSignatureHash(encoderVersion);
 
                 if (hash) {
                     selectors.push(hash);
@@ -274,7 +275,7 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
 
             for (const v of this.vStateVariables) {
                 if (v.visibility === StateVariableVisibility.Public) {
-                    selectors.push(v.getterCanonicalSignatureHash);
+                    selectors.push(v.getterCanonicalSignatureHash(encoderVersion));
                 }
             }
 

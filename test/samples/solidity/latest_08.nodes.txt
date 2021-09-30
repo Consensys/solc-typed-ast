@@ -177,7 +177,6 @@ SourceUnit #641
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(0)
         <getter> vConstructor: undefined
-        <getter> interfaceId: undefined
         <getter> children: Array(1) [ FunctionDefinition #354 ]
         <getter> firstChild: FunctionDefinition #354
         <getter> lastChild: FunctionDefinition #354
@@ -209,8 +208,6 @@ SourceUnit #641
             parent: ContractDefinition #355
             <getter> children: Array(3) [ ParameterList #339, ParameterList #342, Block #353 ]
             <getter> vScope: ContractDefinition #355
-            <getter> canonicalSignature: "test()"
-            <getter> canonicalSignatureHash: "f8a8fd6d"
             <getter> firstChild: ParameterList #339
             <getter> lastChild: Block #353
             <getter> previousSibling: undefined
@@ -270,9 +267,6 @@ SourceUnit #641
                     parent: ParameterList #342
                     <getter> children: Array(1) [ ElementaryTypeName #340 ]
                     <getter> vScope: FunctionDefinition #354
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "()"
-                    <getter> getterCanonicalSignatureHash: "861731d5"
                     <getter> firstChild: ElementaryTypeName #340
                     <getter> lastChild: ElementaryTypeName #340
                     <getter> previousSibling: undefined
@@ -353,9 +347,6 @@ SourceUnit #641
                         parent: VariableDeclarationStatement #346
                         <getter> children: Array(1) [ ElementaryTypeName #343 ]
                         <getter> vScope: Block #353
-                        <getter> canonicalSignatureType: "uint256"
-                        <getter> getterCanonicalSignature: "x()"
-                        <getter> getterCanonicalSignatureHash: "0c55699c"
                         <getter> firstChild: ElementaryTypeName #343
                         <getter> lastChild: ElementaryTypeName #343
                         <getter> previousSibling: undefined
@@ -534,7 +525,6 @@ SourceUnit #641
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(0)
         <getter> vConstructor: FunctionDefinition #367
-        <getter> interfaceId: undefined
         <getter> children: Array(5) [ InheritanceSpecifier #357, UsingForDirective #361, FunctionDefinition #367, FunctionDefinition #380, FunctionDefinition #390 ]
         <getter> firstChild: InheritanceSpecifier #357
         <getter> lastChild: FunctionDefinition #390
@@ -668,8 +658,6 @@ SourceUnit #641
             parent: ContractDefinition #391
             <getter> children: Array(4) [ ParameterList #362, ModifierInvocation #365, ParameterList #363, Block #366 ]
             <getter> vScope: ContractDefinition #391
-            <getter> canonicalSignature: ""
-            <getter> canonicalSignatureHash: ""
             <getter> firstChild: ParameterList #362
             <getter> lastChild: Block #366
             <getter> previousSibling: UsingForDirective #361
@@ -781,8 +769,6 @@ SourceUnit #641
             parent: ContractDefinition #391
             <getter> children: Array(3) [ ParameterList #368, ParameterList #369, Block #379 ]
             <getter> vScope: ContractDefinition #391
-            <getter> canonicalSignature: "test()"
-            <getter> canonicalSignatureHash: "f8a8fd6d"
             <getter> firstChild: ParameterList #368
             <getter> lastChild: Block #379
             <getter> previousSibling: FunctionDefinition #367
@@ -876,9 +862,6 @@ SourceUnit #641
                         parent: VariableDeclarationStatement #378
                         <getter> children: Array(1) [ UserDefinedTypeName #371 ]
                         <getter> vScope: Block #379
-                        <getter> canonicalSignatureType: "(uint256)"
-                        <getter> getterCanonicalSignature: "s()"
-                        <getter> getterCanonicalSignatureHash: "86b714e2"
                         <getter> firstChild: UserDefinedTypeName #371
                         <getter> lastChild: UserDefinedTypeName #371
                         <getter> previousSibling: undefined
@@ -938,8 +921,6 @@ SourceUnit #641
                         <getter> vMemberName: "SomeStruct"
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: StructDefinition #320
-                        <getter> referencedCanonicalSignature: undefined
-                        <getter> referencedCanonicalSignatureHash: undefined
                         <getter> vFunctionName: "SomeStruct"
                         <getter> vCallee: MemberAccess #375
                         <getter> firstChild: MemberAccess #375
@@ -1048,8 +1029,6 @@ SourceUnit #641
             parent: ContractDefinition #391
             <getter> children: Array(4) [ ParameterList #381, OverrideSpecifier #386, ParameterList #384, Block #389 ]
             <getter> vScope: ContractDefinition #391
-            <getter> canonicalSignature: "some()"
-            <getter> canonicalSignatureHash: "c03ee3d3"
             <getter> firstChild: ParameterList #381
             <getter> lastChild: Block #389
             <getter> previousSibling: FunctionDefinition #380
@@ -1141,9 +1120,6 @@ SourceUnit #641
                     parent: ParameterList #384
                     <getter> children: Array(1) [ ElementaryTypeName #382 ]
                     <getter> vScope: FunctionDefinition #390
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "()"
-                    <getter> getterCanonicalSignatureHash: "861731d5"
                     <getter> firstChild: ElementaryTypeName #382
                     <getter> lastChild: ElementaryTypeName #382
                     <getter> previousSibling: undefined
@@ -1250,7 +1226,6 @@ SourceUnit #641
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(0)
         <getter> vConstructor: undefined
-        <getter> interfaceId: undefined
         <getter> children: Array(1) [ FunctionDefinition #411 ]
         <getter> firstChild: FunctionDefinition #411
         <getter> lastChild: FunctionDefinition #411
@@ -1282,8 +1257,6 @@ SourceUnit #641
             parent: ContractDefinition #412
             <getter> children: Array(3) [ ParameterList #392, ParameterList #393, Block #410 ]
             <getter> vScope: ContractDefinition #412
-            <getter> canonicalSignature: "test()"
-            <getter> canonicalSignatureHash: "f8a8fd6d"
             <getter> firstChild: ParameterList #392
             <getter> lastChild: Block #410
             <getter> previousSibling: undefined
@@ -1377,9 +1350,6 @@ SourceUnit #641
                         parent: VariableDeclarationStatement #401
                         <getter> children: Array(1) [ ElementaryTypeName #394 ]
                         <getter> vScope: Block #410
-                        <getter> canonicalSignatureType: "bytes"
-                        <getter> getterCanonicalSignature: "code()"
-                        <getter> getterCanonicalSignatureHash: "24c12bf6"
                         <getter> firstChild: ElementaryTypeName #394
                         <getter> lastChild: ElementaryTypeName #394
                         <getter> previousSibling: undefined
@@ -1439,8 +1409,6 @@ SourceUnit #641
                             <getter> vMemberName: undefined
                             <getter> vFunctionCallType: "builtin"
                             <getter> vReferencedDeclaration: undefined
-                            <getter> referencedCanonicalSignature: undefined
-                            <getter> referencedCanonicalSignatureHash: undefined
                             <getter> vFunctionName: "address"
                             <getter> vCallee: ElementaryTypeNameExpression #397
                             <getter> firstChild: ElementaryTypeNameExpression #397
@@ -1542,9 +1510,6 @@ SourceUnit #641
                         parent: VariableDeclarationStatement #409
                         <getter> children: Array(1) [ ElementaryTypeName #402 ]
                         <getter> vScope: Block #410
-                        <getter> canonicalSignatureType: "bytes32"
-                        <getter> getterCanonicalSignature: "codeHash()"
-                        <getter> getterCanonicalSignatureHash: "18edaaf2"
                         <getter> firstChild: ElementaryTypeName #402
                         <getter> lastChild: ElementaryTypeName #402
                         <getter> previousSibling: undefined
@@ -1604,8 +1569,6 @@ SourceUnit #641
                             <getter> vMemberName: undefined
                             <getter> vFunctionCallType: "builtin"
                             <getter> vReferencedDeclaration: undefined
-                            <getter> referencedCanonicalSignature: undefined
-                            <getter> referencedCanonicalSignatureHash: undefined
                             <getter> vFunctionName: "address"
                             <getter> vCallee: ElementaryTypeNameExpression #405
                             <getter> firstChild: ElementaryTypeNameExpression #405
@@ -1696,7 +1659,6 @@ SourceUnit #641
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(0)
         <getter> vConstructor: undefined
-        <getter> interfaceId: undefined
         <getter> children: Array(1) [ FunctionDefinition #468 ]
         <getter> firstChild: FunctionDefinition #468
         <getter> lastChild: FunctionDefinition #468
@@ -1728,8 +1690,6 @@ SourceUnit #641
             parent: ContractDefinition #469
             <getter> children: Array(3) [ ParameterList #413, ParameterList #414, Block #467 ]
             <getter> vScope: ContractDefinition #469
-            <getter> canonicalSignature: "test()"
-            <getter> canonicalSignatureHash: "f8a8fd6d"
             <getter> firstChild: ParameterList #413
             <getter> lastChild: Block #467
             <getter> previousSibling: undefined
@@ -1823,9 +1783,6 @@ SourceUnit #641
                         parent: VariableDeclarationStatement #422
                         <getter> children: Array(1) [ UserDefinedTypeName #416 ]
                         <getter> vScope: Block #467
-                        <getter> canonicalSignatureType: "address"
-                        <getter> getterCanonicalSignature: "c()"
-                        <getter> getterCanonicalSignatureHash: "c3da42b8"
                         <getter> firstChild: UserDefinedTypeName #416
                         <getter> lastChild: UserDefinedTypeName #416
                         <getter> previousSibling: undefined
@@ -1885,8 +1842,6 @@ SourceUnit #641
                         <getter> vMemberName: undefined
                         <getter> vFunctionCallType: "builtin"
                         <getter> vReferencedDeclaration: undefined
-                        <getter> referencedCanonicalSignature: undefined
-                        <getter> referencedCanonicalSignatureHash: undefined
                         <getter> vFunctionName: "new"
                         <getter> vCallee: NewExpression #420
                         <getter> firstChild: NewExpression #420
@@ -1981,8 +1936,6 @@ SourceUnit #641
                         <getter> vMemberName: "test"
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: FunctionDefinition #411
-                        <getter> referencedCanonicalSignature: "test()"
-                        <getter> referencedCanonicalSignatureHash: "f8a8fd6d"
                         <getter> vFunctionName: "test"
                         <getter> vCallee: MemberAccess #424
                         <getter> firstChild: MemberAccess #424
@@ -2119,9 +2072,6 @@ SourceUnit #641
                                 parent: ParameterList #435
                                 <getter> children: Array(1) [ ElementaryTypeName #433 ]
                                 <getter> vScope: TryCatchClause #436
-                                <getter> canonicalSignatureType: "string"
-                                <getter> getterCanonicalSignature: "reason()"
-                                <getter> getterCanonicalSignatureHash: "e134e33d"
                                 <getter> firstChild: ElementaryTypeName #433
                                 <getter> lastChild: ElementaryTypeName #433
                                 <getter> previousSibling: undefined
@@ -2194,8 +2144,6 @@ SourceUnit #641
                                     <getter> vMemberName: undefined
                                     <getter> vFunctionCallType: "builtin"
                                     <getter> vReferencedDeclaration: undefined
-                                    <getter> referencedCanonicalSignature: undefined
-                                    <getter> referencedCanonicalSignatureHash: undefined
                                     <getter> vFunctionName: "revert"
                                     <getter> vCallee: Identifier #428
                                     <getter> firstChild: Identifier #428
@@ -2298,9 +2246,6 @@ SourceUnit #641
                                 parent: ParameterList #458
                                 <getter> children: Array(1) [ ElementaryTypeName #456 ]
                                 <getter> vScope: TryCatchClause #459
-                                <getter> canonicalSignatureType: "uint256"
-                                <getter> getterCanonicalSignature: "_code()"
-                                <getter> getterCanonicalSignatureHash: "8d1841e3"
                                 <getter> firstChild: ElementaryTypeName #456
                                 <getter> lastChild: ElementaryTypeName #456
                                 <getter> previousSibling: undefined
@@ -2463,8 +2408,6 @@ SourceUnit #641
                                             <getter> vMemberName: undefined
                                             <getter> vFunctionCallType: "builtin"
                                             <getter> vReferencedDeclaration: undefined
-                                            <getter> referencedCanonicalSignature: undefined
-                                            <getter> referencedCanonicalSignatureHash: undefined
                                             <getter> vFunctionName: "revert"
                                             <getter> vCallee: Identifier #440
                                             <getter> firstChild: Identifier #440
@@ -2634,8 +2577,6 @@ SourceUnit #641
                                                 <getter> vMemberName: undefined
                                                 <getter> vFunctionCallType: "builtin"
                                                 <getter> vReferencedDeclaration: undefined
-                                                <getter> referencedCanonicalSignature: undefined
-                                                <getter> referencedCanonicalSignatureHash: undefined
                                                 <getter> vFunctionName: "revert"
                                                 <getter> vCallee: Identifier #448
                                                 <getter> firstChild: Identifier #448
@@ -2749,8 +2690,6 @@ SourceUnit #641
                                     <getter> vMemberName: undefined
                                     <getter> vFunctionCallType: "builtin"
                                     <getter> vReferencedDeclaration: undefined
-                                    <getter> referencedCanonicalSignature: undefined
-                                    <getter> referencedCanonicalSignatureHash: undefined
                                     <getter> vFunctionName: "revert"
                                     <getter> vCallee: Identifier #460
                                     <getter> firstChild: Identifier #460
@@ -2827,7 +2766,6 @@ SourceUnit #641
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(1) [ EnumDefinition #477 ]
         <getter> vConstructor: undefined
-        <getter> interfaceId: undefined
         <getter> children: Array(4) [ EventDefinition #473, EnumDefinition #477, ModifierDefinition #481, FunctionDefinition #553 ]
         <getter> firstChild: EventDefinition #473
         <getter> lastChild: FunctionDefinition #553
@@ -2849,8 +2787,6 @@ SourceUnit #641
             parent: ContractDefinition #554
             <getter> children: Array(1) [ ParameterList #472 ]
             <getter> vScope: ContractDefinition #554
-            <getter> canonicalSignature: "Ev(uint256)"
-            <getter> canonicalSignatureHash: "b30c6e01"
             <getter> firstChild: ParameterList #472
             <getter> lastChild: ParameterList #472
             <getter> previousSibling: undefined
@@ -2895,9 +2831,6 @@ SourceUnit #641
                     parent: ParameterList #472
                     <getter> children: Array(1) [ ElementaryTypeName #470 ]
                     <getter> vScope: EventDefinition #473
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "a()"
-                    <getter> getterCanonicalSignatureHash: "0dbe671f"
                     <getter> firstChild: ElementaryTypeName #470
                     <getter> lastChild: ElementaryTypeName #470
                     <getter> previousSibling: undefined
@@ -3005,8 +2938,6 @@ SourceUnit #641
             parent: ContractDefinition #554
             <getter> children: Array(2) [ ParameterList #478, Block #480 ]
             <getter> vScope: ContractDefinition #554
-            <getter> canonicalSignature: "modStructDocs()"
-            <getter> canonicalSignatureHash: "cd8540bf"
             <getter> firstChild: ParameterList #478
             <getter> lastChild: Block #480
             <getter> previousSibling: EnumDefinition #477
@@ -3083,8 +3014,6 @@ SourceUnit #641
             parent: ContractDefinition #554
             <getter> children: Array(4) [ ParameterList #482, ModifierInvocation #485, ParameterList #483, Block #552 ]
             <getter> vScope: ContractDefinition #554
-            <getter> canonicalSignature: "stmtStructDocs()"
-            <getter> canonicalSignatureHash: "734ea2b8"
             <getter> firstChild: ParameterList #482
             <getter> lastChild: Block #552
             <getter> previousSibling: ModifierDefinition #481
@@ -3213,9 +3142,6 @@ SourceUnit #641
                         parent: VariableDeclarationStatement #490
                         <getter> children: Array(1) [ ElementaryTypeName #486 ]
                         <getter> vScope: Block #552
-                        <getter> canonicalSignatureType: "uint256"
-                        <getter> getterCanonicalSignature: "a()"
-                        <getter> getterCanonicalSignatureHash: "0dbe671f"
                         <getter> firstChild: ElementaryTypeName #486
                         <getter> lastChild: ElementaryTypeName #486
                         <getter> previousSibling: undefined
@@ -3361,8 +3287,6 @@ SourceUnit #641
                         <getter> vMemberName: undefined
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: EventDefinition #473
-                        <getter> referencedCanonicalSignature: "Ev(uint256)"
-                        <getter> referencedCanonicalSignatureHash: "b30c6e01"
                         <getter> vFunctionName: "Ev"
                         <getter> vCallee: Identifier #494
                         <getter> firstChild: Identifier #494
@@ -3603,9 +3527,6 @@ SourceUnit #641
                             parent: VariableDeclarationStatement #511
                             <getter> children: Array(1) [ ElementaryTypeName #507 ]
                             <getter> vScope: ForStatement #518
-                            <getter> canonicalSignatureType: "uint256"
-                            <getter> getterCanonicalSignature: "n()"
-                            <getter> getterCanonicalSignatureHash: "2e52d606"
                             <getter> firstChild: ElementaryTypeName #507
                             <getter> lastChild: ElementaryTypeName #507
                             <getter> previousSibling: undefined
@@ -3902,9 +3823,6 @@ SourceUnit #641
                         parent: VariableDeclarationStatement #530
                         <getter> children: Array(1) [ UserDefinedTypeName #524 ]
                         <getter> vScope: Block #552
-                        <getter> canonicalSignatureType: "address"
-                        <getter> getterCanonicalSignature: "cp()"
-                        <getter> getterCanonicalSignatureHash: "7056dc40"
                         <getter> firstChild: UserDefinedTypeName #524
                         <getter> lastChild: UserDefinedTypeName #524
                         <getter> previousSibling: undefined
@@ -3964,8 +3882,6 @@ SourceUnit #641
                         <getter> vMemberName: undefined
                         <getter> vFunctionCallType: "builtin"
                         <getter> vReferencedDeclaration: undefined
-                        <getter> referencedCanonicalSignature: undefined
-                        <getter> referencedCanonicalSignatureHash: undefined
                         <getter> vFunctionName: "new"
                         <getter> vCallee: NewExpression #528
                         <getter> firstChild: NewExpression #528
@@ -4060,8 +3976,6 @@ SourceUnit #641
                         <getter> vMemberName: "test"
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: FunctionDefinition #468
-                        <getter> referencedCanonicalSignature: "test()"
-                        <getter> referencedCanonicalSignatureHash: "f8a8fd6d"
                         <getter> vFunctionName: "test"
                         <getter> vCallee: MemberAccess #532
                         <getter> firstChild: MemberAccess #532
@@ -4198,9 +4112,6 @@ SourceUnit #641
                                 parent: ParameterList #539
                                 <getter> children: Array(1) [ ElementaryTypeName #537 ]
                                 <getter> vScope: TryCatchClause #540
-                                <getter> canonicalSignatureType: "string"
-                                <getter> getterCanonicalSignature: "reason()"
-                                <getter> getterCanonicalSignatureHash: "e134e33d"
                                 <getter> firstChild: ElementaryTypeName #537
                                 <getter> lastChild: ElementaryTypeName #537
                                 <getter> previousSibling: undefined
@@ -4296,9 +4207,6 @@ SourceUnit #641
                                 parent: ParameterList #544
                                 <getter> children: Array(1) [ ElementaryTypeName #542 ]
                                 <getter> vScope: TryCatchClause #545
-                                <getter> canonicalSignatureType: "uint256"
-                                <getter> getterCanonicalSignature: "_code()"
-                                <getter> getterCanonicalSignatureHash: "8d1841e3"
                                 <getter> firstChild: ElementaryTypeName #542
                                 <getter> lastChild: ElementaryTypeName #542
                                 <getter> previousSibling: undefined
@@ -4437,8 +4345,6 @@ SourceUnit #641
         parent: SourceUnit #641
         <getter> children: Array(2) [ StructuredDocumentation #558, ParameterList #557 ]
         <getter> vScope: SourceUnit #641
-        <getter> canonicalSignature: "UnitLevelError084(uint256)"
-        <getter> canonicalSignatureHash: "1d365080"
         <getter> firstChild: StructuredDocumentation #558
         <getter> lastChild: ParameterList #557
         <getter> previousSibling: ContractDefinition #554
@@ -4498,9 +4404,6 @@ SourceUnit #641
                 parent: ParameterList #557
                 <getter> children: Array(1) [ ElementaryTypeName #555 ]
                 <getter> vScope: ErrorDefinition #559
-                <getter> canonicalSignatureType: "uint256"
-                <getter> getterCanonicalSignature: "code()"
-                <getter> getterCanonicalSignatureHash: "24c12bf6"
                 <getter> firstChild: ElementaryTypeName #555
                 <getter> lastChild: ElementaryTypeName #555
                 <getter> previousSibling: undefined
@@ -4554,7 +4457,6 @@ SourceUnit #641
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(0)
         <getter> vConstructor: undefined
-        <getter> interfaceId: undefined
         <getter> children: Array(1) [ ErrorDefinition #564 ]
         <getter> firstChild: ErrorDefinition #564
         <getter> lastChild: ErrorDefinition #564
@@ -4575,8 +4477,6 @@ SourceUnit #641
             parent: ContractDefinition #565
             <getter> children: Array(2) [ StructuredDocumentation #563, ParameterList #562 ]
             <getter> vScope: ContractDefinition #565
-            <getter> canonicalSignature: "Lib(bytes)"
-            <getter> canonicalSignatureHash: "5df9f479"
             <getter> firstChild: StructuredDocumentation #563
             <getter> lastChild: ParameterList #562
             <getter> previousSibling: undefined
@@ -4636,9 +4536,6 @@ SourceUnit #641
                     parent: ParameterList #562
                     <getter> children: Array(1) [ ElementaryTypeName #560 ]
                     <getter> vScope: ErrorDefinition #564
-                    <getter> canonicalSignatureType: "bytes"
-                    <getter> getterCanonicalSignature: "b()"
-                    <getter> getterCanonicalSignatureHash: "4df7e3d0"
                     <getter> firstChild: ElementaryTypeName #560
                     <getter> lastChild: ElementaryTypeName #560
                     <getter> previousSibling: undefined
@@ -4692,7 +4589,6 @@ SourceUnit #641
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(0)
         <getter> vConstructor: undefined
-        <getter> interfaceId: undefined
         <getter> children: Array(7) [ ErrorDefinition #568, FunctionDefinition #573, FunctionDefinition #590, FunctionDefinition #598, FunctionDefinition #607, FunctionDefinition #614, FunctionDefinition #622 ]
         <getter> firstChild: ErrorDefinition #568
         <getter> lastChild: FunctionDefinition #622
@@ -4713,8 +4609,6 @@ SourceUnit #641
             parent: ContractDefinition #623
             <getter> children: Array(2) [ StructuredDocumentation #567, ParameterList #566 ]
             <getter> vScope: ContractDefinition #623
-            <getter> canonicalSignature: "Own()"
-            <getter> canonicalSignatureHash: "dc846d95"
             <getter> firstChild: StructuredDocumentation #567
             <getter> lastChild: ParameterList #566
             <getter> previousSibling: undefined
@@ -4775,8 +4669,6 @@ SourceUnit #641
             parent: ContractDefinition #623
             <getter> children: Array(3) [ ParameterList #569, ParameterList #570, Block #572 ]
             <getter> vScope: ContractDefinition #623
-            <getter> canonicalSignature: "testAssemblyHexLiterals()"
-            <getter> canonicalSignatureHash: "9fdd8b80"
             <getter> firstChild: ParameterList #569
             <getter> lastChild: Block #572
             <getter> previousSibling: ErrorDefinition #568
@@ -4871,8 +4763,6 @@ SourceUnit #641
             parent: ContractDefinition #623
             <getter> children: Array(3) [ ParameterList #578, ParameterList #581, Block #589 ]
             <getter> vScope: ContractDefinition #623
-            <getter> canonicalSignature: "testBytesConcatBuiltin(bytes,bytes)"
-            <getter> canonicalSignatureHash: "e65caad5"
             <getter> firstChild: ParameterList #578
             <getter> lastChild: Block #589
             <getter> previousSibling: FunctionDefinition #573
@@ -4917,9 +4807,6 @@ SourceUnit #641
                     parent: ParameterList #578
                     <getter> children: Array(1) [ ElementaryTypeName #574 ]
                     <getter> vScope: FunctionDefinition #590
-                    <getter> canonicalSignatureType: "bytes"
-                    <getter> getterCanonicalSignature: "a()"
-                    <getter> getterCanonicalSignatureHash: "0dbe671f"
                     <getter> firstChild: ElementaryTypeName #574
                     <getter> lastChild: ElementaryTypeName #574
                     <getter> previousSibling: undefined
@@ -4966,9 +4853,6 @@ SourceUnit #641
                     parent: ParameterList #578
                     <getter> children: Array(1) [ ElementaryTypeName #576 ]
                     <getter> vScope: FunctionDefinition #590
-                    <getter> canonicalSignatureType: "bytes"
-                    <getter> getterCanonicalSignature: "b()"
-                    <getter> getterCanonicalSignatureHash: "4df7e3d0"
                     <getter> firstChild: ElementaryTypeName #576
                     <getter> lastChild: ElementaryTypeName #576
                     <getter> previousSibling: VariableDeclaration #575
@@ -5030,9 +4914,6 @@ SourceUnit #641
                     parent: ParameterList #581
                     <getter> children: Array(1) [ ElementaryTypeName #579 ]
                     <getter> vScope: FunctionDefinition #590
-                    <getter> canonicalSignatureType: "bytes"
-                    <getter> getterCanonicalSignature: "c()"
-                    <getter> getterCanonicalSignatureHash: "c3da42b8"
                     <getter> firstChild: ElementaryTypeName #579
                     <getter> lastChild: ElementaryTypeName #579
                     <getter> previousSibling: undefined
@@ -5107,8 +4988,6 @@ SourceUnit #641
                         <getter> vMemberName: "concat"
                         <getter> vFunctionCallType: "builtin"
                         <getter> vReferencedDeclaration: undefined
-                        <getter> referencedCanonicalSignature: undefined
-                        <getter> referencedCanonicalSignatureHash: undefined
                         <getter> vFunctionName: "concat"
                         <getter> vCallee: MemberAccess #584
                         <getter> firstChild: MemberAccess #584
@@ -5231,8 +5110,6 @@ SourceUnit #641
             parent: ContractDefinition #623
             <getter> children: Array(3) [ ParameterList #591, ParameterList #592, Block #597 ]
             <getter> vScope: ContractDefinition #623
-            <getter> canonicalSignature: "testVariableDeclarationStatementDocString()"
-            <getter> canonicalSignatureHash: "810605b8"
             <getter> firstChild: ParameterList #591
             <getter> lastChild: Block #597
             <getter> previousSibling: FunctionDefinition #590
@@ -5326,9 +5203,6 @@ SourceUnit #641
                         parent: VariableDeclarationStatement #596
                         <getter> children: Array(1) [ ElementaryTypeName #593 ]
                         <getter> vScope: Block #597
-                        <getter> canonicalSignatureType: "uint256"
-                        <getter> getterCanonicalSignature: "a()"
-                        <getter> getterCanonicalSignatureHash: "0dbe671f"
                         <getter> firstChild: ElementaryTypeName #593
                         <getter> lastChild: ElementaryTypeName #593
                         <getter> previousSibling: undefined
@@ -5395,8 +5269,6 @@ SourceUnit #641
             parent: ContractDefinition #623
             <getter> children: Array(3) [ ParameterList #599, ParameterList #600, Block #606 ]
             <getter> vScope: ContractDefinition #623
-            <getter> canonicalSignature: "revertWithLib()"
-            <getter> canonicalSignatureHash: "f1b5e6ed"
             <getter> firstChild: ParameterList #599
             <getter> lastChild: Block #606
             <getter> previousSibling: FunctionDefinition #598
@@ -5482,8 +5354,6 @@ SourceUnit #641
                         <getter> vMemberName: "Lib"
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: ErrorDefinition #564
-                        <getter> referencedCanonicalSignature: "Lib(bytes)"
-                        <getter> referencedCanonicalSignatureHash: "5df9f479"
                         <getter> vFunctionName: "Lib"
                         <getter> vCallee: MemberAccess #602
                         <getter> firstChild: MemberAccess #602
@@ -5573,8 +5443,6 @@ SourceUnit #641
             parent: ContractDefinition #623
             <getter> children: Array(3) [ ParameterList #608, ParameterList #609, Block #613 ]
             <getter> vScope: ContractDefinition #623
-            <getter> canonicalSignature: "revertWithOwn()"
-            <getter> canonicalSignatureHash: "bdc93894"
             <getter> firstChild: ParameterList #608
             <getter> lastChild: Block #613
             <getter> previousSibling: FunctionDefinition #607
@@ -5660,8 +5528,6 @@ SourceUnit #641
                         <getter> vMemberName: undefined
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: ErrorDefinition #568
-                        <getter> referencedCanonicalSignature: "Own()"
-                        <getter> referencedCanonicalSignatureHash: "dc846d95"
                         <getter> vFunctionName: "Own"
                         <getter> vCallee: Identifier #610
                         <getter> firstChild: Identifier #610
@@ -5713,8 +5579,6 @@ SourceUnit #641
             parent: ContractDefinition #623
             <getter> children: Array(3) [ ParameterList #615, ParameterList #616, Block #621 ]
             <getter> vScope: ContractDefinition #623
-            <getter> canonicalSignature: "revertWithUnitLevelError()"
-            <getter> canonicalSignatureHash: "316d273c"
             <getter> firstChild: ParameterList #615
             <getter> lastChild: Block #621
             <getter> previousSibling: FunctionDefinition #614
@@ -5800,8 +5664,6 @@ SourceUnit #641
                         <getter> vMemberName: undefined
                         <getter> vFunctionCallType: "userDefined"
                         <getter> vReferencedDeclaration: ErrorDefinition #559
-                        <getter> referencedCanonicalSignature: "UnitLevelError084(uint256)"
-                        <getter> referencedCanonicalSignatureHash: "1d365080"
                         <getter> vFunctionName: "UnitLevelError084"
                         <getter> vCallee: Identifier #617
                         <getter> firstChild: Identifier #617
@@ -5878,7 +5740,6 @@ SourceUnit #641
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(0)
         <getter> vConstructor: undefined
-        <getter> interfaceId: undefined
         <getter> children: Array(2) [ FunctionDefinition #632, FunctionDefinition #639 ]
         <getter> firstChild: FunctionDefinition #632
         <getter> lastChild: FunctionDefinition #639
@@ -5910,8 +5771,6 @@ SourceUnit #641
             parent: ContractDefinition #640
             <getter> children: Array(3) [ ParameterList #624, ParameterList #627, Block #631 ]
             <getter> vScope: ContractDefinition #640
-            <getter> canonicalSignature: "basefeeGlobal()"
-            <getter> canonicalSignatureHash: "218fa9ef"
             <getter> firstChild: ParameterList #624
             <getter> lastChild: Block #631
             <getter> previousSibling: undefined
@@ -5971,9 +5830,6 @@ SourceUnit #641
                     parent: ParameterList #627
                     <getter> children: Array(1) [ ElementaryTypeName #625 ]
                     <getter> vScope: FunctionDefinition #632
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "()"
-                    <getter> getterCanonicalSignatureHash: "861731d5"
                     <getter> firstChild: ElementaryTypeName #625
                     <getter> lastChild: ElementaryTypeName #625
                     <getter> previousSibling: undefined
@@ -6093,8 +5949,6 @@ SourceUnit #641
             parent: ContractDefinition #640
             <getter> children: Array(3) [ ParameterList #633, ParameterList #636, Block #638 ]
             <getter> vScope: ContractDefinition #640
-            <getter> canonicalSignature: "basefeeInlineAssembly()"
-            <getter> canonicalSignatureHash: "3bb15802"
             <getter> firstChild: ParameterList #633
             <getter> lastChild: Block #638
             <getter> previousSibling: FunctionDefinition #632
@@ -6154,9 +6008,6 @@ SourceUnit #641
                     parent: ParameterList #636
                     <getter> children: Array(1) [ ElementaryTypeName #634 ]
                     <getter> vScope: FunctionDefinition #639
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "ret()"
-                    <getter> getterCanonicalSignatureHash: "1b08d96f"
                     <getter> firstChild: ElementaryTypeName #634
                     <getter> lastChild: ElementaryTypeName #634
                     <getter> previousSibling: undefined
@@ -6304,7 +6155,6 @@ SourceUnit #657
         <getter> vStructs: Array(1) [ StructDefinition #646 ]
         <getter> vEnums: Array(0)
         <getter> vConstructor: undefined
-        <getter> interfaceId: undefined
         <getter> children: Array(2) [ StructDefinition #646, FunctionDefinition #654 ]
         <getter> firstChild: StructDefinition #646
         <getter> lastChild: FunctionDefinition #654
@@ -6356,9 +6206,6 @@ SourceUnit #657
                 parent: StructDefinition #646
                 <getter> children: Array(1) [ ElementaryTypeName #644 ]
                 <getter> vScope: StructDefinition #646
-                <getter> canonicalSignatureType: "uint256"
-                <getter> getterCanonicalSignature: "n()"
-                <getter> getterCanonicalSignatureHash: "2e52d606"
                 <getter> firstChild: ElementaryTypeName #644
                 <getter> lastChild: ElementaryTypeName #644
                 <getter> previousSibling: undefined
@@ -6406,8 +6253,6 @@ SourceUnit #657
             parent: ContractDefinition #655
             <getter> children: Array(3) [ ParameterList #647, ParameterList #650, Block #653 ]
             <getter> vScope: ContractDefinition #655
-            <getter> canonicalSignature: "some()"
-            <getter> canonicalSignatureHash: "c03ee3d3"
             <getter> firstChild: ParameterList #647
             <getter> lastChild: Block #653
             <getter> previousSibling: StructDefinition #646
@@ -6467,9 +6312,6 @@ SourceUnit #657
                     parent: ParameterList #650
                     <getter> children: Array(1) [ ElementaryTypeName #648 ]
                     <getter> vScope: FunctionDefinition #654
-                    <getter> canonicalSignatureType: "uint256"
-                    <getter> getterCanonicalSignature: "()"
-                    <getter> getterCanonicalSignatureHash: "861731d5"
                     <getter> firstChild: ElementaryTypeName #648
                     <getter> lastChild: ElementaryTypeName #648
                     <getter> previousSibling: undefined
@@ -6576,7 +6418,6 @@ SourceUnit #657
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(0)
         <getter> vConstructor: undefined
-        <getter> interfaceId: undefined
         <getter> children: Array(0)
         <getter> firstChild: undefined
         <getter> lastChild: undefined

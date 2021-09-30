@@ -1,22 +1,23 @@
-import { satisfies } from "semver";
+import { lt, satisfies } from "semver";
 import {
     ArrayTypeName,
     ContractDefinition,
     DataLocation,
     ElementaryTypeName,
     EnumDefinition,
-    FunctionStateMutability,
     FunctionTypeName,
-    FunctionVisibility,
     Literal,
     LiteralKind,
     Mapping,
+    PragmaDirective,
+    SourceUnit,
     StructDefinition,
     TypeName,
     UserDefinedTypeName,
     VariableDeclaration
 } from "../ast";
 import { assert } from "../misc";
+import { ABIEncoderVersion, ABIEncoderVersions } from "./abi";
 import {
     AddressType,
     ArrayType,
@@ -299,89 +300,51 @@ export function enumToIntType(decl: EnumDefinition): IntType {
 }
 
 /**
- * For given variable declaration `decl` computes accessor arguments and return types.
- * Usage:
- * ```
- * const [argTs, retT] = getterArgsAndReturn(v);
- * ```
- * Where `argsTs` is an array of computed argument types and `retT` is computed return type.
- *
- * @see https://docs.soliditylang.org/en/latest/contracts.html#getter-functions
- * @see https://github.com/ethereum/solidity/blob/72fc34494acfcce1ead7da6b63cb03ea9a8da9a3/libsolidity/ast/Types.cpp#L2682-L2745
+ * Given a set of compiled units and their corresponding compiler version, determine the
+ * correct ABIEncoder version for these units. If mulitple incompatible explicit pragmas are found,
+ * throw an error.
  */
-export function getterArgsAndReturn(decl: VariableDeclaration): [TypeNode[], TypeNode] {
-    const argTypes: TypeNode[] = [];
+export function getABIEncoderVersion(
+    units: SourceUnit[],
+    compilerVersion: string
+): ABIEncoderVersion {
+    const explicitEncoderVersions = new Set<ABIEncoderVersion>();
 
-    let type = decl.vType;
+    for (const unit of units) {
+        for (const nd of unit.getChildrenByType(PragmaDirective)) {
+            if (
+                nd.vIdentifier === "experimental" &&
+                nd.literals.length === 2 &&
+                ABIEncoderVersions.has(nd.literals[1])
+            ) {
+                explicitEncoderVersions.add(nd.literals[1] as ABIEncoderVersion);
+            }
+
+            if (nd.vIdentifier === "abicoder") {
+                let version: ABIEncoderVersion;
+                const rawVer = nd.literals[1];
+
+                if (rawVer === "v1") {
+                    version = ABIEncoderVersion.V1;
+                } else if (rawVer === "v2") {
+                    version = ABIEncoderVersion.V2;
+                } else {
+                    throw new Error(`Unknown abicoder pragma version ${rawVer}`);
+                }
+
+                explicitEncoderVersions.add(version);
+            }
+        }
+    }
 
     assert(
-        type !== undefined,
-        "Called getterArgsAndReturn() on variable declaration without type",
-        decl
+        explicitEncoderVersions.size < 2,
+        `Multiple encoder versions found: ${[...explicitEncoderVersions].join(", ")}`
     );
 
-    while (true) {
-        if (type instanceof ArrayTypeName) {
-            argTypes.push(new IntType(256, false));
-
-            type = type.vBaseType;
-        } else if (type instanceof Mapping) {
-            argTypes.push(typeNameToSpecializedTypeNode(type.vKeyType, DataLocation.Memory));
-
-            type = type.vValueType;
-        } else {
-            break;
-        }
+    if (explicitEncoderVersions.size === 1) {
+        return [...explicitEncoderVersions][0];
     }
 
-    let retType = typeNameToSpecializedTypeNode(type, DataLocation.Memory);
-
-    if (
-        retType instanceof PointerType &&
-        retType.to instanceof UserDefinedType &&
-        retType.to.definition instanceof StructDefinition
-    ) {
-        const elements: TypeNode[] = [];
-
-        for (const member of retType.to.definition.vMembers) {
-            const memberT = member.vType;
-
-            assert(
-                memberT !== undefined,
-                "Unexpected untyped struct member",
-                retType.to.definition
-            );
-
-            if (memberT instanceof Mapping) {
-                continue;
-            }
-
-            if (memberT instanceof ArrayTypeName) {
-                continue;
-            }
-
-            const elementT = typeNameToSpecializedTypeNode(memberT, DataLocation.Memory);
-
-            elements.push(elementT);
-        }
-
-        retType = new TupleType(elements);
-    }
-
-    return [argTypes, retType];
-}
-
-/**
- * For given variable declaration `decl` computes accessor function type
- */
-export function getterTypeForVar(decl: VariableDeclaration): FunctionType {
-    const [args, ret] = getterArgsAndReturn(decl);
-
-    return new FunctionType(
-        decl.name,
-        args,
-        ret instanceof TupleType ? ret.elements : [ret],
-        FunctionVisibility.External,
-        FunctionStateMutability.View
-    );
+    return lt(compilerVersion, "0.8.0") ? ABIEncoderVersion.V1 : ABIEncoderVersion.V2;
 }

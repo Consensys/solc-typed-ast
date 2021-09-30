@@ -1,3 +1,4 @@
+import { ABIEncoderVersion } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
 import { encodeSignature } from "../../utils";
 import { OverrideSpecifier } from "../meta/override_specifier";
@@ -101,8 +102,10 @@ export class ModifierDefinition extends ASTNode {
     /**
      * Returns canonical representation of the modifier signature as string.
      */
-    get canonicalSignature(): string {
-        const args = this.vParameters.vParameters.map((arg) => arg.canonicalSignatureType);
+    canonicalSignature(encoderVersion: ABIEncoderVersion): string {
+        const args = this.vParameters.vParameters.map((arg) =>
+            arg.canonicalSignatureType(encoderVersion)
+        );
 
         return this.name + "(" + args.join(",") + ")";
     }
@@ -111,7 +114,7 @@ export class ModifierDefinition extends ASTNode {
      * Returns HEX string containing first 4 bytes of Keccak256 hash function
      * applied to the canonical representation of the modifier signature.
      */
-    get canonicalSignatureHash(): string {
-        return encodeSignature(this.canonicalSignature);
+    canonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
+        return encodeSignature(this.canonicalSignature(encoderVersion));
     }
 }

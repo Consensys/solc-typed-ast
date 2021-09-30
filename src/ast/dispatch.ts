@@ -1,3 +1,4 @@
+import { ABIEncoderVersion } from "../types/abi";
 import { ASTNodeConstructor } from "./ast_node";
 import { StateVariableVisibility } from "./constants";
 import { ContractDefinition } from "./implementation/declaration/contract_definition";
@@ -46,10 +47,13 @@ export function resolve<T extends Resolvable>(
     if (target instanceof VariableDeclaration) {
         finder = (candidate) => candidate.name === target.name;
     } else {
-        const signatureHash = (target as FunctionLikeResolvable).canonicalSignatureHash;
+        const signatureHash = (target as FunctionLikeResolvable).canonicalSignatureHash(
+            ABIEncoderVersion.V2
+        );
 
         finder = (candidate) =>
-            signatureHash === (candidate as FunctionLikeResolvable).canonicalSignatureHash;
+            signatureHash ===
+            (candidate as FunctionLikeResolvable).canonicalSignatureHash(ABIEncoderVersion.V2);
     }
 
     for (const base of scope.vLinearizedBaseContracts) {
@@ -103,11 +107,13 @@ export function resolveByName<T extends Resolvable>(
             /**
              * We use `resolvableIdentifier` to avoid adding already-overloaded functions
              * into the resolved set.
+             * (Its safe to assume ABIEncoderVersionV2 as its backwards
+             * compatible, and we only use it internally here.)
              */
             const resolvableIdentifier =
                 resolvable instanceof VariableDeclaration
                     ? resolvable.name
-                    : resolvable.canonicalSignatureHash;
+                    : resolvable.canonicalSignatureHash(ABIEncoderVersion.V2);
 
             if (resolvable.name === name && !found.has(resolvableIdentifier)) {
                 result.push(resolvable as T);
@@ -157,8 +163,8 @@ export function resolveCallable(
 ): FunctionDefinition | VariableDeclaration | undefined {
     const selector =
         definition instanceof FunctionDefinition
-            ? definition.canonicalSignatureHash
-            : definition.getterCanonicalSignatureHash;
+            ? definition.canonicalSignatureHash(ABIEncoderVersion.V2)
+            : definition.getterCanonicalSignatureHash(ABIEncoderVersion.V2);
 
     for (const base of scope.vLinearizedBaseContracts) {
         if (onlyParents && base === scope) {
@@ -166,14 +172,14 @@ export function resolveCallable(
         }
 
         for (const fn of base.vFunctions) {
-            if (fn.canonicalSignatureHash === selector) {
+            if (fn.canonicalSignatureHash(ABIEncoderVersion.V2) === selector) {
                 return fn;
             }
         }
 
         for (const v of base.vStateVariables) {
             if (v.visibility === StateVariableVisibility.Public) {
-                if (v.getterCanonicalSignatureHash === selector) {
+                if (v.getterCanonicalSignatureHash(ABIEncoderVersion.V2) === selector) {
                     return v;
                 }
             }

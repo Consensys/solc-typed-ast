@@ -1,5 +1,12 @@
+import { variableDeclarationToTypeNode } from "../../../types";
+import { ABIEncoderVersion, abiTypeToLibraryCanonicalName } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
-import { FunctionKind, FunctionStateMutability, FunctionVisibility } from "../../constants";
+import {
+    ContractKind,
+    FunctionKind,
+    FunctionStateMutability,
+    FunctionVisibility
+} from "../../constants";
 import { encodeSignature } from "../../utils";
 import { ModifierInvocation } from "../meta/modifier_invocation";
 import { OverrideSpecifier } from "../meta/override_specifier";
@@ -169,12 +176,27 @@ export class FunctionDefinition extends ASTNode {
      *
      * NOTE: This property will contain empty strings for fallback functions and constructors.
      */
-    get canonicalSignature(): string {
+    canonicalSignature(encoderVersion: ABIEncoderVersion): string {
         if (this.name === "" || this.isConstructor) {
             return "";
         }
 
-        const args = this.vParameters.vParameters.map((arg) => arg.canonicalSignatureType);
+        let args: string[];
+
+        // Signatures are computed differently depending on whether this is a library function
+        // or a contract method
+        if (
+            this.vScope instanceof ContractDefinition &&
+            this.vScope.kind === ContractKind.Library
+        ) {
+            args = this.vParameters.vParameters.map((arg) =>
+                abiTypeToLibraryCanonicalName(variableDeclarationToTypeNode(arg))
+            );
+        } else {
+            args = this.vParameters.vParameters.map((arg) =>
+                arg.canonicalSignatureType(encoderVersion)
+            );
+        }
 
         return this.name + "(" + args.join(",") + ")";
     }
@@ -185,8 +207,8 @@ export class FunctionDefinition extends ASTNode {
      *
      * NOTE: This property will contain empty strings for fallback functions and constructors.
      */
-    get canonicalSignatureHash(): string {
-        const signature = this.canonicalSignature;
+    canonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
+        const signature = this.canonicalSignature(encoderVersion);
 
         return signature ? encodeSignature(signature) : "";
     }

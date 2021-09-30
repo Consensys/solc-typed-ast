@@ -84,7 +84,7 @@ export function eq(a: any, b: any, visited?: Map<any, any>): boolean {
             return false;
         }
 
-        for (const key in a) {
+        for (const key of a.keys()) {
             if (!b.has(key)) {
                 return false;
             }

@@ -7,21 +7,21 @@ SourceUnit #466 -> /test/samples/solidity/fun_selectors.sol
 |   |   |   ElementaryTypeName #4
 |   EnumDefinition #8
 |   |   EnumValue #7
-|   FunctionDefinition #15 -> handleD(D) [selector: 6c91cb1a]
+|   FunctionDefinition #15 -> freeFunction
 |   |   ParameterList #12
 |   |   |   VariableDeclaration #11 -> contract D d
 |   |   |   |   UserDefinedTypeName #10
 |   |   |   |   |   IdentifierPath #9
 |   |   ParameterList #13
 |   |   Block #14
-|   FunctionDefinition #22 -> handleX(X) [selector: 78fc2009]
+|   FunctionDefinition #22 -> freeFunction
 |   |   ParameterList #19
 |   |   |   VariableDeclaration #18 -> enum X x
 |   |   |   |   UserDefinedTypeName #17
 |   |   |   |   |   IdentifierPath #16
 |   |   ParameterList #20
 |   |   Block #21
-|   FunctionDefinition #29 -> handleT(T) [selector: 89ff4196]
+|   FunctionDefinition #29 -> freeFunction
 |   |   ParameterList #26
 |   |   |   VariableDeclaration #25 -> struct T t
 |   |   |   |   UserDefinedTypeName #24
