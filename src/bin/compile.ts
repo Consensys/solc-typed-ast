@@ -19,6 +19,7 @@ import {
     ContractDefinition,
     DefaultASTWriterMapping,
     FunctionDefinition,
+    FunctionVisibility,
     getABIEncoderVersion,
     isExact,
     LatestCompilerVersion,
@@ -28,7 +29,6 @@ import {
     VariableDeclaration,
     XPath
 } from "..";
-import { FunctionVisibility } from "../ast";
 
 const modes = ["auto", "sol", "json"];
 

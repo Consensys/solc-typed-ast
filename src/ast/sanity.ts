@@ -58,6 +58,7 @@ import {
     VariableDeclarationStatement,
     WhileStatement
 } from ".";
+import { pp } from "../misc/pretty_printing";
 
 /**
  * Helper function to check if the node/nodes `arg` is in the `ASTContext` `ctx`.
@@ -80,10 +81,6 @@ function inCtx(arg: ASTNode | ASTNode[], ctx: ASTContext): boolean {
  * Error thrown by `checkSanity` that describes a problem with the AST
  */
 export class InsaneASTError extends Error {}
-
-function pp(node: ASTNode | ASTContext | undefined): string {
-    return node === undefined ? "undefined" : `${node.constructor.name}#${node.id}`;
-}
 
 /**
  * Check that the property `prop` of an `ASTNode` `node` is either an `ASTNode`

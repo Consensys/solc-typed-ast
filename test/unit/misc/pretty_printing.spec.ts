@@ -1,18 +1,31 @@
 import expect from "expect";
-import { ElementaryTypeName, isPPAble, pp, ppArr, ppIter, ppMap, ppSet } from "../../../src";
+import {
+    ASTContext,
+    ElementaryTypeName,
+    isPPAble,
+    pp,
+    ppArr,
+    ppIter,
+    ppMap,
+    ppSet
+} from "../../../src";
+
+const ctx = new ASTContext();
+const astNode = new ElementaryTypeName(777, "0:0:0", "ElementaryTypeName", "uint8", "uint8");
+const customPPAble = {
+    name: "test",
+    pp: () => "PPAble object"
+};
+
+ctx.id = 555;
+ctx.register(astNode);
 
 describe("Utility formatting routines", () => {
     describe("isPPAble()", () => {
         const cases: Array<[any, boolean]> = [
             [{}, false],
             [[], false],
-            [
-                {
-                    name: "test",
-                    pp: () => "PPAble object"
-                },
-                true
-            ]
+            [customPPAble, true]
         ];
 
         for (const [value, result] of cases) {
@@ -31,17 +44,9 @@ describe("Utility formatting routines", () => {
             [false, "false"],
             [null, "null"],
             [undefined, "<undefined>"],
-            [
-                {
-                    name: "test",
-                    pp: () => "PPAble object"
-                },
-                "PPAble object"
-            ],
-            [
-                new ElementaryTypeName(1, "0:0:0", "ElementaryTypeName", "uint8", "uint8"),
-                "ElementaryTypeName #1"
-            ],
+            [customPPAble, customPPAble.pp()],
+            [astNode, "ElementaryTypeName #777"],
+            [ctx, "ASTContext #555"],
             [["x", 1, true, null], "[x,1,true,null]"],
             [new Set(["a", 2, false, null]), "{a,2,false,null}"],
             [
