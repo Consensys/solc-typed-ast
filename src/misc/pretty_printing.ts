@@ -1,4 +1,4 @@
-import { ASTNode } from "../ast/ast_node";
+import { ASTContext, ASTNode } from "../ast";
 
 export interface PPAble {
     pp(): string;
@@ -7,6 +7,7 @@ export interface PPAble {
 export type PPIsh =
     | PPAble
     | ASTNode
+    | ASTContext
     | string
     | number
     | boolean
@@ -25,6 +26,10 @@ export function isPPAble(value: any): value is PPAble {
 export function pp(value: PPIsh): string {
     if (value instanceof ASTNode) {
         return value.type + " #" + value.id;
+    }
+
+    if (value instanceof ASTContext) {
+        return value.constructor.name + " #" + value.id;
     }
 
     if (value === undefined) {

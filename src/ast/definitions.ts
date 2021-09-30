@@ -1,5 +1,5 @@
 import { gte, lt } from "semver";
-import { forAll } from "../misc";
+import { forAll, pp } from "../misc";
 import { ABIEncoderVersion } from "../types/abi";
 import { ASTNode } from "./ast_node";
 import { StateVariableVisibility } from "./constants";
@@ -45,10 +45,6 @@ export type ScopeNode =
     | Block
     | TryCatchClause
     | UncheckedBlock;
-
-function pp(n: ASTNode | undefined): string {
-    return n !== undefined ? `${n.constructor.name}#${n.id}` : "undefined";
-}
 
 /**
  * Given an ASTNode `node` and a compiler version `version` determine if `node` is a
