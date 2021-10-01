@@ -129,7 +129,20 @@ function getContainingScope(node: ASTNode, version: string): ScopeNode | undefin
 /**
  * Lookup the definition corresponding to `name` in the `SourceUnit` `scope`. Yield all matches.
  */
-function* lookupInSourceUnit(name: string, scope: SourceUnit): Iterable<AnyResolvable> {
+function* lookupInSourceUnit(
+    name: string,
+    scope: SourceUnit,
+    visitedUnits: Set<SourceUnit>
+): Iterable<AnyResolvable> {
+    /**
+     * Hit a cycle during lookup due to recursive imports
+     */
+    if (visitedUnits.has(scope)) {
+        return [];
+    }
+
+    visitedUnits.add(scope);
+
     // Note order of checking SourceUnit children doesn't matter
     // since any conflict would result in a compilation error.
     for (const child of scope.children) {
@@ -152,7 +165,7 @@ function* lookupInSourceUnit(name: string, scope: SourceUnit): Iterable<AnyResol
             } else if (child.vSymbolAliases.length === 0) {
                 // import "..."
                 // @todo maybe its better to go through child.vSourceUnit.vExportedSymbols here?
-                for (const def of lookupInScope(name, child.vSourceUnit)) {
+                for (const def of lookupInScope(name, child.vSourceUnit, visitedUnits)) {
                     yield def;
                 }
             } else {
@@ -275,11 +288,15 @@ function* lookupInBlock(name: string, scope: Block | UncheckedBlock): Iterable<A
  * 1. Multiple FunctionDefinitions (and potentially VariableDeclarations corresponding to public state variables) with the same name and DIFFERENT SIGNATURES
  * 2. Multiple EventDefinitions with the same name and different signatures.
  */
-function lookupInScope(name: string, scope: ScopeNode): Set<AnyResolvable> {
+function lookupInScope(
+    name: string,
+    scope: ScopeNode,
+    visitedUnits = new Set<SourceUnit>()
+): Set<AnyResolvable> {
     let results: Iterable<AnyResolvable>;
 
     if (scope instanceof SourceUnit) {
-        results = lookupInSourceUnit(name, scope);
+        results = lookupInSourceUnit(name, scope, visitedUnits);
     } else if (scope instanceof ContractDefinition) {
         results = lookupInContractDefinition(name, scope);
     } else if (scope instanceof FunctionDefinition) {
