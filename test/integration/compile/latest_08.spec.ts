@@ -28,33 +28,33 @@ const encounters = new Map<string, number>([
     ["ImportDirective", 1],
     ["EnumDefinition", 2],
     ["EnumValue", 6],
-    ["ContractDefinition", 8],
-    ["FunctionDefinition", 15],
-    ["ParameterList", 39],
-    ["VariableDeclaration", 23],
-    ["ElementaryTypeName", 23],
-    ["Block", 32],
+    ["ContractDefinition", 11],
+    ["FunctionDefinition", 21],
+    ["ParameterList", 51],
+    ["VariableDeclaration", 36],
+    ["ElementaryTypeName", 32],
+    ["Block", 37],
     ["VariableDeclarationStatement", 9],
-    ["Literal", 21],
+    ["Literal", 23],
     ["UncheckedBlock", 2],
-    ["ExpressionStatement", 7],
+    ["ExpressionStatement", 9],
     ["UnaryOperation", 2],
-    ["Identifier", 21],
-    ["Return", 5],
+    ["Identifier", 44],
+    ["Return", 9],
     ["InheritanceSpecifier", 1],
-    ["IdentifierPath", 11],
+    ["IdentifierPath", 19],
     ["UsingForDirective", 1],
-    ["UserDefinedTypeName", 6],
+    ["UserDefinedTypeName", 14],
     ["ModifierInvocation", 2],
-    ["FunctionCall", 16],
-    ["MemberAccess", 9],
+    ["FunctionCall", 27],
+    ["MemberAccess", 20],
     ["OverrideSpecifier", 1],
     ["ElementaryTypeNameExpression", 3],
     ["NewExpression", 2],
     ["TryStatement", 2],
     ["TryCatchClause", 8],
     ["IfStatement", 3],
-    ["BinaryOperation", 3],
+    ["BinaryOperation", 10],
     ["EventDefinition", 1],
     ["ModifierDefinition", 1],
     ["PlaceholderStatement", 1],
@@ -68,7 +68,8 @@ const encounters = new Map<string, number>([
     ["InlineAssembly", 3],
     ["ErrorDefinition", 3],
     ["StructuredDocumentation", 3],
-    ["RevertStatement", 3]
+    ["RevertStatement", 3],
+    ["UserDefinedValueTypeDefinition", 4]
 ]);
 
 describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
@@ -99,11 +100,11 @@ describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
 
         const sourceUnit = sourceUnits[0];
 
-        expect(sourceUnit.id).toEqual(315);
-        expect(sourceUnit.src).toEqual("0:4733:0");
+        expect(sourceUnit.id).toEqual(443);
+        expect(sourceUnit.src).toEqual("0:5771:0");
         expect(sourceUnit.absolutePath).toEqual(mainSample);
-        expect(sourceUnit.children.length).toEqual(13);
-        expect(sourceUnit.getChildren().length).toEqual(309);
+        expect(sourceUnit.children.length).toEqual(18);
+        expect(sourceUnit.getChildren().length).toEqual(437);
     });
 
     it(`Validate parsed output (${kind})`, () => {

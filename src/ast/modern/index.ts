@@ -55,6 +55,7 @@ export * from "./type_name_processor";
 export * from "./unary_operation_processor";
 export * from "./unchecked_block_processor";
 export * from "./user_defined_type_name_processor";
+export * from "./user_defined_value_type_definition_processor";
 export * from "./using_for_directive_processor";
 export * from "./variable_declaration_processor";
 export * from "./variable_declaration_statement_processor";

@@ -11,6 +11,7 @@ import { EventDefinition } from "./event_definition";
 import { FunctionDefinition } from "./function_definition";
 import { ModifierDefinition } from "./modifier_definition";
 import { StructDefinition } from "./struct_definition";
+import { UserDefinedValueTypeDefinition } from "./user_defined_value_type_definition";
 import { VariableDeclaration } from "./variable_declaration";
 
 export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
@@ -249,6 +250,15 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
         return this.ownChildren.filter(
             (node) => node instanceof EnumDefinition
         ) as EnumDefinition[];
+    }
+
+    /**
+     * User-defined value type definitions of contract
+     */
+    get vUserDefinedValueTypes(): readonly UserDefinedValueTypeDefinition[] {
+        return this.ownChildren.filter(
+            (node) => node instanceof UserDefinedValueTypeDefinition
+        ) as UserDefinedValueTypeDefinition[];
     }
 
     /**

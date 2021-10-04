@@ -9,6 +9,7 @@ import { EventDefinition } from "./implementation/declaration/event_definition";
 import { FunctionDefinition } from "./implementation/declaration/function_definition";
 import { ModifierDefinition } from "./implementation/declaration/modifier_definition";
 import { StructDefinition } from "./implementation/declaration/struct_definition";
+import { UserDefinedValueTypeDefinition } from "./implementation/declaration/user_defined_value_type_definition";
 import { VariableDeclaration } from "./implementation/declaration/variable_declaration";
 import { Assignment } from "./implementation/expression/assignment";
 import { BinaryOperation } from "./implementation/expression/binary_operation";
@@ -186,6 +187,18 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.scope,
             node.visibility,
             node.vMembers,
+            node.nameLocation,
+            node.raw
+        ]
+    ],
+    [
+        UserDefinedValueTypeDefinition,
+        (
+            node: UserDefinedValueTypeDefinition
+        ): Specific<ConstructorParameters<typeof UserDefinedValueTypeDefinition>> => [
+            node.name,
+            node.canonicalName,
+            node.underlyingType,
             node.nameLocation,
             node.raw
         ]
@@ -726,6 +739,12 @@ export class ASTNodeFactory {
         ...args: Specific<ConstructorParameters<typeof StructDefinition>>
     ): StructDefinition {
         return this.make(StructDefinition, ...args);
+    }
+
+    makeUserDefinedValueTypeDefinition(
+        ...args: Specific<ConstructorParameters<typeof UserDefinedValueTypeDefinition>>
+    ): UserDefinedValueTypeDefinition {
+        return this.make(UserDefinedValueTypeDefinition, ...args);
     }
 
     makeVariableDeclaration(

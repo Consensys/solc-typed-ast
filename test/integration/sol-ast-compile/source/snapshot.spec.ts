@@ -90,9 +90,14 @@ for (const [fileName, sample] of cases) {
         });
 
         it("STDOUT is correct", () => {
+            const result = outData.replace(new RegExp(process.cwd(), "g"), "");
+
+            // Uncomment next line to update snapshots
+            // fse.writeFileSync(sample, result, { encoding: "utf-8" });
+
             const content = fse.readFileSync(sample, { encoding: "utf-8" });
 
-            expect(outData.replace(new RegExp(process.cwd(), "g"), "")).toEqual(content);
+            expect(result).toEqual(content);
         });
     });
 }

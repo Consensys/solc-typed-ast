@@ -1,34 +1,43 @@
 import expect from "expect";
 import { gte, lt } from "semver";
 import {
-    compileSol,
-    detectCompileErrors,
-    ASTReader,
-    ASTKind,
-    resolveAny,
-    assert,
-    VariableDeclaration,
-    FunctionDefinition,
-    FunctionType,
-    generalizeType,
-    variableDeclarationToTypeNode,
-    EventDefinition,
-    FunctionVisibility,
-    FunctionStateMutability,
     AnyResolvable,
-    SourceUnit,
+    assert,
+    ASTKind,
+    ASTReader,
+    CompilerVersions08,
+    compileSol,
     ContractDefinition,
-    ErrorDefinition
+    detectCompileErrors,
+    ErrorDefinition,
+    EventDefinition,
+    FunctionDefinition,
+    FunctionStateMutability,
+    FunctionType,
+    FunctionVisibility,
+    generalizeType,
+    resolveAny,
+    SourceUnit,
+    VariableDeclaration,
+    variableDeclarationToTypeNode
 } from "../../../src";
 import { ABIEncoderVersion } from "../../../src/types/abi";
 
 const samples: Array<[string, string, ABIEncoderVersion]> = [
-    ["test/samples/solidity/getters_08.sol", "0.8.7", ABIEncoderVersion.V2],
+    [
+        "test/samples/solidity/getters_08.sol",
+        CompilerVersions08[CompilerVersions08.length - 1],
+        ABIEncoderVersion.V2
+    ],
     ["test/samples/solidity/getters_07.sol", "0.7.6", ABIEncoderVersion.V2],
     ["test/samples/solidity/getters_07_abiv1.sol", "0.7.6", ABIEncoderVersion.V1],
     ["test/samples/solidity/latest_06.sol", "0.6.12", ABIEncoderVersion.V2],
     ["test/samples/solidity/latest_07.sol", "0.7.6", ABIEncoderVersion.V2],
-    ["test/samples/solidity/latest_08.sol", "0.8.7", ABIEncoderVersion.V2],
+    [
+        "test/samples/solidity/latest_08.sol",
+        CompilerVersions08[CompilerVersions08.length - 1],
+        ABIEncoderVersion.V2
+    ],
     ["test/samples/solidity/compile_04.sol", "0.4.26", ABIEncoderVersion.V1],
     ["test/samples/solidity/compile_05.sol", "0.5.17", ABIEncoderVersion.V1],
     ["test/samples/solidity/compile_06.sol", "0.6.12", ABIEncoderVersion.V1],
@@ -42,10 +51,12 @@ function resolveOne(
     compilerVersion: string
 ): AnyResolvable | undefined {
     const contracts = [...resolveAny(contractName, unit, compilerVersion, true)];
-    assert(contracts.length === 1, `Contract ${contractName} not found in ${unit.sourceEntryKey}`);
-    const contract = contracts[0] as ContractDefinition;
 
+    assert(contracts.length === 1, `Contract ${contractName} not found in ${unit.sourceEntryKey}`);
+
+    const contract = contracts[0] as ContractDefinition;
     const defs = [...resolveAny(name, contract, compilerVersion, true)];
+
     if (defs.length === 0) {
         return undefined;
     }
@@ -54,15 +65,17 @@ function resolveOne(
         defs.length === 1,
         `Unexpected number of entries (${defs.length}) for ${name} in contract ${contract.name}: ${defs}`
     );
+
     return defs[0];
 }
 
 describe("Check canonical signatures are generated correctly", () => {
     for (const [sample, compilerVersion, encoderVer] of samples) {
-        it(`Sample ${sample}`, () => {
+        it(sample, () => {
             const result = compileSol(sample, "auto", []);
 
             expect(result.compilerVersion).toEqual(compilerVersion);
+
             const errors = detectCompileErrors(result.data);
 
             expect(errors).toHaveLength(0);
@@ -83,6 +96,7 @@ describe("Check canonical signatures are generated correctly", () => {
                     }
 
                     let signature: string;
+
                     if (def instanceof VariableDeclaration) {
                         signature = def.getterCanonicalSignature(encoderVer);
                     } else if (def instanceof FunctionDefinition) {
@@ -122,21 +136,15 @@ describe("Check canonical signatures are generated correctly", () => {
                     } else if (def instanceof FunctionDefinition) {
                         funT = new FunctionType(
                             def.name,
-                            def.vParameters.vParameters.map((param) =>
-                                variableDeclarationToTypeNode(param)
-                            ),
-                            def.vReturnParameters.vParameters.map((param) =>
-                                variableDeclarationToTypeNode(param)
-                            ),
+                            def.vParameters.vParameters.map(variableDeclarationToTypeNode),
+                            def.vReturnParameters.vParameters.map(variableDeclarationToTypeNode),
                             def.visibility,
                             def.stateMutability
                         );
                     } else if (def instanceof EventDefinition) {
                         funT = new FunctionType(
                             def.name,
-                            def.vParameters.vParameters.map((param) =>
-                                variableDeclarationToTypeNode(param)
-                            ),
+                            def.vParameters.vParameters.map(variableDeclarationToTypeNode),
                             [],
                             FunctionVisibility.Default,
                             FunctionStateMutability.View
@@ -144,9 +152,7 @@ describe("Check canonical signatures are generated correctly", () => {
                     } else if (def instanceof ErrorDefinition) {
                         funT = new FunctionType(
                             def.name,
-                            def.vParameters.vParameters.map((param) =>
-                                variableDeclarationToTypeNode(param)
-                            ),
+                            def.vParameters.vParameters.map(variableDeclarationToTypeNode),
                             [],
                             FunctionVisibility.Default,
                             FunctionStateMutability.View
@@ -156,6 +162,7 @@ describe("Check canonical signatures are generated correctly", () => {
                     }
 
                     expect(funT.parameters.length).toEqual(abiEntry.inputs.length);
+
                     for (let i = 0; i < funT.parameters.length; i++) {
                         expect(generalizeType(funT.parameters[i])[0].pp()).toEqual(
                             abiEntry.inputs[i].internalType
@@ -164,6 +171,7 @@ describe("Check canonical signatures are generated correctly", () => {
 
                     if (abiEntry.type === "function") {
                         expect(funT.returns.length).toEqual(abiEntry.outputs.length);
+
                         for (let i = 0; i < funT.returns.length; i++) {
                             expect(generalizeType(funT.returns[i])[0].pp()).toEqual(
                                 abiEntry.outputs[i].internalType

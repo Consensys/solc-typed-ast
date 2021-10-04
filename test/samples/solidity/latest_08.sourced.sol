@@ -8,6 +8,10 @@ import "./latest_imports_08.sol" as LI;
 
 enum EnumABC { A, B, C }
 
+type Price is uint128;
+
+type Quantity is uint128;
+
 /// UnitLevelError error docstring
 error UnitLevelError084(uint code);
 
@@ -170,6 +174,41 @@ contract Features087 {
         assembly {
             ret := basefee()
         }
+    }
+}
+
+library LibWithUDVT_088 {
+    type UFixed is uint256;
+
+    uint internal constant multiplier = 10 ** 18;
+
+    function add(UFixed a, UFixed b) internal pure returns (UFixed) {
+        return UFixed.wrap(UFixed.unwrap(a) + UFixed.unwrap(b));
+    }
+
+    function mul(UFixed a, uint256 b) internal pure returns (UFixed) {
+        return UFixed.wrap(UFixed.unwrap(a) * b);
+    }
+
+    function floor(UFixed a) internal pure returns (uint256) {
+        return UFixed.unwrap(a) / multiplier;
+    }
+
+    function toUFixed(uint256 a) internal pure returns (UFixed) {
+        return UFixed.wrap(a * multiplier);
+    }
+}
+
+interface InterfaceWithUDTV_088 {
+    type EntityReference is address payable;
+
+    function balance(EntityReference er) external view returns (uint);
+}
+
+contract EnumTypeMinMax_088 {
+    function testEnumMinMax() public pure {
+        assert(type(EnumABC).min == EnumABC.A);
+        assert(type(EnumABC).max == EnumABC.C);
     }
 }
 // ------------------------------------------------------------

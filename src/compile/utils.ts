@@ -242,7 +242,7 @@ export function createFileSystemImportFinder(
             }
 
             throw new Error(`Unable to find import path "${filePath}"`);
-        } catch (e) {
+        } catch (e: any) {
             return { error: e.message };
         }
     };

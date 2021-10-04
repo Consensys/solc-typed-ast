@@ -8,6 +8,7 @@ import { EventDefinition } from "../implementation/declaration/event_definition"
 import { FunctionDefinition } from "../implementation/declaration/function_definition";
 import { ModifierDefinition } from "../implementation/declaration/modifier_definition";
 import { StructDefinition } from "../implementation/declaration/struct_definition";
+import { UserDefinedValueTypeDefinition } from "../implementation/declaration/user_defined_value_type_definition";
 import { VariableDeclaration } from "../implementation/declaration/variable_declaration";
 import { Assignment } from "../implementation/expression/assignment";
 import { BinaryOperation } from "../implementation/expression/binary_operation";
@@ -109,6 +110,7 @@ import { ModernTupleExpressionProcessor } from "./tuple_expression_processor";
 import { ModernUnaryOperationProcessor } from "./unary_operation_processor";
 import { ModernUncheckedBlockProcessor } from "./unchecked_block_processor";
 import { ModernUserDefinedTypeNameProcessor } from "./user_defined_type_name_processor";
+import { ModernUserDefinedValueTypeDefinitionProcessor } from "./user_defined_value_type_definition_processor";
 import { ModernUsingForDirectiveProcessor } from "./using_for_directive_processor";
 import { ModernVariableDeclarationProcessor } from "./variable_declaration_processor";
 import { ModernVariableDeclarationStatementProcessor } from "./variable_declaration_statement_processor";
@@ -178,7 +180,8 @@ const processors = {
     Break: new ModernBreakProcessor(),
     Continue: new ModernContinueProcessor(),
     PlaceholderStatement: new ModernPlaceholderStatementProcessor(),
-    Throw: new ModernThrowProcessor()
+    Throw: new ModernThrowProcessor(),
+    UserDefinedValueTypeDefinition: new ModernUserDefinedValueTypeDefinitionProcessor()
 };
 
 export const ModernConfiguration: ASTReaderConfiguration = {
@@ -468,6 +471,11 @@ export const ModernConfiguration: ASTReaderConfiguration = {
         Throw: {
             constructor: Throw,
             processor: processors.Throw
+        },
+
+        UserDefinedValueTypeDefinition: {
+            constructor: UserDefinedValueTypeDefinition,
+            processor: processors.UserDefinedValueTypeDefinition
         }
     }
 };
