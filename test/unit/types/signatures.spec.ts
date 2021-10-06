@@ -63,7 +63,11 @@ function resolveOne(
 
     assert(
         defs.length === 1,
-        `Unexpected number of entries (${defs.length}) for ${name} in contract ${contract.name}: ${defs}`
+        "Unexpected number of entries ({0}) for {1} in contract {2}: {3}",
+        defs.length,
+        name,
+        contract.name,
+        defs
     );
 
     return defs[0];

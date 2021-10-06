@@ -173,6 +173,7 @@ export class VariableDeclaration extends ASTNode {
     canonicalSignatureType(encoderVersion: ABIEncoderVersion): string {
         const type = variableDeclarationToTypeNode(this);
         const abiType = toABIEncodedType(type, encoderVersion);
+
         return abiTypeToCanonicalName(generalizeType(abiType)[0]);
     }
 

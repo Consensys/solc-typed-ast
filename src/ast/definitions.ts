@@ -212,6 +212,7 @@ function* lookupInContractDefinition(
     scope: ContractDefinition
 ): Iterable<AnyResolvable> {
     const overridenSigHashes = new Set<string>();
+
     for (const base of scope.vLinearizedBaseContracts) {
         for (const child of base.children) {
             if (
