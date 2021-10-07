@@ -49,6 +49,8 @@ contract AccessorReturns {
     B1 public b1;
     B32 public b32;
 
+    mapping(A => U[4]) public udtvMapping;
+
     function main() public {
         function (uint256) external view returns (uint) a1 = this.a;
         function (address) external view returns (uint) b1 = this.b;
@@ -65,5 +67,7 @@ contract AccessorReturns {
         function () external view returns (AP) ap1 = this.ap;
         function () external view returns (B1) b11 = this.b1;
         function () external view returns (B32) b321 = this.b32;
+
+        function (A, uint256) external view returns (U) udtvMapping1 = this.udtvMapping;
     }
 }

@@ -251,6 +251,24 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                         FunctionStateMutability.View
                     );
                 }
+            ],
+            [
+                "udtvMapping",
+                (unit: SourceUnit) => {
+                    const defA = getDef(unit, "AccessorReturns.A", UserDefinedValueTypeDefinition);
+                    const defU = getDef(unit, "AccessorReturns.U", UserDefinedValueTypeDefinition);
+
+                    return new FunctionType(
+                        "udtvMapping",
+                        [
+                            new UserDefinedType(getUserDefinedTypeFQName(defA), defA),
+                            new IntType(256, false)
+                        ],
+                        [new UserDefinedType(getUserDefinedTypeFQName(defU), defU)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
             ]
         ]
     ],
