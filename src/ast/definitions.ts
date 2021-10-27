@@ -165,9 +165,7 @@ function* lookupInSourceUnit(
             } else if (child.vSymbolAliases.length === 0) {
                 // import "..."
                 // @todo maybe its better to go through child.vSourceUnit.vExportedSymbols here?
-                for (const def of lookupInScope(name, child.vSourceUnit, visitedUnits)) {
-                    yield def;
-                }
+                yield* lookupInScope(name, child.vSourceUnit, visitedUnits);
             } else {
                 // `import {<name>} from "..."` or `import {a as <name>} from "..."`
                 for (const [foreignDef, alias] of child.vSymbolAliases) {
@@ -191,7 +189,7 @@ function* lookupInSourceUnit(
                         }
                     }
 
-                    if (alias === name) {
+                    if (symImportName === name) {
                         yield foreignDef;
                     }
                 }
