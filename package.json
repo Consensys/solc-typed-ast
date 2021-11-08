@@ -26,7 +26,7 @@
         "prepare": "npm run build"
     },
     "dependencies": {
-        "findup-sync": "^4.0.0",
+        "findup-sync": "^5.0.0",
         "fs-extra": "^10.0.0",
         "jsel": "^1.1.6",
         "minimist": "^1.2.5",
@@ -102,10 +102,10 @@
         "@types/mocha": "^9.0.0",
         "@types/node": "^12.20.36",
         "@types/semver": "^7.3.9",
-        "@typescript-eslint/eslint-plugin": "^4.33.0",
-        "@typescript-eslint/parser": "^4.33.0",
+        "@typescript-eslint/eslint-plugin": "^5.3.0",
+        "@typescript-eslint/parser": "^5.3.0",
         "codecov": "^3.8.3",
-        "eslint": "^7.32.0",
+        "eslint": "^8.2.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-prettier": "^4.0.0",
         "expect": "^27.3.1",
@@ -115,7 +115,7 @@
         "prettier": "2.4.1",
         "ts-node": "^10.4.0",
         "ts-pegjs": "^1.2.1",
-        "typedoc": "^0.22.7",
+        "typedoc": "^0.22.8",
         "typescript": "^4.4.4"
     },
     "homepage": "https://consensys.github.io/solc-typed-ast",
