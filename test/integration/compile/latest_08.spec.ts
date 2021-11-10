@@ -28,26 +28,26 @@ const encounters = new Map<string, number>([
     ["ImportDirective", 1],
     ["EnumDefinition", 2],
     ["EnumValue", 6],
-    ["ContractDefinition", 11],
-    ["FunctionDefinition", 21],
-    ["ParameterList", 51],
-    ["VariableDeclaration", 36],
-    ["ElementaryTypeName", 32],
-    ["Block", 37],
-    ["VariableDeclarationStatement", 9],
+    ["ContractDefinition", 12],
+    ["FunctionDefinition", 23],
+    ["ParameterList", 57],
+    ["VariableDeclaration", 41],
+    ["ElementaryTypeName", 36],
+    ["Block", 39],
+    ["VariableDeclarationStatement", 10],
     ["Literal", 23],
     ["UncheckedBlock", 2],
     ["ExpressionStatement", 9],
     ["UnaryOperation", 2],
-    ["Identifier", 44],
-    ["Return", 9],
+    ["Identifier", 47],
+    ["Return", 10],
     ["InheritanceSpecifier", 1],
     ["IdentifierPath", 19],
     ["UsingForDirective", 1],
     ["UserDefinedTypeName", 14],
     ["ModifierInvocation", 2],
     ["FunctionCall", 27],
-    ["MemberAccess", 20],
+    ["MemberAccess", 23],
     ["OverrideSpecifier", 1],
     ["ElementaryTypeNameExpression", 3],
     ["NewExpression", 2],
@@ -58,18 +58,19 @@ const encounters = new Map<string, number>([
     ["EventDefinition", 1],
     ["ModifierDefinition", 1],
     ["PlaceholderStatement", 1],
-    ["TupleExpression", 2],
+    ["TupleExpression", 3],
     ["EmitStatement", 1],
     ["WhileStatement", 1],
     ["Continue", 1],
     ["DoWhileStatement", 1],
     ["Break", 1],
     ["ForStatement", 1],
-    ["InlineAssembly", 3],
+    ["InlineAssembly", 4],
     ["ErrorDefinition", 3],
     ["StructuredDocumentation", 3],
     ["RevertStatement", 3],
-    ["UserDefinedValueTypeDefinition", 4]
+    ["UserDefinedValueTypeDefinition", 4],
+    ["FunctionTypeName", 1]
 ]);
 
 describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
@@ -100,11 +101,11 @@ describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
 
         const sourceUnit = sourceUnits[0];
 
-        expect(sourceUnit.id).toEqual(443);
-        expect(sourceUnit.src).toEqual("0:5771:0");
+        expect(sourceUnit.id).toEqual(474);
+        expect(sourceUnit.src).toEqual("0:6239:0");
         expect(sourceUnit.absolutePath).toEqual(mainSample);
-        expect(sourceUnit.children.length).toEqual(18);
-        expect(sourceUnit.getChildren().length).toEqual(437);
+        expect(sourceUnit.children.length).toEqual(19);
+        expect(sourceUnit.getChildren().length).toEqual(468);
     });
 
     it(`Validate parsed output (${kind})`, () => {

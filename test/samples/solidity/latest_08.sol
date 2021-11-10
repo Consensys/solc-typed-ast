@@ -250,3 +250,21 @@ contract EnumTypeMinMax_088 {
         assert(type(EnumABC).max == EnumABC.C);
     }
 }
+
+contract ExternalFnSelectorAndAddress_0810 {
+    function testFunction() external {}
+
+    function test(address newAddress, uint32 newSelector) view public returns (address adr, bytes4 sel) {
+        function() external fp = this.testFunction;
+
+        assembly {
+            let o := fp.address
+            let s := fp.selector
+
+            fp.address := newAddress
+            fp.selector := newSelector
+        }
+
+        return (fp.address, fp.selector);
+    }
+}
