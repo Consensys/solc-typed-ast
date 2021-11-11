@@ -14,6 +14,7 @@ import {
     FunctionStateMutability,
     FunctionType,
     FunctionVisibility,
+    getUserDefinedTypeFQName,
     IntType,
     PointerType,
     SourceUnit,
@@ -21,6 +22,8 @@ import {
     StructDefinition,
     TypeNode,
     UserDefinedType,
+    UserDefinedValueTypeDefinition,
+    UserDefinition,
     VariableDeclaration
 } from "../../../src";
 
@@ -36,7 +39,7 @@ function getStateVar(unit: SourceUnit, name: string): VariableDeclaration {
     return vars[0];
 }
 
-function getDef<T extends StructDefinition | EnumDefinition | ContractDefinition>(
+function getDef<T extends UserDefinition>(
     unit: SourceUnit,
     canonicalName: string,
     constructor: ASTNodeConstructor<T>
@@ -128,7 +131,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                             new IntType(8, true),
                             new PointerType(new StringType(), DataLocation.Memory),
                             new PointerType(
-                                new UserDefinedType(def.canonicalName, def),
+                                new UserDefinedType(getUserDefinedTypeFQName(def), def),
                                 DataLocation.Memory
                             )
                         ],
@@ -150,6 +153,122 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                         FunctionStateMutability.View
                     );
                 }
+            ],
+            [
+                "u",
+                (unit: SourceUnit) => {
+                    const def = getDef(unit, "AccessorReturns.U", UserDefinedValueTypeDefinition);
+
+                    return new FunctionType(
+                        "u",
+                        [],
+                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
+            ],
+            [
+                "i",
+                (unit: SourceUnit) => {
+                    const def = getDef(unit, "AccessorReturns.I", UserDefinedValueTypeDefinition);
+
+                    return new FunctionType(
+                        "i",
+                        [],
+                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
+            ],
+            [
+                "addr",
+                (unit: SourceUnit) => {
+                    const def = getDef(unit, "AccessorReturns.A", UserDefinedValueTypeDefinition);
+
+                    return new FunctionType(
+                        "addr",
+                        [],
+                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
+            ],
+            [
+                "ap",
+                (unit: SourceUnit) => {
+                    const def = getDef(unit, "AccessorReturns.AP", UserDefinedValueTypeDefinition);
+
+                    return new FunctionType(
+                        "ap",
+                        [],
+                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
+            ],
+            [
+                "ap",
+                (unit: SourceUnit) => {
+                    const def = getDef(unit, "AccessorReturns.AP", UserDefinedValueTypeDefinition);
+
+                    return new FunctionType(
+                        "ap",
+                        [],
+                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
+            ],
+            [
+                "b1",
+                (unit: SourceUnit) => {
+                    const def = getDef(unit, "AccessorReturns.B1", UserDefinedValueTypeDefinition);
+
+                    return new FunctionType(
+                        "b1",
+                        [],
+                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
+            ],
+            [
+                "b32",
+                (unit: SourceUnit) => {
+                    const def = getDef(unit, "AccessorReturns.B32", UserDefinedValueTypeDefinition);
+
+                    return new FunctionType(
+                        "b32",
+                        [],
+                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
+            ],
+            [
+                "udtvMapping",
+                (unit: SourceUnit) => {
+                    const defA = getDef(unit, "AccessorReturns.A", UserDefinedValueTypeDefinition);
+                    const defU = getDef(unit, "AccessorReturns.U", UserDefinedValueTypeDefinition);
+
+                    return new FunctionType(
+                        "udtvMapping",
+                        [
+                            new UserDefinedType(getUserDefinedTypeFQName(defA), defA),
+                            new IntType(256, false)
+                        ],
+                        [new UserDefinedType(getUserDefinedTypeFQName(defU), defU)],
+                        FunctionVisibility.External,
+                        FunctionStateMutability.View
+                    );
+                }
             ]
         ]
     ],
@@ -166,7 +285,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                         [],
                         [
                             new PointerType(
-                                new UserDefinedType(def.canonicalName, def),
+                                new UserDefinedType(getUserDefinedTypeFQName(def), def),
                                 DataLocation.Memory
                             ),
                             new IntType(256, false)

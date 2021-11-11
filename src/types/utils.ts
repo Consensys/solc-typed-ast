@@ -14,6 +14,7 @@ import {
     StructDefinition,
     TypeName,
     UserDefinedTypeName,
+    UserDefinedValueTypeDefinition,
     VariableDeclaration
 } from "../ast";
 import { assert } from "../misc";
@@ -32,7 +33,8 @@ import {
     StringType,
     TupleType,
     TypeNode,
-    UserDefinedType
+    UserDefinedType,
+    UserDefinition
 } from "./ast";
 
 export type VersionDependentType = [TypeNode, string];
@@ -143,9 +145,7 @@ export function generalizeType(type: TypeNode): [TypeNode, DataLocation | undefi
     return [type, undefined];
 }
 
-export function getUserDefinedTypeFQName(
-    def: ContractDefinition | StructDefinition | EnumDefinition
-): string {
+export function getUserDefinedTypeFQName(def: UserDefinition): string {
     return def.vScope instanceof ContractDefinition ? `${def.vScope.name}.${def.name}` : def.name;
 }
 
@@ -230,7 +230,8 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
         if (
             def instanceof StructDefinition ||
             def instanceof EnumDefinition ||
-            def instanceof ContractDefinition
+            def instanceof ContractDefinition ||
+            def instanceof UserDefinedValueTypeDefinition
         ) {
             return new UserDefinedType(getUserDefinedTypeFQName(def), def);
         }

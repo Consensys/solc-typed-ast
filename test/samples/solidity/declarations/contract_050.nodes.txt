@@ -15,6 +15,7 @@ SourceUnit #146
     <getter> vStructs: Array(0)
     <getter> vFunctions: Array(0)
     <getter> vVariables: Array(0)
+    <getter> vUserDefinedValueTypes: Array(0)
     <getter> vExportedSymbols: Map(3) { "A" -> ContractDefinition #90, "B" -> ContractDefinition #100, "C" -> ContractDefinition #145 }
     <getter> children: Array(3) [ ContractDefinition #90, ContractDefinition #100, ContractDefinition #145 ]
     <getter> firstChild: ContractDefinition #90
@@ -52,6 +53,7 @@ SourceUnit #146
         <getter> vUsingForDirectives: Array(0)
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(0)
+        <getter> vUserDefinedValueTypes: Array(0)
         <getter> vConstructor: undefined
         <getter> children: Array(1) [ FunctionDefinition #89 ]
         <getter> firstChild: FunctionDefinition #89
@@ -412,6 +414,7 @@ SourceUnit #146
         <getter> vUsingForDirectives: Array(0)
         <getter> vStructs: Array(0)
         <getter> vEnums: Array(0)
+        <getter> vUserDefinedValueTypes: Array(0)
         <getter> vConstructor: undefined
         <getter> children: Array(1) [ FunctionDefinition #99 ]
         <getter> firstChild: FunctionDefinition #99
@@ -647,6 +650,7 @@ SourceUnit #146
         <getter> vUsingForDirectives: Array(1) [ UsingForDirective #116 ]
         <getter> vStructs: Array(1) [ StructDefinition #109 ]
         <getter> vEnums: Array(1) [ EnumDefinition #113 ]
+        <getter> vUserDefinedValueTypes: Array(0)
         <getter> vConstructor: FunctionDefinition #129
         <getter> children: Array(8) [ InheritanceSpecifier #102, EventDefinition #106, StructDefinition #109, EnumDefinition #113, UsingForDirective #116, VariableDeclaration #118, FunctionDefinition #129, FunctionDefinition #144 ]
         <getter> firstChild: InheritanceSpecifier #102

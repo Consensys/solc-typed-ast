@@ -53,6 +53,7 @@ import {
     UnaryOperation,
     UncheckedBlock,
     UserDefinedTypeName,
+    UserDefinedValueTypeDefinition,
     UsingForDirective,
     VariableDeclaration,
     VariableDeclarationStatement,
@@ -401,7 +402,8 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
                 "vStructs",
                 "vFunctions",
                 "vVariables",
-                "vErrors"
+                "vErrors",
+                "vUserDefinedValueTypes"
             );
         } else if (node instanceof ImportDirective) {
             /**
@@ -479,6 +481,7 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
                 "vUsingForDirectives",
                 "vStructs",
                 "vEnums",
+                "vUserDefinedValueTypes",
                 "vConstructor"
             ];
 
@@ -557,6 +560,11 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
             checkVFieldCtx(node, "vScope", ctx);
 
             checkDirectChildren(node, "vMembers");
+        } else if (node instanceof UserDefinedValueTypeDefinition) {
+            checkVFieldCtx(node, "vScope", ctx);
+            checkVFieldCtx(node, "underlyingType", ctx);
+
+            checkDirectChildren(node, "underlyingType");
         } else if (node instanceof VariableDeclaration) {
             checkFieldAndVFieldMatch(node, "scope", "vScope");
             checkVFieldCtx(node, "vScope", ctx);

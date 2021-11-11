@@ -55,6 +55,7 @@ TupleExpression
 UnaryOperation
 UncheckedBlock
 UserDefinedTypeName
+UserDefinedValueTypeDefinition
 UsingForDirective
 VariableDeclaration
 VariableDeclarationStatement

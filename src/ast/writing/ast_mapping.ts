@@ -17,6 +17,7 @@ import {
     FunctionDefinition,
     ModifierDefinition,
     StructDefinition,
+    UserDefinedValueTypeDefinition,
     VariableDeclaration
 } from "../implementation/declaration";
 import {
@@ -113,7 +114,9 @@ function descTrimRight(desc: SrcDesc): void {
  * compound statements like ifs.
  */
 function pushSemicolonsDown(desc: SrcDesc): void {
-    if (desc.length === 0) return;
+    if (desc.length === 0) {
+        return;
+    }
 
     const last = desc[desc.length - 1];
 
@@ -1137,6 +1140,12 @@ class EnumDefinitionWriter extends ASTNodeWriter {
     }
 }
 
+class UserDefinedValueTypeDefinitionWriter extends ASTNodeWriter {
+    writeInner(node: UserDefinedValueTypeDefinition, writer: ASTWriter): SrcDesc {
+        return writer.desc("type ", node.name, " is ", node.underlyingType, ";");
+    }
+}
+
 class InheritanceSpecifierWriter extends ASTNodeWriter {
     writeInner(node: InheritanceSpecifier, writer: ASTWriter): SrcDesc {
         const args: DescArgs = [node.vBaseType];
@@ -1203,6 +1212,10 @@ class ContractDefinitionWriter extends ASTNodeWriter {
 
         if (node.vEnums.length) {
             result.push(...flatJoin(node.vEnums.map(writeLineFn), wrap), wrap);
+        }
+
+        if (node.vUserDefinedValueTypes.length) {
+            result.push(...flatJoin(node.vUserDefinedValueTypes.map(writeLineFn), wrap), wrap);
         }
 
         if (node.vErrors.length) {
@@ -1305,7 +1318,7 @@ class SourceUnitWriter extends ASTNodeWriter {
             result.push(...flatten(node.vImportDirectives.map(writeLineFn)), wrap);
         }
 
-        const typeDefs = [...node.vEnums, ...node.vStructs];
+        const typeDefs = [...node.vEnums, ...node.vUserDefinedValueTypes, ...node.vStructs];
 
         if (typeDefs.length > 0) {
             result.push(...flatJoin(typeDefs.map(writeLineFn), wrap), wrap);
@@ -1377,6 +1390,7 @@ export const DefaultASTWriterMapping = new Map<ASTNodeConstructor<ASTNode>, ASTN
     [StructDefinition, new StructDefinitionWriter()],
     [EnumValue, new EnumValueWriter()],
     [EnumDefinition, new EnumDefinitionWriter()],
+    [UserDefinedValueTypeDefinition, new UserDefinedValueTypeDefinitionWriter()],
     [UsingForDirective, new UsingForDirectiveWriter()],
     [InheritanceSpecifier, new InheritanceSpecifierWriter()],
     [ContractDefinition, new ContractDefinitionWriter()],

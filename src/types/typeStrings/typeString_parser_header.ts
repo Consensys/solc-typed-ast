@@ -11,6 +11,7 @@ import {
     FunctionVisibility,
     resolveAny,
     StructDefinition,
+    UserDefinedValueTypeDefinition,
     VariableDeclaration
 } from "../../ast";
 import {
