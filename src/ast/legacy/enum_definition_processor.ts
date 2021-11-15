@@ -14,8 +14,7 @@ export class LegacyEnumDefinitionProcessor extends LegacyNodeProcessor<EnumDefin
         const members = reader.convertArray(raw.children, config) as EnumValue[];
 
         const name: string = attributes.name;
-        const canonicalName: string = attributes.canonicalName;
 
-        return [id, src, type, name, canonicalName, members, undefined, raw];
+        return [id, src, type, name, members, undefined, raw];
     }
 }

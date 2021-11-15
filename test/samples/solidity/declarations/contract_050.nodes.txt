@@ -781,12 +781,12 @@ SourceUnit #146
             src: "0:0:0"
             type: "StructDefinition"
             name: "St"
-            canonicalName: "C.St"
             scope: 145
             visibility: "public"
             nameLocation: undefined
             context: ASTContext #1000
             parent: ContractDefinition #145
+            <getter> canonicalName: "C.St"
             <getter> vMembers: Array(1) [ VariableDeclaration #108 ]
             <getter> vScope: ContractDefinition #145
             <getter> children: Array(1) [ VariableDeclaration #108 ]
@@ -848,10 +848,10 @@ SourceUnit #146
             src: "0:0:0"
             type: "EnumDefinition"
             name: "En"
-            canonicalName: "C.En"
             nameLocation: undefined
             context: ASTContext #1000
             parent: ContractDefinition #145
+            <getter> canonicalName: "C.En"
             <getter> vMembers: Array(3) [ EnumValue #110, EnumValue #111, EnumValue #112 ]
             <getter> vScope: ContractDefinition #145
             <getter> children: Array(3) [ EnumValue #110, EnumValue #111, EnumValue #112 ]

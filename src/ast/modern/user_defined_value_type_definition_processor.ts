@@ -12,10 +12,9 @@ export class ModernUserDefinedValueTypeDefinitionProcessor extends ModernNodePro
         const [id, src, type] = super.process(reader, config, raw);
 
         const name: string = raw.name;
-        const canonicalName: string = raw.canonicalName;
         const nameLocation: string | undefined = raw.nameLocation;
         const underlyingType = reader.convert(raw.underlyingType, config) as ElementaryTypeName;
 
-        return [id, src, type, name, canonicalName, underlyingType, nameLocation, raw];
+        return [id, src, type, name, underlyingType, nameLocation, raw];
     }
 }

@@ -1,3 +1,4 @@
+import { getUserDefinedTypeFQName } from "../../..";
 import { ASTNode } from "../../ast_node";
 import { SourceUnit } from "../meta/source_unit";
 import { ElementaryTypeName } from "../type/elementary_type_name";
@@ -8,12 +9,6 @@ export class UserDefinedValueTypeDefinition extends ASTNode {
      * The name of the user-defined value type definition
      */
     name: string;
-
-    /**
-     * Canonical name (or qualified name), e.g. `DefiningContract.SomeType`.
-     * Is `undefined` for Solidity 0.8.8. Available since Solidity 0.8.9.
-     */
-    canonicalName?: string;
 
     /**
      * The source range for name string
@@ -30,7 +25,6 @@ export class UserDefinedValueTypeDefinition extends ASTNode {
         src: string,
         type: string,
         name: string,
-        canonicalName: string | undefined,
         underlyingType: ElementaryTypeName,
         nameLocation?: string,
         raw?: any
@@ -38,7 +32,6 @@ export class UserDefinedValueTypeDefinition extends ASTNode {
         super(id, src, type, raw);
 
         this.name = name;
-        this.canonicalName = canonicalName;
         this.underlyingType = underlyingType;
         this.nameLocation = nameLocation;
 
@@ -47,6 +40,13 @@ export class UserDefinedValueTypeDefinition extends ASTNode {
 
     get children(): readonly ASTNode[] {
         return this.pickNodes(this.underlyingType);
+    }
+
+    /**
+     * Canonical name (or qualified name), e.g. `DefiningContract.SomeType`
+     */
+    get canonicalName(): string {
+        return getUserDefinedTypeFQName(this);
     }
 
     /**

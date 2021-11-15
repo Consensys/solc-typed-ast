@@ -110,7 +110,6 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         EnumDefinition,
         (node: EnumDefinition): Specific<ConstructorParameters<typeof EnumDefinition>> => [
             node.name,
-            node.canonicalName,
             node.vMembers,
             node.nameLocation,
             node.raw
@@ -183,7 +182,6 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         StructDefinition,
         (node: StructDefinition): Specific<ConstructorParameters<typeof StructDefinition>> => [
             node.name,
-            node.canonicalName,
             node.scope,
             node.visibility,
             node.vMembers,
@@ -197,7 +195,6 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node: UserDefinedValueTypeDefinition
         ): Specific<ConstructorParameters<typeof UserDefinedValueTypeDefinition>> => [
             node.name,
-            node.canonicalName,
             node.underlyingType,
             node.nameLocation,
             node.raw
@@ -1032,6 +1029,7 @@ export class ASTNodeFactory {
             | ErrorDefinition
             | EventDefinition
             | EnumDefinition
+            | UserDefinedValueTypeDefinition
             | ImportDirective
     ): Identifier {
         let typeString: string;
@@ -1060,6 +1058,12 @@ export class ASTNodeFactory {
             typeString = result.join(" ");
         } else if (target instanceof ContractDefinition) {
             typeString = `type(contract ${target.name})`;
+        } else if (target instanceof StructDefinition) {
+            typeString = `type(struct ${target.canonicalName} storage pointer)`;
+        } else if (target instanceof EnumDefinition) {
+            typeString = `type(enum ${target.canonicalName})`;
+        } else if (target instanceof UserDefinedValueTypeDefinition) {
+            typeString = `type(${target.canonicalName})`;
         } else if (target instanceof EventDefinition || target instanceof ErrorDefinition) {
             const args = target.vParameters.vParameters.map(this.typeExtractor);
 
@@ -1071,15 +1075,9 @@ export class ASTNodeFactory {
                 throw new Error('Target ImportDirective required to have valid "unitAlias"');
             }
         } else {
-            const name =
-                target.vScope instanceof ContractDefinition
-                    ? target.vScope.name + "." + target.name
-                    : target.name;
-
-            typeString =
-                target instanceof StructDefinition
-                    ? `type(struct ${name} storage pointer)`
-                    : `type(enum ${name})`;
+            throw new Error(
+                "ASTNodeFactory.makeIdentifierFor(): Unable to compose typeString for supplied target"
+            );
         }
 
         return this.makeIdentifier(

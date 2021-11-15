@@ -12,11 +12,10 @@ export class ModernEnumDefinitionProcessor extends ModernNodeProcessor<EnumDefin
         const [id, src, type] = super.process(reader, config, raw);
 
         const name: string = raw.name;
-        const canonicalName: string = raw.canonicalName;
         const nameLocation: string | undefined = raw.nameLocation;
 
         const members = reader.convertArray(raw.members, config) as EnumValue[];
 
-        return [id, src, type, name, canonicalName, members, nameLocation, raw];
+        return [id, src, type, name, members, nameLocation, raw];
     }
 }

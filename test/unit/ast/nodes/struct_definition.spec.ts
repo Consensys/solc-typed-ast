@@ -29,7 +29,6 @@ describe("StructDefinition", () => {
             "0:0:0",
             "StructDefinition",
             "MyStruct",
-            "MyStruct",
             0,
             "internal",
             []

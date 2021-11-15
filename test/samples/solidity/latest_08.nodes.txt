@@ -87,10 +87,10 @@ SourceUnit #959
         src: "0:0:0"
         type: "EnumDefinition"
         name: "EnumABC"
-        canonicalName: "EnumABC"
         nameLocation: "91:7:0"
         context: ASTContext #1000
         parent: SourceUnit #959
+        <getter> canonicalName: "EnumABC"
         <getter> vMembers: Array(3) [ EnumValue #494, EnumValue #495, EnumValue #496 ]
         <getter> vScope: SourceUnit #959
         <getter> children: Array(3) [ EnumValue #494, EnumValue #495, EnumValue #496 ]
@@ -2866,10 +2866,10 @@ SourceUnit #959
             src: "0:0:0"
             type: "EnumDefinition"
             name: "EnumXYZ"
-            canonicalName: "Features082.EnumXYZ"
             nameLocation: "1379:7:0"
             context: ASTContext #1000
             parent: ContractDefinition #713
+            <getter> canonicalName: "Features082.EnumXYZ"
             <getter> vMembers: Array(3) [ EnumValue #633, EnumValue #634, EnumValue #635 ]
             <getter> vScope: ContractDefinition #713
             <getter> children: Array(3) [ EnumValue #633, EnumValue #634, EnumValue #635 ]
@@ -6080,12 +6080,12 @@ SourceUnit #959
         src: "0:0:0"
         type: "UserDefinedValueTypeDefinition"
         name: "Price"
-        canonicalName: "Price"
         underlyingType: ElementaryTypeName #800
         nameLocation: "4739:5:0"
         context: ASTContext #1000
         parent: SourceUnit #959
         <getter> children: Array(1) [ ElementaryTypeName #800 ]
+        <getter> canonicalName: "Price"
         <getter> vScope: SourceUnit #959
         <getter> firstChild: ElementaryTypeName #800
         <getter> lastChild: ElementaryTypeName #800
@@ -6116,12 +6116,12 @@ SourceUnit #959
         src: "0:0:0"
         type: "UserDefinedValueTypeDefinition"
         name: "Quantity"
-        canonicalName: "Quantity"
         underlyingType: ElementaryTypeName #802
         nameLocation: "4762:8:0"
         context: ASTContext #1000
         parent: SourceUnit #959
         <getter> children: Array(1) [ ElementaryTypeName #802 ]
+        <getter> canonicalName: "Quantity"
         <getter> vScope: SourceUnit #959
         <getter> firstChild: ElementaryTypeName #802
         <getter> lastChild: ElementaryTypeName #802
@@ -6190,12 +6190,12 @@ SourceUnit #959
             src: "0:0:0"
             type: "UserDefinedValueTypeDefinition"
             name: "UFixed"
-            canonicalName: "LibWithUDVT_088.UFixed"
             underlyingType: ElementaryTypeName #804
             nameLocation: "4819:6:0"
             context: ASTContext #1000
             parent: ContractDefinition #891
             <getter> children: Array(1) [ ElementaryTypeName #804 ]
+            <getter> canonicalName: "LibWithUDVT_088.UFixed"
             <getter> vScope: ContractDefinition #891
             <getter> firstChild: ElementaryTypeName #804
             <getter> lastChild: ElementaryTypeName #804
@@ -8000,12 +8000,12 @@ SourceUnit #959
             src: "0:0:0"
             type: "UserDefinedValueTypeDefinition"
             name: "EntityReference"
-            canonicalName: "InterfaceWithUDTV_088.EntityReference"
             underlyingType: ElementaryTypeName #892
             nameLocation: "5483:15:0"
             context: ASTContext #1000
             parent: ContractDefinition #902
             <getter> children: Array(1) [ ElementaryTypeName #892 ]
+            <getter> canonicalName: "InterfaceWithUDTV_088.EntityReference"
             <getter> vScope: ContractDefinition #902
             <getter> firstChild: ElementaryTypeName #892
             <getter> lastChild: ElementaryTypeName #892
@@ -9455,12 +9455,12 @@ SourceUnit #975
             src: "0:0:0"
             type: "StructDefinition"
             name: "SomeStruct"
-            canonicalName: "SomeContract.SomeStruct"
             scope: 973
             visibility: "public"
             nameLocation: "80:10:1"
             context: ASTContext #1000
             parent: ContractDefinition #973
+            <getter> canonicalName: "SomeContract.SomeStruct"
             <getter> vMembers: Array(1) [ VariableDeclaration #963 ]
             <getter> vScope: ContractDefinition #973
             <getter> children: Array(1) [ VariableDeclaration #963 ]
