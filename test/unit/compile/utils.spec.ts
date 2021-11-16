@@ -191,12 +191,21 @@ describe("Compile general utils", () => {
 
         for (const [fileName, version, result] of cases) {
             if (result instanceof RegExp) {
-                it(`Throws an error for ${JSON.stringify(fileName)}`, () => {
-                    expect(() => compileJson(fileName, "auto", [])).toThrow(result);
+                it(`Throws an error for ${JSON.stringify(fileName)}`, async () => {
+                    try {
+                        await compileJson(fileName, "auto", []);
+                        expect(false).toBe(true);
+                    } catch (e: any) {
+                        expect(e.message).toMatch(result);
+                    }
                 });
             } else {
-                it(`Compiles ${JSON.stringify(fileName)} successfully`, () => {
-                    const { data, compilerVersion, files } = compileJson(fileName, "auto", []);
+                it(`Compiles ${JSON.stringify(fileName)} successfully`, async () => {
+                    const { data, compilerVersion, files } = await compileJson(
+                        fileName,
+                        "auto",
+                        []
+                    );
 
                     expect(data.sources).toBeDefined();
                     expect(detectCompileErrors(data)).toHaveLength(0);

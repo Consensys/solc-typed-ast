@@ -3,6 +3,7 @@ import path from "path";
 import fse from "fs-extra";
 import https from "https";
 import { IncomingMessage } from "http";
+import { Compiler } from "./frontends/base";
 
 export function getCompilerPrefixForOs(): string | undefined {
     const arch = os.arch();
@@ -42,8 +43,14 @@ interface VersionListEntry {
     urls: string[];
 }
 
-class NativeCompiler {
-    constructor(public readonly version: string, public readonly path: string) {}
+class NativeCompiler extends Compiler {
+    constructor(public readonly version: string, public readonly path: string) {
+        super(version);
+    }
+
+    compile(inputJSON: any): any {
+        throw new Error(`NYI NativeCompiler.compile()`);
+    }
 }
 
 const CACHE_DIR = "./.native_compilers_cache/";

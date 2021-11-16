@@ -262,6 +262,7 @@ OPTIONS:
                 process.exit(1);
             }
 
+            console.error(`Here with ${e}`);
             throw e;
         }
 
@@ -416,4 +417,7 @@ OPTIONS:
 
         process.exit(0);
     }
-})();
+})().catch((reason) => {
+    console.error(reason);
+    process.exit(1);
+});

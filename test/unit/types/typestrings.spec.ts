@@ -97,8 +97,8 @@ const samples: Array<[string, string, ASTKind]> = [
 
 describe("Round-trip tests for typestring parser/printer", () => {
     for (const [sample, compilerVersion, kind] of samples) {
-        it(`Sample ${sample}`, () => {
-            const result = compileSol(sample, "auto", []);
+        it(`Sample ${sample}`, async () => {
+            const result = await compileSol(sample, "auto", []);
 
             expect(result.compilerVersion).toEqual(compilerVersion);
             const errors = detectCompileErrors(result.data);

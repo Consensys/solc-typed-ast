@@ -91,8 +91,8 @@ const samples: Array<[string, string, ASTKind]> = [
 
 describe("resolveAny() correctly resolves all Identifiers/UserDefinedTypeNames/FunctionCalls", () => {
     for (const [sample, compilerVersion, kind] of samples) {
-        it(`All definitions in ${sample} resolve correctly`, () => {
-            const result = compileSol(sample, "auto", []);
+        it(`All definitions in ${sample} resolve correctly`, async () => {
+            const result = await compileSol(sample, "auto", []);
 
             expect(result.compilerVersion).toEqual(compilerVersion);
             const errors = detectCompileErrors(result.data);
@@ -466,8 +466,8 @@ const unitSamples: Array<
 
 describe("resolveAny() unit tests", () => {
     for (const [sample, compilerVersion, kind, sampleTests] of unitSamples) {
-        describe(`In sample ${sample}`, () => {
-            const result = compileSol(sample, "auto", []);
+        describe(`In sample ${sample}`, async () => {
+            const result = await compileSol(sample, "auto", []);
 
             expect(result.compilerVersion).toEqual(compilerVersion);
             const errors = detectCompileErrors(result.data);

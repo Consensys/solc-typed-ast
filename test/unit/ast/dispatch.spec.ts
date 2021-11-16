@@ -17,9 +17,9 @@ import {
 
 type Resolvable = EventDefinition | FunctionDefinition | ModifierDefinition | VariableDeclaration;
 
-describe("Dynamic dispatch AST utils", () => {
+describe("Dynamic dispatch AST utils", async () => {
     const reader = new ASTReader();
-    const { data } = compileJson("test/samples/solidity/dispatch_05.json", "auto", []);
+    const { data } = await compileJson("test/samples/solidity/dispatch_05.json", "auto", []);
 
     const [mainUnit] = reader.read(data);
     const [a, b, c, d, i] = mainUnit.vContracts;

@@ -11,9 +11,9 @@ describe("PragmaDirective", () => {
         describe(`Solc ${version}: ${sample}`, () => {
             let directives: readonly PragmaDirective[];
 
-            before(() => {
+            before(async () => {
                 const reader = new ASTReader();
-                const { data } = compileJson(sample, version, []);
+                const { data } = await compileJson(sample, version, []);
                 const [mainUnit] = reader.read(data);
 
                 directives = mainUnit.vPragmaDirectives;

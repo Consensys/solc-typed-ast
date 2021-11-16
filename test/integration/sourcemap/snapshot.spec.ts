@@ -28,9 +28,9 @@ describe("Source map snapshot tests", () => {
             let units: SourceUnit[];
             let compilerVersion: string;
 
-            before(() => {
+            before(async () => {
                 const reader = new ASTReader();
-                const result = compileSol(fileName, "auto", []);
+                const result = await compileSol(fileName, "auto", []);
 
                 compilerVersion =
                     result.compilerVersion === undefined

@@ -17,9 +17,9 @@ describe("ForStatement (Solc 0.5.0)", () => {
     let mainUnit: SourceUnit;
     let funcs: FunctionDefinition[];
 
-    before(() => {
+    before(async () => {
         const reader = new ASTReader();
-        const { data } = compileJson(sample, "0.5.0", []);
+        const { data } = await compileJson(sample, "0.5.0", []);
         const units = reader.read(data);
 
         mainUnit = units[0];

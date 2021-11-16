@@ -59,8 +59,8 @@ function resolveOne(
 
 describe("Check canonical signatures are generated correctly", () => {
     for (const [sample, compilerVersion, encoderVer] of samples) {
-        it(`Sample ${sample}`, () => {
-            const result = compileSol(sample, "auto", []);
+        it(`Sample ${sample}`, async () => {
+            const result = await compileSol(sample, "auto", []);
 
             expect(result.compilerVersion).toEqual(compilerVersion);
             const errors = detectCompileErrors(result.data);

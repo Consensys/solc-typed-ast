@@ -262,8 +262,8 @@ describe("getterFunType()", () => {
         describe(sample, () => {
             let unit: SourceUnit;
 
-            before(() => {
-                const { data } = compileSol(sample, "auto", []);
+            before(async () => {
+                const { data } = await compileSol(sample, "auto", []);
                 const errors = detectCompileErrors(data);
 
                 expect(errors).toHaveLength(0);

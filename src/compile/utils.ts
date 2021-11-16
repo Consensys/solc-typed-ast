@@ -9,6 +9,7 @@ import {
     VersionDetectionStrategy
 } from "./compiler_selection";
 import { CompilationOutput } from "./constants";
+import { WasmCompiler } from "./frontends/wasm";
 import {
     FileSystemResolver,
     ImportResolver,
@@ -244,7 +245,7 @@ export function createFileSystemImportFinder(
             }
 
             throw new Error(`Unable to find import path "${filePath}"`);
-        } catch (e) {
+        } catch (e: any) {
             return { error: e.message };
         }
     };
@@ -295,29 +296,15 @@ export async function compile(
         remapping,
         compilerSettings
     );
+
     if (frontend === CompilationFrontend.Default) {
         frontend = CompilationFrontend.WASM;
     }
 
     if (frontend === CompilationFrontend.WASM) {
-        const compiler = getWasmCompilerForVersion(version);
+        const compiler = WasmCompiler.getWasmCompilerForVersion(version);
 
-        if (satisfies(version, "0.4")) {
-            const output = compiler.compile(input, 1, finder);
-
-            return output;
-        }
-
-        if (satisfies(version, "0.5")) {
-            const output = compiler.compile(JSON.stringify(input), finder);
-
-            return JSON.parse(output);
-        }
-
-        const callbacks = { import: finder };
-        const output = compiler.compile(JSON.stringify(input), callbacks);
-
-        return JSON.parse(output);
+        return compiler.compile(input, finder);
     } else if (frontend === CompilationFrontend.Native) {
         await getNativeCompilerForVersion(version);
         throw new Error("NYI Native compiler");

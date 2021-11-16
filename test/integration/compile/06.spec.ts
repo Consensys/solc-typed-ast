@@ -57,8 +57,8 @@ describe(`Compile ${sample} with any available 0.6.x compiler`, () => {
             let data: any = {};
             let sourceUnits: SourceUnit[];
 
-            before("Compile", () => {
-                const result = compileSol(sample, version, []);
+            before("Compile", async () => {
+                const result = await compileSol(sample, version, []);
 
                 expect(result.compilerVersion).toEqual(version);
                 expect(result.files).toEqual(expectedFiles);

@@ -22,10 +22,10 @@ describe(`ASTNodeFactory.copy() validation`, () => {
         describe(`Validate copy of ${sample} by snapshot ${snapshot}`, () => {
             let data: any = {};
 
-            before("Compile", () => {
+            before("Compile", async () => {
                 const result = sample.endsWith(".sol")
-                    ? compileSol(sample, "auto", [])
-                    : compileJson(sample, "auto", []);
+                    ? await compileSol(sample, "auto", [])
+                    : await compileJson(sample, "auto", []);
 
                 const errors = detectCompileErrors(result.data);
 

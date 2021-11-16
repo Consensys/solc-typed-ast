@@ -21,9 +21,9 @@ describe("TupleExpression", () => {
             let mainUnit: SourceUnit;
             let funcs: readonly FunctionDefinition[];
 
-            before(() => {
+            before(async () => {
                 const reader = new ASTReader();
-                const { data } = compileJson(sample, version, []);
+                const { data } = await compileJson(sample, version, []);
 
                 [mainUnit] = reader.read(data);
 

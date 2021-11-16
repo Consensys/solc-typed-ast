@@ -19,13 +19,13 @@ import {
     VariableDeclaration
 } from "../../../src";
 
-function readAST(fileName: string, version: string, source?: string): SourceUnit[] {
+async function readAST(fileName: string, version: string, source?: string): Promise<SourceUnit[]> {
     const reader = new ASTReader();
 
     const result =
         source === undefined
-            ? compileSol(fileName, version, [])
-            : compileSourceString(fileName, source, version, []);
+            ? await compileSol(fileName, version, [])
+            : await compileSourceString(fileName, source, version, []);
 
     return reader.read(result.data);
 }
@@ -67,8 +67,8 @@ const samples = [
 ];
 
 for (const [sample, version] of samples) {
-    describe(`Check mappings of ${sample} (version ${version})`, () => {
-        const units = readAST(sample, version);
+    describe(`Check mappings of ${sample} (version ${version})`, async () => {
+        const units = await readAST(sample, version);
 
         /**
          * Remove StructuredDoumentation nodes due to unstable behavior,
@@ -78,7 +78,7 @@ for (const [sample, version] of samples) {
 
         const [writtenSource] = writeAST(units, version);
 
-        const writtenUnits = readAST(sample, version, writtenSource);
+        const writtenUnits = await readAST(sample, version, writtenSource);
         const [, sourceMap] = writeAST(writtenUnits, version);
 
         for (const unit of writtenUnits) {

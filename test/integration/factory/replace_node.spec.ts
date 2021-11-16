@@ -72,10 +72,10 @@ describe(`replaceNode() validation`, () => {
         describe(`Validate replaceNode on ${sample}`, () => {
             let data: any = {};
 
-            before("Compile", () => {
+            before("Compile", async () => {
                 const result = sample.endsWith(".sol")
-                    ? compileSol(sample, "auto", [])
-                    : compileJson(sample, "auto", []);
+                    ? await compileSol(sample, "auto", [])
+                    : await compileJson(sample, "auto", []);
 
                 const errors = detectCompileErrors(result.data);
 
