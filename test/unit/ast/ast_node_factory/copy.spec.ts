@@ -62,7 +62,7 @@ describe("ASTNodeFactory.copy()", () => {
         const factory = new ASTNodeFactory();
 
         const value = factory.makeEnumValue("MyValue");
-        const definition = factory.makeEnumDefinition("MyEnum", "Some.MyEnum", [value]);
+        const definition = factory.makeEnumDefinition("MyEnum", [value]);
 
         const defCopy = factory.copy(definition);
         const valCopy = defCopy.vMembers[0];
@@ -78,7 +78,7 @@ describe("ASTNodeFactory.copy()", () => {
             raw: undefined,
 
             name: "MyEnum",
-            canonicalName: "Some.MyEnum",
+            canonicalName: "MyEnum",
             vMembers: [valCopy],
 
             vScope: undefined
@@ -296,7 +296,6 @@ describe("ASTNodeFactory.copy()", () => {
 
         const struct = factory.makeStructDefinition(
             "MyStruct",
-            "Test.MyStruct",
             contract.id,
             FunctionVisibility.Internal,
             []

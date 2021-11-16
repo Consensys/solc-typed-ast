@@ -12,13 +12,12 @@ export class ModernStructDefinitionProcessor extends ModernNodeProcessor<StructD
         const [id, src, type] = super.process(reader, config, raw);
 
         const name: string = raw.name;
-        const canonicalName: string = raw.canonicalName;
         const scope: number = raw.scope;
         const visibility: string = raw.visibility;
         const nameLocation: string | undefined = raw.nameLocation;
 
         const members = reader.convertArray(raw.members, config) as VariableDeclaration[];
 
-        return [id, src, type, name, canonicalName, scope, visibility, members, nameLocation, raw];
+        return [id, src, type, name, scope, visibility, members, nameLocation, raw];
     }
 }

@@ -10,7 +10,6 @@ describe("UserDefinedTypeName", () => {
             "0:0:0",
             "StructDefinition",
             "MyStruct",
-            "MyStruct",
             0,
             "internal",
             []
@@ -20,7 +19,6 @@ describe("UserDefinedTypeName", () => {
             2,
             "0:0:0",
             "StructDefinition",
-            "OtherStruct",
             "OtherStruct",
             0,
             "internal",

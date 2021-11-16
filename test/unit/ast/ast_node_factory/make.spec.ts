@@ -111,7 +111,7 @@ describe("ASTNodeFactory.make*()", () => {
     it("makeEnumDefinition()", () => {
         const factory = new ASTNodeFactory();
         const value = factory.makeEnumValue("MyValue");
-        const node = factory.makeEnumDefinition("MyEnum", "MyContract.MyEnum", [value]);
+        const node = factory.makeEnumDefinition("MyEnum", [value]);
 
         verify(node, EnumDefinition, {
             id: 2,
@@ -121,7 +121,7 @@ describe("ASTNodeFactory.make*()", () => {
             raw: undefined,
 
             name: "MyEnum",
-            canonicalName: "MyContract.MyEnum",
+            canonicalName: "MyEnum",
             vMembers: [value]
         });
     });
@@ -257,13 +257,7 @@ describe("ASTNodeFactory.make*()", () => {
     it("makeStructDefinition()", () => {
         const factory = new ASTNodeFactory();
         const unit = factory.makeSourceUnit("sample.sol", 0, "path/to/sample.sol", new Map());
-        const node = factory.makeStructDefinition(
-            "MyStruct",
-            "MyContract.MyStruct",
-            unit.id,
-            "internal",
-            []
-        );
+        const node = factory.makeStructDefinition("MyStruct", unit.id, "internal", []);
 
         verify(node, StructDefinition, {
             id: 2,
@@ -273,7 +267,7 @@ describe("ASTNodeFactory.make*()", () => {
             raw: undefined,
 
             name: "MyStruct",
-            canonicalName: "MyContract.MyStruct",
+            canonicalName: "MyStruct",
             scope: unit.id,
             visibility: "internal",
             vMembers: [],

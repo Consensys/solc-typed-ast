@@ -14,10 +14,9 @@ export class LegacyStructDefinitionProcessor extends LegacyNodeProcessor<StructD
         const members = reader.convertArray(raw.children, config) as VariableDeclaration[];
 
         const name: string = attributes.name;
-        const canonicalName: string = attributes.canonicalName;
         const scope: number = attributes.scope;
         const visibility: string = attributes.visibility;
 
-        return [id, src, type, name, canonicalName, scope, visibility, members, undefined, raw];
+        return [id, src, type, name, scope, visibility, members, undefined, raw];
     }
 }

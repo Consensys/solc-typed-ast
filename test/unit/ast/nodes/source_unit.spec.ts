@@ -4,14 +4,7 @@ import { EnumDefinition, SourceUnit } from "../../../../src";
 describe("SourceUnit", () => {
     describe("removeChild()", () => {
         it("Single child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "Myunit.MyEnum1",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "EnumDefinition", "MyEnum1", []);
 
             const unit = new SourceUnit(
                 2,
@@ -39,23 +32,8 @@ describe("SourceUnit", () => {
         });
 
         it("First child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "Myunit.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "Myunit.MyEnum2",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "EnumDefinition", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "EnumDefinition", "MyEnum2", []);
 
             const unit = new SourceUnit(
                 3,
@@ -86,23 +64,8 @@ describe("SourceUnit", () => {
         });
 
         it("Last child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "Myunit.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "Myunit.MyEnum2",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "EnumDefinition", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "EnumDefinition", "MyEnum2", []);
 
             const unit = new SourceUnit(
                 3,
@@ -133,32 +96,9 @@ describe("SourceUnit", () => {
         });
 
         it("Middle child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "Myunit.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "Myunit.MyEnum2",
-                []
-            );
-
-            const myEnum3 = new EnumDefinition(
-                3,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum3",
-                "Myunit.MyEnum3",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "EnumDefinition", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "EnumDefinition", "MyEnum2", []);
+            const myEnum3 = new EnumDefinition(3, "0:0:0", "EnumDefinition", "MyEnum3", []);
 
             const unit = new SourceUnit(
                 4,
@@ -191,23 +131,8 @@ describe("SourceUnit", () => {
 
     describe("insertBefore()", () => {
         it("First child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "Myunit.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "Myunit.MyEnum2",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "EnumDefinition", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "EnumDefinition", "MyEnum2", []);
 
             const unit = new SourceUnit(
                 3,
@@ -237,32 +162,9 @@ describe("SourceUnit", () => {
         });
 
         it("Last child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "Myunit.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "Myunit.MyEnum2",
-                []
-            );
-
-            const myEnum3 = new EnumDefinition(
-                3,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum3",
-                "Myunit.MyEnum3",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "EnumDefinition", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "EnumDefinition", "MyEnum2", []);
+            const myEnum3 = new EnumDefinition(3, "0:0:0", "EnumDefinition", "MyEnum3", []);
 
             const unit = new SourceUnit(
                 4,
@@ -295,23 +197,8 @@ describe("SourceUnit", () => {
 
     describe("insertAfter()", () => {
         it("Last child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "Myunit.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "Myunit.MyEnum2",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "EnumDefinition", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "EnumDefinition", "MyEnum2", []);
 
             const unit = new SourceUnit(
                 3,
@@ -341,32 +228,9 @@ describe("SourceUnit", () => {
         });
 
         it("First child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "Myunit.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "Myunit.MyEnum2",
-                []
-            );
-
-            const myEnum3 = new EnumDefinition(
-                3,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum3",
-                "Myunit.MyEnum3",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "EnumDefinition", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "EnumDefinition", "MyEnum2", []);
+            const myEnum3 = new EnumDefinition(3, "0:0:0", "EnumDefinition", "MyEnum3", []);
 
             const unit = new SourceUnit(
                 4,
@@ -396,23 +260,8 @@ describe("SourceUnit", () => {
 
     describe("replaceChild()", () => {
         it("Single child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "Myunit.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "Myunit.MyEnum2",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "EnumDefinition", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "EnumDefinition", "MyEnum2", []);
 
             const unit = new SourceUnit(
                 3,
@@ -440,41 +289,10 @@ describe("SourceUnit", () => {
         });
 
         it("Middle child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "Myunit.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "Myunit.MyEnum2",
-                []
-            );
-
-            const myEnum3 = new EnumDefinition(
-                3,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum3",
-                "Myunit.MyEnum3",
-                []
-            );
-
-            const myEnum4 = new EnumDefinition(
-                4,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum4",
-                "Myunit.MyEnum4",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "EnumDefinition", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "EnumDefinition", "MyEnum2", []);
+            const myEnum3 = new EnumDefinition(3, "0:0:0", "EnumDefinition", "MyEnum3", []);
+            const myEnum4 = new EnumDefinition(4, "0:0:0", "EnumDefinition", "MyEnum4", []);
 
             const unit = new SourceUnit(
                 5,
