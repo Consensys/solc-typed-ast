@@ -28,7 +28,6 @@ export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
     constructor(
         id: number,
         src: string,
-        type: string,
         name: string,
         scope: number,
         visibility: string,
@@ -36,7 +35,7 @@ export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
         nameLocation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.name = name;
         this.scope = scope;

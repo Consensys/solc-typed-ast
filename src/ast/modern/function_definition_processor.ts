@@ -14,7 +14,7 @@ export class ModernFunctionDefinitionProcessor extends ModernNodeProcessor<Funct
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof FunctionDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const scope: number = raw.scope;
         const kind: FunctionKind = raw.kind;
@@ -46,7 +46,6 @@ export class ModernFunctionDefinitionProcessor extends ModernNodeProcessor<Funct
         return [
             id,
             src,
-            type,
             scope,
             kind,
             name,

@@ -9,12 +9,12 @@ export class ModernUserDefinedValueTypeDefinitionProcessor extends ModernNodePro
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof UserDefinedValueTypeDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const name: string = raw.name;
         const nameLocation: string | undefined = raw.nameLocation;
         const underlyingType = reader.convert(raw.underlyingType, config) as ElementaryTypeName;
 
-        return [id, src, type, name, underlyingType, nameLocation, raw];
+        return [id, src, name, underlyingType, nameLocation, raw];
     }
 }

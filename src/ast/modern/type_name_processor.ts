@@ -8,10 +8,10 @@ export class ModernTypeNameProcessor<T extends TypeName> extends ModernNodeProce
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<TypeNameConstructor<T>> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const typeString: string = raw.typeDescriptions.typeString;
 
-        return [id, src, type, typeString, undefined, raw];
+        return [id, src, typeString, undefined, raw];
     }
 }

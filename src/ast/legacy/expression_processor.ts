@@ -8,11 +8,9 @@ export class LegacyExpressionProcessor<T extends Expression> extends LegacyNodeP
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<ExpressionConstructor<T>> {
-        const [id, src, type] = super.process(reader, config, raw);
-        const attributes = raw.attributes;
+        const [id, src] = super.process(reader, config, raw);
+        const typeString: string = raw.attributes.type;
 
-        const typeString: string = attributes.type;
-
-        return [id, src, type, typeString, raw];
+        return [id, src, typeString, raw];
     }
 }

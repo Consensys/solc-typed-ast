@@ -15,7 +15,7 @@ export class LegacyFunctionDefinitionProcessor extends LegacyNodeProcessor<Funct
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof FunctionDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
         const attributes = raw.attributes;
         const children = reader.convertArray(raw.children, config);
 
@@ -47,7 +47,6 @@ export class LegacyFunctionDefinitionProcessor extends LegacyNodeProcessor<Funct
         return [
             id,
             src,
-            type,
             scope,
             kind,
             name,

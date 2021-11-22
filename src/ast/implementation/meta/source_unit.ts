@@ -43,7 +43,6 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
     constructor(
         id: number,
         src: string,
-        type: string,
         sourceEntryKey: string,
         sourceListIndex: number,
         absolutePath: string,
@@ -51,7 +50,7 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
         children?: Iterable<ASTNode>,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.sourceEntryKey = sourceEntryKey;
         this.sourceListIndex = sourceListIndex;

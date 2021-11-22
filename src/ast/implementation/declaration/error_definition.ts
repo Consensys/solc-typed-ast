@@ -33,14 +33,13 @@ export class ErrorDefinition extends ASTNode {
     constructor(
         id: number,
         src: string,
-        type: string,
         name: string,
         parameters: ParameterList,
         documentation?: string | StructuredDocumentation,
         nameLocation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.name = name;
         this.documentation = documentation;

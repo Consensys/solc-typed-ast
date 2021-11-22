@@ -10,7 +10,7 @@ export class ModernIfStatementProcessor extends ModernNodeProcessor<IfStatement>
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof IfStatement> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const documentation: string | undefined = raw.documentation;
 
@@ -20,6 +20,6 @@ export class ModernIfStatementProcessor extends ModernNodeProcessor<IfStatement>
             ? (reader.convert(raw.falseBody, config) as Statement)
             : undefined;
 
-        return [id, src, type, condition, trueBody, falseBody, documentation, raw];
+        return [id, src, condition, trueBody, falseBody, documentation, raw];
     }
 }

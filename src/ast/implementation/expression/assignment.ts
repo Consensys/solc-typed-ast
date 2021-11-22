@@ -20,14 +20,13 @@ export class Assignment extends Expression {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         operator: string,
         leftHandSide: Expression,
         rightHandSide: Expression,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.operator = operator;
 

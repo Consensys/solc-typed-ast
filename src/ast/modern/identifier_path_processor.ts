@@ -8,11 +8,11 @@ export class ModernIdentifierPathProcessor extends ModernNodeProcessor<Identifie
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof IdentifierPath> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const name: string = raw.name;
         const referencedDeclaration: number = raw.referencedDeclaration;
 
-        return [id, src, type, name, referencedDeclaration, raw];
+        return [id, src, name, referencedDeclaration, raw];
     }
 }

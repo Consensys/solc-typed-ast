@@ -17,12 +17,11 @@ export class UsingForDirective extends ASTNode {
     constructor(
         id: number,
         src: string,
-        type: string,
         libraryName: UserDefinedTypeName | IdentifierPath,
         typeName?: TypeName,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.vLibraryName = libraryName;
         this.vTypeName = typeName;

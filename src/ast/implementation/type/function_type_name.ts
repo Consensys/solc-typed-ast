@@ -28,7 +28,6 @@ export class FunctionTypeName extends TypeName {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         visibility: FunctionVisibility,
         stateMutability: FunctionStateMutability,
@@ -36,7 +35,7 @@ export class FunctionTypeName extends TypeName {
         returnParameterTypes: ParameterList,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.visibility = visibility;
         this.stateMutability = stateMutability;

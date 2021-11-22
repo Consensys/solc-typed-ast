@@ -8,13 +8,13 @@ export class ModernInlineAssemblyProcessor extends ModernNodeProcessor<InlineAss
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof InlineAssembly> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const externalReferences: any[] = raw.externalReferences;
         const documentation: string | undefined = raw.documentation;
         const operations: string | undefined = raw.operations;
         const yul: YulNode | undefined = raw.AST;
 
-        return [id, src, type, externalReferences, operations, yul, documentation, raw];
+        return [id, src, externalReferences, operations, yul, documentation, raw];
     }
 }

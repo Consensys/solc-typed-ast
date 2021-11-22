@@ -24,14 +24,13 @@ export class UnaryOperation extends Expression {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         prefix: boolean,
         operator: string,
         subExpression: Expression,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.prefix = prefix;
         this.operator = operator;

@@ -16,13 +16,12 @@ export class Identifier extends PrimaryExpression {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         name: string,
         referencedDeclaration: number,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.name = name;
         this.referencedDeclaration = referencedDeclaration;

@@ -28,7 +28,7 @@ export class StructuredDocumentationReconstructor {
         const src = `${offset}:${length}:${sourceIndex}`;
         const text = this.extractText(docBlock);
 
-        return new StructuredDocumentation(0, src, "StructuredDocumentation", text);
+        return new StructuredDocumentation(0, src, text);
     }
 
     private getGapInfo(node: ASTNode): [number, number, number] {

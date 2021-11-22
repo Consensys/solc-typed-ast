@@ -19,13 +19,12 @@ export class FunctionCallOptions extends Expression {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         expression: Expression,
         options: Map<string, Expression>,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.vExpression = expression;
         this.vOptionsMap = options;

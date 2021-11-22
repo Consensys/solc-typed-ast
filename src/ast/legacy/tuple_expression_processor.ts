@@ -11,7 +11,7 @@ export class LegacyTupleExpressionProcessor extends LegacyExpressionProcessor<Tu
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof TupleExpression> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
         const attributes = raw.attributes;
         const children = raw.children ? reader.convertArray(raw.children, config) : undefined;
 
@@ -21,7 +21,7 @@ export class LegacyTupleExpressionProcessor extends LegacyExpressionProcessor<Tu
             ? this.extractComponentsFromRaw(attributes.components, reader, config)
             : this.extractComponentsFromTypeString(typeString, children);
 
-        return [id, src, type, typeString, isInlineArray, components, raw];
+        return [id, src, typeString, isInlineArray, components, raw];
     }
 
     private extractComponentsFromRaw(

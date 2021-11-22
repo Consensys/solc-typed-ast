@@ -9,13 +9,13 @@ export class LegacyElementaryTypeNameExpressionProcessor extends LegacyExpressio
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ElementaryTypeNameExpression> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
         const children = raw.children ? reader.convertArray(raw.children, config) : undefined;
 
         const [typeName] = children
             ? (children as [ElementaryTypeName])
             : ([raw.attributes.value] as [string]);
 
-        return [id, src, type, typeString, typeName, raw];
+        return [id, src, typeString, typeName, raw];
     }
 }

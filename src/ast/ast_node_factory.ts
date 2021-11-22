@@ -77,12 +77,7 @@ import { UserDefinedTypeName } from "./implementation/type/user_defined_type_nam
  */
 type Specific<Args extends any[]> = Args["length"] extends 0
     ? undefined
-    : ((...args: Args) => void) extends (
-          id: number,
-          src: string,
-          type: string,
-          ...rest: infer Rest
-      ) => void
+    : ((...args: Args) => void) extends (id: number, src: string, ...rest: infer Rest) => void
     ? Rest
     : [];
 
@@ -1091,7 +1086,7 @@ export class ASTNodeFactory {
         type: ASTNodeConstructor<T>,
         ...args: Specific<ConstructorParameters<typeof type>>
     ): T {
-        const node = new type(++this.lastId, "0:0:0", type.name, ...args);
+        const node = new type(++this.lastId, "0:0:0", ...args);
 
         this.context.register(node);
 

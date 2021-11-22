@@ -8,10 +8,10 @@ export class ModernStructuredDocumentationProcessor extends ModernNodeProcessor<
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof StructuredDocumentation> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const text: string = raw.text;
 
-        return [id, src, type, text, raw];
+        return [id, src, text, raw];
     }
 }

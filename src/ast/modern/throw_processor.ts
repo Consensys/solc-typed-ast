@@ -8,10 +8,10 @@ export class ModernThrowProcessor extends ModernNodeProcessor<Throw> {
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof Throw> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const documentation: string | undefined = raw.documentation;
 
-        return [id, src, type, documentation, raw];
+        return [id, src, documentation, raw];
     }
 }

@@ -9,7 +9,7 @@ export class LegacyStructDefinitionProcessor extends LegacyNodeProcessor<StructD
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof StructDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
         const attributes = raw.attributes;
         const members = reader.convertArray(raw.children, config) as VariableDeclaration[];
 
@@ -17,6 +17,6 @@ export class LegacyStructDefinitionProcessor extends LegacyNodeProcessor<StructD
         const scope: number = attributes.scope;
         const visibility: string = attributes.visibility;
 
-        return [id, src, type, name, scope, visibility, members, undefined, raw];
+        return [id, src, name, scope, visibility, members, undefined, raw];
     }
 }

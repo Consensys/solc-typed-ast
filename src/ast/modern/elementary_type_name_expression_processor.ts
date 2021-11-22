@@ -9,13 +9,13 @@ export class ModernElementaryTypeNameExpressionProcessor extends ModernExpressio
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ElementaryTypeNameExpression> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const typeName =
             typeof raw.typeName === "string"
                 ? (raw.typeName as string)
                 : (reader.convert(raw.typeName, config) as ElementaryTypeName);
 
-        return [id, src, type, typeString, typeName, raw];
+        return [id, src, typeString, typeName, raw];
     }
 }

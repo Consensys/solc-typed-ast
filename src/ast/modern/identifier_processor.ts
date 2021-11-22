@@ -8,11 +8,11 @@ export class ModernIdentifierProcessor extends ModernExpressionProcessor<Identif
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof Identifier> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const name: string = raw.name;
         const referencedDeclaration: number = raw.referencedDeclaration;
 
-        return [id, src, type, typeString, name, referencedDeclaration, raw];
+        return [id, src, typeString, name, referencedDeclaration, raw];
     }
 }

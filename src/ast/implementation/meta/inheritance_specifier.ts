@@ -17,12 +17,11 @@ export class InheritanceSpecifier extends ASTNode {
     constructor(
         id: number,
         src: string,
-        type: string,
         baseType: UserDefinedTypeName | IdentifierPath,
         args: Expression[],
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.vBaseType = baseType;
         this.vArguments = args;

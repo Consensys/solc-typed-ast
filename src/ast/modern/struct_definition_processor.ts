@@ -9,7 +9,7 @@ export class ModernStructDefinitionProcessor extends ModernNodeProcessor<StructD
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof StructDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const name: string = raw.name;
         const scope: number = raw.scope;
@@ -18,6 +18,6 @@ export class ModernStructDefinitionProcessor extends ModernNodeProcessor<StructD
 
         const members = reader.convertArray(raw.members, config) as VariableDeclaration[];
 
-        return [id, src, type, name, scope, visibility, members, nameLocation, raw];
+        return [id, src, name, scope, visibility, members, nameLocation, raw];
     }
 }

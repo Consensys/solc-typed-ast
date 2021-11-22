@@ -9,12 +9,12 @@ export class LegacyEnumDefinitionProcessor extends LegacyNodeProcessor<EnumDefin
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof EnumDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
         const attributes = raw.attributes;
         const members = reader.convertArray(raw.children, config) as EnumValue[];
 
         const name: string = attributes.name;
 
-        return [id, src, type, name, members, undefined, raw];
+        return [id, src, name, members, undefined, raw];
     }
 }

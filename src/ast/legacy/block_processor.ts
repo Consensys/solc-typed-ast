@@ -9,10 +9,10 @@ export class LegacyBlockProcessor extends LegacyNodeProcessor<Block> {
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof Block> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const statements = reader.convertArray(raw.children, config) as Statement[];
 
-        return [id, src, type, statements, undefined, raw];
+        return [id, src, statements, undefined, raw];
     }
 }

@@ -10,13 +10,13 @@ export class LegacyInheritanceSpecifierProcessor extends LegacyNodeProcessor<Inh
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof InheritanceSpecifier> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const [baseType, ...args] = reader.convertArray(raw.children, config) as [
             UserDefinedTypeName,
             ...Expression[]
         ];
 
-        return [id, src, type, baseType, args, raw];
+        return [id, src, baseType, args, raw];
     }
 }

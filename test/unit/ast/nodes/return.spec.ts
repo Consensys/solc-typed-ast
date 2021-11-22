@@ -5,9 +5,9 @@ describe("Return", () => {
     it("set vFunctionReturnParameters", () => {
         const context = new ASTContext();
 
-        const rets = new ParameterList(1, "0:0:0", "ParameterList", []);
-        const otherRets = new ParameterList(2, "0:0:0", "ParameterList", []);
-        const ret = new Return(3, "0:0:0", "Return", 0);
+        const rets = new ParameterList(1, "0:0:0", []);
+        const otherRets = new ParameterList(2, "0:0:0", []);
+        const ret = new Return(3, "0:0:0", 0);
 
         context.register(rets, ret);
 

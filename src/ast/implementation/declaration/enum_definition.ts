@@ -18,13 +18,12 @@ export class EnumDefinition extends ASTNodeWithChildren<EnumValue> {
     constructor(
         id: number,
         src: string,
-        type: string,
         name: string,
         members: Iterable<EnumValue>,
         nameLocation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.name = name;
 

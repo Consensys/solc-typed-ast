@@ -8,8 +8,8 @@ export class LegacyBreakProcessor extends LegacyNodeProcessor<Break> {
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof Break> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
-        return [id, src, type, undefined, raw];
+        return [id, src, undefined, raw];
     }
 }

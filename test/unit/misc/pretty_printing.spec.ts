@@ -11,7 +11,7 @@ import {
 } from "../../../src";
 
 const ctx = new ASTContext();
-const astNode = new ElementaryTypeName(777, "0:0:0", "ElementaryTypeName", "uint8", "uint8");
+const astNode = new ElementaryTypeName(777, "0:0:0", "uint8", "uint8");
 const customPPAble = {
     name: "test",
     pp: () => "PPAble object"

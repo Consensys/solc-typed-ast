@@ -7,8 +7,8 @@ export class PragmaDirective extends ASTNode {
      */
     literals: string[];
 
-    constructor(id: number, src: string, type: string, literals: string[], raw?: any) {
-        super(id, src, type, raw);
+    constructor(id: number, src: string, literals: string[], raw?: any) {
+        super(id, src, raw);
 
         this.literals = literals;
     }

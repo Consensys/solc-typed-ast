@@ -9,7 +9,7 @@ export class LegacyAssignmentProcessor extends LegacyExpressionProcessor<Assignm
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof Assignment> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const operator: string = raw.attributes.operator;
 
@@ -18,6 +18,6 @@ export class LegacyAssignmentProcessor extends LegacyExpressionProcessor<Assignm
             Expression
         ];
 
-        return [id, src, type, typeString, operator, leftHandSide, rightHandSide, raw];
+        return [id, src, typeString, operator, leftHandSide, rightHandSide, raw];
     }
 }

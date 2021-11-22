@@ -10,7 +10,7 @@ export class LegacyIfStatementProcessor extends LegacyNodeProcessor<IfStatement>
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof IfStatement> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const [condition, trueBody, falseBody] = reader.convertArray(raw.children, config) as [
             Expression,
@@ -18,6 +18,6 @@ export class LegacyIfStatementProcessor extends LegacyNodeProcessor<IfStatement>
             Statement?
         ];
 
-        return [id, src, type, condition, trueBody, falseBody, undefined, raw];
+        return [id, src, condition, trueBody, falseBody, undefined, raw];
     }
 }

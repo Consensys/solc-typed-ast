@@ -46,7 +46,6 @@ export class FunctionCall extends Expression {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         kind: FunctionCallKind,
         expression: Expression,
@@ -54,7 +53,7 @@ export class FunctionCall extends Expression {
         fieldNames?: string[],
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.kind = kind;
         this.fieldNames = fieldNames;

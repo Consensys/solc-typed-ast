@@ -10,13 +10,13 @@ export class LegacyUsingForDirectiveProcessor extends LegacyNodeProcessor<UsingF
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof UsingForDirective> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const [libraryName, typeName] = reader.convertArray(raw.children, config) as [
             UserDefinedTypeName,
             TypeName?
         ];
 
-        return [id, src, type, libraryName, typeName, raw];
+        return [id, src, libraryName, typeName, raw];
     }
 }

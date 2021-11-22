@@ -10,13 +10,13 @@ export class ModernInheritanceSpecifierProcessor extends ModernNodeProcessor<Inh
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof InheritanceSpecifier> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const baseType = reader.convert(raw.baseName, config) as UserDefinedTypeName;
         const args = raw.arguments
             ? (reader.convertArray(raw.arguments, config) as Expression[])
             : [];
 
-        return [id, src, type, baseType, args, raw];
+        return [id, src, baseType, args, raw];
     }
 }

@@ -38,7 +38,6 @@ export class EventDefinition extends ASTNode {
     constructor(
         id: number,
         src: string,
-        type: string,
         anonymous: boolean,
         name: string,
         parameters: ParameterList,
@@ -46,7 +45,7 @@ export class EventDefinition extends ASTNode {
         nameLocation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.anonymous = anonymous;
         this.name = name;

@@ -10,7 +10,7 @@ export class LegacyFunctionCallProcessor extends LegacyExpressionProcessor<Funct
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof FunctionCall> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
         const attributes = raw.attributes;
 
         const kind = this.detectKind(attributes);
@@ -18,7 +18,7 @@ export class LegacyFunctionCallProcessor extends LegacyExpressionProcessor<Funct
 
         const [expression, ...args] = reader.convertArray(raw.children, config) as Expression[];
 
-        return [id, src, type, typeString, kind, expression, args, fieldNames, raw];
+        return [id, src, typeString, kind, expression, args, fieldNames, raw];
     }
 
     private detectKind(attributes: any): FunctionCallKind {

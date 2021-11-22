@@ -9,13 +9,13 @@ export class LegacyReturnProcessor extends LegacyNodeProcessor<Return> {
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof Return> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
         const children = raw.children ? reader.convertArray(raw.children, config) : undefined;
 
         const functionReturnParameters: number = raw.attributes.functionReturnParameters;
 
         const [expression] = children ? (children as [Expression]) : [];
 
-        return [id, src, type, functionReturnParameters, expression, undefined, raw];
+        return [id, src, functionReturnParameters, expression, undefined, raw];
     }
 }

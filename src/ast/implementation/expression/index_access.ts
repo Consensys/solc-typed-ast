@@ -18,13 +18,12 @@ export class IndexAccess extends Expression {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         baseExpression: Expression,
         indexExpression?: Expression,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.vBaseExpression = baseExpression;
         this.vIndexExpression = indexExpression;

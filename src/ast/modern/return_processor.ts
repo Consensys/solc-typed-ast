@@ -9,7 +9,7 @@ export class ModernReturnProcessor extends ModernNodeProcessor<Return> {
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof Return> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const functionReturnParameters: number = raw.functionReturnParameters;
         const documentation: string | undefined = raw.documentation;
@@ -18,6 +18,6 @@ export class ModernReturnProcessor extends ModernNodeProcessor<Return> {
             ? (reader.convert(raw.expression, config) as Expression)
             : undefined;
 
-        return [id, src, type, functionReturnParameters, expression, documentation, raw];
+        return [id, src, functionReturnParameters, expression, documentation, raw];
     }
 }
