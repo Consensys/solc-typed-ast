@@ -13,7 +13,7 @@ export class ModernVariableDeclarationProcessor extends ModernNodeProcessor<Vari
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof VariableDeclaration> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const constant: boolean = raw.constant;
         const indexed: boolean = raw.indexed || false;
@@ -52,7 +52,6 @@ export class ModernVariableDeclarationProcessor extends ModernNodeProcessor<Vari
         return [
             id,
             src,
-            type,
             constant,
             indexed,
             name,

@@ -46,7 +46,6 @@ export class ImportDirective extends ASTNode {
     constructor(
         id: number,
         src: string,
-        type: string,
         file: string,
         absolutePath: string,
         unitAlias: string,
@@ -55,7 +54,7 @@ export class ImportDirective extends ASTNode {
         sourceUnit: number,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.file = file;
         this.absolutePath = absolutePath;

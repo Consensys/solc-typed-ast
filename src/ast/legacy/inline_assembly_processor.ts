@@ -8,7 +8,7 @@ export class LegacyInlineAssemblyProcessor extends LegacyNodeProcessor<InlineAss
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof InlineAssembly> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
         const attributes = raw.attributes;
 
         const externalReferences: any[] = attributes.externalReferences;
@@ -20,6 +20,6 @@ export class LegacyInlineAssemblyProcessor extends LegacyNodeProcessor<InlineAss
          */
         const yul = undefined;
 
-        return [id, src, type, externalReferences, operations, yul, undefined, raw];
+        return [id, src, externalReferences, operations, yul, undefined, raw];
     }
 }

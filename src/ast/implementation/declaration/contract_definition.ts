@@ -65,7 +65,6 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
     constructor(
         id: number,
         src: string,
-        type: string,
         name: string,
         scope: number,
         kind: ContractKind,
@@ -78,7 +77,7 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
         nameLocation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.name = name;
         this.scope = scope;

@@ -20,14 +20,13 @@ export class MemberAccess extends Expression {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         expression: Expression,
         memberName: string,
         referencedDeclaration: number,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.vExpression = expression;
         this.memberName = memberName;

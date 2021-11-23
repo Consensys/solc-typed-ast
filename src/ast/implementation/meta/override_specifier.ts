@@ -6,11 +6,10 @@ export class OverrideSpecifier extends ASTNodeWithChildren<UserDefinedTypeName |
     constructor(
         id: number,
         src: string,
-        type: string,
         overrides: Iterable<UserDefinedTypeName | IdentifierPath>,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         for (const override of overrides) {
             this.appendChild(override);

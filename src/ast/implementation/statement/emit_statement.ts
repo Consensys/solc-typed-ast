@@ -12,12 +12,11 @@ export class EmitStatement extends Statement {
     constructor(
         id: number,
         src: string,
-        type: string,
         eventCall: FunctionCall,
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
-        super(id, src, type, documentation, raw);
+        super(id, src, documentation, raw);
 
         this.vEventCall = eventCall;
 

@@ -14,7 +14,7 @@ export class LegacyVariableDeclarationProcessor extends LegacyNodeProcessor<Vari
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof VariableDeclaration> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
         const attributes = raw.attributes;
         const children = reader.convertArray(raw.children, config);
 
@@ -40,7 +40,6 @@ export class LegacyVariableDeclarationProcessor extends LegacyNodeProcessor<Vari
         return [
             id,
             src,
-            type,
             constant,
             indexed,
             name,

@@ -23,13 +23,12 @@ export class UserDefinedValueTypeDefinition extends ASTNode {
     constructor(
         id: number,
         src: string,
-        type: string,
         name: string,
         underlyingType: ElementaryTypeName,
         nameLocation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.name = name;
         this.underlyingType = underlyingType;

@@ -12,7 +12,7 @@ export class LegacyForStatementProcessor extends LegacyNodeProcessor<ForStatemen
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ForStatement> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
         const attributes = raw.attributes || {};
         const children = reader.convertArray(raw.children, config);
 
@@ -31,16 +31,6 @@ export class LegacyForStatementProcessor extends LegacyNodeProcessor<ForStatemen
 
         const body = children.shift() as Statement;
 
-        return [
-            id,
-            src,
-            type,
-            body,
-            initializationExpression,
-            condition,
-            loopExpression,
-            undefined,
-            raw
-        ];
+        return [id, src, body, initializationExpression, condition, loopExpression, undefined, raw];
     }
 }

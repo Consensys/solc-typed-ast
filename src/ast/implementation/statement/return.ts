@@ -18,13 +18,12 @@ export class Return extends Statement {
     constructor(
         id: number,
         src: string,
-        type: string,
         functionReturnParameters: number,
         expression?: Expression,
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
-        super(id, src, type, documentation, raw);
+        super(id, src, documentation, raw);
 
         this.functionReturnParameters = functionReturnParameters;
 

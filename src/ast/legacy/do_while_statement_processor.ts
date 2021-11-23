@@ -10,13 +10,13 @@ export class LegacyDoWhileStatementProcessor extends LegacyNodeProcessor<DoWhile
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof DoWhileStatement> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const [condition, body] = reader.convertArray(raw.children, config) as [
             Expression,
             Statement
         ];
 
-        return [id, src, type, condition, body, undefined, raw];
+        return [id, src, condition, body, undefined, raw];
     }
 }

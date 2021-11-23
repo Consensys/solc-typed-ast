@@ -21,14 +21,13 @@ export class UserDefinedTypeName extends TypeName {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         name: string | undefined,
         referencedDeclaration: number,
         path?: IdentifierPath,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.name = name;
         this.referencedDeclaration = referencedDeclaration;

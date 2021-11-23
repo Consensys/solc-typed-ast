@@ -9,10 +9,10 @@ export class LegacyEmitStatementProcessor extends LegacyNodeProcessor<EmitStatem
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof EmitStatement> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const [eventCall] = reader.convertArray(raw.children, config) as [FunctionCall];
 
-        return [id, src, type, eventCall, undefined, raw];
+        return [id, src, eventCall, undefined, raw];
     }
 }

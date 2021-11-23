@@ -23,14 +23,13 @@ export class TryCatchClause extends Statement {
     constructor(
         id: number,
         src: string,
-        type: string,
         errorName: string,
         block: Block,
         parameters?: ParameterList,
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
-        super(id, src, type, documentation, raw);
+        super(id, src, documentation, raw);
 
         this.errorName = errorName;
         this.vParameters = parameters;

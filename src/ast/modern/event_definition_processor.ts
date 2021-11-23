@@ -10,7 +10,7 @@ export class ModernEventDefinitionProcessor extends ModernNodeProcessor<EventDef
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof EventDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const anonymous: boolean = raw.anonymous;
         const name: string = raw.name;
@@ -27,6 +27,6 @@ export class ModernEventDefinitionProcessor extends ModernNodeProcessor<EventDef
 
         const parameters = reader.convert(raw.parameters, config) as ParameterList;
 
-        return [id, src, type, anonymous, name, parameters, documentation, nameLocation, raw];
+        return [id, src, anonymous, name, parameters, documentation, nameLocation, raw];
     }
 }

@@ -17,13 +17,12 @@ export class TupleExpression extends Expression {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         isInlineArray: boolean,
         components: Array<Expression | null>,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.isInlineArray = isInlineArray;
         this.vOriginalComponents = components;

@@ -9,7 +9,7 @@ import {
 } from "../../../../src";
 
 const typeNode = new IntType(256, false);
-const astNode = new ElementaryTypeName(1, "0:0:0", "ElementaryTypeName", "uint8", "uint8");
+const astNode = new ElementaryTypeName(1, "0:0:0", "uint8", "uint8");
 const ctx = new ASTContext();
 
 ctx.register(astNode);

@@ -9,13 +9,13 @@ export class ModernEnumDefinitionProcessor extends ModernNodeProcessor<EnumDefin
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof EnumDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const name: string = raw.name;
         const nameLocation: string | undefined = raw.nameLocation;
 
         const members = reader.convertArray(raw.members, config) as EnumValue[];
 
-        return [id, src, type, name, members, nameLocation, raw];
+        return [id, src, name, members, nameLocation, raw];
     }
 }

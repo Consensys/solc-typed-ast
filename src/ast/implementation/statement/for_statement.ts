@@ -30,7 +30,6 @@ export class ForStatement extends Statement {
     constructor(
         id: number,
         src: string,
-        type: string,
         body: Statement,
         initializationExpression?: VariableDeclarationStatement | ExpressionStatement,
         condition?: Expression,
@@ -38,7 +37,7 @@ export class ForStatement extends Statement {
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
-        super(id, src, type, documentation, raw);
+        super(id, src, documentation, raw);
 
         this.vInitializationExpression = initializationExpression;
         this.vCondition = condition;

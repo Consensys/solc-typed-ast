@@ -16,13 +16,12 @@ export class Mapping extends TypeName {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         keyType: TypeName,
         valueType: TypeName,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.vKeyType = keyType;
         this.vValueType = valueType;

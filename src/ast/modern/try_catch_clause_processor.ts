@@ -10,7 +10,7 @@ export class ModernTryCatchClauseProcessor extends ModernNodeProcessor<TryCatchC
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof TryCatchClause> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const errorName: string = raw.errorName;
         const documentation: string | undefined = raw.documentation;
@@ -21,6 +21,6 @@ export class ModernTryCatchClauseProcessor extends ModernNodeProcessor<TryCatchC
 
         const block = reader.convert(raw.block, config) as Block;
 
-        return [id, src, type, errorName, block, parameters, documentation, raw];
+        return [id, src, errorName, block, parameters, documentation, raw];
     }
 }

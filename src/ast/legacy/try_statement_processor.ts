@@ -10,13 +10,13 @@ export class LegacyTryStatementProcessor extends LegacyNodeProcessor<TryStatemen
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof TryStatement> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const [externalCall, ...clauses] = reader.convertArray(raw.children, config) as [
             FunctionCall,
             ...TryCatchClause[]
         ];
 
-        return [id, src, type, externalCall, clauses, undefined, raw];
+        return [id, src, externalCall, clauses, undefined, raw];
     }
 }

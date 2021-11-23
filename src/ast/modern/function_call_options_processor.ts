@@ -9,7 +9,7 @@ export class ModernFunctionCallOptionsProcessor extends ModernExpressionProcesso
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof FunctionCallOptions> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const names: string[] = raw.names;
         const expression = reader.convert(raw.expression, config) as Expression;
@@ -20,6 +20,6 @@ export class ModernFunctionCallOptionsProcessor extends ModernExpressionProcesso
             options.set(names[n], values[n]);
         }
 
-        return [id, src, type, typeString, expression, options, raw];
+        return [id, src, typeString, expression, options, raw];
     }
 }

@@ -9,12 +9,12 @@ export class ModernEmitStatementProcessor extends ModernNodeProcessor<EmitStatem
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof EmitStatement> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const documentation: string | undefined = raw.documentation;
 
         const eventCall = reader.convert(raw.eventCall, config) as FunctionCall;
 
-        return [id, src, type, eventCall, documentation, raw];
+        return [id, src, eventCall, documentation, raw];
     }
 }

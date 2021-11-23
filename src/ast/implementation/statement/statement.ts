@@ -12,11 +12,10 @@ export class Statement extends ASTNode {
     constructor(
         id: number,
         src: string,
-        type: string,
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.documentation = documentation;
     }
@@ -33,11 +32,10 @@ export class StatementWithChildren<T extends ASTNode> extends ASTNodeWithChildre
     constructor(
         id: number,
         src: string,
-        type: string,
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.documentation = documentation;
     }

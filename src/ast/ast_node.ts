@@ -33,11 +33,6 @@ export class ASTNode {
     src: string;
 
     /**
-     * Type of the AST node
-     */
-    type: string;
-
-    /**
      * Raw original Solc AST node that was used to create current node.
      */
     raw?: any;
@@ -47,10 +42,9 @@ export class ASTNode {
      */
     parent?: ASTNode;
 
-    constructor(id: number, src: string, type: string, raw?: any) {
+    constructor(id: number, src: string, raw?: any) {
         this.id = id;
         this.src = src;
-        this.type = type;
         this.raw = raw;
     }
 
@@ -77,6 +71,13 @@ export class ASTNode {
         for (const node of this.children) {
             node.parent = this;
         }
+    }
+
+    /**
+     * Type of the AST node
+     */
+    get type(): string {
+        return this.constructor.name;
     }
 
     /**
@@ -424,7 +425,6 @@ export class ASTNodeWithChildren<T extends ASTNode> extends ASTNode {
 export type ASTNodeConstructor<T extends ASTNode> = new (
     id: number,
     src: string,
-    type: string,
     ...args: any[]
 ) => T;
 

@@ -12,7 +12,7 @@ export class ModernVariableDeclarationStatementProcessor extends ModernNodeProce
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof VariableDeclarationStatement> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const assignments: Array<number | null> = raw.assignments;
         const documentation: string | undefined = raw.documentation;
@@ -26,6 +26,6 @@ export class ModernVariableDeclarationStatementProcessor extends ModernNodeProce
             ? (reader.convert(raw.initialValue, config) as Expression)
             : undefined;
 
-        return [id, src, type, assignments, declarations, initialValue, documentation, raw];
+        return [id, src, assignments, declarations, initialValue, documentation, raw];
     }
 }

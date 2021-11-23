@@ -9,7 +9,7 @@ export class LegacyMemberAccessProcessor extends LegacyExpressionProcessor<Membe
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof MemberAccess> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const attributes = raw.attributes;
 
@@ -18,6 +18,6 @@ export class LegacyMemberAccessProcessor extends LegacyExpressionProcessor<Membe
 
         const [expression] = reader.convertArray(raw.children, config) as [Expression];
 
-        return [id, src, type, typeString, expression, memberName, referencedDeclaration, raw];
+        return [id, src, typeString, expression, memberName, referencedDeclaration, raw];
     }
 }

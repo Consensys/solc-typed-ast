@@ -16,7 +16,7 @@ describe("ASTWriter", () => {
                 LatestCompilerVersion
             );
 
-            const node = new ASTNode(0, "0:0:0", "CustomNode");
+            const node = new ASTNode(0, "0:0:0");
 
             expect(() => writer.write(node)).toThrow();
         });

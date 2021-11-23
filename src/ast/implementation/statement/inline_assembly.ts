@@ -17,14 +17,13 @@ export class InlineAssembly extends Statement {
     constructor(
         id: number,
         src: string,
-        type: string,
         externalReferences: any[],
         operations?: string,
         yul?: YulNode,
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
-        super(id, src, type, documentation, raw);
+        super(id, src, documentation, raw);
 
         this.externalReferences = externalReferences;
         this.operations = operations;

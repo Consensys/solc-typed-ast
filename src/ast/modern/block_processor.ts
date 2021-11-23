@@ -9,12 +9,12 @@ export class ModernBlockProcessor extends ModernNodeProcessor<Block> {
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof Block> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const documentation: string | undefined = raw.documentation;
 
         const statements = reader.convertArray(raw.statements, config) as Statement[];
 
-        return [id, src, type, statements, documentation, raw];
+        return [id, src, statements, documentation, raw];
     }
 }
