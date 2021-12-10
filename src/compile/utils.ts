@@ -1,6 +1,7 @@
 import fse from "fs-extra";
 import path from "path";
 import { lt, satisfies } from "semver";
+import { getCompilerPrefixForOs } from ".";
 import { CompilationFrontend } from "../ast";
 import {
     CompilerVersionSelectionStrategy,
@@ -90,6 +91,7 @@ function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, se
 function createCompilerInput(
     fileName: string,
     version: string,
+    frontend: CompilationFrontend,
     content: string,
     output: CompilationOutput[],
     remappings: string[],
@@ -125,7 +127,7 @@ function createCompilerInput(
         }
     };
 
-    if (lt(version, "0.5.0")) {
+    if (lt(version, "0.5.0") && frontend === CompilationFrontend.WASM) {
         partialInp.sources = {
             [fileName]: content
         };
@@ -288,26 +290,33 @@ export async function compile(
     compilerSettings?: any,
     frontend = CompilationFrontend.Default
 ): Promise<any> {
+    if (frontend === CompilationFrontend.Default) {
+        frontend = CompilationFrontend.Native;
+    }
+
     const input = createCompilerInput(
         fileName,
         version,
+        frontend,
         content,
         compilationOutput,
         remapping,
         compilerSettings
     );
 
-    if (frontend === CompilationFrontend.Default) {
-        frontend = CompilationFrontend.WASM;
-    }
-
     if (frontend === CompilationFrontend.WASM) {
         const compiler = WasmCompiler.getWasmCompilerForVersion(version);
 
         return compiler.compile(input, finder);
     } else if (frontend === CompilationFrontend.Native) {
-        await getNativeCompilerForVersion(version);
-        throw new Error("NYI Native compiler");
+        const compiler = await getNativeCompilerForVersion(version);
+
+        if (compiler === undefined) {
+            throw new Error(
+                `Couldn't find native compiler for version ${version} for current platform ${getCompilerPrefixForOs()}`
+            );
+        }
+        return compiler.compile(input);
     } else {
         throw new Error(`NYI Compiler Frontend ${frontend}`);
     }

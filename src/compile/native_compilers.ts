@@ -4,6 +4,7 @@ import fse from "fs-extra";
 import https from "https";
 import { IncomingMessage } from "http";
 import { Compiler } from "./frontends/base";
+import { spawn } from "child_process";
 
 export function getCompilerPrefixForOs(): string | undefined {
     const arch = os.arch();
@@ -48,8 +49,48 @@ class NativeCompiler extends Compiler {
         super(version);
     }
 
-    compile(inputJSON: any): any {
-        throw new Error(`NYI NativeCompiler.compile()`);
+    async compile(inputJSON: any): Promise<any> {
+        const child = spawn(this.path, ["--standard-json"], {});
+        const resultPromise = function (
+            onSuccess: (output: any) => void,
+            onError: (e: any) => void
+        ) {
+            child.stdin.write(JSON.stringify(inputJSON), "utf-8");
+            child.stdin.end();
+            let stdout = "";
+            let stderr = "";
+
+            child.stdout.on("data", (data) => {
+                stdout += data;
+            });
+            child.stderr.on("data", (data) => {
+                stderr += data;
+            });
+
+            child.on("close", (code) => {
+                if (code !== 0) {
+                    onError(`Compiler exited with code ${code}. Stderr: ${stderr}`);
+                    return;
+                }
+
+                if (stderr !== "") {
+                    onError(`Compiler exited with non-empty stderr: ${stderr}`);
+                    return;
+                }
+
+                let outJSON: any;
+                try {
+                    outJSON = JSON.parse(stdout);
+                } catch (e) {
+                    onError(e);
+                    return;
+                }
+
+                onSuccess(outJSON);
+            });
+        };
+
+        return await new Promise(resultPromise);
     }
 }
 
@@ -57,10 +98,10 @@ const CACHE_DIR = "./.native_compilers_cache/";
 const BINARIES_URL = "https://binaries.soliditylang.org";
 
 export async function httpsGetSync(url: string): Promise<Buffer> {
-    console.error(`GET ${url}`);
+    //console.error(`GET ${url}`);
     const reqPromise = new Promise<Buffer>((resolve, reject) => {
         const fullURL = url;
-        console.error(`Full url: ${fullURL}`);
+        //console.error(`Full url: ${fullURL}`);
         https.get(fullURL, (res: IncomingMessage) => {
             const chunks: Buffer[] = [];
 
@@ -83,7 +124,7 @@ async function getCompilerMDForPlatform(prefix: string): Promise<CompilerPlatfor
     const cachedListPath = path.join(CACHE_DIR, prefix, "list.json");
 
     if (fse.existsSync(cachedListPath)) {
-        console.error(`Hit cache for list ${prefix}`);
+        //console.error(`Hit cache for list ${prefix}`);
         return fse.readJSONSync(cachedListPath) as CompilerPlatformMetadata;
     }
 
@@ -115,9 +156,9 @@ export async function getNativeCompilerForVersion(
 
         if (!fse.existsSync(compilerLocalPath)) {
             const compiler = await httpsGetSync(`${BINARIES_URL}/${prefix}/${compilerFileName}`);
-            fse.writeFileSync(compilerLocalPath, compiler, { mode: 0o500 });
+            fse.writeFileSync(compilerLocalPath, compiler, { mode: 0o555 });
         } else {
-            console.error(`Hit cache for compiler ${compilerFileName}`);
+            //console.error(`Hit cache for compiler ${compilerFileName}`);
         }
 
         return new NativeCompiler(version, compilerLocalPath);

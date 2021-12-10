@@ -342,8 +342,12 @@ OPTIONS:
                         message += ` -> ${node.typeString} ${node.visibility} ${node.name}`;
 
                         if (node.visibility === StateVariableVisibility.Public) {
-                            const signature = node.getterCanonicalSignature;
-                            const selector = node.getterCanonicalSignatureHash;
+                            const signature = encoderVersion
+                                ? node.getterCanonicalSignature(encoderVersion)
+                                : undefined;
+                            const selector = encoderVersion
+                                ? node.getterCanonicalSignatureHash(encoderVersion)
+                                : undefined;
 
                             message += ` [getter: ${signature}, selector: ${selector}]`;
                         }
