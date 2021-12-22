@@ -28,26 +28,26 @@ const encounters = new Map<string, number>([
     ["ImportDirective", 1],
     ["EnumDefinition", 2],
     ["EnumValue", 6],
-    ["ContractDefinition", 12],
-    ["FunctionDefinition", 23],
-    ["ParameterList", 57],
-    ["VariableDeclaration", 41],
-    ["ElementaryTypeName", 36],
-    ["Block", 39],
-    ["VariableDeclarationStatement", 10],
-    ["Literal", 23],
+    ["ContractDefinition", 13],
+    ["FunctionDefinition", 25],
+    ["ParameterList", 61],
+    ["VariableDeclaration", 48],
+    ["ElementaryTypeName", 43],
+    ["Block", 41],
+    ["VariableDeclarationStatement", 11],
+    ["Literal", 26],
     ["UncheckedBlock", 2],
     ["ExpressionStatement", 9],
-    ["UnaryOperation", 2],
-    ["Identifier", 47],
-    ["Return", 10],
+    ["UnaryOperation", 3],
+    ["Identifier", 52],
+    ["Return", 11],
     ["InheritanceSpecifier", 1],
     ["IdentifierPath", 19],
     ["UsingForDirective", 1],
     ["UserDefinedTypeName", 14],
     ["ModifierInvocation", 2],
-    ["FunctionCall", 27],
-    ["MemberAccess", 23],
+    ["FunctionCall", 28],
+    ["MemberAccess", 25],
     ["OverrideSpecifier", 1],
     ["ElementaryTypeNameExpression", 3],
     ["NewExpression", 2],
@@ -58,7 +58,7 @@ const encounters = new Map<string, number>([
     ["EventDefinition", 1],
     ["ModifierDefinition", 1],
     ["PlaceholderStatement", 1],
-    ["TupleExpression", 3],
+    ["TupleExpression", 5],
     ["EmitStatement", 1],
     ["WhileStatement", 1],
     ["Continue", 1],
@@ -101,11 +101,15 @@ describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
 
         const sourceUnit = sourceUnits[0];
 
-        expect(sourceUnit.id).toEqual(474);
-        expect(sourceUnit.src).toEqual("0:6239:0");
+        // Uncomment following lines to get the current state of unit:
+        // console.log(sourceUnit.print());
+        // console.log(sourceUnit.getChildren().length);
+
+        expect(sourceUnit.id).toEqual(513);
+        expect(sourceUnit.src).toEqual("0:6507:0");
         expect(sourceUnit.absolutePath).toEqual(mainSample);
-        expect(sourceUnit.children.length).toEqual(19);
-        expect(sourceUnit.getChildren().length).toEqual(468);
+        expect(sourceUnit.children.length).toEqual(20);
+        expect(sourceUnit.getChildren().length).toEqual(507);
     });
 
     it(`Validate parsed output (${kind})`, () => {
@@ -113,6 +117,11 @@ describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
         const sourceUnitImprint = createImprint(sourceUnit);
 
         expect(sourceUnitImprint.ASTNode).toBeUndefined();
+
+        // Uncomment following lines to get the current unit snapshot data:
+        // for (const [type, nodes] of Object.entries(sourceUnitImprint)) {
+        //     console.log(`["${type}", ${nodes.length}],`);
+        // }
 
         for (const [type, count] of encounters.entries()) {
             expect(sourceUnitImprint[type]).toBeDefined();
