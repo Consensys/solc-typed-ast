@@ -226,6 +226,16 @@ contract ExternalFnSelectorAndAddress_0810 {
         return (fp.address, fp.selector);
     }
 }
+
+contract Builtins_0811 {
+    function some(uint a, int b, bytes2 c) external pure returns (bytes2 x, int y, uint z) {
+        return (c, b, a);
+    }
+
+    function test() public view {
+        bytes memory payload = abi.encodeCall(this.some, (1, -1, 0xFFFF));
+    }
+}
 // ------------------------------------------------------------
 // /test/samples/solidity/latest_imports_08.sol
 // ------------------------------------------------------------
