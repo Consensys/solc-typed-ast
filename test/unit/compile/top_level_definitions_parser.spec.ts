@@ -3,54 +3,54 @@ import { parse } from "../../../src/compile/inference/top_level_definitions_pars
 
 const good_samples: Array<[string, string, any]> = [
     // Imports
-    ["import1", `import "a.sol";`, [{ path: "a.sol", unitAlias: undefined, symbolAliases: [] }]],
+    ["import1", `import "a.sol";`, [{ path: "a.sol", unitAlias: null, symbols: [] }]],
     [
         "import2",
         `import {foo} from "a.sol";`,
-        [{ path: "a.sol", symbolAliases: [{ alias: null, name: "foo" }], unitAlias: undefined }]
+        [{ path: "a.sol", symbols: [{ alias: null, name: "foo" }], unitAlias: null }]
     ],
     [
         "import3",
         `import {foo as bar} from "a.sol";`,
-        [{ path: "a.sol", symbolAliases: [{ alias: "bar", name: "foo" }], unitAlias: undefined }]
+        [{ path: "a.sol", symbols: [{ alias: "bar", name: "foo" }], unitAlias: null }]
     ],
-    ["import4", `import "a.sol" as boo;`, [{ path: "a.sol", symbolAliases: [], unitAlias: "boo" }]],
+    ["import4", `import "a.sol" as boo;`, [{ path: "a.sol", symbols: [], unitAlias: "boo" }]],
     [
         "import5",
         `/*sup brah */ import "a.sol" as boo;`,
-        [{ path: "a.sol", symbolAliases: [], unitAlias: "boo" }]
+        [{ path: "a.sol", symbols: [], unitAlias: "boo" }]
     ],
     [
         "import6",
         `/*sup brah */ import /* import foo */ "a.sol" /* boo * */ as /* mo*o */ /**/ /* */ boo; // for realzies?`,
-        [{ path: "a.sol", symbolAliases: [], unitAlias: "boo" }]
+        [{ path: "a.sol", symbols: [], unitAlias: "boo" }]
     ],
 
     // Constants
-    ["constant1", "uint constant a = 1;", [{ name: "a", type: "constant", value: "1" }]],
+    ["constant1", "uint constant a = 1;", [{ name: "a", kind: "constant", value: "1" }]],
     [
         "constant2",
         `string constant a = "asdfasd; nasdf (;)}{;/**/ // /*";`,
-        [{ name: "a", type: "constant", value: `"asdfasd; nasdf (;)}{;/**/ // /*"` }]
+        [{ name: "a", kind: "constant", value: `"asdfasd; nasdf (;)}{;/**/ // /*"` }]
     ],
     [
         "constant3",
         `string constant a = 'asdfasd; nasdf (;)}{;/**/ // /*';`,
-        [{ name: "a", type: "constant", value: `'asdfasd; nasdf (;)}{;/**/ // /*'` }]
+        [{ name: "a", kind: "constant", value: `'asdfasd; nasdf (;)}{;/**/ // /*'` }]
     ],
 
     // Free functions
     [
         "free fun foo0",
         `function foo0() {}`,
-        [{ type: "function", name: "foo0", args: "()", mutability: "", returns: null, body: "{}" }]
+        [{ kind: "function", name: "foo0", args: "()", mutability: "", returns: null, body: "{}" }]
     ],
     [
         "free fun foo1",
         `function foo1(uint x) {}`,
         [
             {
-                type: "function",
+                kind: "function",
                 name: "foo1",
                 args: "(uint x)",
                 mutability: "",
@@ -64,7 +64,7 @@ const good_samples: Array<[string, string, any]> = [
         `function foo2(uint x) pure {}`,
         [
             {
-                type: "function",
+                kind: "function",
                 name: "foo2",
                 args: "(uint x)",
                 mutability: "pure",
@@ -78,7 +78,7 @@ const good_samples: Array<[string, string, any]> = [
         `function foo3(uint x) returns (uint y) {}`,
         [
             {
-                type: "function",
+                kind: "function",
                 name: "foo3",
                 args: "(uint x)",
                 mutability: "",
@@ -92,7 +92,7 @@ const good_samples: Array<[string, string, any]> = [
         `function foo4(uint x) view returns (uint y) {}`,
         [
             {
-                type: "function",
+                kind: "function",
                 name: "foo4",
                 args: "(uint x)",
                 mutability: "view",
@@ -111,7 +111,7 @@ const good_samples: Array<[string, string, any]> = [
 }`,
         [
             {
-                type: "function",
+                kind: "function",
                 name: "foo5",
                 args: "(uint x, uint[] memory y, mapping (uint => bytes) storage t)",
                 mutability: "",
@@ -135,7 +135,7 @@ const good_samples: Array<[string, string, any]> = [
 }`,
         [
             {
-                type: "function",
+                kind: "function",
                 name: "foo6",
                 args: "(uint x, uint[] memory y, mapping (uint => bytes) storage t)",
                 mutability: "view",
@@ -163,7 +163,7 @@ const good_samples: Array<[string, string, any]> = [
 }`,
         [
             {
-                type: "function",
+                kind: "function",
                 name: "foo7",
                 args: "(uint x)",
                 mutability: "view",
@@ -195,7 +195,7 @@ const good_samples: Array<[string, string, any]> = [
 } // bruh`,
         [
             {
-                type: "function",
+                kind: "function",
                 name: "foo8",
                 args: `(uint x, // many
  /* comments */ uint[/***/]  /* you*/ memory y, mapping (uint  /*wouldnt*/=> bytes) storage t)`,
@@ -364,6 +364,121 @@ const good_samples: Array<[string, string, any]> = [
 /****/}`
             }
         ]
+    ],
+    [
+        "enum EA",
+        `enum EA {
+    A, B,
+    C
+}`,
+        [
+            {
+                kind: "enum",
+                name: "EA",
+                body: `{
+    A, B,
+    C
+}`
+            }
+        ]
+    ],
+    [
+        "enum EB",
+        `enum  /*1*/ EB //2
+ { /*3*/
+    A,/*3*/ B/**/,
+    C//5
+}`,
+        [
+            {
+                kind: "enum",
+                name: "EB",
+                body: `{ /*3*/
+    A,/*3*/ B/**/,
+    C//5
+}`
+            }
+        ]
+    ],
+    [
+        "type T1",
+        `type T1 is uint;`,
+        [
+            {
+                kind: "userValueType",
+                name: "T1",
+                value_type: `uint`
+            }
+        ]
+    ],
+    [
+        "type T2",
+        `type T2 is bytes4;`,
+        [
+            {
+                kind: "userValueType",
+                name: "T2",
+                value_type: `bytes4`
+            }
+        ]
+    ],
+    [
+        "type T3",
+        `type /*1*/ T3  //2
+is /*3*/ int24;`,
+        [
+            {
+                kind: "userValueType",
+                name: "T3",
+                value_type: `int24`
+            }
+        ]
+    ],
+    [
+        "type T4",
+        `type /*1*/ T4  //2
+is /*3*/ int24/*;*/;`,
+        [
+            {
+                kind: "userValueType",
+                name: "T4",
+                value_type: `int24/*;*/`
+            }
+        ]
+    ],
+    [
+        "pragma solidity ^0.8.8;",
+        `pragma solidity ^0.8.8;`,
+        [
+            {
+                kind: "pragma",
+                name: "solidity",
+                value: `^0.8.8`
+            }
+        ]
+    ],
+    [
+        "pragma experimental ABIEncoderV2;",
+        `pragma experimental ABIEncoderV2;`,
+        [
+            {
+                kind: "pragma",
+                name: "experimental",
+                value: `ABIEncoderV2`
+            }
+        ]
+    ],
+    [
+        "pragma with comments",
+        `pragma /*;*/ solidity // oh yeah;
+0.8.9/*;*/;`,
+        [
+            {
+                kind: "pragma",
+                name: "solidity",
+                value: `0.8.9/*;*/`
+            }
+        ]
     ]
 ];
 
@@ -386,7 +501,6 @@ describe("Top-level definitions parser positive tests", () => {
         it(`Sample ${name} should parse successfully`, () => {
             const parsed = parse(sample);
 
-            //expect(parsed).toContainEqual(expectedParsed);
             expectTopLevelNodesMatch(parsed, expectedParsed);
         });
     }

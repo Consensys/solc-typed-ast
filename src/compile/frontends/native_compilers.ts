@@ -3,7 +3,7 @@ import path from "path";
 import fse from "fs-extra";
 import https from "https";
 import { IncomingMessage } from "http";
-import { Compiler } from "./frontends/base";
+import { Compiler } from "./base";
 import { spawn } from "child_process";
 
 export function getCompilerPrefixForOs(): string | undefined {

@@ -1,8 +1,14 @@
 SourceUnit =
-    (__ t: TopLevelDefinition __  { return t; })*
+    tlds: (__ t: TopLevelDefinition __  { return t; })* {
+        // Dummy uses to silence unused function TSC errors in auto-generated code
+        expected;
+        error;
+        return tlds as TopLevelNode<any>[];
+    }
 
-TopLevelDefinition = 
-     ImportDirective
+TopLevelDefinition
+    = Pragma
+    / ImportDirective
     / Constant
     / FreeFunction
     / ContractDefinition
@@ -11,15 +17,56 @@ TopLevelDefinition =
     / UserValueTypeDef
 
 
-// ==== global constants
+// ==== Pragma
+
+PragmaValue = NonSemicolonSoup { return text().trim(); }
+Pragma =
+    PRAGMA __ name: Identifier __ value: PragmaValue __ ";" {
+        return {kind: TopLevelNodeKind.Pragma, location: location(), name, value} as TLPragma;
+    }
+
+// ==== Import Directives
+
+Symbol = 
+    name: (Identifier) alias: (__ AS __ Identifier)? {
+        return { name, alias: alias !== null ? alias[3] : null } as SymbolDesc;
+    }
+
+SymbolList =
+    head: Symbol
+    tail: ( __ COMMA __ Symbol)* {
+        return tail.reduce(
+            (acc: SymbolDesc[], el: [any, any, any, SymbolDesc]) => {
+                acc.push(el[3]);
+                
+                return acc;
+            },
+            [head]
+        );
+    }
+
+ImportDirective =
+    IMPORT __ path: StringLiteral __ SEMICOLON {
+        return {kind: TopLevelNodeKind.Import, location: location(), path, unitAlias: null, symbols: [] } as TLImportDirective;
+    }
+    / IMPORT __ path: StringLiteral __ AS __ unitAlias: Identifier __ SEMICOLON {
+        return {kind: TopLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] } as TLImportDirective;
+    }
+    / IMPORT __ ASTERISK __ AS __ unitAlias: Identifier __ FROM __ path: StringLiteral __ SEMICOLON {
+        return {kind: TopLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] } as TLImportDirective;
+    }
+    / IMPORT __ LBRACE __ symbols: SymbolList __ RBRACE __ FROM __ path: StringLiteral __ SEMICOLON {
+        return {kind: TopLevelNodeKind.Import, location: location(), symbols, path, unitAlias: null } as TLImportDirective;
+    }
+
+// ==== Global Constants
 
 // global constants don't support reference types I think?
 ConstantType 
     = Identifier (__ LBRACKET Number? RBRACKET)*  { return text(); }
 
-NonSemicolonSoup = (__ ( [^;"']+ / StringLiteral))* { return text(); }
 Constant = ConstantType __ CONSTANT  __ name: Identifier __ EQUAL __ value: NonSemicolonSoup __  SEMICOLON {
-    return {type: TopLevelNodeKind.Constant, location: location(), name, value };
+    return {kind: TopLevelNodeKind.Constant, location: location(), name, value } as TLConstant;
 }
 
 // ==== Free Functions
@@ -31,14 +78,22 @@ FreeFunBody = LBRACE __ BraceSoup __ RBRACE { return text(); }
 FreeFunReturns = RETURNS __ FreeFunArgs { return text(); }
 
 FreeFunction = FUNCTION __ name: Identifier __ args: FreeFunArgs __ mutability: FreeFunMut returns: FreeFunReturns? __ body: FreeFunBody {
-    return {type: TopLevelNodeKind.Function, location: location(), name, args , mutability: mutability.trim(), returns, body};
+    return {
+        kind: TopLevelNodeKind.Function,
+        location: location(),
+        name,
+        args ,
+        mutability: mutability.trim(),
+        returns,
+        body
+    } as TLFreeFunction;
 }
+
+// ==== Contract definitions
 
 BaseArgs = LPAREN __ ParenSoup __ RPAREN
 BaseClassList =
     head: Identifier __ BaseArgs? tail: (__ COMMA __ Identifier __ BaseArgs?)* { return text(); }
-
-// ==== Contract definitions
 
 ContractBody = LBRACE __ BraceSoup __ RBRACE { return text(); }
 ContractDefinition = abstract: (ABSTRACT __)? kind: (CONTRACT / LIBRARY / INTERFACE) __ name: Identifier bases: (__ IS __ BaseClassList)? __ body: ContractBody {
@@ -50,7 +105,7 @@ ContractDefinition = abstract: (ABSTRACT __)? kind: (CONTRACT / LIBRARY / INTERF
         name,
         bases: bases !== null ? bases[3].trim() : null,
         body
-    }
+    } as TLContractDefinition
 }
 
 // ==== Struct definitions
@@ -62,52 +117,44 @@ StructDef = STRUCT __ name: Identifier __ body: StructBody {
         location: location(),
         name,
         body
-    }
+    } as TLStructDefinition
 }
 
 // ==== Enum definitions
 
-EnumDef = ENUM __ Identifier __ LBRACE __ BraceSoup __ RBRACE
-UserValueTypeDef = TYPE __ Identifier __ IS __ NonSemicolonSoup __ SEMICOLON
+EnumDefBody = LBRACE __ BraceSoup __ RBRACE { return text(); }
+EnumDef = ENUM __ name: Identifier __ body: EnumDefBody {
+    return {
+        kind: TopLevelNodeKind.Enum,
+        location: location(),
+        name,
+        body
+    } as TLEnumDefinition
+}
 
-Symbol = 
-    name: (Identifier) alias: (__ AS __ Identifier)? {
-        return { name, alias: alias !== null ? alias[3] : null } as SymbolDesc;
-    }
+// ==== User-defined value types
 
-SymbolList =
-    head: Symbol
-    tail: ( __ COMMA __ Symbol)* {
-        return tail.reduce(
-            (acc, el) => {
-                acc.push(el[3]);
-                
-                return acc;
-            },
-            [head]
-        );
-    }
+UserValueTypeDef = TYPE __ name: Identifier __ IS __ value_type: NonSemicolonSoup __ SEMICOLON {
+    return {
+        kind: TopLevelNodeKind.UserValueType,
+        location: location(),
+        name,
+        value_type
+    } as TLUserValueType
+}
 
-ImportDirective =
-    IMPORT __ path: StringLiteral __ SEMICOLON {
-        return { path, unitAlias: undefined, symbolAliases: [] } as ImportDirectiveDesc;
-    }
-    / IMPORT __ path: StringLiteral __ AS __ unitAlias: Identifier __ SEMICOLON {
-        return { path, unitAlias, symbolAliases: [] } as ImportDirectiveDesc;
-    }
-    / IMPORT __ ASTERISK __ AS __ unitAlias: Identifier __ FROM __ path: StringLiteral __ SEMICOLON {
-        return { path, unitAlias, symbolAliases: [] } as ImportDirectiveDesc;
-    }
-    / IMPORT __ LBRACE __ symbolAliases: SymbolList __ RBRACE __ FROM __ path: StringLiteral __ SEMICOLON {
-        return { symbolAliases, path, unitAlias: undefined } as ImportDirectiveDesc;
-    }
 
-// ==== Soups - helper rules for matching semi-structured with comments and strings inside,
-// that still try to account for either matchin () or matching {}
+// ==== Soups - helper rules for matching semi-structured text with comments and strings inside,
+// that still try to account for either matching () or matching {}, or for an ending semicolon.
+NonSemicolonSoup =
+    (([^"'/;]+ ("/" [^/'"*;])?) // non-comment, non-string-literal, non-semicolon anything
+     / StringLiteral // string literal
+     / Comment // comment
+    )* { return text(); }
 
 ParenSoup
     = ((
-        ([^"'()/]+ ("/" [^/*])?)  // non-comment, non string literal anything
+        ([^"'()/]+ ("/" [^/*"'()])?)  // non-comment, non-string literal, non-parenthesis anything
         / StringLiteral  // string literal
         / Comment // comment 
       )
@@ -115,7 +162,7 @@ ParenSoup
 
 BraceSoup
     = ((
-        ([^"'{}/]+ ("/" [^/*])?)  // non-comment, non string literal anything
+        ([^"'{}/]+ ("/" [^/*'"{}])?)  // non-comment, non string literal, non-braces anything
         / StringLiteral  // string literal
         / Comment // comment 
        )   
@@ -123,7 +170,7 @@ BraceSoup
 
 // ==== White space
 
-PrimitiveWhiteSpace "whitespace" =
+PrimitiveWhiteSpace =
     "\t"
     / "\v"
     / "\f"
@@ -136,9 +183,6 @@ WhiteSpace "whitespace" =
     PrimitiveWhiteSpace
     / LineTerminator PrimitiveWhiteSpace* ("*" / "///")
 
-StartingWhiteSpace "whitespace" =
-    PrimitiveWhiteSpace* LineTerminator? PrimitiveWhiteSpace* ("*" / "///")? __ 
-
 // Separator, Space
 Zs =
     [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
@@ -149,7 +193,7 @@ LineTerminator =
 NonLineTerminator =
     [^\n\r\u2028\u2029]
 
-LineTerminatorSequence "end of line" =
+LineTerminatorSequence =
     "\n"
     / "\r\n"
     / "\r"
@@ -195,6 +239,7 @@ FUNCTION = "function"
 IS = "is"
 TYPE = "type"
 RETURNS = "returns"
+PRAGMA = "pragma"
 
 
 // ==== String literals

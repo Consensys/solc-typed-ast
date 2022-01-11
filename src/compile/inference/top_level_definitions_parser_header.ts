@@ -1,23 +1,13 @@
 // Need the ts-nocheck to suppress the noUnusedLocals errors in the generated parser
-// @ts-nocheck
-export interface SymbolDesc {
-    name: string;
-    alias: string | null;
-}
-
-export interface ImportDirectiveDesc {
-    path: string;
-    unitAlias: string | undefined;
-    symbolAliases: SymbolDesc[];
-}
-
 export enum TopLevelNodeKind {
-    Comment = "comment",
+    Pragma = "pragma",
     Import = "import",
     Constant = "constant",
     Function = "function",
     Contract = "contract",
-    Struct = "struct"
+    Struct = "struct",
+    Enum = "enum",
+    UserValueType = "userValueType"
 }
 
 export type TopLevelNodeLocation = IFileRange;
@@ -25,6 +15,22 @@ export type TopLevelNodeLocation = IFileRange;
 export interface TopLevelNode<T extends TopLevelNodeKind> {
     kind: T;
     location: TopLevelNodeLocation;
+}
+
+export interface TLPragma extends TopLevelNode<TopLevelNodeKind.Pragma> {
+    name: string;
+    value: string;
+}
+
+export interface SymbolDesc {
+    name: string;
+    alias: string | null;
+}
+
+export interface TLImportDirective extends TopLevelNode<TopLevelNodeKind.Import> {
+    path: string;
+    symbols: SymbolDesc[];
+    unitAlias: string | null;
 }
 
 export interface TLConstant extends TopLevelNode<TopLevelNodeKind.Constant> {
@@ -35,7 +41,7 @@ export interface TLConstant extends TopLevelNode<TopLevelNodeKind.Constant> {
 export interface TLFreeFunction extends TopLevelNode<TopLevelNodeKind.Function> {
     name: string;
     args: string;
-    qualifiers: string;
+    mutability: string;
     returns: string | null;
     body: string;
 }
@@ -51,4 +57,14 @@ export interface TLContractDefinition extends TopLevelNode<TopLevelNodeKind.Cont
 export interface TLStructDefinition extends TopLevelNode<TopLevelNodeKind.Struct> {
     name: string;
     body: string;
+}
+
+export interface TLEnumDefinition extends TopLevelNode<TopLevelNodeKind.Enum> {
+    name: string;
+    body: string;
+}
+
+export interface TLUserValueType extends TopLevelNode<TopLevelNodeKind.UserValueType> {
+    name: string;
+    value_type: string;
 }

@@ -1,7 +1,7 @@
 import fse from "fs-extra";
 import path from "path";
 import { lt, satisfies } from "semver";
-import { getCompilerPrefixForOs } from ".";
+import { getCompilerPrefixForOs } from "./frontends";
 import { CompilationFrontend } from "../ast";
 import {
     CompilerVersionSelectionStrategy,
@@ -18,7 +18,7 @@ import {
     Remapping,
     RemappingResolver
 } from "./import_resolver";
-import { getNativeCompilerForVersion } from "./native_compilers";
+import { getNativeCompilerForVersion } from "./frontends/native_compilers";
 import { isExact } from "./version";
 
 export interface MemoryStorage {

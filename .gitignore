@@ -5,3 +5,4 @@ docs
 coverage
 *.tgz
 src/types/typeStrings/typeString_parser.ts
+src/compile/inference/top_level_definitions_parser.ts
