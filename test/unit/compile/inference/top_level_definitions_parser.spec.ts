@@ -1,5 +1,8 @@
+import { fail } from "assert";
 import expect from "expect";
-import { parse } from "../../../src/compile/inference/top_level_definitions_parser";
+import fse from "fs-extra";
+import { join } from "path";
+import { parseTopLevelDefinitions } from "../../../../src/compile/inference/top_level_definitions_parser";
 
 const good_samples: Array<[string, string, any]> = [
     // Imports
@@ -496,12 +499,41 @@ function expectTopLevelNodesMatch(a: any[], b: any[]) {
     }
 }
 
-describe("Top-level definitions parser positive tests", () => {
+describe("Top-level definitions parser unit tests", () => {
     for (const [name, sample, expectedParsed] of good_samples) {
         it(`Sample ${name} should parse successfully`, () => {
-            const parsed = parse(sample);
+            const parsed = parseTopLevelDefinitions(sample);
 
             expectTopLevelNodesMatch(parsed, expectedParsed);
+        });
+    }
+});
+
+describe("Top-level definitions parser samples test", () => {
+    for (const fileName of fse.readdirSync("test/samples/solidity")) {
+        if (!fileName.endsWith(".sol")) {
+            continue;
+        }
+
+        it(`Parse sample ${fileName}`, () => {
+            const contents = fse
+                .readFileSync(join("test", "samples", "solidity", fileName))
+                .toString();
+            let tlds;
+
+            try {
+                tlds = parseTopLevelDefinitions(contents);
+            } catch (e) {
+                fail(
+                    `Failed compiling ${fileName}: msg: ${e.message}  loc: ${JSON.stringify(
+                        e.location,
+                        undefined,
+                        2
+                    )}`
+                );
+            }
+
+            expect(tlds.length).toBeGreaterThan(0);
         });
     }
 });

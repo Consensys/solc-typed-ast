@@ -1,6 +1,4 @@
 import fse from "fs-extra";
-import path from "path";
-import { lt, satisfies } from "semver";
 import { getCompilerPrefixForOs } from "./frontends";
 import { CompilationFrontend } from "../ast";
 import {
@@ -11,15 +9,12 @@ import {
 } from "./compiler_selection";
 import { CompilationOutput } from "./constants";
 import { WasmCompiler } from "./frontends/wasm";
-import {
-    FileSystemResolver,
-    ImportResolver,
-    LocalNpmResolver,
-    Remapping,
-    RemappingResolver
-} from "./import_resolver";
+import { Remapping } from "./import_resolver";
 import { getNativeCompilerForVersion } from "./frontends/native_compilers";
 import { isExact } from "./version";
+import { findAllFiles } from "./inference";
+import { createCompilerInput } from "./input";
+import { FileSystemResolver } from ".";
 
 export interface MemoryStorage {
     [path: string]: {
@@ -48,8 +43,6 @@ export class CompileFailedError extends Error {
     }
 }
 
-export type ImportFinder = (filePath: string) => { contents: string } | { error: string };
-
 export function getWasmCompilerForVersion(version: string): any {
     if (isExact(version)) {
         return require("solc-" + version);
@@ -58,88 +51,6 @@ export function getWasmCompilerForVersion(version: string): any {
     throw new Error(
         "Version string must contain exact SemVer-formatted version without any operators"
     );
-}
-
-interface PartialSolcInput {
-    language: "Solidity";
-    settings: { remappings: string[]; outputSelection: any; [otherKeys: string]: any };
-    [otherKeys: string]: any;
-}
-
-interface Solc04Input extends PartialSolcInput {
-    sources: { [fileName: string]: string };
-}
-
-interface Solc05Input extends PartialSolcInput {
-    sources: { [fileName: string]: { content: string } };
-}
-
-function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, settings: any): T {
-    if (settings !== undefined) {
-        for (const key in settings) {
-            if (key === "remappings" || key === "outputSelection") {
-                continue;
-            }
-
-            input.settings[key] = settings[key];
-        }
-    }
-
-    return input;
-}
-
-function createCompilerInput(
-    fileName: string,
-    version: string,
-    frontend: CompilationFrontend,
-    content: string,
-    output: CompilationOutput[],
-    remappings: string[],
-    compilerSettings: any
-): Solc04Input | Solc05Input {
-    let fileOutput: string[] = [];
-    let contractOutput: string[] = [];
-
-    for (const outputSel of output) {
-        if (outputSel === CompilationOutput.ALL) {
-            fileOutput = [CompilationOutput.ALL];
-            contractOutput = [CompilationOutput.ALL];
-            break;
-        }
-
-        if (outputSel === CompilationOutput.AST) {
-            fileOutput.push(outputSel);
-        } else {
-            contractOutput.push(outputSel);
-        }
-    }
-
-    const partialInp: PartialSolcInput = {
-        language: "Solidity",
-        settings: {
-            remappings,
-            outputSelection: {
-                "*": {
-                    "*": contractOutput,
-                    "": fileOutput
-                }
-            }
-        }
-    };
-
-    if (lt(version, "0.5.0") && frontend === CompilationFrontend.WASM) {
-        partialInp.sources = {
-            [fileName]: content
-        };
-    } else {
-        partialInp.sources = {
-            [fileName]: { content }
-        };
-    }
-
-    const inp = partialInp as Solc04Input | Solc05Input;
-
-    return mergeCompilerSettings(inp, compilerSettings);
 }
 
 function consistentlyContainsOneOf(
@@ -220,72 +131,11 @@ export function parsePathRemapping(remapping: string[]): Remapping[] {
     return result;
 }
 
-export function createFileSystemImportFinder(
-    fileName: string,
-    files: Map<string, string>,
-    remapping: Remapping[]
-): ImportFinder {
-    const basePath = path.dirname(fileName);
-    const resolvers: ImportResolver[] = [
-        new FileSystemResolver(),
-        new RemappingResolver(remapping),
-        new LocalNpmResolver(basePath)
-    ];
-
-    return (filePath) => {
-        try {
-            for (const resolver of resolvers) {
-                const resolvedPath = resolver.resolve(filePath);
-
-                if (resolvedPath) {
-                    const contents = fse.readFileSync(resolvedPath).toString();
-
-                    files.set(filePath, contents);
-
-                    return { contents };
-                }
-            }
-
-            throw new Error(`Unable to find import path "${filePath}"`);
-        } catch (e: any) {
-            return { error: e.message };
-        }
-    };
-}
-
-export function createMemoryImportFinder(
-    storage: MemoryStorage,
-    files: Map<string, string>
-): ImportFinder {
-    if (storage === null || storage === undefined) {
-        throw new Error("Storage must be an object");
-    }
-
-    return (filePath) => {
-        const entry = storage[filePath];
-
-        if (!entry) {
-            return { error: `Import path "${filePath}" not found in storage` };
-        }
-
-        if (entry.source === undefined) {
-            return { error: `Entry at "${filePath}" contains no "source" property` };
-        }
-
-        const contents = entry.source;
-
-        files.set(filePath, contents);
-
-        return { contents };
-    };
-}
-
 export async function compile(
     fileName: string,
     content: string,
     version: string,
-    finder: ImportFinder,
-    remapping: string[],
+    raw_remappings: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
     frontend = CompilationFrontend.Default
@@ -294,20 +144,31 @@ export async function compile(
         frontend = CompilationFrontend.Native;
     }
 
+    const files = new Map<string, string>([[fileName, content]]);
+    const remappings = parsePathRemapping(raw_remappings);
+    // TODO (dimo): Add LocalNPMResolver below
+    const additionalFiles = findAllFiles(files, remappings, [new FileSystemResolver()]);
+
+    for (const [name, cont] of additionalFiles) {
+        files.set(name, cont);
+    }
+    //console.error(`files keys: ${[...files.keys()]}`);
+
     const input = createCompilerInput(
-        fileName,
+        files,
         version,
         frontend,
-        content,
         compilationOutput,
-        remapping,
+        raw_remappings,
         compilerSettings
     );
+
+    //console.error(`input.sources keys: ${[...Object.keys(input.sources)]}`);
 
     if (frontend === CompilationFrontend.WASM) {
         const compiler = WasmCompiler.getWasmCompilerForVersion(version);
 
-        return compiler.compile(input, finder);
+        return compiler.compile(input);
     } else if (frontend === CompilationFrontend.Native) {
         const compiler = await getNativeCompilerForVersion(version);
 
@@ -364,17 +225,10 @@ export async function compileSourceString(
     const failures: CompileFailure[] = [];
 
     for (const compilerVersion of compilerVersionStrategy.select()) {
-        const finder = createFileSystemImportFinder(
-            fileName,
-            files,
-            satisfies(compilerVersion, "0.4") ? parsePathRemapping(remapping) : []
-        );
-
         const data = await compile(
             fileName,
             sourceCode,
             compilerVersion,
-            finder,
             remapping,
             compilationOutput,
             compilerSettings,
@@ -389,6 +243,9 @@ export async function compileSourceString(
         failures.push({ compilerVersion, errors });
     }
 
+    for (const failure of failures) {
+        console.error(failure.compilerVersion, ": ", JSON.stringify(failure.errors));
+    }
     throw new CompileFailedError(failures);
 }
 
@@ -457,7 +314,6 @@ export async function compileJsonData(
 
         files.set(mainFileName, sourceCode);
 
-        const finder = createMemoryImportFinder(sources, files);
         const failures: CompileFailure[] = [];
 
         for (const compilerVersion of compilerVersionStrategy.select()) {
@@ -465,7 +321,6 @@ export async function compileJsonData(
                 mainFileName,
                 sourceCode,
                 compilerVersion,
-                finder,
                 remapping,
                 compilationOutput,
                 compilerSettings,

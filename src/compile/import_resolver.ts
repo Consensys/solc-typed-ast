@@ -15,32 +15,6 @@ export class FileSystemResolver implements ImportResolver {
 
 export type Remapping = [string, string, string];
 
-export class RemappingResolver extends FileSystemResolver {
-    private remapping: Remapping[];
-
-    constructor(remapping: Remapping[]) {
-        super();
-
-        this.remapping = remapping;
-    }
-
-    resolve(fileName: string): string | undefined {
-        const remapped = this.getRemappedPath(fileName, this.remapping);
-
-        return remapped ? super.resolve(remapped) : undefined;
-    }
-
-    private getRemappedPath(filePath: string, remapping: Remapping[]): string | undefined {
-        for (const [, prefix, replacement] of remapping) {
-            if (filePath.startsWith(prefix)) {
-                return filePath.replace(prefix, replacement);
-            }
-        }
-
-        return undefined;
-    }
-}
-
 export class LocalNpmResolver implements ImportResolver {
     private baseDir: string;
 

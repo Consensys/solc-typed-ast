@@ -2,8 +2,6 @@ import expect from "expect";
 import fse from "fs-extra";
 import {
     compileJson,
-    createFileSystemImportFinder,
-    createMemoryImportFinder,
     detectCompileErrors,
     getWasmCompilerForVersion,
     LatestAndFirstVersionInEachSeriesStrategy,
@@ -46,85 +44,6 @@ describe("Compile general utils", () => {
 
         it(`Invalid input triggers an error`, () => {
             expect(() => parsePathRemapping(["???"])).toThrow();
-        });
-    });
-
-    describe("createFileSystemImportFinder()", () => {
-        const files = new Map<string, string>();
-        const finder = createFileSystemImportFinder(
-            "test/samples/solidity/node.sol",
-            files,
-            parsePathRemapping(["@x/=test/samples/solidity/"])
-        );
-
-        const cases = [
-            ["test/samples/solidity/node.sol", "pragma solidity"],
-            ["@x/missing_pragma.sol", "contract Test"],
-            [".bin/tsc", "#!/usr/bin/env"]
-        ];
-
-        for (const [fileName, contentPrefix] of cases) {
-            it(`Created finder resolves "${fileName}"`, () => {
-                const result = finder(fileName) as { contents: string };
-
-                expect(result.contents).toBeDefined();
-                expect(result.contents.startsWith(contentPrefix)).toEqual(true);
-
-                const cacheValue = files.get(fileName) as string;
-
-                expect(cacheValue).toBeDefined();
-                expect(cacheValue.startsWith(contentPrefix)).toEqual(true);
-            });
-        }
-
-        it('Created finder not resolves "missing"', () => {
-            const result = finder("missing") as { error: string };
-
-            expect(result.error).toBeDefined();
-            expect(result.error).toMatch(/^Unable to find import path "[^"]+"$/);
-        });
-    });
-
-    describe("createMemoryImportFinder()", () => {
-        const storage: any = {
-            "a/b.sol": {
-                source: "test"
-            },
-            "c.sol": {}
-        };
-
-        const files = new Map<string, string>();
-        const finder = createMemoryImportFinder(storage, files);
-
-        it(`Created finder resolves "a/b.sol"`, () => {
-            const result = finder("a/b.sol") as { contents: string };
-
-            expect(result.contents).toBeDefined();
-            expect(result.contents).toEqual("test");
-
-            const cacheValue = files.get("a/b.sol") as string;
-
-            expect(cacheValue).toBeDefined();
-            expect(cacheValue).toEqual("test");
-        });
-
-        it('Created finder not resolves "c.sol"', () => {
-            const result = finder("c.sol") as { error: string };
-
-            expect(result.error).toBeDefined();
-            expect(result.error).toMatch(/^Entry at "[^"]+" contains no "source" property$/);
-        });
-
-        it('Created finder not resolves "missing"', () => {
-            const result = finder("missing") as { error: string };
-
-            expect(result.error).toBeDefined();
-            expect(result.error).toMatch(/^Import path "[^"]+" not found in storage$/);
-        });
-
-        it("Creation of finder fails for null or undefined", () => {
-            expect(() => createMemoryImportFinder(undefined as any, new Map())).toThrow();
-            expect(() => createMemoryImportFinder(null as any, new Map())).toThrow();
         });
     });
 

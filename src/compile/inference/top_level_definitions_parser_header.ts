@@ -7,7 +7,8 @@ export enum TopLevelNodeKind {
     Contract = "contract",
     Struct = "struct",
     Enum = "enum",
-    UserValueType = "userValueType"
+    UserValueType = "userValueType",
+    Error = "error"
 }
 
 export type TopLevelNodeLocation = IFileRange;
@@ -67,4 +68,13 @@ export interface TLEnumDefinition extends TopLevelNode<TopLevelNodeKind.Enum> {
 export interface TLUserValueType extends TopLevelNode<TopLevelNodeKind.UserValueType> {
     name: string;
     value_type: string;
+}
+
+export interface TLErrorDefinition extends TopLevelNode<TopLevelNodeKind.Error> {
+    name: string;
+    args: string;
+}
+
+export function parseTopLevelDefinitions(contents: string): Array<TopLevelNode<TopLevelNodeKind>> {
+    return parse(contents);
 }

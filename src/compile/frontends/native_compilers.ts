@@ -94,6 +94,10 @@ class NativeCompiler extends Compiler {
     }
 }
 
+// TODO: (dimo): This is causing test failures
+// TODO: (pavel): We need a more general solution for picking CACHE_DIR
+// TODO: The location of the CACHE_DIR should be documented
+// TODO: The locaiton of the CACHE_DIR should be settable by the user
 const CACHE_DIR = "./.native_compilers_cache/";
 const BINARIES_URL = "https://binaries.soliditylang.org";
 
