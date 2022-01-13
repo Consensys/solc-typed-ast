@@ -6,7 +6,7 @@ import {
     TopLevelNodeKind
 } from "./top_level_definitions_parser";
 import fse from "fs-extra";
-import { dirname, normalize, join } from "path";
+import { dirname, normalize, join, isAbsolute } from "path";
 
 function applyRemappings(remappings: Remapping[], path: string): string {
     for (const [, prefix, mapped_prefix] of remappings) {
@@ -16,6 +16,13 @@ function applyRemappings(remappings: Remapping[], path: string): string {
     }
 
     return path;
+}
+
+export function normalizeImportPath(path: string): string {
+    let res = normalize(path);
+    res = isAbsolute(res) ? res : "./" + res;
+
+    return res;
 }
 
 export function findAllFiles(
@@ -67,7 +74,10 @@ export function findAllFiles(
             const path = imp.path;
             if (path.startsWith("./") || path.startsWith("../")) {
                 const importingFileDir = dirname(filePath);
-                queue.push(normalize(join(importingFileDir, path)));
+                // TODO(dimo): We have to check that the behavior of normalize(join(...)) below
+                // matches the behavior described in this section https://docs.soliditylang.org/en/v0.8.8/path-resolution.html#relative-imports
+                // and that it works for all compiler versions
+                queue.push(normalizeImportPath(join(importingFileDir, path)));
             } else {
                 queue.push(applyRemappings(remappings, path));
             }

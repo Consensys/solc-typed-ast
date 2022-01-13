@@ -23,6 +23,7 @@ export const options = [
     "stdin",
     "mode",
     "compiler-version",
+    "compiler-kind",
     "path-remapping",
     "compiler-settings",
     "raw",

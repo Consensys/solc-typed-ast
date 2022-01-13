@@ -89,8 +89,7 @@ export enum TimeUnit {
     Years = "years"
 }
 
-export enum CompilationFrontend {
-    Default = "default",
+export enum CompilerKind {
     WASM = "wasm",
     Native = "native"
 }
@@ -121,4 +120,4 @@ export const PossibleEtherUnits = new Set<string>(Object.values(EtherUnit));
 
 export const PossibleTimeUnits = new Set<string>(Object.values(TimeUnit));
 
-export const PossibleCompilationFrontends = new Set<string>(Object.values(CompilationFrontend));
+export const PossibleCompilerKinds = new Set<string>(Object.values(CompilerKind));

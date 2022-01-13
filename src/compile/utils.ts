@@ -1,6 +1,6 @@
 import fse from "fs-extra";
 import { getCompilerPrefixForOs } from "./frontends";
-import { CompilationFrontend } from "../ast";
+import { CompilerKind } from "../ast";
 import {
     CompilerVersionSelectionStrategy,
     LatestVersionInEachSeriesStrategy,
@@ -11,7 +11,6 @@ import { CompilationOutput } from "./constants";
 import { WasmCompiler } from "./frontends/wasm";
 import { Remapping } from "./import_resolver";
 import { getNativeCompilerForVersion } from "./frontends/native_compilers";
-import { isExact } from "./version";
 import { findAllFiles, normalizeImportPath } from "./inference";
 import { createCompilerInput } from "./input";
 import { FileSystemResolver } from ".";
@@ -45,16 +44,6 @@ export class CompileFailedError extends Error {
         );
         this.message = `Compiler Errors: ${underlyingErrorsStr}`;
     }
-}
-
-export function getWasmCompilerForVersion(version: string): any {
-    if (isExact(version)) {
-        return require("solc-" + version);
-    }
-
-    throw new Error(
-        "Version string must contain exact SemVer-formatted version without any operators"
-    );
 }
 
 function consistentlyContainsOneOf(
@@ -119,10 +108,10 @@ export async function compile(
     raw_remappings: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
-    frontend = CompilationFrontend.Default
+    frontend?: CompilerKind
 ): Promise<any> {
-    if (frontend === CompilationFrontend.Default) {
-        frontend = CompilationFrontend.Native;
+    if (frontend === undefined) {
+        frontend = CompilerKind.Native;
     }
 
     const remappings = parsePathRemapping(raw_remappings);
@@ -142,11 +131,11 @@ export async function compile(
         compilerSettings
     );
 
-    if (frontend === CompilationFrontend.WASM) {
+    if (frontend === CompilerKind.WASM) {
         const compiler = WasmCompiler.getWasmCompilerForVersion(version);
 
         return compiler.compile(input);
-    } else if (frontend === CompilationFrontend.Native) {
+    } else if (frontend === CompilerKind.Native) {
         const compiler = await getNativeCompilerForVersion(version);
 
         if (compiler === undefined) {
@@ -195,7 +184,7 @@ export async function compileSourceString(
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
-    frontend = CompilationFrontend.Default
+    frontend?: CompilerKind
 ): Promise<CompileResult> {
     const compilerVersionStrategy = getCompilerVersionStrategy([sourceCode], version);
     const files = new Map([[normalizeImportPath(fileName), sourceCode]]);
@@ -228,7 +217,7 @@ export async function compileSol(
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
-    frontend = CompilationFrontend.Default
+    frontend?: CompilerKind
 ): Promise<CompileResult> {
     const source = fse.readFileSync(fileName, { encoding: "utf-8" });
 
@@ -250,7 +239,7 @@ export async function compileJsonData(
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
-    frontend = CompilationFrontend.Default
+    frontend?: CompilerKind
 ): Promise<CompileResult> {
     const files = new Map<string, string>();
 
@@ -315,7 +304,7 @@ export async function compileJson(
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
-    frontend = CompilationFrontend.Default
+    frontend?: CompilerKind
 ): Promise<CompileResult> {
     const data = fse.readJSONSync(fileName);
 

@@ -1,8 +1,8 @@
 import { fail } from "assert";
 import expect from "expect";
 import fse from "fs-extra";
-import { join } from "path";
 import { parseTopLevelDefinitions } from "../../../../src/compile/inference/top_level_definitions_parser";
+import { searchRecursive } from "../../../utils";
 
 const good_samples: Array<[string, string, any]> = [
     // Imports
@@ -510,15 +510,11 @@ describe("Top-level definitions parser unit tests", () => {
 });
 
 describe("Top-level definitions parser samples test", () => {
-    for (const fileName of fse.readdirSync("test/samples/solidity")) {
-        if (!fileName.endsWith(".sol")) {
-            continue;
-        }
-
+    for (const fileName of searchRecursive("test/samples/solidity", (name) =>
+        name.endsWith(".sol")
+    )) {
         it(`Parse sample ${fileName}`, () => {
-            const contents = fse
-                .readFileSync(join("test", "samples", "solidity", fileName))
-                .toString();
+            const contents = fse.readFileSync(fileName).toString();
             let tlds;
 
             try {

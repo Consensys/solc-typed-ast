@@ -1,5 +1,5 @@
 import { lt } from "semver";
-import { CompilationFrontend } from "../ast/constants";
+import { CompilerKind } from "../ast/constants";
 import { CompilationOutput } from "./constants";
 
 export interface PartialSolcInput {
@@ -33,7 +33,7 @@ function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, se
 export function createCompilerInput(
     files: Map<string, string>,
     version: string,
-    frontend: CompilationFrontend,
+    frontend: CompilerKind,
     output: CompilationOutput[],
     remappings: string[],
     compilerSettings: any
@@ -69,7 +69,7 @@ export function createCompilerInput(
     };
 
     partialInp.sources = {};
-    if (lt(version, "0.5.0") && frontend === CompilationFrontend.WASM) {
+    if (lt(version, "0.5.0") && frontend === CompilerKind.WASM) {
         for (const [fileName, content] of files.entries()) {
             partialInp.sources[fileName] = content;
         }
