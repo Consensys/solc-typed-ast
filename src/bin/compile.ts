@@ -262,7 +262,6 @@ OPTIONS:
                 process.exit(1);
             }
 
-            console.error(`Here with ${e}`);
             throw e;
         }
 

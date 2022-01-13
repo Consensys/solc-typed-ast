@@ -12,7 +12,7 @@ import { WasmCompiler } from "./frontends/wasm";
 import { Remapping } from "./import_resolver";
 import { getNativeCompilerForVersion } from "./frontends/native_compilers";
 import { isExact } from "./version";
-import { findAllFiles } from "./inference";
+import { findAllFiles, normalizeImportPath } from "./inference";
 import { createCompilerInput } from "./input";
 import { FileSystemResolver } from ".";
 
@@ -40,6 +40,10 @@ export class CompileFailedError extends Error {
         super();
 
         this.failures = entries;
+        const underlyingErrorsStr = entries.map(
+            (entry) => `==== ${entry.compilerVersion} ===:\n ${entry.errors.join("\n")}\n`
+        );
+        this.message = `Compiler Errors: ${underlyingErrorsStr}`;
     }
 }
 
@@ -79,34 +83,12 @@ function fillFilesFromSources(
     }
 }
 
-function detectMainFileName(data: any): string | undefined {
-    if (data.sources) {
-        const sources = data.sources;
-
-        if (data.mainSource && data.mainSource in sources) {
-            return data.mainSource;
-        }
-
-        const main = Object.values(sources).find((section: any) => section.main);
-
-        if (main) {
-            for (const key in sources) {
-                if (sources[key] === main) {
-                    return key;
-                }
-            }
-        }
-    }
-
-    return undefined;
-}
-
 function getCompilerVersionStrategy(
-    sourceCode: string,
+    sources: string[],
     versionOrStrategy: string | CompilerVersionSelectionStrategy
 ): CompilerVersionSelectionStrategy {
     if (versionOrStrategy === "auto") {
-        return new VersionDetectionStrategy(sourceCode, new LatestVersionInEachSeriesStrategy());
+        return new VersionDetectionStrategy(sources, new LatestVersionInEachSeriesStrategy());
     }
 
     if (typeof versionOrStrategy === "string") {
@@ -132,8 +114,7 @@ export function parsePathRemapping(remapping: string[]): Remapping[] {
 }
 
 export async function compile(
-    fileName: string,
-    content: string,
+    files: Map<string, string>,
     version: string,
     raw_remappings: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
@@ -144,7 +125,6 @@ export async function compile(
         frontend = CompilationFrontend.Native;
     }
 
-    const files = new Map<string, string>([[fileName, content]]);
     const remappings = parsePathRemapping(raw_remappings);
     // TODO (dimo): Add LocalNPMResolver below
     const additionalFiles = findAllFiles(files, remappings, [new FileSystemResolver()]);
@@ -152,7 +132,6 @@ export async function compile(
     for (const [name, cont] of additionalFiles) {
         files.set(name, cont);
     }
-    //console.error(`files keys: ${[...files.keys()]}`);
 
     const input = createCompilerInput(
         files,
@@ -162,8 +141,6 @@ export async function compile(
         raw_remappings,
         compilerSettings
     );
-
-    //console.error(`input.sources keys: ${[...Object.keys(input.sources)]}`);
 
     if (frontend === CompilationFrontend.WASM) {
         const compiler = WasmCompiler.getWasmCompilerForVersion(version);
@@ -220,14 +197,13 @@ export async function compileSourceString(
     compilerSettings?: any,
     frontend = CompilationFrontend.Default
 ): Promise<CompileResult> {
-    const compilerVersionStrategy = getCompilerVersionStrategy(sourceCode, version);
-    const files = new Map([[fileName, sourceCode]]);
+    const compilerVersionStrategy = getCompilerVersionStrategy([sourceCode], version);
+    const files = new Map([[normalizeImportPath(fileName), sourceCode]]);
     const failures: CompileFailure[] = [];
 
     for (const compilerVersion of compilerVersionStrategy.select()) {
         const data = await compile(
-            fileName,
-            sourceCode,
+            files,
             compilerVersion,
             remapping,
             compilationOutput,
@@ -243,9 +219,6 @@ export async function compileSourceString(
         failures.push({ compilerVersion, errors });
     }
 
-    for (const failure of failures) {
-        console.error(failure.compilerVersion, ": ", JSON.stringify(failure.errors));
-    }
     throw new CompileFailedError(failures);
 }
 
@@ -301,25 +274,17 @@ export async function compileJsonData(
     }
 
     if (consistentlyContainsOneOf(sources, "source")) {
-        const mainFileName = detectMainFileName(data);
-        const sourceCode: string | undefined = mainFileName
-            ? sources[mainFileName].source
-            : undefined;
-
-        if (!(mainFileName && sourceCode)) {
-            throw new Error("Unable to detect main source to compile");
+        for (const [fileName, fileData] of Object.entries<{ source: string }>(sources)) {
+            files.set(fileName, fileData.source);
         }
 
-        const compilerVersionStrategy = getCompilerVersionStrategy(sourceCode, version);
-
-        files.set(mainFileName, sourceCode);
+        const compilerVersionStrategy = getCompilerVersionStrategy([...files.values()], version);
 
         const failures: CompileFailure[] = [];
 
         for (const compilerVersion of compilerVersionStrategy.select()) {
             const compileData = await compile(
-                mainFileName,
-                sourceCode,
+                files,
                 compilerVersion,
                 remapping,
                 compilationOutput,

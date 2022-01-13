@@ -93,16 +93,7 @@ describe("Compile general utils", () => {
                 undefined,
                 /^Unable to process data structure: neither consistent AST or code values are present$/
             ],
-            [
-                "test/samples/json/code_no_main.json",
-                undefined,
-                /^Unable to detect main source to compile$/
-            ],
-            [
-                "test/samples/json/code_main_source_invalid.json",
-                undefined,
-                /^Unable to detect main source to compile$/
-            ],
+            ["test/samples/json/code_no_main.json", LatestCompilerVersion, undefined],
             ["test/samples/json/code_and_ast.json", undefined, undefined],
             ["test/samples/json/code_main_source.json", LatestCompilerVersion, undefined],
             ["test/samples/json/code_main_in_sources.json", LatestCompilerVersion, undefined]
