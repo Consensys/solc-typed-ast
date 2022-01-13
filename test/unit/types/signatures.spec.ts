@@ -1,5 +1,5 @@
 import expect from "expect";
-import { gte, lt } from "semver";
+import { lt } from "semver";
 import {
     compileSol,
     detectCompileErrors,
@@ -173,23 +173,11 @@ describe("Check canonical signatures are generated correctly", () => {
                 }
             };
 
-            // Standrad Json is laid out differently between 0.4.x and 0.5.x
-            if (gte(compilerVersion, "0.5.0")) {
-                for (const fileName in data.contracts) {
-                    for (const contractName in data.contracts[fileName]) {
-                        const contractData = data.contracts[fileName][contractName];
-                        const functionHashes = contractData.evm.methodIdentifiers;
-                        const abiData = contractData.abi;
-
-                        runTestsHelper(contractName, functionHashes, abiData);
-                    }
-                }
-            } else {
-                for (const fileAndContractName of Object.keys(data.contracts)) {
-                    const contractName = fileAndContractName.split(":")[1];
-                    const contractData = data.contracts[fileAndContractName];
-                    const functionHashes = contractData.functionHashes;
-                    const abiData = JSON.parse(contractData.interface);
+            for (const fileName in data.contracts) {
+                for (const contractName in data.contracts[fileName]) {
+                    const contractData = data.contracts[fileName][contractName];
+                    const functionHashes = contractData.evm.methodIdentifiers;
+                    const abiData = contractData.abi;
 
                     runTestsHelper(contractName, functionHashes, abiData);
                 }

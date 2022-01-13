@@ -2159,7 +2159,7 @@ SourceUnit #641
                                         type: "Identifier"
                                         typeString: "function (string memory) pure"
                                         name: "revert"
-                                        referencedDeclaration: -1
+                                        referencedDeclaration: -19
                                         context: ASTContext #1000
                                         parent: FunctionCall #430
                                         <getter> vReferencedDeclaration: undefined
@@ -2423,7 +2423,7 @@ SourceUnit #641
                                                 type: "Identifier"
                                                 typeString: "function (string memory) pure"
                                                 name: "revert"
-                                                referencedDeclaration: -1
+                                                referencedDeclaration: -19
                                                 context: ASTContext #1000
                                                 parent: FunctionCall #442
                                                 <getter> vReferencedDeclaration: undefined
@@ -2592,7 +2592,7 @@ SourceUnit #641
                                                     type: "Identifier"
                                                     typeString: "function (string memory) pure"
                                                     name: "revert"
-                                                    referencedDeclaration: -1
+                                                    referencedDeclaration: -19
                                                     context: ASTContext #1000
                                                     parent: FunctionCall #450
                                                     <getter> vReferencedDeclaration: undefined
@@ -2705,7 +2705,7 @@ SourceUnit #641
                                         type: "Identifier"
                                         typeString: "function (string memory) pure"
                                         name: "revert"
-                                        referencedDeclaration: -1
+                                        referencedDeclaration: -19
                                         context: ASTContext #1000
                                         parent: FunctionCall #462
                                         <getter> vReferencedDeclaration: undefined
@@ -5913,7 +5913,7 @@ SourceUnit #641
                             type: "Identifier"
                             typeString: "block"
                             name: "block"
-                            referencedDeclaration: -1
+                            referencedDeclaration: -4
                             context: ASTContext #1000
                             parent: MemberAccess #629
                             <getter> vReferencedDeclaration: undefined

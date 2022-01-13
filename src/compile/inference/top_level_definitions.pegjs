@@ -1,5 +1,5 @@
 SourceUnit =
-    tlds: (__ t: TopLevelDefinition __  { return t; })* {
+    __ tlds: (t: TopLevelDefinition __  { return t; })* {
         // Dummy uses to silence unused function TSC errors in auto-generated code
         expected;
         error;
@@ -15,6 +15,7 @@ TopLevelDefinition
     / EnumDef
     / StructDef
     / UserValueTypeDef
+    / ErrorDef
 
 
 // ==== Pragma
@@ -91,9 +92,11 @@ FreeFunction = FUNCTION __ name: Identifier __ args: FreeFunArgs __ mutability: 
 
 // ==== Contract definitions
 
+IdentifierPath =
+    head: Identifier tail: ("." Identifier)* { return text(); }
 BaseArgs = LPAREN __ ParenSoup __ RPAREN
 BaseClassList =
-    head: Identifier __ BaseArgs? tail: (__ COMMA __ Identifier __ BaseArgs?)* { return text(); }
+    head: IdentifierPath __ BaseArgs? tail: (__ COMMA __ IdentifierPath __ BaseArgs?)* { return text(); }
 
 ContractBody = LBRACE __ BraceSoup __ RBRACE { return text(); }
 ContractDefinition = abstract: (ABSTRACT __)? kind: (CONTRACT / LIBRARY / INTERFACE) __ name: Identifier bases: (__ IS __ BaseClassList)? __ body: ContractBody {
@@ -143,6 +146,18 @@ UserValueTypeDef = TYPE __ name: Identifier __ IS __ value_type: NonSemicolonSou
     } as TLUserValueType
 }
 
+// ==== Error
+
+ErrorArgs = LPAREN __ ParenSoup __ RPAREN { return text(); }
+ErrorDef = ERROR __ name: Identifier __ args: ErrorArgs __ SEMICOLON {
+    return {
+        kind: TopLevelNodeKind.Error,
+        location: location(),
+        name,
+        args 
+    } as TLErrorDefinition;
+}
+
 
 // ==== Soups - helper rules for matching semi-structured text with comments and strings inside,
 // that still try to account for either matching () or matching {}, or for an ending semicolon.
@@ -179,19 +194,12 @@ PrimitiveWhiteSpace =
     / "\uFEFF"
     / Zs
 
-WhiteSpace "whitespace" =
-    PrimitiveWhiteSpace
-    / LineTerminator PrimitiveWhiteSpace* ("*" / "///")
-
 // Separator, Space
 Zs =
     [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
 
 LineTerminator =
     [\n\r\u2028\u2029]
-
-NonLineTerminator =
-    [^\n\r\u2028\u2029]
 
 LineTerminatorSequence =
     "\n"
@@ -201,12 +209,15 @@ LineTerminatorSequence =
     / "\u2029"
 
 __ =
-    (WhiteSpace / LineTerminator / Comment)*
+    (PrimitiveWhiteSpace / LineTerminator / Comment)*
 
 // ==== Comments
 
+NonLineTerminator =
+    [^\n\r\u2028\u2029]
+
 EndOfLineComment = 
-    "//" NonLineTerminator* { return text() }
+    "//" "/"* NonLineTerminator*  { return text() }
 
 // This is hacky but it works. TODO: find a simpler expression thats more obviously correct.
 EnclosedComment = "/*" ([^*]+ / ("*"+ [^/*]))* "*"+ "/" { return text(); }
@@ -240,6 +251,7 @@ IS = "is"
 TYPE = "type"
 RETURNS = "returns"
 PRAGMA = "pragma"
+ERROR = "error"
 
 
 // ==== String literals

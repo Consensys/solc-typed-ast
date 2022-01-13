@@ -94,14 +94,16 @@ class NativeCompiler extends Compiler {
     }
 }
 
+// TODO: (dimo): This is causing test failures
+// TODO: (pavel): We need a more general solution for picking CACHE_DIR
+// TODO: The location of the CACHE_DIR should be documented
+// TODO: The locaiton of the CACHE_DIR should be settable by the user
 const CACHE_DIR = "./.native_compilers_cache/";
 const BINARIES_URL = "https://binaries.soliditylang.org";
 
-export async function httpsGetSync(url: string): Promise<Buffer> {
-    //console.error(`GET ${url}`);
-    const reqPromise = new Promise<Buffer>((resolve, reject) => {
+export async function httpsGet(url: string): Promise<Buffer> {
+    return new Promise<Buffer>((resolve, reject) => {
         const fullURL = url;
-        //console.error(`Full url: ${fullURL}`);
         https.get(fullURL, (res: IncomingMessage) => {
             const chunks: Buffer[] = [];
 
@@ -116,19 +118,16 @@ export async function httpsGetSync(url: string): Promise<Buffer> {
             res.on("error", (e) => reject(e));
         });
     });
-
-    return await reqPromise;
 }
 
 async function getCompilerMDForPlatform(prefix: string): Promise<CompilerPlatformMetadata> {
     const cachedListPath = path.join(CACHE_DIR, prefix, "list.json");
 
     if (fse.existsSync(cachedListPath)) {
-        //console.error(`Hit cache for list ${prefix}`);
         return fse.readJSONSync(cachedListPath) as CompilerPlatformMetadata;
     }
 
-    const rawMD = await (await httpsGetSync(`${BINARIES_URL}/${prefix}/list.json`)).toString();
+    const rawMD = await (await httpsGet(`${BINARIES_URL}/${prefix}/list.json`)).toString();
     const parsedMD = JSON.parse(rawMD) as CompilerPlatformMetadata;
 
     fse.ensureDirSync(path.join(CACHE_DIR, prefix));
@@ -155,10 +154,8 @@ export async function getNativeCompilerForVersion(
         const compilerLocalPath = path.join(CACHE_DIR, prefix, compilerFileName);
 
         if (!fse.existsSync(compilerLocalPath)) {
-            const compiler = await httpsGetSync(`${BINARIES_URL}/${prefix}/${compilerFileName}`);
+            const compiler = await httpsGet(`${BINARIES_URL}/${prefix}/${compilerFileName}`);
             fse.writeFileSync(compilerLocalPath, compiler, { mode: 0o555 });
-        } else {
-            //console.error(`Hit cache for compiler ${compilerFileName}`);
         }
 
         return new NativeCompiler(version, compilerLocalPath);

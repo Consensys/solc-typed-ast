@@ -27,9 +27,10 @@ import {
     SourceUnit,
     StateVariableVisibility,
     VariableDeclaration,
-    XPath
+    XPath,
+    CompilerKind,
+    PossibleCompilerKinds
 } from "..";
-import { CompilationFrontend, PossibleCompilationFrontends } from "../ast";
 
 const modes = ["auto", "sol", "json"];
 
@@ -51,13 +52,13 @@ const cli = {
         "path-remapping",
         "xpath",
         "compiler-settings",
-        "frontend"
+        "compiler-kind"
     ],
     default: {
         depth: Number.MAX_SAFE_INTEGER,
         mode: modes[0],
         "compiler-version": "auto",
-        frontend: "default"
+        "compiler-kind": "native"
     }
 };
 
@@ -99,6 +100,7 @@ OPTIONS:
                                 - ${LatestCompilerVersion} (exact SemVer version specifier)
                                 - auto (try to detect suitable compiler version)
                             Default value: ${cli.default["compiler-version"]}
+    --compiler-kind         What type of Solidity compiler to user. Currently supported values are 'wasm' and 'native'
     --path-remapping        Path remapping input for Solc.
     --compiler-settings     Additional settings passed to the solc compiler in the form of a
                             JSON string (e.g. '{"optimizer": {"enabled": true, "runs": 200}}').
@@ -118,16 +120,15 @@ OPTIONS:
     } else {
         const stdin: boolean = args.stdin;
         const mode: string = args.mode;
+        const compilerKind = args["compiler-kind"] as CompilerKind;
 
-        if (!PossibleCompilationFrontends.has(args.frontend)) {
+        if (!PossibleCompilerKinds.has(compilerKind)) {
             throw new Error(
-                `Invalid frontend "${args.frontend}". Possible values: ${[
-                    ...PossibleCompilationFrontends.values()
+                `Invalid compiler kind "${compilerKind}". Possible values: ${[
+                    ...PossibleCompilerKinds.values()
                 ].join(", ")}.`
             );
         }
-
-        const frontend = args.frontend as CompilationFrontend;
 
         if (!modes.includes(mode)) {
             throw new Error(`Invalid mode "${mode}". Possible values: ${modes.join(", ")}.`);
@@ -184,7 +185,7 @@ OPTIONS:
                               pathRemapping,
                               compilationOutput,
                               compilerSettings,
-                              frontend
+                              compilerKind
                           )
                         : await compileSourceString(
                               fileName,
@@ -193,7 +194,7 @@ OPTIONS:
                               pathRemapping,
                               compilationOutput,
                               compilerSettings,
-                              frontend
+                              compilerKind
                           );
             } else {
                 fileName = path.resolve(process.cwd(), args._[0]);
@@ -208,7 +209,7 @@ OPTIONS:
                             pathRemapping,
                             compilationOutput,
                             compilerSettings,
-                            frontend
+                            compilerKind
                         );
                     } else if (iFileName.endsWith(".json")) {
                         result = await compileJson(
@@ -217,7 +218,7 @@ OPTIONS:
                             pathRemapping,
                             compilationOutput,
                             compilerSettings,
-                            frontend
+                            compilerKind
                         );
                     } else {
                         throw new Error(
@@ -262,7 +263,6 @@ OPTIONS:
                 process.exit(1);
             }
 
-            console.error(`Here with ${e}`);
             throw e;
         }
 
