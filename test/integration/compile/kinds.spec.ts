@@ -71,6 +71,7 @@ function normalizeOutput(output: CompileResult | CompileFailedError): any {
      */
     walkObjects(res.sources, (n) => {
         const refDecl = n["referencedDeclaration"];
+
         if (refDecl !== undefined && typeof refDecl === "number" && refDecl < 0) {
             n["referencedDeclaration"] += 4294967296;
         }
@@ -113,10 +114,11 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
     )) {
         it(`Sample ${fileName}`, async () => {
             const source = fse.readFileSync(fileName, { encoding: "utf8" });
-            const versionSelectionStrat = new VersionDetectionStrategy(
+            const versionStrategy = new VersionDetectionStrategy(
                 [source],
                 new LatestVersionInEachSeriesStrategy()
             );
+
             const outputs = [CompilationOutput.ALL];
             const settings = { optimizer: { enabled: false } };
 
@@ -126,7 +128,7 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
             try {
                 wasmResult = await compileSol(
                     fileName,
-                    versionSelectionStrat,
+                    versionStrategy,
                     [],
                     outputs,
                     settings,
@@ -143,7 +145,7 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
             try {
                 nativeResult = await compileSol(
                     fileName,
-                    versionSelectionStrat,
+                    versionStrategy,
                     [],
                     outputs,
                     settings,

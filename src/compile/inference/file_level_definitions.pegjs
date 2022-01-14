@@ -1,10 +1,10 @@
 SourceUnit =
-    __ tlds: (t: FileLevelDefinition __  { return t; })* {
+    __ flds: (t: FileLevelDefinition __  { return t; })* {
         // Dummy uses to silence unused function TSC errors in auto-generated code
         expected;
         error;
 
-        return tlds as FileLevelNode<any>[];
+        return flds as FileLevelNode<any>[];
     }
 
 FileLevelDefinition

@@ -103,9 +103,10 @@ describe("Compile general utils", () => {
         for (const [fileName, version, result] of cases) {
             if (result instanceof RegExp) {
                 it(`Throws an error for ${JSON.stringify(fileName)}`, async () => {
+                    expect.assertions(1);
+
                     try {
                         await compileJson(fileName, "auto", []);
-                        expect(false).toBe(true);
                     } catch (e: any) {
                         expect(e.message).toMatch(result);
                     }
