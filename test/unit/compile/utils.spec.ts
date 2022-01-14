@@ -3,6 +3,7 @@ import fse from "fs-extra";
 import {
     compileJson,
     detectCompileErrors,
+    getWasmCompilerForVersion,
     LatestAndFirstVersionInEachSeriesStrategy,
     LatestCompilerVersion,
     parsePathRemapping,
@@ -12,20 +13,18 @@ import {
 describe("Compile general utils", () => {
     describe("getWasmCompilerForVersion()", () => {
         it("Non-exact version of compiler triggers an error", () => {
-            expect(() => WasmCompiler.getWasmCompilerForVersion("^0.5.0")).toThrow();
+            expect(() => getWasmCompilerForVersion("^0.5.0")).toThrow();
         });
 
         it("Unsupported version of compiler triggers an error", () => {
-            expect(() => WasmCompiler.getWasmCompilerForVersion("0.4.10").module).toThrow();
+            expect(() => getWasmCompilerForVersion("0.4.10").module).toThrow();
         });
 
         const strategy = new LatestAndFirstVersionInEachSeriesStrategy();
 
         for (const version of strategy.select()) {
             it(`Compiler ${version} is accessible`, () => {
-                expect(WasmCompiler.getWasmCompilerForVersion(version)).toBeInstanceOf(
-                    WasmCompiler
-                );
+                expect(getWasmCompilerForVersion(version)).toBeInstanceOf(WasmCompiler);
             });
         }
     });
