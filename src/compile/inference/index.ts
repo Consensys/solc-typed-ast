@@ -1,2 +1,2 @@
 export * from "./imports";
-export { parseTopLevelDefinitions } from "./top_level_definitions_parser";
+export { parseFileLevelDefinitions } from "./top_level_definitions_parser";

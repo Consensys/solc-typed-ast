@@ -26,5 +26,5 @@
     },
 
     "include": ["src/**/*"],
-    "exclude": ["src/compile/inference/top_level_definitions_parser_header.ts"]
+    "exclude": []
 }

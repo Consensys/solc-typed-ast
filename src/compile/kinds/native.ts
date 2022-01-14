@@ -1,19 +1,23 @@
+import { spawn } from "child_process";
+import fse from "fs-extra";
+import { IncomingMessage } from "http";
+import https from "https";
 import os from "os";
 import path from "path";
-import fse from "fs-extra";
-import https from "https";
-import { IncomingMessage } from "http";
-import { Compiler } from "./base";
-import { spawn } from "child_process";
+import { SolcInput } from "../input";
+import { Compiler } from "./compiler";
 
 export function getCompilerPrefixForOs(): string | undefined {
     const arch = os.arch();
-    const type = os.type();
 
-    // Only 64 bit native compilers built
+    /**
+     * Only 64 bit native compilers built
+     */
     if (arch !== "x64" && arch !== "ia64") {
         return undefined;
     }
+
+    const type = os.type();
 
     if (type === "Linux") {
         return "linux-amd64";
@@ -49,48 +53,47 @@ class NativeCompiler extends Compiler {
         super(version);
     }
 
-    async compile(inputJSON: any): Promise<any> {
+    async compile(inputJson: SolcInput): Promise<any> {
         const child = spawn(this.path, ["--standard-json"], {});
-        const resultPromise = function (
-            onSuccess: (output: any) => void,
-            onError: (e: any) => void
-        ) {
-            child.stdin.write(JSON.stringify(inputJSON), "utf-8");
+
+        return new Promise((resolve, reject) => {
+            child.stdin.write(JSON.stringify(inputJson), "utf-8");
             child.stdin.end();
+
             let stdout = "";
             let stderr = "";
 
             child.stdout.on("data", (data) => {
                 stdout += data;
             });
+
             child.stderr.on("data", (data) => {
                 stderr += data;
             });
 
             child.on("close", (code) => {
                 if (code !== 0) {
-                    onError(`Compiler exited with code ${code}. Stderr: ${stderr}`);
+                    reject(`Compiler exited with code ${code}, stderr: ${stderr}`);
                     return;
                 }
 
                 if (stderr !== "") {
-                    onError(`Compiler exited with non-empty stderr: ${stderr}`);
+                    reject(`Compiler exited with non-empty stderr: ${stderr}`);
                     return;
                 }
 
-                let outJSON: any;
+                let outJson: any;
+
                 try {
-                    outJSON = JSON.parse(stdout);
+                    outJson = JSON.parse(stdout);
                 } catch (e) {
-                    onError(e);
+                    reject(e);
                     return;
                 }
 
-                onSuccess(outJSON);
+                resolve(outJson);
             });
-        };
-
-        return await new Promise(resultPromise);
+        });
     }
 }
 
@@ -103,20 +106,21 @@ const BINARIES_URL = "https://binaries.soliditylang.org";
 
 export async function httpsGet(url: string): Promise<Buffer> {
     return new Promise<Buffer>((resolve, reject) => {
-        const fullURL = url;
-        https.get(fullURL, (res: IncomingMessage) => {
+        const callback = (msg: IncomingMessage) => {
             const chunks: Buffer[] = [];
 
-            res.on("data", (fragment) => {
+            msg.on("data", (fragment) => {
                 chunks.push(fragment);
             });
 
-            res.on("end", () => {
+            msg.on("end", () => {
                 resolve(Buffer.concat(chunks));
             });
 
-            res.on("error", (e) => reject(e));
-        });
+            msg.on("error", (e) => reject(e));
+        };
+
+        https.get(url, callback);
     });
 }
 
@@ -127,7 +131,7 @@ async function getCompilerMDForPlatform(prefix: string): Promise<CompilerPlatfor
         return fse.readJSONSync(cachedListPath) as CompilerPlatformMetadata;
     }
 
-    const rawMD = await (await httpsGet(`${BINARIES_URL}/${prefix}/list.json`)).toString();
+    const rawMD = await httpsGet(`${BINARIES_URL}/${prefix}/list.json`).toString();
     const parsedMD = JSON.parse(rawMD) as CompilerPlatformMetadata;
 
     fse.ensureDirSync(path.join(CACHE_DIR, prefix));
@@ -149,12 +153,14 @@ export async function getNativeCompilerForVersion(
 
     if (version in md.releases) {
         const compilerFileName = md.releases[version];
+
         fse.ensureDirSync(path.join(CACHE_DIR, prefix));
 
         const compilerLocalPath = path.join(CACHE_DIR, prefix, compilerFileName);
 
         if (!fse.existsSync(compilerLocalPath)) {
             const compiler = await httpsGet(`${BINARIES_URL}/${prefix}/${compilerFileName}`);
+
             fse.writeFileSync(compilerLocalPath, compiler, { mode: 0o555 });
         }
 

@@ -1,12 +1,13 @@
 SourceUnit =
-    __ tlds: (t: TopLevelDefinition __  { return t; })* {
+    __ tlds: (t: FileLevelDefinition __  { return t; })* {
         // Dummy uses to silence unused function TSC errors in auto-generated code
         expected;
         error;
-        return tlds as TopLevelNode<any>[];
+
+        return tlds as FileLevelNode<any>[];
     }
 
-TopLevelDefinition
+FileLevelDefinition
     = Pragma
     / ImportDirective
     / Constant
@@ -23,7 +24,7 @@ TopLevelDefinition
 PragmaValue = NonSemicolonSoup { return text().trim(); }
 Pragma =
     PRAGMA __ name: Identifier __ value: PragmaValue __ ";" {
-        return {kind: TopLevelNodeKind.Pragma, location: location(), name, value} as TLPragma;
+        return { kind: FileLevelNodeKind.Pragma, location: location(), name, value } as FLPragma;
     }
 
 // ==== Import Directives
@@ -48,16 +49,16 @@ SymbolList =
 
 ImportDirective =
     IMPORT __ path: StringLiteral __ SEMICOLON {
-        return {kind: TopLevelNodeKind.Import, location: location(), path, unitAlias: null, symbols: [] } as TLImportDirective;
+        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias: null, symbols: [] } as FLImportDirective;
     }
     / IMPORT __ path: StringLiteral __ AS __ unitAlias: Identifier __ SEMICOLON {
-        return {kind: TopLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] } as TLImportDirective;
+        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] } as FLImportDirective;
     }
     / IMPORT __ ASTERISK __ AS __ unitAlias: Identifier __ FROM __ path: StringLiteral __ SEMICOLON {
-        return {kind: TopLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] } as TLImportDirective;
+        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] } as FLImportDirective;
     }
     / IMPORT __ LBRACE __ symbols: SymbolList __ RBRACE __ FROM __ path: StringLiteral __ SEMICOLON {
-        return {kind: TopLevelNodeKind.Import, location: location(), symbols, path, unitAlias: null } as TLImportDirective;
+        return { kind: FileLevelNodeKind.Import, location: location(), symbols, path, unitAlias: null } as FLImportDirective;
     }
 
 // ==== Global Constants
@@ -67,7 +68,7 @@ ConstantType
     = Identifier (__ LBRACKET Number? RBRACKET)*  { return text(); }
 
 Constant = ConstantType __ CONSTANT  __ name: Identifier __ EQUAL __ value: NonSemicolonSoup __  SEMICOLON {
-    return {kind: TopLevelNodeKind.Constant, location: location(), name, value } as TLConstant;
+    return { kind: FileLevelNodeKind.Constant, location: location(), name, value } as FLConstant;
 }
 
 // ==== Free Functions
@@ -80,35 +81,38 @@ FreeFunReturns = RETURNS __ FreeFunArgs { return text(); }
 
 FreeFunction = FUNCTION __ name: Identifier __ args: FreeFunArgs __ mutability: FreeFunMut returns: FreeFunReturns? __ body: FreeFunBody {
     return {
-        kind: TopLevelNodeKind.Function,
+        kind: FileLevelNodeKind.Function,
         location: location(),
         name,
         args ,
         mutability: mutability.trim(),
         returns,
         body
-    } as TLFreeFunction;
+    } as FLFreeFunction;
 }
 
 // ==== Contract definitions
 
 IdentifierPath =
     head: Identifier tail: ("." Identifier)* { return text(); }
+
 BaseArgs = LPAREN __ ParenSoup __ RPAREN
+
 BaseClassList =
     head: IdentifierPath __ BaseArgs? tail: (__ COMMA __ IdentifierPath __ BaseArgs?)* { return text(); }
 
 ContractBody = LBRACE __ BraceSoup __ RBRACE { return text(); }
+
 ContractDefinition = abstract: (ABSTRACT __)? kind: (CONTRACT / LIBRARY / INTERFACE) __ name: Identifier bases: (__ IS __ BaseClassList)? __ body: ContractBody {
     return { 
         abstract: abstract !== null,
-        kind: TopLevelNodeKind.Contract,
+        kind: FileLevelNodeKind.Contract,
         location: location(),
-        contract_kind: kind,
+        contractKind: kind,
         name,
         bases: bases !== null ? bases[3].trim() : null,
         body
-    } as TLContractDefinition
+    } as FLContractDefinition
 }
 
 // ==== Struct definitions
@@ -116,11 +120,11 @@ ContractDefinition = abstract: (ABSTRACT __)? kind: (CONTRACT / LIBRARY / INTERF
 StructBody = LBRACE __ BraceSoup __ RBRACE { return text(); }
 StructDef = STRUCT __ name: Identifier __ body: StructBody {
     return {
-        kind: TopLevelNodeKind.Struct,
+        kind: FileLevelNodeKind.Struct,
         location: location(),
         name,
         body
-    } as TLStructDefinition
+    } as FLStructDefinition
 }
 
 // ==== Enum definitions
@@ -128,22 +132,22 @@ StructDef = STRUCT __ name: Identifier __ body: StructBody {
 EnumDefBody = LBRACE __ BraceSoup __ RBRACE { return text(); }
 EnumDef = ENUM __ name: Identifier __ body: EnumDefBody {
     return {
-        kind: TopLevelNodeKind.Enum,
+        kind: FileLevelNodeKind.Enum,
         location: location(),
         name,
         body
-    } as TLEnumDefinition
+    } as FLEnumDefinition
 }
 
 // ==== User-defined value types
 
-UserValueTypeDef = TYPE __ name: Identifier __ IS __ value_type: NonSemicolonSoup __ SEMICOLON {
+UserValueTypeDef = TYPE __ name: Identifier __ IS __ valueType: NonSemicolonSoup __ SEMICOLON {
     return {
-        kind: TopLevelNodeKind.UserValueType,
+        kind: FileLevelNodeKind.UserValueType,
         location: location(),
         name,
-        value_type
-    } as TLUserValueType
+        valueType
+    } as FLUserValueType
 }
 
 // ==== Error
@@ -151,13 +155,12 @@ UserValueTypeDef = TYPE __ name: Identifier __ IS __ value_type: NonSemicolonSou
 ErrorArgs = LPAREN __ ParenSoup __ RPAREN { return text(); }
 ErrorDef = ERROR __ name: Identifier __ args: ErrorArgs __ SEMICOLON {
     return {
-        kind: TopLevelNodeKind.Error,
+        kind: FileLevelNodeKind.Error,
         location: location(),
         name,
         args 
-    } as TLErrorDefinition;
+    } as FLErrorDefinition;
 }
-
 
 // ==== Soups - helper rules for matching semi-structured text with comments and strings inside,
 // that still try to account for either matching () or matching {}, or for an ending semicolon.
@@ -253,7 +256,6 @@ RETURNS = "returns"
 PRAGMA = "pragma"
 ERROR = "error"
 
-
 // ==== String literals
 
 StringLiteral =
@@ -339,7 +341,6 @@ DecNumber =
 
 Number =
     value: (HexNumber / DecNumber)
-
 
 Identifier =
     id: ([a-zA-Z_][a-zA-Z0-9_]*) { return text(); }

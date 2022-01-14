@@ -1,5 +1,4 @@
-// Need the ts-nocheck to suppress the noUnusedLocals errors in the generated parser
-export enum TopLevelNodeKind {
+export enum FileLevelNodeKind {
     Pragma = "pragma",
     Import = "import",
     Constant = "constant",
@@ -11,14 +10,15 @@ export enum TopLevelNodeKind {
     Error = "error"
 }
 
-export type TopLevelNodeLocation = IFileRange;
+// @ts-ignore
+export type FileLevelNodeLocation = IFileRange;
 
-export interface TopLevelNode<T extends TopLevelNodeKind> {
+export interface FileLevelNode<T extends FileLevelNodeKind> {
     kind: T;
-    location: TopLevelNodeLocation;
+    location: FileLevelNodeLocation;
 }
 
-export interface TLPragma extends TopLevelNode<TopLevelNodeKind.Pragma> {
+export interface FLPragma extends FileLevelNode<FileLevelNodeKind.Pragma> {
     name: string;
     value: string;
 }
@@ -28,18 +28,18 @@ export interface SymbolDesc {
     alias: string | null;
 }
 
-export interface TLImportDirective extends TopLevelNode<TopLevelNodeKind.Import> {
+export interface FLImportDirective extends FileLevelNode<FileLevelNodeKind.Import> {
     path: string;
     symbols: SymbolDesc[];
     unitAlias: string | null;
 }
 
-export interface TLConstant extends TopLevelNode<TopLevelNodeKind.Constant> {
+export interface FLConstant extends FileLevelNode<FileLevelNodeKind.Constant> {
     name: string;
     value: string;
 }
 
-export interface TLFreeFunction extends TopLevelNode<TopLevelNodeKind.Function> {
+export interface FLFreeFunction extends FileLevelNode<FileLevelNodeKind.Function> {
     name: string;
     args: string;
     mutability: string;
@@ -47,34 +47,35 @@ export interface TLFreeFunction extends TopLevelNode<TopLevelNodeKind.Function> 
     body: string;
 }
 
-export interface TLContractDefinition extends TopLevelNode<TopLevelNodeKind.Contract> {
+export interface FLContractDefinition extends FileLevelNode<FileLevelNodeKind.Contract> {
     abstract: boolean;
-    contract_kind: "contract" | "library" | "interface";
+    contractKind: "contract" | "library" | "interface";
     name: string;
     bases: string | null;
     body: string;
 }
 
-export interface TLStructDefinition extends TopLevelNode<TopLevelNodeKind.Struct> {
+export interface FLStructDefinition extends FileLevelNode<FileLevelNodeKind.Struct> {
     name: string;
     body: string;
 }
 
-export interface TLEnumDefinition extends TopLevelNode<TopLevelNodeKind.Enum> {
+export interface FLEnumDefinition extends FileLevelNode<FileLevelNodeKind.Enum> {
     name: string;
     body: string;
 }
 
-export interface TLUserValueType extends TopLevelNode<TopLevelNodeKind.UserValueType> {
+export interface FLUserValueType extends FileLevelNode<FileLevelNodeKind.UserValueType> {
     name: string;
-    value_type: string;
+    valueType: string;
 }
 
-export interface TLErrorDefinition extends TopLevelNode<TopLevelNodeKind.Error> {
+export interface FLErrorDefinition extends FileLevelNode<FileLevelNodeKind.Error> {
     name: string;
     args: string;
 }
 
-export function parseTopLevelDefinitions(contents: string): Array<TopLevelNode<TopLevelNodeKind>> {
+export function parseFileLevelDefinitions(contents: string): Array<FileLevelNode<FileLevelNodeKind>> {
+    // @ts-ignore
     return parse(contents);
 }

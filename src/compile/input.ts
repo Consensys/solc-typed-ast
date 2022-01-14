@@ -1,6 +1,5 @@
 import { lt } from "semver";
-import { CompilerKind } from "../ast/constants";
-import { CompilationOutput } from "./constants";
+import { CompilationOutput, CompilerKind } from "./constants";
 
 export interface PartialSolcInput {
     language: "Solidity";
@@ -15,6 +14,8 @@ export interface Solc04Input extends PartialSolcInput {
 export interface Solc05Input extends PartialSolcInput {
     sources: { [fileName: string]: { content: string } };
 }
+
+export type SolcInput = Solc04Input | Solc05Input;
 
 function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, settings: any): T {
     if (settings !== undefined) {
@@ -37,7 +38,7 @@ export function createCompilerInput(
     output: CompilationOutput[],
     remappings: string[],
     compilerSettings: any
-): Solc04Input | Solc05Input {
+): SolcInput {
     let fileOutput: string[] = [];
     let contractOutput: string[] = [];
 
@@ -69,6 +70,7 @@ export function createCompilerInput(
     };
 
     partialInp.sources = {};
+
     if (lt(version, "0.5.0") && frontend === CompilerKind.WASM) {
         for (const [fileName, content] of files.entries()) {
             partialInp.sources[fileName] = content;
@@ -79,7 +81,7 @@ export function createCompilerInput(
         }
     }
 
-    const inp = partialInp as Solc04Input | Solc05Input;
+    const input = partialInp as Solc04Input | Solc05Input;
 
-    return mergeCompilerSettings(inp, compilerSettings);
+    return mergeCompilerSettings(input, compilerSettings);
 }

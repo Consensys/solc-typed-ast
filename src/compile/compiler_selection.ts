@@ -82,6 +82,7 @@ export class VersionDetectionStrategy implements CompilerVersionSelectionStrateg
 
     select(): Iterable<string> {
         const specifiers: string[] = [];
+
         for (const source of this.sources) {
             specifiers.push(...extractSpecifiersFromSource(source));
         }

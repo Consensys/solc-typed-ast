@@ -1,12 +1,12 @@
+import fse from "fs-extra";
+import { dirname, isAbsolute, join, normalize } from "path";
 import { ImportResolver, Remapping } from "..";
 import {
-    parseTopLevelDefinitions,
-    TLImportDirective,
-    TopLevelNode,
-    TopLevelNodeKind
+    parseFileLevelDefinitions,
+    FLImportDirective,
+    FileLevelNode,
+    FileLevelNodeKind
 } from "./top_level_definitions_parser";
-import fse from "fs-extra";
-import { dirname, normalize, join, isAbsolute } from "path";
 
 function applyRemappings(remappings: Remapping[], path: string): string {
     for (const [, prefix, mapped_prefix] of remappings) {
@@ -19,10 +19,9 @@ function applyRemappings(remappings: Remapping[], path: string): string {
 }
 
 export function normalizeImportPath(path: string): string {
-    let res = normalize(path);
-    res = isAbsolute(res) ? res : "./" + res;
+    const normalized = normalize(path);
 
-    return res;
+    return isAbsolute(normalized) ? normalized : "./" + normalized;
 }
 
 export function findAllFiles(
@@ -51,6 +50,7 @@ export function findAllFiles(
 
                 if (resolvedPath !== undefined) {
                     contents = fse.readFileSync(resolvedPath, {}).toString();
+
                     break;
                 }
             }
@@ -63,12 +63,13 @@ export function findAllFiles(
         }
 
         visited.add(filePath);
+
         // TODO: Need to catch the underlying syntax error (if any) and warp it into a PPAble error
-        const tlds: Array<TopLevelNode<any>> = parseTopLevelDefinitions(contents);
+        const tlds: Array<FileLevelNode<any>> = parseFileLevelDefinitions(contents);
 
         const imports = tlds.filter(
-            (tld) => tld.kind === TopLevelNodeKind.Import
-        ) as TLImportDirective[];
+            (tld) => tld.kind === FileLevelNodeKind.Import
+        ) as FLImportDirective[];
 
         for (const imp of imports) {
             const path = imp.path;

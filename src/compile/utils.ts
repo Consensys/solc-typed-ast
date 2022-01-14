@@ -1,19 +1,20 @@
 import fse from "fs-extra";
-import { getCompilerPrefixForOs } from "./frontends";
-import { CompilerKind } from "../ast";
+import { FileSystemResolver } from ".";
 import {
     CompilerVersionSelectionStrategy,
     LatestVersionInEachSeriesStrategy,
     RangeVersionStrategy,
     VersionDetectionStrategy
 } from "./compiler_selection";
-import { CompilationOutput } from "./constants";
-import { WasmCompiler } from "./frontends/wasm";
+import { CompilationOutput, CompilerKind } from "./constants";
 import { Remapping } from "./import_resolver";
-import { getNativeCompilerForVersion } from "./frontends/native_compilers";
 import { findAllFiles, normalizeImportPath } from "./inference";
 import { createCompilerInput } from "./input";
-import { FileSystemResolver } from ".";
+import {
+    getCompilerPrefixForOs,
+    getNativeCompilerForVersion,
+    getWasmCompilerForVersion
+} from "./kinds";
 
 export interface MemoryStorage {
     [path: string]: {
@@ -39,10 +40,12 @@ export class CompileFailedError extends Error {
         super();
 
         this.failures = entries;
-        const underlyingErrorsStr = entries.map(
+
+        const formattedErrorStr = entries.map(
             (entry) => `==== ${entry.compilerVersion} ===:\n ${entry.errors.join("\n")}\n`
         );
-        this.message = `Compiler Errors: ${underlyingErrorsStr}`;
+
+        this.message = `Compiler Errors: ${formattedErrorStr}`;
     }
 }
 
@@ -105,37 +108,38 @@ export function parsePathRemapping(remapping: string[]): Remapping[] {
 export async function compile(
     files: Map<string, string>,
     version: string,
-    raw_remappings: string[],
+    remappings: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
-    frontend?: CompilerKind
+    kind = CompilerKind.Native
 ): Promise<any> {
-    if (frontend === undefined) {
-        frontend = CompilerKind.Native;
-    }
+    const parsedRemappings = parsePathRemapping(remappings);
+    /**
+     * @todo Support local NPM resolver
+     */
+    const resolvers = [new FileSystemResolver()];
+    const additionalFiles = findAllFiles(files, parsedRemappings, resolvers);
 
-    const remappings = parsePathRemapping(raw_remappings);
-    // TODO (dimo): Add LocalNPMResolver below
-    const additionalFiles = findAllFiles(files, remappings, [new FileSystemResolver()]);
-
-    for (const [name, cont] of additionalFiles) {
-        files.set(name, cont);
+    for (const [fileName, source] of additionalFiles) {
+        files.set(fileName, source);
     }
 
     const input = createCompilerInput(
         files,
         version,
-        frontend,
+        kind,
         compilationOutput,
-        raw_remappings,
+        remappings,
         compilerSettings
     );
 
-    if (frontend === CompilerKind.WASM) {
-        const compiler = WasmCompiler.getWasmCompilerForVersion(version);
+    if (kind === CompilerKind.WASM) {
+        const compiler = getWasmCompilerForVersion(version);
 
         return compiler.compile(input);
-    } else if (frontend === CompilerKind.Native) {
+    }
+
+    if (kind === CompilerKind.Native) {
         const compiler = await getNativeCompilerForVersion(version);
 
         if (compiler === undefined) {
@@ -143,10 +147,11 @@ export async function compile(
                 `Couldn't find native compiler for version ${version} for current platform ${getCompilerPrefixForOs()}`
             );
         }
+
         return compiler.compile(input);
-    } else {
-        throw new Error(`NYI Compiler Frontend ${frontend}`);
     }
+
+    throw new Error(`Unsupported compiler kind "${kind}"`);
 }
 
 export function detectCompileErrors(data: any): string[] {

@@ -1,7 +1,7 @@
 import { fail } from "assert";
 import expect from "expect";
 import fse from "fs-extra";
-import { parseTopLevelDefinitions } from "../../../../src/compile/inference/top_level_definitions_parser";
+import { parseFileLevelDefinitions } from "../../../../src";
 import { searchRecursive } from "../../../utils";
 
 const good_samples: Array<[string, string, any]> = [
@@ -222,7 +222,7 @@ const good_samples: Array<[string, string, any]> = [
             {
                 abstract: false,
                 kind: "contract",
-                contract_kind: "library",
+                contractKind: "library",
                 name: "Brah",
                 bases: null,
                 body: "{}"
@@ -236,7 +236,7 @@ const good_samples: Array<[string, string, any]> = [
             {
                 abstract: false,
                 kind: "contract",
-                contract_kind: "contract",
+                contractKind: "contract",
                 name: "Foo",
                 bases: null,
                 body: "{}"
@@ -250,7 +250,7 @@ const good_samples: Array<[string, string, any]> = [
             {
                 abstract: true,
                 kind: "contract",
-                contract_kind: "contract",
+                contractKind: "contract",
                 name: "Foo1",
                 bases: null,
                 body: "{}"
@@ -264,7 +264,7 @@ const good_samples: Array<[string, string, any]> = [
             {
                 abstract: false,
                 kind: "contract",
-                contract_kind: "interface",
+                contractKind: "interface",
                 name: "Moo",
                 bases: null,
                 body: "{}"
@@ -280,7 +280,7 @@ const good_samples: Array<[string, string, any]> = [
             {
                 abstract: false,
                 kind: "contract",
-                contract_kind: "contract",
+                contractKind: "contract",
                 name: "Bar",
                 bases: "Foo",
                 body: `{
@@ -298,7 +298,7 @@ const good_samples: Array<[string, string, any]> = [
             {
                 abstract: false,
                 kind: "contract",
-                contract_kind: "contract",
+                contractKind: "contract",
                 name: "Boo",
                 bases: "Foo, Bar(1)",
                 body: `{
@@ -323,7 +323,7 @@ const good_samples: Array<[string, string, any]> = [
             {
                 abstract: false,
                 kind: "contract",
-                contract_kind: "contract",
+                contractKind: "contract",
                 name: "Baz",
                 bases: `Boo(1,//wow
 /*such */2 /*whitespace*/)`,
@@ -410,7 +410,7 @@ const good_samples: Array<[string, string, any]> = [
             {
                 kind: "userValueType",
                 name: "T1",
-                value_type: `uint`
+                valueType: `uint`
             }
         ]
     ],
@@ -421,7 +421,7 @@ const good_samples: Array<[string, string, any]> = [
             {
                 kind: "userValueType",
                 name: "T2",
-                value_type: `bytes4`
+                valueType: `bytes4`
             }
         ]
     ],
@@ -433,7 +433,7 @@ is /*3*/ int24;`,
             {
                 kind: "userValueType",
                 name: "T3",
-                value_type: `int24`
+                valueType: `int24`
             }
         ]
     ],
@@ -445,7 +445,7 @@ is /*3*/ int24/*;*/;`,
             {
                 kind: "userValueType",
                 name: "T4",
-                value_type: `int24/*;*/`
+                valueType: `int24/*;*/`
             }
         ]
     ],
@@ -502,7 +502,7 @@ function expectTopLevelNodesMatch(a: any[], b: any[]) {
 describe("Top-level definitions parser unit tests", () => {
     for (const [name, sample, expectedParsed] of good_samples) {
         it(`Sample ${name} should parse successfully`, () => {
-            const parsed = parseTopLevelDefinitions(sample);
+            const parsed = parseFileLevelDefinitions(sample);
 
             expectTopLevelNodesMatch(parsed, expectedParsed);
         });
@@ -518,7 +518,7 @@ describe("Top-level definitions parser samples test", () => {
             let tlds;
 
             try {
-                tlds = parseTopLevelDefinitions(contents);
+                tlds = parseFileLevelDefinitions(contents);
             } catch (e) {
                 fail(
                     `Failed compiling ${fileName}: msg: ${e.message}  loc: ${JSON.stringify(

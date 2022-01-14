@@ -89,11 +89,6 @@ export enum TimeUnit {
     Years = "years"
 }
 
-export enum CompilerKind {
-    WASM = "wasm",
-    Native = "native"
-}
-
 export const PossibleDataLocations = new Set<string>(Object.values(DataLocation));
 
 export const PossibleFunctionVisibilities = new Set<string>(Object.values(FunctionVisibility));
@@ -119,5 +114,3 @@ export const PossibleLiteralKinds = new Set<string>(Object.values(LiteralKind));
 export const PossibleEtherUnits = new Set<string>(Object.values(EtherUnit));
 
 export const PossibleTimeUnits = new Set<string>(Object.values(TimeUnit));
-
-export const PossibleCompilerKinds = new Set<string>(Object.values(CompilerKind));

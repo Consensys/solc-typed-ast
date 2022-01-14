@@ -83,6 +83,11 @@ export const CompilerVersions = [
 
 export const LatestCompilerVersion = CompilerVersions[CompilerVersions.length - 1];
 
+export enum CompilerKind {
+    WASM = "wasm",
+    Native = "native"
+}
+
 /**
  * Corresponds to the string constants used in "outputSelection" as described in
  * https://docs.soliditylang.org/en/latest/using-the-compiler.html#input-description
@@ -112,3 +117,7 @@ export enum CompilationOutput {
     EWASM_WASM = "ewasm.wasm",
     ALL = "*"
 }
+
+export const PossibleCompilerKinds = new Set<string>(Object.values(CompilerKind));
+
+export const PossibleCompilationOutputs = new Set<string>(Object.values(CompilationOutput));
