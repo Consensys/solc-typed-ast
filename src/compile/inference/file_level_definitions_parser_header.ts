@@ -1,3 +1,5 @@
+import { Range } from "../../misc/node";
+
 export enum FileLevelNodeKind {
     Pragma = "pragma",
     Import = "import",
@@ -10,12 +12,9 @@ export enum FileLevelNodeKind {
     Error = "error"
 }
 
-// @ts-ignore
-export type FileLevelNodeLocation = IFileRange;
-
 export interface FileLevelNode<T extends FileLevelNodeKind> {
     kind: T;
-    location: FileLevelNodeLocation;
+    location: Range;
 }
 
 export interface FLPragma extends FileLevelNode<FileLevelNodeKind.Pragma> {

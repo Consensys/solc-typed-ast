@@ -13,6 +13,7 @@ import {
     compileJson,
     compileJsonData,
     CompileResult,
+    CompilerKind,
     CompilerVersions,
     compileSol,
     compileSourceString,
@@ -23,13 +24,12 @@ import {
     getABIEncoderVersion,
     isExact,
     LatestCompilerVersion,
+    PossibleCompilerKinds,
     PrettyFormatter,
     SourceUnit,
     StateVariableVisibility,
     VariableDeclaration,
-    XPath,
-    CompilerKind,
-    PossibleCompilerKinds
+    XPath
 } from "..";
 
 const modes = ["auto", "sol", "json"];
@@ -58,7 +58,7 @@ const cli = {
         depth: Number.MAX_SAFE_INTEGER,
         mode: modes[0],
         "compiler-version": "auto",
-        "compiler-kind": "native"
+        "compiler-kind": CompilerKind.Native
     }
 };
 
@@ -100,7 +100,8 @@ OPTIONS:
                                 - ${LatestCompilerVersion} (exact SemVer version specifier)
                                 - auto (try to detect suitable compiler version)
                             Default value: ${cli.default["compiler-version"]}
-    --compiler-kind         What type of Solidity compiler to user. Currently supported values are 'wasm' and 'native'
+    --compiler-kind         What type of Solidity compiler to use. Currently supported values are 'wasm' and 'native'.
+                            Default value: ${cli.default["compiler-kind"]}
     --path-remapping        Path remapping input for Solc.
     --compiler-settings     Additional settings passed to the solc compiler in the form of a
                             JSON string (e.g. '{"optimizer": {"enabled": true, "runs": 200}}').
@@ -120,7 +121,7 @@ OPTIONS:
     } else {
         const stdin: boolean = args.stdin;
         const mode: string = args.mode;
-        const compilerKind = args["compiler-kind"] as CompilerKind;
+        const compilerKind: CompilerKind = args["compiler-kind"];
 
         if (!PossibleCompilerKinds.has(compilerKind)) {
             throw new Error(
@@ -148,6 +149,7 @@ OPTIONS:
         const pathRemapping: string[] = args["path-remapping"]
             ? args["path-remapping"].split(";")
             : [];
+
         let compilerSettings: any = undefined;
 
         if (args["compiler-settings"]) {
@@ -160,9 +162,10 @@ OPTIONS:
             }
         }
 
+        const compilationOutput: CompilationOutput[] = [CompilationOutput.ALL];
+
         let fileName = args._[0];
         let result: CompileResult;
-        const compilationOutput: CompilationOutput[] = [CompilationOutput.ALL];
 
         try {
             if (stdin) {

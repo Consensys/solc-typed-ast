@@ -6,7 +6,7 @@ import {
     FLImportDirective,
     FileLevelNode,
     FileLevelNodeKind
-} from "./top_level_definitions_parser";
+} from "./file_level_definitions_parser";
 
 function applyRemappings(remappings: Remapping[], path: string): string {
     for (const [, prefix, mapped_prefix] of remappings) {
