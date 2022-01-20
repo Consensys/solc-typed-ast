@@ -1,9 +1,10 @@
+import axios from "axios";
 import { spawn } from "child_process";
 import fse from "fs-extra";
-import { IncomingMessage } from "http";
-import https from "https";
 import os from "os";
 import path from "path";
+import * as stream from "stream";
+import { promisify } from "util";
 import { SolcInput } from "../input";
 import { Compiler } from "./compiler";
 
@@ -104,26 +105,6 @@ class NativeCompiler extends Compiler {
 const CACHE_DIR = "./.native_compilers_cache/";
 const BINARIES_URL = "https://binaries.soliditylang.org";
 
-export async function httpsGet(url: string): Promise<Buffer> {
-    return new Promise<Buffer>((resolve, reject) => {
-        const callback = (msg: IncomingMessage) => {
-            const chunks: Buffer[] = [];
-
-            msg.on("data", (fragment) => {
-                chunks.push(fragment);
-            });
-
-            msg.on("end", () => {
-                resolve(Buffer.concat(chunks));
-            });
-
-            msg.on("error", (e) => reject(e));
-        };
-
-        https.get(url, callback);
-    });
-}
-
 async function getCompilerMDForPlatform(prefix: string): Promise<CompilerPlatformMetadata> {
     const cachedListPath = path.join(CACHE_DIR, prefix, "list.json");
 
@@ -131,14 +112,16 @@ async function getCompilerMDForPlatform(prefix: string): Promise<CompilerPlatfor
         return fse.readJSONSync(cachedListPath) as CompilerPlatformMetadata;
     }
 
-    const blob = await httpsGet(`${BINARIES_URL}/${prefix}/list.json`);
-    const rawMetaData = blob.toString("utf-8");
-    const parsedMetaData = JSON.parse(rawMetaData) as CompilerPlatformMetadata;
+    const response = await axios.get<CompilerPlatformMetadata>(
+        `${BINARIES_URL}/${prefix}/list.json`
+    );
+
+    const metaData = response.data;
 
     fse.ensureDirSync(path.join(CACHE_DIR, prefix));
-    fse.writeJSONSync(cachedListPath, parsedMetaData);
+    fse.writeJSONSync(cachedListPath, metaData);
 
-    return parsedMetaData;
+    return metaData;
 }
 
 export async function getNativeCompilerForVersion(
@@ -160,9 +143,16 @@ export async function getNativeCompilerForVersion(
         const compilerLocalPath = path.join(CACHE_DIR, prefix, compilerFileName);
 
         if (!fse.existsSync(compilerLocalPath)) {
-            const compiler = await httpsGet(`${BINARIES_URL}/${prefix}/${compilerFileName}`);
+            const response = await axios({
+                method: "GET",
+                url: `${BINARIES_URL}/${prefix}/${compilerFileName}`,
+                responseType: "stream"
+            });
 
-            fse.writeFileSync(compilerLocalPath, compiler, { mode: 0o555 });
+            const target = fse.createWriteStream(compilerLocalPath, { mode: 0o555 });
+            const pipeline = promisify(stream.pipeline);
+
+            await pipeline(response.data, target);
         }
 
         return new NativeCompiler(version, compilerLocalPath);

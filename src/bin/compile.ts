@@ -345,6 +345,7 @@ OPTIONS:
                             const signature = encoderVersion
                                 ? node.getterCanonicalSignature(encoderVersion)
                                 : undefined;
+
                             const selector = encoderVersion
                                 ? node.getterCanonicalSignatureHash(encoderVersion)
                                 : undefined;

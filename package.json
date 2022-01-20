@@ -28,6 +28,7 @@
         "prepare": "npm run build"
     },
     "dependencies": {
+        "axios": "^0.25.0",
         "findup-sync": "^5.0.0",
         "fs-extra": "^10.0.0",
         "jsel": "^1.1.6",
@@ -87,6 +88,8 @@
         "solc-0.7.6": "npm:solc@0.7.6",
         "solc-0.8.0": "npm:solc@0.8.0",
         "solc-0.8.1": "npm:solc-0.8.1-fixed@0.8.1",
+        "solc-0.8.10": "npm:solc@0.8.10",
+        "solc-0.8.11": "npm:solc@0.8.11",
         "solc-0.8.2": "npm:solc@0.8.2",
         "solc-0.8.3": "npm:solc@0.8.3",
         "solc-0.8.4": "npm:solc@0.8.4",
@@ -95,8 +98,6 @@
         "solc-0.8.7": "npm:solc@0.8.7-fixed",
         "solc-0.8.8": "npm:solc@0.8.8",
         "solc-0.8.9": "npm:solc@0.8.9",
-        "solc-0.8.10": "npm:solc@0.8.10",
-        "solc-0.8.11": "npm:solc@0.8.11",
         "src-location": "^1.1.0",
         "web3-eth-abi": "^1.6.1"
     },
