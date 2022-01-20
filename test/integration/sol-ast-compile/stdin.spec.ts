@@ -1,6 +1,7 @@
 import { spawnSync } from "child_process";
 import expect from "expect";
 import fse from "fs-extra";
+import { PossibleCompilerKinds } from "../../../src";
 import { SolAstCompileCommand } from "./common";
 
 const error =
@@ -15,39 +16,39 @@ const cases: Array<[string, string, number, string, string[]]> = [
 ];
 
 for (const [fileName, mode, expectedExitCode, stdErr, stdOut] of cases) {
-    const args = ["--stdin", "--mode", mode];
-    const command = SolAstCompileCommand(...args) + " < " + fileName;
+    for (const kind of PossibleCompilerKinds) {
+        const args = ["--compiler-kind", kind, "--stdin", "--mode", mode];
+        const command = SolAstCompileCommand(...args) + " < " + fileName;
 
-    describe(command, () => {
-        let exitCode: number | null;
-        let outData: string;
-        let errData: string;
+        describe(command, () => {
+            let exitCode: number | null;
+            let outData: string;
+            let errData: string;
 
-        before((done) => {
-            const result = spawnSync("sol-ast-compile", args, {
-                input: fse.readFileSync(fileName),
-                encoding: "utf8"
+            before(() => {
+                const result = spawnSync("sol-ast-compile", args, {
+                    input: fse.readFileSync(fileName),
+                    encoding: "utf8"
+                });
+
+                outData = result.stdout;
+                errData = result.stderr;
+                exitCode = result.status;
             });
 
-            outData = result.stdout;
-            errData = result.stderr;
-            exitCode = result.status;
+            it("Exit code is valid", () => {
+                expect(exitCode).toEqual(expectedExitCode);
+            });
 
-            done();
-        });
+            it("STDERR is correct", () => {
+                expect(errData).toContain(stdErr);
+            });
 
-        it("Exit code is valid", () => {
-            expect(exitCode).toEqual(expectedExitCode);
+            it("STDOUT is correct", () => {
+                for (const value of stdOut) {
+                    expect(outData).toContain(value);
+                }
+            });
         });
-
-        it("STDERR is correct", () => {
-            expect(errData).toContain(stdErr);
-        });
-
-        it("STDOUT is correct", () => {
-            for (const value of stdOut) {
-                expect(outData).toContain(value);
-            }
-        });
-    });
+    }
 }

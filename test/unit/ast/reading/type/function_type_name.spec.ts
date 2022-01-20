@@ -21,7 +21,7 @@ describe("FunctionTypeName", () => {
 
             before(async () => {
                 const reader = new ASTReader();
-                const { data } = await compileJson(sample, version, []);
+                const { data } = await compileJson(sample, version);
                 const [mainUnit] = reader.read(data);
 
                 nodes = mainUnit.getChildrenByType(FunctionTypeName);

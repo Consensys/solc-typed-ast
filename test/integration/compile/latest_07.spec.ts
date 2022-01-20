@@ -3,9 +3,11 @@ import fse from "fs-extra";
 import {
     ASTKind,
     ASTReader,
+    CompilerKind,
     CompilerVersions07,
     compileSol,
     detectCompileErrors,
+    PossibleCompilerKinds,
     SourceUnit
 } from "../../../src";
 import { createImprint } from "./common";
@@ -51,57 +53,66 @@ const encounters = new Map<string, number>([
     ["ElementaryTypeNameExpression", 1]
 ]);
 
-describe(`Compile ${sample} with ${compilerVersion} compiler`, () => {
-    let data: any = {};
-    let sourceUnits: SourceUnit[];
+for (const compilerKind of PossibleCompilerKinds) {
+    describe(`Compile ${sample} with ${compilerKind} ${compilerVersion} compiler`, () => {
+        let data: any = {};
+        let sourceUnits: SourceUnit[];
 
-    before("Compile", async () => {
-        const result = await compileSol(sample, "auto", []);
+        before("Compile", async () => {
+            const result = await compileSol(
+                sample,
+                "auto",
+                [],
+                undefined,
+                undefined,
+                compilerKind as CompilerKind
+            );
 
-        expect(result.compilerVersion).toEqual(compilerVersion);
-        expect(result.files).toEqual(expectedFiles);
+            expect(result.compilerVersion).toEqual(compilerVersion);
+            expect(result.files).toEqual(expectedFiles);
 
-        const errors = detectCompileErrors(result.data);
+            const errors = detectCompileErrors(result.data);
 
-        expect(errors).toHaveLength(0);
+            expect(errors).toHaveLength(0);
 
-        data = result.data;
+            data = result.data;
+        });
+
+        for (const astKind of [ASTKind.Modern, ASTKind.Legacy]) {
+            it(`Parse compiler output (${astKind})`, () => {
+                const reader = new ASTReader();
+
+                sourceUnits = reader.read(data, astKind);
+
+                expect(sourceUnits.length).toEqual(1);
+
+                const sourceUnit = sourceUnits[0];
+
+                expect(sourceUnit.id).toEqual(353);
+                expect(sourceUnit.src).toEqual("0:2428:0");
+                expect(sourceUnit.absolutePath).toEqual(sample);
+                expect(sourceUnit.children.length).toEqual(14);
+                expect(sourceUnit.getChildren().length).toEqual(348);
+            });
+
+            it(`Validate parsed output (${astKind})`, () => {
+                const sourceUnit = sourceUnits[0];
+                const sourceUnitImprint = createImprint(sourceUnit);
+
+                expect(sourceUnitImprint.ASTNode).toBeUndefined();
+
+                for (const [type, count] of encounters.entries()) {
+                    expect(sourceUnitImprint[type]).toBeDefined();
+                    expect(sourceUnitImprint[type].length).toEqual(count);
+
+                    const nodes = sourceUnit.getChildrenBySelector(
+                        (node) => node.type === type,
+                        type === "SourceUnit"
+                    );
+
+                    expect(nodes.length).toEqual(count);
+                }
+            });
+        }
     });
-
-    for (const kind of [ASTKind.Modern, ASTKind.Legacy]) {
-        it(`Parse compiler output (${kind})`, () => {
-            const reader = new ASTReader();
-
-            sourceUnits = reader.read(data, kind);
-
-            expect(sourceUnits.length).toEqual(1);
-
-            const sourceUnit = sourceUnits[0];
-
-            expect(sourceUnit.id).toEqual(353);
-            expect(sourceUnit.src).toEqual("0:2428:0");
-            expect(sourceUnit.absolutePath).toEqual(sample);
-            expect(sourceUnit.children.length).toEqual(14);
-            expect(sourceUnit.getChildren().length).toEqual(348);
-        });
-
-        it(`Validate parsed output (${kind})`, () => {
-            const sourceUnit = sourceUnits[0];
-            const sourceUnitImprint = createImprint(sourceUnit);
-
-            expect(sourceUnitImprint.ASTNode).toBeUndefined();
-
-            for (const [type, count] of encounters.entries()) {
-                expect(sourceUnitImprint[type]).toBeDefined();
-                expect(sourceUnitImprint[type].length).toEqual(count);
-
-                const nodes = sourceUnit.getChildrenBySelector(
-                    (node) => node.type === type,
-                    type === "SourceUnit"
-                );
-
-                expect(nodes.length).toEqual(count);
-            }
-        });
-    }
-});
+}

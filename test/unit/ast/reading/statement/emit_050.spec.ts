@@ -18,7 +18,7 @@ describe("EmitStatement (Solc 0.5.0)", () => {
 
     before(async () => {
         const reader = new ASTReader();
-        const { data } = await compileJson(sample, "0.5.0", []);
+        const { data } = await compileJson(sample, "0.5.0");
         const units = reader.read(data);
 
         mainUnit = units[0];

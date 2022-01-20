@@ -4,9 +4,11 @@ import {
     ASTNode,
     ASTReader,
     ASTWriter,
+    CompilerKind,
     compileSol,
     DefaultASTWriterMapping,
     LatestCompilerVersion,
+    PossibleCompilerKinds,
     PrettyFormatter,
     SourceUnit
 } from "../../../src";
@@ -24,49 +26,62 @@ const cases: Array<[string, string]> = [
 
 describe("Source map snapshot tests", () => {
     for (const [fileName, sample] of cases) {
-        describe(fileName, () => {
-            let units: SourceUnit[];
-            let compilerVersion: string;
+        for (const kind of PossibleCompilerKinds) {
+            describe(`[${kind}] ${fileName}`, () => {
+                let units: SourceUnit[];
+                let compilerVersion: string;
 
-            before(async () => {
-                const reader = new ASTReader();
-                const result = await compileSol(fileName, "auto", []);
+                before(async () => {
+                    const reader = new ASTReader();
+                    const result = await compileSol(
+                        fileName,
+                        "auto",
+                        [],
+                        undefined,
+                        undefined,
+                        kind as CompilerKind
+                    );
 
-                compilerVersion =
-                    result.compilerVersion === undefined
-                        ? LatestCompilerVersion
-                        : result.compilerVersion;
+                    compilerVersion =
+                        result.compilerVersion === undefined
+                            ? LatestCompilerVersion
+                            : result.compilerVersion;
 
-                units = reader.read(result.data);
+                    units = reader.read(result.data);
 
-                expect(units.length).toBeGreaterThan(0);
-            });
+                    expect(units.length).toBeGreaterThan(0);
+                });
 
-            it(`Matches expected output sample "${sample}"`, () => {
-                const formatter = new PrettyFormatter(4, 0);
-                const writer = new ASTWriter(DefaultASTWriterMapping, formatter, compilerVersion);
+                it(`Matches expected output sample "${sample}"`, () => {
+                    const formatter = new PrettyFormatter(4, 0);
+                    const writer = new ASTWriter(
+                        DefaultASTWriterMapping,
+                        formatter,
+                        compilerVersion
+                    );
 
-                const parts = [];
+                    const parts = [];
 
-                for (const unit of units) {
-                    const sourceMap = new Map<ASTNode, [number, number]>();
-                    const source = writer.write(unit, sourceMap);
+                    for (const unit of units) {
+                        const sourceMap = new Map<ASTNode, [number, number]>();
+                        const source = writer.write(unit, sourceMap);
 
-                    parts.push(source);
+                        parts.push(source);
 
-                    for (const [node, [offset, length]] of sourceMap.entries()) {
-                        const nodeStr = node.type + "#" + node.id + " (" + node.src + ")";
-                        const coordsStr = offset + ":" + length + ":" + unit.sourceListIndex;
+                        for (const [node, [offset, length]] of sourceMap.entries()) {
+                            const nodeStr = node.type + "#" + node.id + " (" + node.src + ")";
+                            const coordsStr = offset + ":" + length + ":" + unit.sourceListIndex;
 
-                        parts.push("// " + nodeStr + " -> " + coordsStr);
+                            parts.push("// " + nodeStr + " -> " + coordsStr);
+                        }
                     }
-                }
 
-                const result = parts.join("\n") + "\n";
-                const expectation = fse.readFileSync(sample, { encoding: "utf-8" });
+                    const result = parts.join("\n") + "\n";
+                    const expectation = fse.readFileSync(sample, { encoding: "utf-8" });
 
-                expect(result).toEqual(expectation);
+                    expect(result).toEqual(expectation);
+                });
             });
-        });
+        }
     }
 });

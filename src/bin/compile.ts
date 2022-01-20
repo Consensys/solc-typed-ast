@@ -58,7 +58,7 @@ const cli = {
         depth: Number.MAX_SAFE_INTEGER,
         mode: modes[0],
         "compiler-version": "auto",
-        "compiler-kind": CompilerKind.Native
+        "compiler-kind": CompilerKind.WASM
     }
 };
 
@@ -185,7 +185,6 @@ OPTIONS:
                               fileName,
                               JSON.parse(content),
                               compilerVersion,
-                              pathRemapping,
                               compilationOutput,
                               compilerSettings,
                               compilerKind
@@ -218,7 +217,6 @@ OPTIONS:
                         result = await compileJson(
                             fileName,
                             compilerVersion,
-                            pathRemapping,
                             compilationOutput,
                             compilerSettings,
                             compilerKind
@@ -234,7 +232,6 @@ OPTIONS:
                             ? await compileJson(
                                   fileName,
                                   compilerVersion,
-                                  pathRemapping,
                                   compilationOutput,
                                   compilerSettings
                               )

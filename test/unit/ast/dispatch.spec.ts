@@ -19,7 +19,7 @@ type Resolvable = EventDefinition | FunctionDefinition | ModifierDefinition | Va
 
 describe("Dynamic dispatch AST utils", async () => {
     const reader = new ASTReader();
-    const { data } = await compileJson("test/samples/solidity/dispatch_05.json", "auto", []);
+    const { data } = await compileJson("test/samples/solidity/dispatch_05.json", "auto");
 
     const [mainUnit] = reader.read(data);
     const [a, b, c, d, i] = mainUnit.vContracts;

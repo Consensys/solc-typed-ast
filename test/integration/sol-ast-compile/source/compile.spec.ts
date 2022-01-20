@@ -1,5 +1,6 @@
 import { spawnSync } from "child_process";
 import expect from "expect";
+import { PossibleCompilerKinds } from "../../../../src";
 import { SolAstCompileExec } from "../common";
 
 const samples: string[] = [
@@ -30,36 +31,42 @@ const samples: string[] = [
 export type CompiledBytecode = any;
 
 for (const fileName of samples) {
-    const args = [fileName, "--source"];
+    for (const kind of PossibleCompilerKinds) {
+        const args = [fileName, "--compiler-kind", kind, "--source"];
 
-    describe(`Check re-written ${fileName} compiles`, () => {
-        let exitCode: number | null;
-        let outData: string;
-        let errData: string;
+        describe(`[${kind}] Check re-written ${fileName} compiles`, () => {
+            let exitCode: number | null;
+            let outData: string;
+            let errData: string;
 
-        before(() => {
-            const result = SolAstCompileExec(...args);
+            before(() => {
+                const result = SolAstCompileExec(...args);
 
-            outData = result.stdout;
-            errData = result.stderr;
-            exitCode = result.status;
-        });
-
-        it("Exit code is valid", () => {
-            expect(exitCode).toEqual(0);
-        });
-
-        it("STDERR is empty", () => {
-            expect(errData).toContain("");
-        });
-
-        it("Written source compiles", () => {
-            const result = spawnSync("sol-ast-compile", ["--mode", "sol", "--stdin", "--tree"], {
-                input: outData,
-                encoding: "utf8"
+                outData = result.stdout;
+                errData = result.stderr;
+                exitCode = result.status;
             });
 
-            expect(result.status).toEqual(0);
+            it("Exit code is valid", () => {
+                expect(exitCode).toEqual(0);
+            });
+
+            it("STDERR is empty", () => {
+                expect(errData).toContain("");
+            });
+
+            it("Written source compiles", () => {
+                const result = spawnSync(
+                    "sol-ast-compile",
+                    ["--mode", "sol", "--stdin", "--tree"],
+                    {
+                        input: outData,
+                        encoding: "utf8"
+                    }
+                );
+
+                expect(result.status).toEqual(0);
+            });
         });
-    });
+    }
 }

@@ -1,12 +1,8 @@
 import fse from "fs-extra";
 import { dirname, isAbsolute, join, normalize } from "path";
 import { ImportResolver, Remapping } from "..";
-import {
-    parseFileLevelDefinitions,
-    FLImportDirective,
-    FileLevelNode,
-    FileLevelNodeKind
-} from "./file_level_definitions_parser";
+import { assert } from "../..";
+import { FileLevelNodeKind, parseFileLevelDefinitions } from "./file_level_definitions_parser";
 
 function applyRemappings(remappings: Remapping[], path: string): string {
     for (const [, prefix, mapped_prefix] of remappings) {
@@ -24,66 +20,84 @@ export function normalizeImportPath(path: string): string {
     return isAbsolute(normalized) ? normalized : "./" + normalized;
 }
 
+function isPathWithRelativePrefix(path: string): boolean {
+    return path.startsWith("./") || path.startsWith("../");
+}
+
+function computeRealPath(
+    importer: string | undefined,
+    imported: string,
+    remappings: Remapping[]
+): string {
+    // TODO(dimo): We have to check that the behavior of normalize(join(...)) below
+    // matches the behavior described in this section https://docs.soliditylang.org/en/v0.8.8/path-resolution.html#relative-imports
+    // and that it works for all compiler versions
+    let result = applyRemappings(remappings, imported);
+
+    if (importer !== undefined && isPathWithRelativePrefix(result)) {
+        const importingFileDir = dirname(importer);
+
+        result = normalizeImportPath(join(importingFileDir, result));
+    }
+
+    return result;
+}
+
 export function findAllFiles(
     files: Map<string, string>,
     remappings: Remapping[],
     resolvers: ImportResolver[]
 ): Map<string, string> {
-    const queue: string[] = [...files.keys()];
-    const visited = new Set<string>();
+    const queue: Array<[string | undefined, string]> = [];
 
-    const additionalFiles = new Map<string, string>();
+    for (const fileName of files.keys()) {
+        queue.push([undefined, fileName]);
+    }
+
+    const visited = new Set<string>();
+    const result = new Map<string, string>();
 
     while (queue.length > 0) {
-        const filePath = queue.pop() as string;
+        const [importer, imported] = queue.pop() as [string | undefined, string];
 
-        // Already processed
-        if (visited.has(filePath)) {
+        const realPath = computeRealPath(importer, imported, remappings);
+
+        /**
+         * Skip already processed imports
+         */
+        if (visited.has(realPath)) {
             continue;
         }
 
-        let contents = files.get(filePath);
+        let content = files.get(realPath);
 
-        if (contents === undefined) {
+        if (content === undefined) {
             for (const resolver of resolvers) {
-                const resolvedPath = resolver.resolve(filePath);
+                const resolvedPath = resolver.resolve(realPath);
 
                 if (resolvedPath !== undefined) {
-                    contents = fse.readFileSync(resolvedPath, {}).toString();
+                    content = fse.readFileSync(resolvedPath, { encoding: "utf-8" });
 
                     break;
                 }
             }
 
-            if (contents === undefined) {
-                throw new Error(`Couldn't find ${filePath}`);
-            }
+            assert(content !== undefined, 'Couldn\'t find "{0}"', imported);
 
-            additionalFiles.set(filePath, contents);
+            result.set(isPathWithRelativePrefix(imported) ? realPath : imported, content);
         }
 
-        visited.add(filePath);
+        visited.add(realPath);
 
-        // TODO: Need to catch the underlying syntax error (if any) and warp it into a PPAble error
-        const tlds: Array<FileLevelNode<any>> = parseFileLevelDefinitions(contents);
+        // TODO: Need to catch the underlying syntax error (if any) and wrap it into a PPAble error
+        const flds = parseFileLevelDefinitions(content);
 
-        const imports = tlds.filter(
-            (tld) => tld.kind === FileLevelNodeKind.Import
-        ) as FLImportDirective[];
-
-        for (const imp of imports) {
-            const path = imp.path;
-            if (path.startsWith("./") || path.startsWith("../")) {
-                const importingFileDir = dirname(filePath);
-                // TODO(dimo): We have to check that the behavior of normalize(join(...)) below
-                // matches the behavior described in this section https://docs.soliditylang.org/en/v0.8.8/path-resolution.html#relative-imports
-                // and that it works for all compiler versions
-                queue.push(normalizeImportPath(join(importingFileDir, path)));
-            } else {
-                queue.push(applyRemappings(remappings, path));
+        for (const fld of flds) {
+            if (fld.kind === FileLevelNodeKind.Import) {
+                queue.push([realPath, fld.path]);
             }
         }
     }
 
-    return additionalFiles;
+    return result;
 }

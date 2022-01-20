@@ -2,9 +2,11 @@ import expect from "expect";
 import fse from "fs-extra";
 import {
     ASTReader,
+    CompilerKind,
     CompilerVersions04,
     compileSol,
     detectCompileErrors,
+    PossibleCompilerKinds,
     SourceUnit
 } from "../../../src";
 import { createImprint } from "./common";
@@ -50,57 +52,66 @@ const encounters = new Map<string, number>([
 
 describe(`Compile ${sample} with any available 0.4.x compiler`, () => {
     for (const version of CompilerVersions04) {
-        describe(`Solc ${version}`, () => {
-            let data: any = {};
-            let sourceUnits: SourceUnit[];
+        for (const kind of PossibleCompilerKinds) {
+            describe(`[${kind}] ${version}`, () => {
+                let data: any = {};
+                let sourceUnits: SourceUnit[];
 
-            before("Compile", async () => {
-                const result = await compileSol(sample, version, []);
-
-                expect(result.compilerVersion).toEqual(version);
-                expect(result.files).toEqual(expectedFiles);
-
-                const errors = detectCompileErrors(result.data);
-
-                expect(errors).toHaveLength(0);
-
-                data = result.data;
-            });
-
-            it("Process compiler output", () => {
-                const reader = new ASTReader();
-
-                sourceUnits = reader.read(data);
-
-                expect(sourceUnits.length).toEqual(1);
-
-                const sourceUnit = sourceUnits[0];
-
-                expect(sourceUnit.id).toEqual(212);
-                expect(sourceUnit.src).toEqual("0:1580:0");
-                expect(sourceUnit.absolutePath).toEqual(sample);
-                expect(sourceUnit.children.length).toEqual(2);
-                expect(sourceUnit.getChildren().length).toEqual(211);
-            });
-
-            it("Validate processed output", () => {
-                const sourceUnit = sourceUnits[0];
-                const sourceUnitImprint = createImprint(sourceUnit);
-
-                expect(sourceUnitImprint.ASTNode).toBeUndefined();
-
-                for (const [type, count] of encounters.entries()) {
-                    expect(sourceUnitImprint[type]).toBeDefined();
-                    expect(sourceUnitImprint[type].length).toEqual(count);
-
-                    const nodes = sourceUnit.getChildrenBySelector(
-                        (node) => node.type === type,
-                        type === "SourceUnit"
+                before("Compile", async () => {
+                    const result = await compileSol(
+                        sample,
+                        version,
+                        [],
+                        undefined,
+                        undefined,
+                        kind as CompilerKind
                     );
 
-                    expect(nodes.length).toEqual(count);
-                }
+                    expect(result.compilerVersion).toEqual(version);
+                    expect(result.files).toEqual(expectedFiles);
+
+                    const errors = detectCompileErrors(result.data);
+
+                    expect(errors).toHaveLength(0);
+
+                    data = result.data;
+                });
+
+                it("Process compiler output", () => {
+                    const reader = new ASTReader();
+
+                    sourceUnits = reader.read(data);
+
+                    expect(sourceUnits.length).toEqual(1);
+
+                    const sourceUnit = sourceUnits[0];
+
+                    expect(sourceUnit.id).toEqual(212);
+                    expect(sourceUnit.src).toEqual("0:1580:0");
+                    expect(sourceUnit.absolutePath).toEqual(sample);
+                    expect(sourceUnit.children.length).toEqual(2);
+                    expect(sourceUnit.getChildren().length).toEqual(211);
+                });
+
+                it("Validate processed output", () => {
+                    const sourceUnit = sourceUnits[0];
+                    const sourceUnitImprint = createImprint(sourceUnit);
+
+                    expect(sourceUnitImprint.ASTNode).toBeUndefined();
+
+                    for (const [type, count] of encounters.entries()) {
+                        expect(sourceUnitImprint[type]).toBeDefined();
+                        expect(sourceUnitImprint[type].length).toEqual(count);
+
+                        const nodes = sourceUnit.getChildrenBySelector(
+                            (node) => node.type === type,
+                            type === "SourceUnit"
+                        );
+
+                        expect(nodes.length).toEqual(count);
+                    }
+                });
             });
-        });
+        }
     }
 });

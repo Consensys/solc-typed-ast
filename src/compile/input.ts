@@ -3,7 +3,7 @@ import { CompilationOutput, CompilerKind } from "./constants";
 
 export interface PartialSolcInput {
     language: "Solidity";
-    settings: { remappings: string[]; outputSelection: any; [otherKeys: string]: any };
+    settings: { outputSelection: any; [otherKeys: string]: any };
     [otherKeys: string]: any;
 }
 
@@ -20,7 +20,7 @@ export type SolcInput = Solc04Input | Solc05Input;
 function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, settings: any): T {
     if (settings !== undefined) {
         for (const key in settings) {
-            if (key === "remappings" || key === "outputSelection") {
+            if (key === "outputSelection") {
                 continue;
             }
 
@@ -34,9 +34,8 @@ function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, se
 export function createCompilerInput(
     files: Map<string, string>,
     version: string,
-    frontend: CompilerKind,
+    kind: CompilerKind,
     output: CompilationOutput[],
-    remappings: string[],
     compilerSettings: any
 ): SolcInput {
     let fileOutput: string[] = [];
@@ -59,7 +58,6 @@ export function createCompilerInput(
     const partialInp: PartialSolcInput = {
         language: "Solidity",
         settings: {
-            remappings,
             outputSelection: {
                 "*": {
                     "*": contractOutput,
@@ -71,7 +69,7 @@ export function createCompilerInput(
 
     partialInp.sources = {};
 
-    if (lt(version, "0.5.0") && frontend === CompilerKind.WASM) {
+    if (lt(version, "0.5.0") && kind === CompilerKind.WASM) {
         for (const [fileName, content] of files.entries()) {
             partialInp.sources[fileName] = content;
         }

@@ -1,5 +1,5 @@
-import { TypeNode, PointerType, UserDefinedType, AddressType, enumToIntType } from ".";
-import { DataLocation, ContractDefinition, EnumDefinition, StructDefinition } from "..";
+import { AddressType, enumToIntType, PointerType, TypeNode, UserDefinedType } from ".";
+import { ContractDefinition, DataLocation, EnumDefinition, StructDefinition } from "..";
 import { assert } from "../misc";
 import {
     ArrayType,
@@ -35,7 +35,7 @@ export function toABIEncodedType(
     normalizePointers = false
 ): TypeNode {
     if (type instanceof MappingType) {
-        throw new Error(`Cannnot abi-encode mapping types.`);
+        throw new Error("Cannot abi-encode mapping types");
     }
 
     if (type instanceof ArrayType) {
@@ -47,6 +47,7 @@ export function toABIEncodedType(
 
     if (type instanceof PointerType) {
         const toT = toABIEncodedType(type.to, encoderVersion, normalizePointers);
+
         return new PointerType(toT, normalizePointers ? DataLocation.Memory : type.location);
     }
 
@@ -62,7 +63,7 @@ export function toABIEncodedType(
         if (type.definition instanceof StructDefinition) {
             assert(
                 encoderVersion !== ABIEncoderVersion.V1,
-                "Getters of struct return type are not supported by ABI encoder v1."
+                "Getters of struct return type are not supported by ABI encoder v1"
             );
 
             const fieldTs = type.definition.vMembers.map((fieldT) =>
@@ -95,7 +96,7 @@ export function abiTypeToCanonicalName(t: TypeNode): string {
 
     // Payable is ignored in canonical names
     if (t instanceof AddressType) {
-        return `address`;
+        return "address";
     }
 
     if (t instanceof ArrayType) {
@@ -111,7 +112,7 @@ export function abiTypeToCanonicalName(t: TypeNode): string {
         return abiTypeToCanonicalName(t.to);
     }
 
-    assert(false, `Unexpected ABI Type ${t.pp()}`);
+    assert(false, "Unexpected ABI Type: {0}", t);
 }
 
 /**
@@ -132,7 +133,7 @@ export function abiTypeToLibraryCanonicalName(t: TypeNode): string {
 
     // Payable is ignored in canonical names
     if (t instanceof AddressType) {
-        return `address`;
+        return "address";
     }
 
     if (t instanceof ArrayType) {
@@ -149,6 +150,7 @@ export function abiTypeToLibraryCanonicalName(t: TypeNode): string {
     // Go figure...
     if (t instanceof PointerType) {
         const toName = abiTypeToLibraryCanonicalName(t.to);
+
         return t.location === DataLocation.Storage ? `${toName} storage` : toName;
     }
 
@@ -163,5 +165,5 @@ export function abiTypeToLibraryCanonicalName(t: TypeNode): string {
         return `mapping(${keyName} => ${valueName})`;
     }
 
-    assert(false, `Unexpected ABI Type ${t.pp()}`);
+    assert(false, "Unexpected ABI Type: {0}", t);
 }

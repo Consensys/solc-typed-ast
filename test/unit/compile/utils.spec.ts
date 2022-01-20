@@ -106,18 +106,14 @@ describe("Compile general utils", () => {
                     expect.assertions(1);
 
                     try {
-                        await compileJson(fileName, "auto", []);
+                        await compileJson(fileName, "auto");
                     } catch (e: any) {
                         expect(e.message).toMatch(result);
                     }
                 });
             } else {
                 it(`Compiles ${JSON.stringify(fileName)} successfully`, async () => {
-                    const { data, compilerVersion, files } = await compileJson(
-                        fileName,
-                        "auto",
-                        []
-                    );
+                    const { data, compilerVersion, files } = await compileJson(fileName, "auto");
 
                     expect(data.sources).toBeDefined();
                     expect(detectCompileErrors(data)).toHaveLength(0);

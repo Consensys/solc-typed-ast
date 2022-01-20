@@ -131,13 +131,14 @@ async function getCompilerMDForPlatform(prefix: string): Promise<CompilerPlatfor
         return fse.readJSONSync(cachedListPath) as CompilerPlatformMetadata;
     }
 
-    const rawMD = await httpsGet(`${BINARIES_URL}/${prefix}/list.json`).toString();
-    const parsedMD = JSON.parse(rawMD) as CompilerPlatformMetadata;
+    const blob = await httpsGet(`${BINARIES_URL}/${prefix}/list.json`);
+    const rawMetaData = blob.toString("utf-8");
+    const parsedMetaData = JSON.parse(rawMetaData) as CompilerPlatformMetadata;
 
     fse.ensureDirSync(path.join(CACHE_DIR, prefix));
-    fse.writeJSONSync(cachedListPath, parsedMD);
+    fse.writeJSONSync(cachedListPath, parsedMetaData);
 
-    return parsedMD;
+    return parsedMetaData;
 }
 
 export async function getNativeCompilerForVersion(
@@ -166,5 +167,6 @@ export async function getNativeCompilerForVersion(
 
         return new NativeCompiler(version, compilerLocalPath);
     }
+
     return undefined;
 }

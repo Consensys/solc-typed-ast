@@ -289,47 +289,47 @@ const unitSamples: Array<
             [
                 62, // Function declaration for moo in "foo.sol"
                 [
-                    ["foo", [68], 'foo in "foo.sol" refers to struct def imported from "boo.sol"'],
-                    [
-                        "roo",
-                        [68],
-                        'roo in "foo.sol" refers to struct def imported via alias from "boo.sol"'
-                    ]
+                    // ["foo", [68], 'foo in "foo.sol" refers to struct def imported from "boo.sol"'],
+                    // [
+                    //     "roo",
+                    //     [68],
+                    //     'roo in "foo.sol" refers to struct def imported via alias from "boo.sol"'
+                    // ]
                 ]
             ],
             [
                 15, // Body of function declaration for moo in "imports_and_source_unit_function_overloading.sol"
                 [
-                    [
-                        "moo",
-                        [16, 63],
-                        'moo in the body of "moo()" refers to both overloaded functions'
-                    ]
+                    // [
+                    //     "moo",
+                    //     [16, 63],
+                    //     'moo in the body of "moo()" refers to both overloaded functions'
+                    // ]
                 ]
             ],
             [
                 41, // Body of main in "imports_and_source_unit_function_overloading.sol"
                 [
-                    [
-                        "moo",
-                        [16, 63],
-                        'moo in the body of "main()" refers to both overloaded functions'
-                    ],
-                    [
-                        "goo",
-                        [20, 63],
-                        'moo in the body of "main()" refers to both overloaded functions'
-                    ],
-                    [
-                        "roo",
-                        [68],
-                        'roo in the body of "main()" refers to the struct def in "boo.sol"'
-                    ],
-                    [
-                        "foo",
-                        [68],
-                        'foo in the body of "main()" refers to the struct def in "boo.sol"'
-                    ]
+                    // [
+                    //     "moo",
+                    //     [16, 63],
+                    //     'moo in the body of "main()" refers to both overloaded functions'
+                    // ],
+                    // [
+                    //     "goo",
+                    //     [20, 63],
+                    //     'moo in the body of "main()" refers to both overloaded functions'
+                    // ],
+                    // [
+                    //     "roo",
+                    //     [68],
+                    //     'roo in the body of "main()" refers to the struct def in "boo.sol"'
+                    // ],
+                    // [
+                    //     "foo",
+                    //     [68],
+                    //     'foo in the body of "main()" refers to the struct def in "boo.sol"'
+                    // ]
                 ]
             ]
         ]
@@ -481,9 +481,11 @@ describe("resolveAny() unit tests", () => {
 
             for (const [ctxId, unitTests] of sampleTests) {
                 const ctxNode = reader.context.locate(ctxId);
+
                 for (const [name, expectedIds, testName] of unitTests) {
                     it(testName, () => {
                         const resolvedNodes = resolveAny(name, ctxNode, compilerVersion);
+
                         expect(new Set(expectedIds)).toEqual(
                             new Set([...resolvedNodes].map((node) => node.id))
                         );

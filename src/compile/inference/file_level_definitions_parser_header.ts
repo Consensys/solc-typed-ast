@@ -69,12 +69,21 @@ export interface FLUserValueType extends FileLevelNode<FileLevelNodeKind.UserVal
     valueType: string;
 }
 
+export type AnyFileLevelNode = FLPragma
+    | FLImportDirective
+    | FLConstant
+    | FLFreeFunction
+    | FLContractDefinition
+    | FLStructDefinition
+    | FLEnumDefinition
+    | FLUserValueType;
+
 export interface FLErrorDefinition extends FileLevelNode<FileLevelNodeKind.Error> {
     name: string;
     args: string;
 }
 
-export function parseFileLevelDefinitions(contents: string): Array<FileLevelNode<FileLevelNodeKind>> {
+export function parseFileLevelDefinitions(contents: string): Array<AnyFileLevelNode> {
     // @ts-ignore
     return parse(contents);
 }

@@ -1,36 +1,38 @@
 import expect from "expect";
+import { PossibleCompilerKinds } from "../../../../src";
 import { SolAstCompileCommand, SolAstCompileExec } from "../common";
 
 const sample = "test/samples/solidity/missing_pragma.sol";
-const args = [sample, "--compiler-version", "^0.4.0"];
-const command = SolAstCompileCommand(...args);
 
-describe(command, () => {
-    let exitCode: number | null;
-    let outData = "";
-    let errData = "";
+for (const kind of PossibleCompilerKinds) {
+    const args = [sample, "--compiler-kind", kind, "--compiler-version", "^0.4.0"];
+    const command = SolAstCompileCommand(...args);
 
-    before((done) => {
-        const result = SolAstCompileExec(...args);
+    describe(command, () => {
+        let exitCode: number | null;
+        let outData = "";
+        let errData = "";
 
-        outData = result.stdout;
-        errData = result.stderr;
-        exitCode = result.status;
+        before(() => {
+            const result = SolAstCompileExec(...args);
 
-        done();
+            outData = result.stdout;
+            errData = result.stderr;
+            exitCode = result.status;
+        });
+
+        it("Exit code is valid", () => {
+            expect(exitCode).toEqual(1);
+        });
+
+        it("STDERR is correct", () => {
+            expect(errData).toContain(
+                'Error: Invalid compiler version "^0.4.0". Possible values: "auto" or exact version string.'
+            );
+        });
+
+        it("STDOUT is empty", () => {
+            expect(outData).toEqual("");
+        });
     });
-
-    it("Exit code is valid", () => {
-        expect(exitCode).toEqual(1);
-    });
-
-    it("STDERR is correct", () => {
-        expect(errData).toContain(
-            'Error: Invalid compiler version "^0.4.0". Possible values: "auto" or exact version string.'
-        );
-    });
-
-    it("STDOUT is empty", () => {
-        expect(outData).toEqual("");
-    });
-});
+}

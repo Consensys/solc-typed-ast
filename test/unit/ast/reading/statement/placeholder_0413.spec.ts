@@ -18,7 +18,7 @@ describe("PlaceholderStatement (Solc 0.4.13)", () => {
 
     before(async () => {
         const reader = new ASTReader();
-        const { data } = await compileJson(sample, "0.4.13", []);
+        const { data } = await compileJson(sample, "0.4.13");
         const units = reader.read(data);
 
         mainUnit = units[0];

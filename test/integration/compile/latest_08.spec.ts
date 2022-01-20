@@ -3,9 +3,11 @@ import fse from "fs-extra";
 import {
     ASTKind,
     ASTReader,
+    CompilerKind,
     CompilerVersions08,
     compileSol,
     detectCompileErrors,
+    PossibleCompilerKinds,
     SourceUnit
 } from "../../../src";
 import { createImprint } from "./common";
@@ -71,57 +73,66 @@ const encounters = new Map<string, number>([
     ["RevertStatement", 3]
 ]);
 
-describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
-    const kind = ASTKind.Modern;
+for (const compilerKind of PossibleCompilerKinds) {
+    describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
+        const astKind = ASTKind.Modern;
 
-    let data: any = {};
-    let sourceUnits: SourceUnit[];
+        let data: any = {};
+        let sourceUnits: SourceUnit[];
 
-    before("Compile", async () => {
-        const result = await compileSol(mainSample, "auto", []);
-
-        expect(result.compilerVersion).toEqual(compilerVersion);
-        expect(result.files).toEqual(expectedFiles);
-
-        const errors = detectCompileErrors(result.data);
-
-        expect(errors).toHaveLength(0);
-
-        data = result.data;
-    });
-
-    it(`Parse compiler output (${kind})`, () => {
-        const reader = new ASTReader();
-
-        sourceUnits = reader.read(data, kind);
-
-        expect(sourceUnits.length).toEqual(2);
-
-        const sourceUnit = sourceUnits[0];
-
-        expect(sourceUnit.id).toEqual(315);
-        expect(sourceUnit.src).toEqual("0:4733:0");
-        expect(sourceUnit.absolutePath).toEqual(mainSample);
-        expect(sourceUnit.children.length).toEqual(13);
-        expect(sourceUnit.getChildren().length).toEqual(309);
-    });
-
-    it(`Validate parsed output (${kind})`, () => {
-        const sourceUnit = sourceUnits[0];
-        const sourceUnitImprint = createImprint(sourceUnit);
-
-        expect(sourceUnitImprint.ASTNode).toBeUndefined();
-
-        for (const [type, count] of encounters.entries()) {
-            expect(sourceUnitImprint[type]).toBeDefined();
-            expect(sourceUnitImprint[type].length).toEqual(count);
-
-            const nodes = sourceUnit.getChildrenBySelector(
-                (node) => node.type === type,
-                type === "SourceUnit"
+        before("Compile", async () => {
+            const result = await compileSol(
+                mainSample,
+                "auto",
+                [],
+                undefined,
+                undefined,
+                compilerKind as CompilerKind
             );
 
-            expect(nodes.length).toEqual(count);
-        }
+            expect(result.compilerVersion).toEqual(compilerVersion);
+            expect(result.files).toEqual(expectedFiles);
+
+            const errors = detectCompileErrors(result.data);
+
+            expect(errors).toHaveLength(0);
+
+            data = result.data;
+        });
+
+        it(`Parse compiler output (${astKind})`, () => {
+            const reader = new ASTReader();
+
+            sourceUnits = reader.read(data, astKind);
+
+            expect(sourceUnits.length).toEqual(2);
+
+            const sourceUnit = sourceUnits[0];
+
+            expect(sourceUnit.id).toEqual(315);
+            expect(sourceUnit.src).toEqual("0:4733:0");
+            expect(sourceUnit.absolutePath).toEqual(mainSample);
+            expect(sourceUnit.children.length).toEqual(13);
+            expect(sourceUnit.getChildren().length).toEqual(309);
+        });
+
+        it(`Validate parsed output (${astKind})`, () => {
+            const sourceUnit = sourceUnits[0];
+            const sourceUnitImprint = createImprint(sourceUnit);
+
+            expect(sourceUnitImprint.ASTNode).toBeUndefined();
+
+            for (const [type, count] of encounters.entries()) {
+                expect(sourceUnitImprint[type]).toBeDefined();
+                expect(sourceUnitImprint[type].length).toEqual(count);
+
+                const nodes = sourceUnit.getChildrenBySelector(
+                    (node) => node.type === type,
+                    type === "SourceUnit"
+                );
+
+                expect(nodes.length).toEqual(count);
+            }
+        });
     });
-});
+}

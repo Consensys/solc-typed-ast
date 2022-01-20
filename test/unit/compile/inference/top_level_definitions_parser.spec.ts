@@ -513,8 +513,9 @@ describe("Top-level definitions parser samples test", () => {
     for (const fileName of searchRecursive("test/samples/solidity", (name) =>
         name.endsWith(".sol")
     )) {
-        it(`Parse sample ${fileName}`, () => {
+        it(fileName, () => {
             const contents = fse.readFileSync(fileName).toString();
+
             let tlds;
 
             try {

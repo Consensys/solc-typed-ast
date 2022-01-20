@@ -4,6 +4,7 @@ import {
     assert,
     ASTNodeConstructor,
     ASTReader,
+    CompilerKind,
     compileSol,
     ContractDefinition,
     DataLocation,
@@ -16,6 +17,7 @@ import {
     FunctionVisibility,
     IntType,
     PointerType,
+    PossibleCompilerKinds,
     SourceUnit,
     StringType,
     StructDefinition,
@@ -259,39 +261,49 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
 
 describe("getterFunType()", () => {
     for (const [sample, mapping] of cases) {
-        describe(sample, () => {
-            let unit: SourceUnit;
+        for (const kind of PossibleCompilerKinds) {
+            describe(`[${kind}] sample`, () => {
+                let unit: SourceUnit;
 
-            before(async () => {
-                const { data } = await compileSol(sample, "auto", []);
-                const errors = detectCompileErrors(data);
-
-                expect(errors).toHaveLength(0);
-
-                const reader = new ASTReader();
-                const units = reader.read(data);
-
-                expect(units.length).toEqual(1);
-
-                unit = units[0];
-            });
-
-            for (const [stateVarName, typing] of mapping) {
-                it(`${stateVarName} -> ${
-                    typing instanceof TypeNode ? typing.pp() : "(deferred)"
-                }`, () => {
-                    const expectedType = typing instanceof TypeNode ? typing : typing(unit);
-                    const stateVar = getStateVar(unit, stateVarName);
-                    const resultType = stateVar.getterFunType();
-
-                    assert(
-                        eq(resultType, expectedType),
-                        "Expected {0}, got {1}",
-                        expectedType,
-                        resultType
+                before(async () => {
+                    const { data } = await compileSol(
+                        sample,
+                        "auto",
+                        [],
+                        undefined,
+                        undefined,
+                        kind as CompilerKind
                     );
+
+                    const errors = detectCompileErrors(data);
+
+                    expect(errors).toHaveLength(0);
+
+                    const reader = new ASTReader();
+                    const units = reader.read(data);
+
+                    expect(units.length).toEqual(1);
+
+                    unit = units[0];
                 });
-            }
-        });
+
+                for (const [stateVarName, typing] of mapping) {
+                    it(`${stateVarName} -> ${
+                        typing instanceof TypeNode ? typing.pp() : "(deferred)"
+                    }`, () => {
+                        const expectedType = typing instanceof TypeNode ? typing : typing(unit);
+                        const stateVar = getStateVar(unit, stateVarName);
+                        const resultType = stateVar.getterFunType();
+
+                        assert(
+                            eq(resultType, expectedType),
+                            "Expected {0}, got {1}",
+                            expectedType,
+                            resultType
+                        );
+                    });
+                }
+            });
+        }
     }
 });

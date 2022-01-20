@@ -21,6 +21,7 @@ function walkObjects(json: any, cb: (o: Record<string, any>) => void): void {
         }
     } else if (json instanceof Object) {
         cb(json);
+
         for (const field of Object.values(json)) {
             walkObjects(field, cb);
         }
@@ -109,18 +110,36 @@ function normalizeOutput(output: CompileResult | CompileFailedError): any {
 }
 
 describe(`Native and WASM compilers produce the same results for all files`, () => {
-    for (const fileName of searchRecursive("test/samples/solidity/", (name) =>
-        name.endsWith(".sol")
-    )) {
-        it(`Sample ${fileName}`, async () => {
-            const source = fse.readFileSync(fileName, { encoding: "utf8" });
+    const samples = searchRecursive(
+        "test/samples/solidity/",
+        (name) => name.endsWith(".sol") && !name.endsWith(".sourced.sol")
+    );
+
+    // const skipSamples: string[] = [];
+
+    const defaultCompilationOutput = [CompilationOutput.ALL];
+    const defaultCompilerSettings = { optimizer: { enabled: false } };
+
+    const additionalArgs = new Map<string, [string[], CompilationOutput[], any]>([
+        [
+            "test/samples/solidity/path_remapping/entry.sol",
+            [["@missing=./local"], defaultCompilationOutput, defaultCompilerSettings]
+        ]
+    ]);
+
+    for (const sample of samples) {
+        it(sample, async () => {
+            const source = fse.readFileSync(sample, { encoding: "utf8" });
             const versionStrategy = new VersionDetectionStrategy(
                 [source],
                 new LatestVersionInEachSeriesStrategy()
             );
 
-            const outputs = [CompilationOutput.ALL];
-            const settings = { optimizer: { enabled: false } };
+            const fileName = sample.replace(process.cwd() + "/", "");
+            const args = additionalArgs.get(fileName);
+
+            const [remappings, outputs, settings] =
+                args === undefined ? [[], defaultCompilationOutput, defaultCompilerSettings] : args;
 
             let wasmResult: CompileResult | CompileFailedError;
             let nativeResult: CompileResult | CompileFailedError;
@@ -129,7 +148,7 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
                 wasmResult = await compileSol(
                     fileName,
                     versionStrategy,
-                    [],
+                    remappings,
                     outputs,
                     settings,
                     CompilerKind.WASM
@@ -146,7 +165,7 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
                 nativeResult = await compileSol(
                     fileName,
                     versionStrategy,
-                    [],
+                    remappings,
                     outputs,
                     settings,
                     CompilerKind.Native

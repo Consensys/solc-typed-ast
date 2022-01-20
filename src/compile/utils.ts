@@ -122,17 +122,15 @@ function getCompilerVersionStrategy(
 export async function compile(
     files: Map<string, string>,
     version: string,
-    remappings: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
-    kind = CompilerKind.Native
+    kind = CompilerKind.WASM
 ): Promise<any> {
     const compilerInput = createCompilerInput(
         files,
         version,
         kind,
         compilationOutput,
-        remappings,
         compilerSettings
     );
 
@@ -209,7 +207,6 @@ export async function compileSourceString(
         const data = await compile(
             files,
             compilerVersion,
-            remapping,
             compilationOutput,
             compilerSettings,
             kind
@@ -252,7 +249,6 @@ export async function compileJsonData(
     fileName: string,
     data: any,
     version: string | CompilerVersionSelectionStrategy,
-    remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
     kind?: CompilerKind
@@ -290,7 +286,6 @@ export async function compileJsonData(
             const compileData = await compile(
                 files,
                 compilerVersion,
-                remapping,
                 compilationOutput,
                 compilerSettings,
                 kind
@@ -316,20 +311,11 @@ export async function compileJsonData(
 export async function compileJson(
     fileName: string,
     version: string | CompilerVersionSelectionStrategy,
-    remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
     kind?: CompilerKind
 ): Promise<CompileResult> {
     const data = fse.readJSONSync(fileName);
 
-    return compileJsonData(
-        fileName,
-        data,
-        version,
-        remapping,
-        compilationOutput,
-        compilerSettings,
-        kind
-    );
+    return compileJsonData(fileName, data, version, compilationOutput, compilerSettings, kind);
 }
