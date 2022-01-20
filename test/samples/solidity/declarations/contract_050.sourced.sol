@@ -24,7 +24,7 @@ contract C is B {
 
     uint internal val;
 
-    constructor() public {
+    constructor() {
         val = some(1, 2);
     }
 

@@ -10,7 +10,7 @@ export class ModernFunctionCallProcessor extends ModernExpressionProcessor<Funct
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof FunctionCall> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const kind: FunctionCallKind = raw.kind;
         const fieldNames: string[] | undefined = raw.names.length ? raw.names : undefined;
@@ -18,6 +18,6 @@ export class ModernFunctionCallProcessor extends ModernExpressionProcessor<Funct
         const expression = reader.convert(raw.expression, config) as Expression;
         const args = reader.convertArray(raw.arguments, config) as Expression[];
 
-        return [id, src, type, typeString, kind, expression, args, fieldNames, raw];
+        return [id, src, typeString, kind, expression, args, fieldNames, raw];
     }
 }

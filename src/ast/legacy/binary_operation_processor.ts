@@ -9,7 +9,7 @@ export class LegacyBinaryOperationProcessor extends LegacyExpressionProcessor<Bi
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof BinaryOperation> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const operator = raw.attributes.operator;
 
@@ -18,6 +18,6 @@ export class LegacyBinaryOperationProcessor extends LegacyExpressionProcessor<Bi
             Expression
         ];
 
-        return [id, src, type, typeString, operator, leftHandSide, rightHandSide, raw];
+        return [id, src, typeString, operator, leftHandSide, rightHandSide, raw];
     }
 }

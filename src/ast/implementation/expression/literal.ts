@@ -31,7 +31,6 @@ export class Literal extends PrimaryExpression {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         kind: LiteralKind,
         hexValue: string,
@@ -39,7 +38,7 @@ export class Literal extends PrimaryExpression {
         subdenomination?: TimeUnit | EtherUnit,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.kind = kind;
         this.hexValue = hexValue;

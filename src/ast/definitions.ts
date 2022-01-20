@@ -3,12 +3,14 @@ import { forAll, pp } from "../misc";
 import { ABIEncoderVersion } from "../types/abi";
 import { ASTNode } from "./ast_node";
 import { StateVariableVisibility } from "./constants";
-import { EnumDefinition, StructDefinition } from "./implementation/declaration";
 import { ContractDefinition } from "./implementation/declaration/contract_definition";
+import { EnumDefinition } from "./implementation/declaration/enum_definition";
 import { ErrorDefinition } from "./implementation/declaration/error_definition";
 import { EventDefinition } from "./implementation/declaration/event_definition";
 import { FunctionDefinition } from "./implementation/declaration/function_definition";
 import { ModifierDefinition } from "./implementation/declaration/modifier_definition";
+import { StructDefinition } from "./implementation/declaration/struct_definition";
+import { UserDefinedValueTypeDefinition } from "./implementation/declaration/user_defined_value_type_definition";
 import { VariableDeclaration } from "./implementation/declaration/variable_declaration";
 import { ImportDirective, SourceUnit } from "./implementation/meta";
 import {
@@ -31,6 +33,7 @@ export type AnyResolvable =
     | StructDefinition
     | EnumDefinition
     | ContractDefinition
+    | UserDefinedValueTypeDefinition
     | ImportDirective;
 
 /**
@@ -152,7 +155,8 @@ function* lookupInSourceUnit(
                 child instanceof ContractDefinition ||
                 child instanceof StructDefinition ||
                 child instanceof EnumDefinition ||
-                child instanceof ErrorDefinition) &&
+                child instanceof ErrorDefinition ||
+                child instanceof UserDefinedValueTypeDefinition) &&
             child.name === name
         ) {
             yield child;
@@ -165,9 +169,7 @@ function* lookupInSourceUnit(
             } else if (child.vSymbolAliases.length === 0) {
                 // import "..."
                 // @todo maybe its better to go through child.vSourceUnit.vExportedSymbols here?
-                for (const def of lookupInScope(name, child.vSourceUnit, visitedUnits)) {
-                    yield def;
-                }
+                yield* lookupInScope(name, child.vSourceUnit, visitedUnits);
             } else {
                 // `import {<name>} from "..."` or `import {a as <name>} from "..."`
                 for (const [foreignDef, alias] of child.vSymbolAliases) {
@@ -191,7 +193,7 @@ function* lookupInSourceUnit(
                         }
                     }
 
-                    if (alias === name) {
+                    if (symImportName === name) {
                         yield foreignDef;
                     }
                 }
@@ -208,6 +210,7 @@ function* lookupInContractDefinition(
     scope: ContractDefinition
 ): Iterable<AnyResolvable> {
     const overridenSigHashes = new Set<string>();
+
     for (const base of scope.vLinearizedBaseContracts) {
         for (const child of base.children) {
             if (
@@ -217,7 +220,8 @@ function* lookupInContractDefinition(
                     child instanceof EventDefinition ||
                     child instanceof StructDefinition ||
                     child instanceof EnumDefinition ||
-                    child instanceof ErrorDefinition) &&
+                    child instanceof ErrorDefinition ||
+                    child instanceof UserDefinedValueTypeDefinition) &&
                 child.name === name
             ) {
                 let sigHash: string | undefined;

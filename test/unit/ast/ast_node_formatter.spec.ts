@@ -5,7 +5,7 @@ describe("ASTNodeFormatter", () => {
     const formatter = new ASTNodeFormatter();
 
     const context = new ASTContext();
-    const node = new ASTNode(1, "1:2:3", "SourceUnit", undefined);
+    const node = new ASTNode(1, "1:2:3", undefined);
 
     context.register(node);
 
@@ -37,17 +37,17 @@ describe("ASTNodeFormatter", () => {
             "Correctly handles generic ASTNode",
             [node, 0],
             [
-                "ASTNode #1 = SourceUnit",
+                "ASTNode #1",
                 "    id: 1",
                 '    src: "1:2:3"',
-                '    type: "SourceUnit"',
                 "    context: ASTContext #1",
+                '    <getter> type: "ASTNode"',
                 "    <getter> children: Array(0)",
                 "    <getter> firstChild: undefined",
                 "    <getter> lastChild: undefined",
                 "    <getter> previousSibling: undefined",
                 "    <getter> nextSibling: undefined",
-                "    <getter> root: ASTNode #1 = SourceUnit",
+                "    <getter> root: ASTNode #1",
                 "    <getter> sourceInfo: Object { offset: 1, length: 2, sourceIndex: 3 }",
                 ""
             ].join("\n")

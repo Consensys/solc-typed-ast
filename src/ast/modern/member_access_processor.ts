@@ -9,13 +9,13 @@ export class ModernMemberAccessProcessor extends ModernExpressionProcessor<Membe
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof MemberAccess> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const memberName: string = raw.memberName;
         const referencedDeclaration: number = raw.referencedDeclaration;
 
         const expression = reader.convert(raw.expression, config) as Expression;
 
-        return [id, src, type, typeString, expression, memberName, referencedDeclaration, raw];
+        return [id, src, typeString, expression, memberName, referencedDeclaration, raw];
     }
 }

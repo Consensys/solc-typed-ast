@@ -25,14 +25,13 @@ export class VariableDeclarationStatement extends Statement {
     constructor(
         id: number,
         src: string,
-        type: string,
         assignments: Array<number | null>,
         declarations: VariableDeclaration[],
         initialValue?: Expression,
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
-        super(id, src, type, documentation, raw);
+        super(id, src, documentation, raw);
 
         this.assignments = assignments;
         this.vDeclarations = declarations;

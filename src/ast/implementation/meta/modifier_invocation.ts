@@ -29,13 +29,12 @@ export class ModifierInvocation extends ASTNode {
     constructor(
         id: number,
         src: string,
-        type: string,
         modifierName: Identifier | IdentifierPath,
         args: Expression[],
         kind?: ModifierInvocationKind,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.kind = kind;
 

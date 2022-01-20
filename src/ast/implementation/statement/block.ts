@@ -8,12 +8,11 @@ export class Block extends StatementWithChildren<Statement> {
     constructor(
         id: number,
         src: string,
-        type: string,
         statements: Iterable<Statement>,
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
-        super(id, src, type, documentation, raw);
+        super(id, src, documentation, raw);
 
         for (const statement of statements) {
             this.appendChild(statement);

@@ -4,36 +4,10 @@ import { ASTContext, SourceUnit, StructDefinition } from "../../../../src";
 describe("StructDefinition", () => {
     it("set vScope", () => {
         const context = new ASTContext();
-        const unit = new SourceUnit(
-            1,
-            "0:0:0",
-            "SourceUnit",
-            "entry.sol",
-            0,
-            "entry.sol",
-            new Map()
-        );
+        const unit = new SourceUnit(1, "0:0:0", "entry.sol", 0, "entry.sol", new Map());
+        const otherUnit = new SourceUnit(2, "0:0:0", "other.sol", 1, "other.sol", new Map());
 
-        const otherUnit = new SourceUnit(
-            2,
-            "0:0:0",
-            "SourceUnit",
-            "other.sol",
-            1,
-            "other.sol",
-            new Map()
-        );
-
-        const struct = new StructDefinition(
-            3,
-            "0:0:0",
-            "StructDefinition",
-            "MyStruct",
-            "MyStruct",
-            0,
-            "internal",
-            []
-        );
+        const struct = new StructDefinition(3, "0:0:0", "MyStruct", 0, "internal", []);
 
         context.register(unit, struct);
 

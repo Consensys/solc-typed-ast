@@ -113,7 +113,6 @@ export class VariableDeclaration extends ASTNode {
     constructor(
         id: number,
         src: string,
-        type: string,
         constant: boolean,
         indexed: boolean,
         name: string,
@@ -130,7 +129,7 @@ export class VariableDeclaration extends ASTNode {
         nameLocation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.constant = constant;
         this.indexed = indexed;
@@ -173,6 +172,7 @@ export class VariableDeclaration extends ASTNode {
     canonicalSignatureType(encoderVersion: ABIEncoderVersion): string {
         const type = variableDeclarationToTypeNode(this);
         const abiType = toABIEncodedType(type, encoderVersion);
+
         return abiTypeToCanonicalName(generalizeType(abiType)[0]);
     }
 

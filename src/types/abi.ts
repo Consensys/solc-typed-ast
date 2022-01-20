@@ -1,5 +1,11 @@
 import { AddressType, enumToIntType, PointerType, TypeNode, UserDefinedType } from ".";
-import { ContractDefinition, DataLocation, EnumDefinition, StructDefinition } from "..";
+import {
+    ContractDefinition,
+    DataLocation,
+    EnumDefinition,
+    StructDefinition,
+    UserDefinedValueTypeDefinition
+} from "..";
 import { assert } from "../misc";
 import {
     ArrayType,
@@ -11,7 +17,11 @@ import {
     StringType,
     TupleType
 } from "./ast";
-import { getUserDefinedTypeFQName, variableDeclarationToTypeNode } from "./utils";
+import {
+    getUserDefinedTypeFQName,
+    typeNameToTypeNode,
+    variableDeclarationToTypeNode
+} from "./utils";
 
 export enum ABIEncoderVersion {
     V1 = "ABIEncoderV1",
@@ -52,6 +62,10 @@ export function toABIEncodedType(
     }
 
     if (type instanceof UserDefinedType) {
+        if (type.definition instanceof UserDefinedValueTypeDefinition) {
+            return typeNameToTypeNode(type.definition.underlyingType);
+        }
+
         if (type.definition instanceof ContractDefinition) {
             return new AddressType(false);
         }

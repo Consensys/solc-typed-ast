@@ -11,15 +11,8 @@ export class EnumValue extends ASTNode {
      */
     nameLocation?: string;
 
-    constructor(
-        id: number,
-        src: string,
-        type: string,
-        name: string,
-        nameLocation?: string,
-        raw?: any
-    ) {
-        super(id, src, type, raw);
+    constructor(id: number, src: string, name: string, nameLocation?: string, raw?: any) {
+        super(id, src, raw);
 
         this.name = name;
         this.nameLocation = nameLocation;

@@ -12,7 +12,7 @@ export class ModernForStatementProcessor extends ModernNodeProcessor<ForStatemen
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ForStatement> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const documentation: string | undefined = raw.documentation;
 
@@ -33,7 +33,6 @@ export class ModernForStatementProcessor extends ModernNodeProcessor<ForStatemen
         return [
             id,
             src,
-            type,
             body,
             initializationExpression,
             condition,

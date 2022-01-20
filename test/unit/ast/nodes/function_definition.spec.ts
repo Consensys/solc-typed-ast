@@ -13,33 +13,15 @@ import {
 describe("FunctionDefinition", () => {
     it("set vScope", () => {
         const context = new ASTContext();
-        const unit = new SourceUnit(
-            1,
-            "0:0:0",
-            "SourceUnit",
-            "entry.sol",
-            0,
-            "entry.sol",
-            new Map()
-        );
+        const unit = new SourceUnit(1, "0:0:0", "entry.sol", 0, "entry.sol", new Map());
+        const otherUnit = new SourceUnit(2, "0:0:0", "other.sol", 1, "other.sol", new Map());
 
-        const otherUnit = new SourceUnit(
-            2,
-            "0:0:0",
-            "SourceUnit",
-            "other.sol",
-            1,
-            "other.sol",
-            new Map()
-        );
-
-        const body = new Block(3, "0:0:0", "Block", []);
-        const args = new ParameterList(4, "0:0:0", "ParameterList", []);
-        const rets = new ParameterList(5, "0:0:0", "ParameterList", []);
+        const body = new Block(3, "0:0:0", []);
+        const args = new ParameterList(4, "0:0:0", []);
+        const rets = new ParameterList(5, "0:0:0", []);
         const fn = new FunctionDefinition(
             6,
             "0:0:0",
-            "FunctionDefinition",
             0,
             FunctionKind.Free,
             "myFunc",

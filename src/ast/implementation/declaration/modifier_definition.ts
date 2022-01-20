@@ -57,7 +57,6 @@ export class ModifierDefinition extends ASTNode {
     constructor(
         id: number,
         src: string,
-        type: string,
         name: string,
         virtual: boolean,
         visibility: string,
@@ -68,7 +67,7 @@ export class ModifierDefinition extends ASTNode {
         nameLocation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.name = name;
         this.virtual = virtual;

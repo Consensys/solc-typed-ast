@@ -17,13 +17,12 @@ export class ArrayTypeName extends TypeName {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         baseType: TypeName,
         length?: Expression,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.vBaseType = baseType;
         this.vLength = length;

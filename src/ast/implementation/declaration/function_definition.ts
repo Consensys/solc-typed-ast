@@ -104,7 +104,6 @@ export class FunctionDefinition extends ASTNode {
     constructor(
         id: number,
         src: string,
-        type: string,
         scope: number,
         kind: FunctionKind,
         name: string,
@@ -121,7 +120,7 @@ export class FunctionDefinition extends ASTNode {
         nameLocation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.implemented = body !== undefined;
         this.virtual = virtual;

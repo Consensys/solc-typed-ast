@@ -9,10 +9,10 @@ export class ModernParameterListProcessor extends ModernNodeProcessor<ParameterL
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ParameterList> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const parameters = reader.convertArray(raw.parameters, config) as VariableDeclaration[];
 
-        return [id, src, type, parameters, raw];
+        return [id, src, parameters, raw];
     }
 }

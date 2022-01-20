@@ -1,3 +1,4 @@
+import { getUserDefinedTypeFQName } from "../../..";
 import { ASTNodeWithChildren } from "../../ast_node";
 import { SourceUnit } from "../meta/source_unit";
 import { ContractDefinition } from "./contract_definition";
@@ -8,11 +9,6 @@ export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
      * The name of the struct
      */
     name: string;
-
-    /**
-     * Canonical name (or qualified name), e.g. `DefiningContract.SomeStruct`
-     */
-    canonicalName: string;
 
     /**
      * The source range for name string
@@ -32,19 +28,16 @@ export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
     constructor(
         id: number,
         src: string,
-        type: string,
         name: string,
-        canonicalName: string,
         scope: number,
         visibility: string,
         members: Iterable<VariableDeclaration>,
         nameLocation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.name = name;
-        this.canonicalName = canonicalName;
         this.scope = scope;
         this.visibility = visibility;
         this.nameLocation = nameLocation;
@@ -52,6 +45,13 @@ export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
         for (const member of members) {
             this.appendChild(member);
         }
+    }
+
+    /**
+     * Canonical name (or qualified name), e.g. `DefiningContract.SomeStruct`
+     */
+    get canonicalName(): string {
+        return getUserDefinedTypeFQName(this);
     }
 
     /**

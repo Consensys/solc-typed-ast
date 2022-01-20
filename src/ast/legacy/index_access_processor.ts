@@ -9,13 +9,13 @@ export class LegacyIndexAccessProcessor extends LegacyExpressionProcessor<IndexA
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof IndexAccess> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const [baseExpression, indexExpression] = reader.convertArray(raw.children, config) as [
             Expression,
             Expression | undefined
         ];
 
-        return [id, src, type, typeString, baseExpression, indexExpression, raw];
+        return [id, src, typeString, baseExpression, indexExpression, raw];
     }
 }

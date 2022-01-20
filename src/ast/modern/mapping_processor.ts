@@ -9,11 +9,11 @@ export class ModernMappingProcessor extends ModernTypeNameProcessor<Mapping> {
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof Mapping> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const keyType = reader.convert(raw.keyType, config) as TypeName;
         const valueType = reader.convert(raw.valueType, config) as TypeName;
 
-        return [id, src, type, typeString, keyType, valueType, raw];
+        return [id, src, typeString, keyType, valueType, raw];
     }
 }

@@ -10,7 +10,7 @@ export class ModernErrorDefinitionProcessor extends ModernNodeProcessor<ErrorDef
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ErrorDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const name: string = raw.name;
         const nameLocation: string | undefined = raw.nameLocation;
@@ -26,6 +26,6 @@ export class ModernErrorDefinitionProcessor extends ModernNodeProcessor<ErrorDef
 
         const parameters = reader.convert(raw.parameters, config) as ParameterList;
 
-        return [id, src, type, name, parameters, documentation, nameLocation, raw];
+        return [id, src, name, parameters, documentation, nameLocation, raw];
     }
 }

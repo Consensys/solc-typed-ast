@@ -6,4 +6,5 @@ export * from "./event_definition";
 export * from "./function_definition";
 export * from "./modifier_definition";
 export * from "./struct_definition";
+export * from "./user_defined_value_type_definition";
 export * from "./variable_declaration";

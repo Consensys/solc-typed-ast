@@ -8,11 +8,11 @@ export class ModernEnumValueProcessor extends ModernNodeProcessor<EnumValue> {
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof EnumValue> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const name: string = raw.name;
         const nameLocation: string | undefined = raw.nameLocation;
 
-        return [id, src, type, name, nameLocation, raw];
+        return [id, src, name, nameLocation, raw];
     }
 }

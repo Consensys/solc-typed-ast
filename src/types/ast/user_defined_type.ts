@@ -1,8 +1,18 @@
-import { ContractDefinition, ContractKind, EnumDefinition, StructDefinition } from "../../ast";
+import {
+    ContractDefinition,
+    ContractKind,
+    EnumDefinition,
+    StructDefinition,
+    UserDefinedValueTypeDefinition
+} from "../../ast";
 import { Range } from "../../misc";
 import { TypeNode } from "./type";
 
-export type UserDefinition = StructDefinition | EnumDefinition | ContractDefinition;
+export type UserDefinition =
+    | StructDefinition
+    | EnumDefinition
+    | ContractDefinition
+    | UserDefinedValueTypeDefinition;
 
 export class UserDefinedType extends TypeNode {
     public readonly name: string;
@@ -17,6 +27,10 @@ export class UserDefinedType extends TypeNode {
     }
 
     pp(): string {
+        if (this.definition instanceof UserDefinedValueTypeDefinition) {
+            return this.name;
+        }
+
         let typePrefix: string;
 
         if (this.definition instanceof StructDefinition) {

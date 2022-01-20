@@ -10,7 +10,7 @@ export class LegacyTryCatchClauseProcessor extends LegacyNodeProcessor<TryCatchC
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof TryCatchClause> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
         const children = reader.convertArray(raw.children, config);
 
         const errorName: string = raw.attributes.errorName;
@@ -18,6 +18,6 @@ export class LegacyTryCatchClauseProcessor extends LegacyNodeProcessor<TryCatchC
         const block = children.pop() as Block;
         const parameters = children.length ? (children.pop() as ParameterList) : undefined;
 
-        return [id, src, type, errorName, block, parameters, undefined, raw];
+        return [id, src, errorName, block, parameters, undefined, raw];
     }
 }

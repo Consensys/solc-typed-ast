@@ -10,7 +10,7 @@ export class ModernContractDefinitionProcessor extends ModernNodeProcessor<Contr
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ContractDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const name: string = raw.name;
         const scope: number = raw.scope;
@@ -41,7 +41,6 @@ export class ModernContractDefinitionProcessor extends ModernNodeProcessor<Contr
         return [
             id,
             src,
-            type,
             name,
             scope,
             kind,

@@ -9,13 +9,13 @@ export class LegacyConditionalProcessor extends LegacyExpressionProcessor<Condit
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof Conditional> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const [condition, trueExpression, falseExpression] = reader.convertArray(
             raw.children,
             config
         ) as [Expression, Expression, Expression];
 
-        return [id, src, type, typeString, condition, trueExpression, falseExpression, raw];
+        return [id, src, typeString, condition, trueExpression, falseExpression, raw];
     }
 }

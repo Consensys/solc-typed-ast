@@ -24,14 +24,13 @@ export class Conditional extends Expression {
     constructor(
         id: number,
         src: string,
-        type: string,
         typeString: string,
         condition: Expression,
         trueExpression: Expression,
         falseExpression: Expression,
         raw?: any
     ) {
-        super(id, src, type, typeString, raw);
+        super(id, src, typeString, raw);
 
         this.vCondition = condition;
         this.vTrueExpression = trueExpression;

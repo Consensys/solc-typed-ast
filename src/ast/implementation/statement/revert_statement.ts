@@ -12,12 +12,11 @@ export class RevertStatement extends Statement {
     constructor(
         id: number,
         src: string,
-        type: string,
         errorCall: FunctionCall,
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
-        super(id, src, type, documentation, raw);
+        super(id, src, documentation, raw);
 
         this.errorCall = errorCall;
 

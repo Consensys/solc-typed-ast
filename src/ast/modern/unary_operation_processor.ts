@@ -9,13 +9,13 @@ export class ModernUnaryOperationProcessor extends ModernExpressionProcessor<Una
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof UnaryOperation> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const prefix: boolean = raw.prefix;
         const operator: string = raw.operator;
 
         const subExpression = reader.convert(raw.subExpression, config) as Expression;
 
-        return [id, src, type, typeString, prefix, operator, subExpression, raw];
+        return [id, src, typeString, prefix, operator, subExpression, raw];
     }
 }

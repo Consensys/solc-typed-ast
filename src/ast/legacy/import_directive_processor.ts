@@ -11,7 +11,7 @@ export class LegacyImportDirectiveProcessor extends LegacyNodeProcessor<ImportDi
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ImportDirective> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
         const attributes = raw.attributes;
 
         const file: string = attributes.file;
@@ -27,17 +27,6 @@ export class LegacyImportDirectiveProcessor extends LegacyNodeProcessor<ImportDi
             }
         }
 
-        return [
-            id,
-            src,
-            type,
-            file,
-            absolutePath,
-            unitAlias,
-            symbolAliases,
-            scope,
-            sourceUnit,
-            raw
-        ];
+        return [id, src, file, absolutePath, unitAlias, symbolAliases, scope, sourceUnit, raw];
     }
 }

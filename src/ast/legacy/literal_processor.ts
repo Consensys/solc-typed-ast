@@ -9,7 +9,7 @@ export class LegacyLiteralProcessor extends LegacyExpressionProcessor<Literal> {
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof Literal> {
-        const [id, src, type, typeString] = super.process(reader, config, raw);
+        const [id, src, typeString] = super.process(reader, config, raw);
 
         const attributes = raw.attributes;
 
@@ -20,6 +20,6 @@ export class LegacyLiteralProcessor extends LegacyExpressionProcessor<Literal> {
             ? attributes.subdenomination
             : undefined;
 
-        return [id, src, type, typeString, kind, hexValue, value, subdenomination, raw];
+        return [id, src, typeString, kind, hexValue, value, subdenomination, raw];
     }
 }

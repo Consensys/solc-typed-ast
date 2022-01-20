@@ -16,6 +16,7 @@ import {
     PossibleCompilerKinds,
     replaceNode,
     StructDefinition,
+    UserDefinedValueTypeDefinition,
     VariableDeclaration
 } from "../../../src";
 
@@ -107,6 +108,7 @@ describe(`replaceNode() validation`, () => {
                                 child instanceof ModifierDefinition ||
                                 child instanceof StructDefinition ||
                                 child instanceof EnumDefinition ||
+                                child instanceof UserDefinedValueTypeDefinition ||
                                 child instanceof VariableDeclaration
                             ) {
                                 continue;

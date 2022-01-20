@@ -4,6 +4,7 @@ import { EnumDefinition } from "../declaration/enum_definition";
 import { ErrorDefinition } from "../declaration/error_definition";
 import { FunctionDefinition } from "../declaration/function_definition";
 import { StructDefinition } from "../declaration/struct_definition";
+import { UserDefinedValueTypeDefinition } from "../declaration/user_defined_value_type_definition";
 import { VariableDeclaration } from "../declaration/variable_declaration";
 import { ImportDirective } from "./import_directive";
 import { PragmaDirective } from "./pragma_directive";
@@ -14,6 +15,7 @@ export type ExportedSymbol =
     | EnumDefinition
     | ErrorDefinition
     | FunctionDefinition
+    | UserDefinedValueTypeDefinition
     | VariableDeclaration
     | ImportDirective;
 
@@ -41,7 +43,6 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
     constructor(
         id: number,
         src: string,
-        type: string,
         sourceEntryKey: string,
         sourceListIndex: number,
         absolutePath: string,
@@ -49,7 +50,7 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
         children?: Iterable<ASTNode>,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.sourceEntryKey = sourceEntryKey;
         this.sourceListIndex = sourceListIndex;
@@ -133,6 +134,15 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
         return this.ownChildren.filter(
             (node) => node instanceof VariableDeclaration
         ) as VariableDeclaration[];
+    }
+
+    /**
+     * References to file-level user-defined value type definitions
+     */
+    get vUserDefinedValueTypes(): readonly UserDefinedValueTypeDefinition[] {
+        return this.ownChildren.filter(
+            (node) => node instanceof UserDefinedValueTypeDefinition
+        ) as UserDefinedValueTypeDefinition[];
     }
 
     /**

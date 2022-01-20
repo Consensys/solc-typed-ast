@@ -8,10 +8,10 @@ export class LegacyStructuredDocumentationProcessor extends LegacyNodeProcessor<
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof StructuredDocumentation> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const text: string = raw.attributes.text;
 
-        return [id, src, type, text, raw];
+        return [id, src, text, raw];
     }
 }

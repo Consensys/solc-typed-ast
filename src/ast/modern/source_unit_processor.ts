@@ -8,7 +8,7 @@ export class ModernSourceUnitProcessor extends ModernNodeProcessor<SourceUnit> {
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof SourceUnit> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const sourceEntryKey: string = raw.sourceEntryKey;
         const sourceListIndex = parseInt(src.slice(src.lastIndexOf(":") + 1), 10);
@@ -23,16 +23,6 @@ export class ModernSourceUnitProcessor extends ModernNodeProcessor<SourceUnit> {
 
         const children = reader.convertArray(raw.nodes, config);
 
-        return [
-            id,
-            src,
-            type,
-            sourceEntryKey,
-            sourceListIndex,
-            absolutePath,
-            symbols,
-            children,
-            raw
-        ];
+        return [id, src, sourceEntryKey, sourceListIndex, absolutePath, symbols, children, raw];
     }
 }

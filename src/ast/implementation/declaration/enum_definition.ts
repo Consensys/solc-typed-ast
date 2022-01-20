@@ -1,4 +1,4 @@
-import { enumToIntType } from "../../..";
+import { enumToIntType, getUserDefinedTypeFQName } from "../../..";
 import { ASTNodeWithChildren } from "../../ast_node";
 import { SourceUnit } from "../meta/source_unit";
 import { ContractDefinition } from "./contract_definition";
@@ -15,31 +15,30 @@ export class EnumDefinition extends ASTNodeWithChildren<EnumValue> {
      */
     nameLocation?: string;
 
-    /**
-     * Canonical name (or qualified name), e.g. `DefiningContract.SomeEnum`
-     */
-    canonicalName: string;
-
     constructor(
         id: number,
         src: string,
-        type: string,
         name: string,
-        canonicalName: string,
         members: Iterable<EnumValue>,
         nameLocation?: string,
         raw?: any
     ) {
-        super(id, src, type, raw);
+        super(id, src, raw);
 
         this.name = name;
-        this.canonicalName = canonicalName;
 
         for (const member of members) {
             this.appendChild(member);
         }
 
         this.nameLocation = nameLocation;
+    }
+
+    /**
+     * Canonical name (or qualified name), e.g. `DefiningContract.SomeEnum`
+     */
+    get canonicalName(): string {
+        return getUserDefinedTypeFQName(this);
     }
 
     /**

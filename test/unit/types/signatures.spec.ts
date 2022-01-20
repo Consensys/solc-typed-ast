@@ -6,6 +6,7 @@ import {
     ASTKind,
     ASTReader,
     CompilerKind,
+    CompilerVersions08,
     compileSol,
     ContractDefinition,
     detectCompileErrors,
@@ -25,12 +26,20 @@ import {
 import { ABIEncoderVersion } from "../../../src/types/abi";
 
 const samples: Array<[string, string, ABIEncoderVersion]> = [
-    ["test/samples/solidity/getters_08.sol", "0.8.7", ABIEncoderVersion.V2],
+    [
+        "test/samples/solidity/getters_08.sol",
+        CompilerVersions08[CompilerVersions08.length - 1],
+        ABIEncoderVersion.V2
+    ],
     ["test/samples/solidity/getters_07.sol", "0.7.6", ABIEncoderVersion.V2],
     ["test/samples/solidity/getters_07_abiv1.sol", "0.7.6", ABIEncoderVersion.V1],
     ["test/samples/solidity/latest_06.sol", "0.6.12", ABIEncoderVersion.V2],
     ["test/samples/solidity/latest_07.sol", "0.7.6", ABIEncoderVersion.V2],
-    ["test/samples/solidity/latest_08.sol", "0.8.7", ABIEncoderVersion.V2],
+    [
+        "test/samples/solidity/latest_08.sol",
+        CompilerVersions08[CompilerVersions08.length - 1],
+        ABIEncoderVersion.V2
+    ],
     ["test/samples/solidity/compile_04.sol", "0.4.26", ABIEncoderVersion.V1],
     ["test/samples/solidity/compile_05.sol", "0.5.17", ABIEncoderVersion.V1],
     ["test/samples/solidity/compile_06.sol", "0.6.12", ABIEncoderVersion.V1],
@@ -48,7 +57,6 @@ function resolveOne(
     assert(contracts.length === 1, `Contract ${contractName} not found in ${unit.sourceEntryKey}`);
 
     const contract = contracts[0] as ContractDefinition;
-
     const defs = [...resolveAny(name, contract, compilerVersion, true)];
 
     if (defs.length === 0) {
@@ -57,7 +65,11 @@ function resolveOne(
 
     assert(
         defs.length === 1,
-        `Unexpected number of entries (${defs.length}) for ${name} in contract ${contract.name}: ${defs}`
+        "Unexpected number of entries ({0}) for {1} in contract {2}: {3}",
+        defs.length,
+        name,
+        contract.name,
+        defs
     );
 
     return defs[0];

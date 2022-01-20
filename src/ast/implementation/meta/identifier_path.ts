@@ -11,15 +11,8 @@ export class IdentifierPath extends ASTNode {
      */
     referencedDeclaration: number;
 
-    constructor(
-        id: number,
-        src: string,
-        type: string,
-        name: string,
-        referencedDeclaration: number,
-        raw?: any
-    ) {
-        super(id, src, type, raw);
+    constructor(id: number, src: string, name: string, referencedDeclaration: number, raw?: any) {
+        super(id, src, raw);
 
         this.name = name;
         this.referencedDeclaration = referencedDeclaration;

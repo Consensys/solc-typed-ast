@@ -13,7 +13,7 @@ export class LegacyModifierDefinitionProcessor extends LegacyNodeProcessor<Modif
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ModifierDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
         const attributes = raw.attributes;
         const children = reader.convertArray(raw.children, config);
 
@@ -35,7 +35,6 @@ export class LegacyModifierDefinitionProcessor extends LegacyNodeProcessor<Modif
         return [
             id,
             src,
-            type,
             name,
             virtual,
             visibility,

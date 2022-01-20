@@ -11,7 +11,7 @@ export class LegacyEventDefinitionProcessor extends LegacyNodeProcessor<EventDef
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof EventDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
         const attributes = raw.attributes;
         const children = reader.convertArray(raw.children, config);
 
@@ -28,7 +28,7 @@ export class LegacyEventDefinitionProcessor extends LegacyNodeProcessor<EventDef
             documentation = attributes.documentation;
         }
 
-        return [id, src, type, anonymous, name, parameters, documentation, undefined, raw];
+        return [id, src, anonymous, name, parameters, documentation, undefined, raw];
     }
 
     private extract(children: ASTNode[]): [StructuredDocumentation | undefined, ParameterList] {

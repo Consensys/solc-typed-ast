@@ -499,7 +499,7 @@ function expectTopLevelNodesMatch(a: any[], b: any[]) {
     }
 }
 
-describe("Top-level definitions parser unit tests", () => {
+describe("File-level definitions parser unit tests", () => {
     for (const [name, sample, expectedParsed] of good_samples) {
         it(`Sample ${name} should parse successfully`, () => {
             const parsed = parseFileLevelDefinitions(sample);
@@ -509,7 +509,7 @@ describe("Top-level definitions parser unit tests", () => {
     }
 });
 
-describe("Top-level definitions parser samples test", () => {
+describe("File-level definitions parser samples test", () => {
     for (const fileName of searchRecursive("test/samples/solidity", (name) =>
         name.endsWith(".sol")
     )) {
@@ -520,7 +520,7 @@ describe("Top-level definitions parser samples test", () => {
 
             try {
                 tlds = parseFileLevelDefinitions(contents);
-            } catch (e) {
+            } catch (e: any) {
                 fail(
                     `Failed compiling ${fileName}: msg: ${e.message}  loc: ${JSON.stringify(
                         e.location,

@@ -8,10 +8,10 @@ export class ModernPragmaDirectiveProcessor extends ModernNodeProcessor<PragmaDi
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof PragmaDirective> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const literals: string[] = raw.literals;
 
-        return [id, src, type, literals, raw];
+        return [id, src, literals, raw];
     }
 }

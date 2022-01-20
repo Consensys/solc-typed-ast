@@ -6,8 +6,8 @@ export class Expression extends ASTNode {
      */
     typeString: string;
 
-    constructor(id: number, src: string, type: string, typeString: string, raw?: any) {
-        super(id, src, type, raw);
+    constructor(id: number, src: string, typeString: string, raw?: any) {
+        super(id, src, raw);
 
         this.typeString = typeString;
     }
@@ -16,7 +16,6 @@ export class Expression extends ASTNode {
 export type ExpressionConstructor<T extends Expression> = new (
     id: number,
     src: string,
-    type: string,
     typeString: string,
     ...args: any[]
 ) => T;

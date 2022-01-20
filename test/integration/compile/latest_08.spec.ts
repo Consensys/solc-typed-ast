@@ -30,51 +30,53 @@ const encounters = new Map<string, number>([
     ["ImportDirective", 1],
     ["EnumDefinition", 2],
     ["EnumValue", 6],
-    ["ContractDefinition", 8],
-    ["FunctionDefinition", 15],
-    ["ParameterList", 39],
-    ["VariableDeclaration", 23],
-    ["ElementaryTypeName", 23],
-    ["Block", 32],
-    ["VariableDeclarationStatement", 9],
-    ["Literal", 21],
+    ["ContractDefinition", 13],
+    ["FunctionDefinition", 25],
+    ["ParameterList", 61],
+    ["VariableDeclaration", 48],
+    ["ElementaryTypeName", 43],
+    ["Block", 41],
+    ["VariableDeclarationStatement", 11],
+    ["Literal", 26],
     ["UncheckedBlock", 2],
-    ["ExpressionStatement", 7],
-    ["UnaryOperation", 2],
-    ["Identifier", 21],
-    ["Return", 5],
+    ["ExpressionStatement", 9],
+    ["UnaryOperation", 3],
+    ["Identifier", 52],
+    ["Return", 11],
     ["InheritanceSpecifier", 1],
-    ["IdentifierPath", 11],
+    ["IdentifierPath", 19],
     ["UsingForDirective", 1],
-    ["UserDefinedTypeName", 6],
+    ["UserDefinedTypeName", 14],
     ["ModifierInvocation", 2],
-    ["FunctionCall", 16],
-    ["MemberAccess", 9],
+    ["FunctionCall", 28],
+    ["MemberAccess", 25],
     ["OverrideSpecifier", 1],
     ["ElementaryTypeNameExpression", 3],
     ["NewExpression", 2],
     ["TryStatement", 2],
     ["TryCatchClause", 8],
     ["IfStatement", 3],
-    ["BinaryOperation", 3],
+    ["BinaryOperation", 10],
     ["EventDefinition", 1],
     ["ModifierDefinition", 1],
     ["PlaceholderStatement", 1],
-    ["TupleExpression", 2],
+    ["TupleExpression", 5],
     ["EmitStatement", 1],
     ["WhileStatement", 1],
     ["Continue", 1],
     ["DoWhileStatement", 1],
     ["Break", 1],
     ["ForStatement", 1],
-    ["InlineAssembly", 3],
+    ["InlineAssembly", 4],
     ["ErrorDefinition", 3],
     ["StructuredDocumentation", 3],
-    ["RevertStatement", 3]
+    ["RevertStatement", 3],
+    ["UserDefinedValueTypeDefinition", 4],
+    ["FunctionTypeName", 1]
 ]);
 
 for (const compilerKind of PossibleCompilerKinds) {
-    describe(`Compile ${mainSample} with ${compilerVersion} compiler`, () => {
+    describe(`Compile ${mainSample} with ${compilerKind} ${compilerVersion} compiler`, () => {
         const astKind = ASTKind.Modern;
 
         let data: any = {};
@@ -109,11 +111,15 @@ for (const compilerKind of PossibleCompilerKinds) {
 
             const sourceUnit = sourceUnits[0];
 
-            expect(sourceUnit.id).toEqual(315);
-            expect(sourceUnit.src).toEqual("0:4733:0");
+            // Uncomment following lines to get the current state of unit:
+            // console.log(sourceUnit.print());
+            // console.log(sourceUnit.getChildren().length);
+
+            expect(sourceUnit.id).toEqual(513);
+            expect(sourceUnit.src).toEqual("0:6507:0");
             expect(sourceUnit.absolutePath).toEqual(mainSample);
-            expect(sourceUnit.children.length).toEqual(13);
-            expect(sourceUnit.getChildren().length).toEqual(309);
+            expect(sourceUnit.children.length).toEqual(20);
+            expect(sourceUnit.getChildren().length).toEqual(507);
         });
 
         it(`Validate parsed output (${astKind})`, () => {
@@ -121,6 +127,11 @@ for (const compilerKind of PossibleCompilerKinds) {
             const sourceUnitImprint = createImprint(sourceUnit);
 
             expect(sourceUnitImprint.ASTNode).toBeUndefined();
+
+            // Uncomment following lines to get the current unit snapshot data:
+            // for (const [type, nodes] of Object.entries(sourceUnitImprint)) {
+            //     console.log(`["${type}", ${nodes.length}],`);
+            // }
 
             for (const [type, count] of encounters.entries()) {
                 expect(sourceUnitImprint[type]).toBeDefined();

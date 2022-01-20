@@ -10,30 +10,12 @@ import {
 describe("ContractDefinition", () => {
     it("set vScope", () => {
         const context = new ASTContext();
-        const unit = new SourceUnit(
-            1,
-            "0:0:0",
-            "SourceUnit",
-            "entry.sol",
-            0,
-            "entry.sol",
-            new Map()
-        );
-
-        const otherUnit = new SourceUnit(
-            2,
-            "0:0:0",
-            "SourceUnit",
-            "other.sol",
-            1,
-            "other.sol",
-            new Map()
-        );
+        const unit = new SourceUnit(1, "0:0:0", "entry.sol", 0, "entry.sol", new Map());
+        const otherUnit = new SourceUnit(2, "0:0:0", "other.sol", 1, "other.sol", new Map());
 
         const contract = new ContractDefinition(
             3,
             "0:0:0",
-            "ContractDefinition",
             "MyContract",
             0,
             ContractKind.Contract,
@@ -59,19 +41,11 @@ describe("ContractDefinition", () => {
 
     describe("removeChild()", () => {
         it("Single child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "MyContract.MyEnum1",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "MyEnum1", []);
 
             const contract = new ContractDefinition(
                 2,
                 "0:0:0",
-                "ContractDefinition",
                 "MyContract",
                 0,
                 ContractKind.Contract,
@@ -98,28 +72,12 @@ describe("ContractDefinition", () => {
         });
 
         it("First child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "MyContract.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "MyContract.MyEnum2",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "MyEnum2", []);
 
             const contract = new ContractDefinition(
                 3,
                 "0:0:0",
-                "ContractDefinition",
                 "MyContract",
                 0,
                 ContractKind.Contract,
@@ -149,28 +107,12 @@ describe("ContractDefinition", () => {
         });
 
         it("Last child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "MyContract.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "MyContract.MyEnum2",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "MyEnum2", []);
 
             const contract = new ContractDefinition(
                 3,
                 "0:0:0",
-                "ContractDefinition",
                 "MyContract",
                 0,
                 ContractKind.Contract,
@@ -200,37 +142,13 @@ describe("ContractDefinition", () => {
         });
 
         it("Middle child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "MyContract.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "MyContract.MyEnum2",
-                []
-            );
-
-            const myEnum3 = new EnumDefinition(
-                3,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum3",
-                "MyContract.MyEnum3",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "MyEnum2", []);
+            const myEnum3 = new EnumDefinition(3, "0:0:0", "MyEnum3", []);
 
             const contract = new ContractDefinition(
                 4,
                 "0:0:0",
-                "ContractDefinition",
                 "MyContract",
                 0,
                 ContractKind.Contract,
@@ -262,28 +180,12 @@ describe("ContractDefinition", () => {
 
     describe("insertBefore()", () => {
         it("First child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "MyContract.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "MyContract.MyEnum2",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "MyEnum2", []);
 
             const contract = new ContractDefinition(
                 3,
                 "0:0:0",
-                "ContractDefinition",
                 "MyContract",
                 0,
                 ContractKind.Contract,
@@ -312,37 +214,13 @@ describe("ContractDefinition", () => {
         });
 
         it("Last child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "MyContract.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "MyContract.MyEnum2",
-                []
-            );
-
-            const myEnum3 = new EnumDefinition(
-                3,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum3",
-                "MyContract.MyEnum3",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "MyEnum2", []);
+            const myEnum3 = new EnumDefinition(3, "0:0:0", "MyEnum3", []);
 
             const contract = new ContractDefinition(
                 4,
                 "0:0:0",
-                "ContractDefinition",
                 "MyContract",
                 0,
                 ContractKind.Contract,
@@ -374,28 +252,12 @@ describe("ContractDefinition", () => {
 
     describe("insertAfter()", () => {
         it("Last child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "MyContract.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "MyContract.MyEnum2",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "MyEnum2", []);
 
             const contract = new ContractDefinition(
                 3,
                 "0:0:0",
-                "ContractDefinition",
                 "MyContract",
                 0,
                 ContractKind.Contract,
@@ -424,37 +286,13 @@ describe("ContractDefinition", () => {
         });
 
         it("First child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "MyContract.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "MyContract.MyEnum2",
-                []
-            );
-
-            const myEnum3 = new EnumDefinition(
-                3,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum3",
-                "MyContract.MyEnum3",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "MyEnum2", []);
+            const myEnum3 = new EnumDefinition(3, "0:0:0", "MyEnum3", []);
 
             const contract = new ContractDefinition(
                 4,
                 "0:0:0",
-                "ContractDefinition",
                 "MyContract",
                 0,
                 ContractKind.Contract,
@@ -483,28 +321,12 @@ describe("ContractDefinition", () => {
 
     describe("replaceChild()", () => {
         it("Single child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "MyContract.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "MyContract.MyEnum2",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "MyEnum2", []);
 
             const contract = new ContractDefinition(
                 3,
                 "0:0:0",
-                "ContractDefinition",
                 "MyContract",
                 0,
                 ContractKind.Contract,
@@ -531,46 +353,14 @@ describe("ContractDefinition", () => {
         });
 
         it("Middle child", () => {
-            const myEnum1 = new EnumDefinition(
-                1,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum1",
-                "MyContract.MyEnum1",
-                []
-            );
-
-            const myEnum2 = new EnumDefinition(
-                2,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum2",
-                "MyContract.MyEnum2",
-                []
-            );
-
-            const myEnum3 = new EnumDefinition(
-                3,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum3",
-                "MyContract.MyEnum3",
-                []
-            );
-
-            const myEnum4 = new EnumDefinition(
-                4,
-                "0:0:0",
-                "EnumDefinition",
-                "MyEnum4",
-                "MyContract.MyEnum4",
-                []
-            );
+            const myEnum1 = new EnumDefinition(1, "0:0:0", "MyEnum1", []);
+            const myEnum2 = new EnumDefinition(2, "0:0:0", "MyEnum2", []);
+            const myEnum3 = new EnumDefinition(3, "0:0:0", "MyEnum3", []);
+            const myEnum4 = new EnumDefinition(4, "0:0:0", "MyEnum4", []);
 
             const contract = new ContractDefinition(
                 5,
                 "0:0:0",
-                "ContractDefinition",
                 "MyContract",
                 0,
                 ContractKind.Contract,

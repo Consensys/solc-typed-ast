@@ -18,13 +18,12 @@ export class TryStatement extends Statement {
     constructor(
         id: number,
         src: string,
-        type: string,
         externalCall: FunctionCall,
         clauses: TryCatchClause[],
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
-        super(id, src, type, documentation, raw);
+        super(id, src, documentation, raw);
 
         this.vExternalCall = externalCall;
         this.vClauses = clauses;

@@ -15,10 +15,7 @@ export class ASTNodeFormatter {
     }
 
     private formatNodeValue(node: ASTNode): string {
-        const name = node.constructor.name;
-        const result = `${name} #${node.id}`;
-
-        return name === node.type ? result : `${result} = ${node.type}`;
+        return `${node.type} #${node.id}`;
     }
 
     private formatArrayValue(array: any[]): string {

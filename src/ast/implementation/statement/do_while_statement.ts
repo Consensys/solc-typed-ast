@@ -17,13 +17,12 @@ export class DoWhileStatement extends Statement {
     constructor(
         id: number,
         src: string,
-        type: string,
         condition: Expression,
         body: Statement,
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
-        super(id, src, type, documentation, raw);
+        super(id, src, documentation, raw);
 
         this.vCondition = condition;
         this.vBody = body;

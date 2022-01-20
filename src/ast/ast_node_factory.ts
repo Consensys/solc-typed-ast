@@ -9,6 +9,7 @@ import { EventDefinition } from "./implementation/declaration/event_definition";
 import { FunctionDefinition } from "./implementation/declaration/function_definition";
 import { ModifierDefinition } from "./implementation/declaration/modifier_definition";
 import { StructDefinition } from "./implementation/declaration/struct_definition";
+import { UserDefinedValueTypeDefinition } from "./implementation/declaration/user_defined_value_type_definition";
 import { VariableDeclaration } from "./implementation/declaration/variable_declaration";
 import { Assignment } from "./implementation/expression/assignment";
 import { BinaryOperation } from "./implementation/expression/binary_operation";
@@ -76,12 +77,7 @@ import { UserDefinedTypeName } from "./implementation/type/user_defined_type_nam
  */
 type Specific<Args extends any[]> = Args["length"] extends 0
     ? undefined
-    : ((...args: Args) => void) extends (
-          id: number,
-          src: string,
-          type: string,
-          ...rest: infer Rest
-      ) => void
+    : ((...args: Args) => void) extends (id: number, src: string, ...rest: infer Rest) => void
     ? Rest
     : [];
 
@@ -109,7 +105,6 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         EnumDefinition,
         (node: EnumDefinition): Specific<ConstructorParameters<typeof EnumDefinition>> => [
             node.name,
-            node.canonicalName,
             node.vMembers,
             node.nameLocation,
             node.raw
@@ -182,10 +177,20 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         StructDefinition,
         (node: StructDefinition): Specific<ConstructorParameters<typeof StructDefinition>> => [
             node.name,
-            node.canonicalName,
             node.scope,
             node.visibility,
             node.vMembers,
+            node.nameLocation,
+            node.raw
+        ]
+    ],
+    [
+        UserDefinedValueTypeDefinition,
+        (
+            node: UserDefinedValueTypeDefinition
+        ): Specific<ConstructorParameters<typeof UserDefinedValueTypeDefinition>> => [
+            node.name,
+            node.underlyingType,
             node.nameLocation,
             node.raw
         ]
@@ -728,6 +733,12 @@ export class ASTNodeFactory {
         return this.make(StructDefinition, ...args);
     }
 
+    makeUserDefinedValueTypeDefinition(
+        ...args: Specific<ConstructorParameters<typeof UserDefinedValueTypeDefinition>>
+    ): UserDefinedValueTypeDefinition {
+        return this.make(UserDefinedValueTypeDefinition, ...args);
+    }
+
     makeVariableDeclaration(
         ...args: Specific<ConstructorParameters<typeof VariableDeclaration>>
     ): VariableDeclaration {
@@ -1013,6 +1024,7 @@ export class ASTNodeFactory {
             | ErrorDefinition
             | EventDefinition
             | EnumDefinition
+            | UserDefinedValueTypeDefinition
             | ImportDirective
     ): Identifier {
         let typeString: string;
@@ -1041,6 +1053,12 @@ export class ASTNodeFactory {
             typeString = result.join(" ");
         } else if (target instanceof ContractDefinition) {
             typeString = `type(contract ${target.name})`;
+        } else if (target instanceof StructDefinition) {
+            typeString = `type(struct ${target.canonicalName} storage pointer)`;
+        } else if (target instanceof EnumDefinition) {
+            typeString = `type(enum ${target.canonicalName})`;
+        } else if (target instanceof UserDefinedValueTypeDefinition) {
+            typeString = `type(${target.canonicalName})`;
         } else if (target instanceof EventDefinition || target instanceof ErrorDefinition) {
             const args = target.vParameters.vParameters.map(this.typeExtractor);
 
@@ -1052,15 +1070,9 @@ export class ASTNodeFactory {
                 throw new Error('Target ImportDirective required to have valid "unitAlias"');
             }
         } else {
-            const name =
-                target.vScope instanceof ContractDefinition
-                    ? target.vScope.name + "." + target.name
-                    : target.name;
-
-            typeString =
-                target instanceof StructDefinition
-                    ? `type(struct ${name} storage pointer)`
-                    : `type(enum ${name})`;
+            throw new Error(
+                "ASTNodeFactory.makeIdentifierFor(): Unable to compose typeString for supplied target"
+            );
         }
 
         return this.makeIdentifier(
@@ -1074,7 +1086,7 @@ export class ASTNodeFactory {
         type: ASTNodeConstructor<T>,
         ...args: Specific<ConstructorParameters<typeof type>>
     ): T {
-        const node = new type(++this.lastId, "0:0:0", type.name, ...args);
+        const node = new type(++this.lastId, "0:0:0", ...args);
 
         this.context.register(node);
 

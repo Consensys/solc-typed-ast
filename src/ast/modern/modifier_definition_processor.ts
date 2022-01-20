@@ -12,7 +12,7 @@ export class ModernModifierDefinitionProcessor extends ModernNodeProcessor<Modif
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ModifierDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const name: string = raw.name;
         const visibility: string = raw.visibility;
@@ -39,7 +39,6 @@ export class ModernModifierDefinitionProcessor extends ModernNodeProcessor<Modif
         return [
             id,
             src,
-            type,
             name,
             virtual,
             visibility,

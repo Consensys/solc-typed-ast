@@ -309,6 +309,13 @@ UserDefinedType =
             options.version,
             options.ctx
         );
+    } / name: FQName {
+        return makeUserDefinedType(
+            name,
+            UserDefinedValueTypeDefinition,
+            options.version,
+            options.ctx
+        );
     }
 
 MappingType =
@@ -437,27 +444,27 @@ ArrayPtrType =
         / __ storageLocation: (DataLocation) pointerType: (__ PointerType)?
     )* {
     return tail.reduce(
-        (acc, cur) => {
-            if (cur.length > 3) {
-                const size = cur[4];
+            (acc, cur) => {
+                if (cur.length > 3) {
+                    const size = cur[4];
 
-                return new ArrayType(acc, size === null ? undefined : size);
-            }
+                    return new ArrayType(acc, size === null ? undefined : size);
+                }
 
-            const location = cur[1] as DataLocation;
-            const kind = cur[2] === null ? undefined : cur[2][1];
+                const location = cur[1] as DataLocation;
+                const kind = cur[2] === null ? undefined : cur[2][1];
 
-            return new PointerType(acc, location, kind);
-        },
-        head
+                return new PointerType(acc, location, kind);
+            },
+            head
         );
     }
 
 // Top-level rule
 Type =
-    ModifierType
+    ModuleType
+    / ModifierType
     / TypeExprType
     / TupleType
     / BuiltinTypes
     / ArrayPtrType
-    / ModuleType

@@ -10,7 +10,7 @@ export class LegacyContractDefinitionProcessor extends LegacyNodeProcessor<Contr
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ContractDefinition> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
         const attributes = raw.attributes;
         const children = reader.convertArray(raw.children, config);
 
@@ -34,7 +34,6 @@ export class LegacyContractDefinitionProcessor extends LegacyNodeProcessor<Contr
         return [
             id,
             src,
-            type,
             name,
             scope,
             kind,

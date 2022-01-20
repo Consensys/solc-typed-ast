@@ -9,7 +9,7 @@ export class ModernImportDirectiveProcessor extends ModernNodeProcessor<ImportDi
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ImportDirective> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const file: string = raw.file;
         const absolutePath: string = raw.absolutePath;
@@ -24,17 +24,6 @@ export class ModernImportDirectiveProcessor extends ModernNodeProcessor<ImportDi
             }
         }
 
-        return [
-            id,
-            src,
-            type,
-            file,
-            absolutePath,
-            unitAlias,
-            symbolAliases,
-            scope,
-            sourceUnit,
-            raw
-        ];
+        return [id, src, file, absolutePath, unitAlias, symbolAliases, scope, sourceUnit, raw];
     }
 }

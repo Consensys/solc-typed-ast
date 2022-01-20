@@ -10,13 +10,13 @@ export class LegacyModifierInvocationProcessor extends LegacyNodeProcessor<Modif
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof ModifierInvocation> {
-        const [id, src, type] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const [modifierName, ...args] = reader.convertArray(raw.children, config) as [
             Identifier,
             ...Expression[]
         ];
 
-        return [id, src, type, modifierName, args, undefined, raw];
+        return [id, src, modifierName, args, undefined, raw];
     }
 }
