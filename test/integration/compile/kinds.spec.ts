@@ -111,12 +111,15 @@ function normalizeOutput(output: CompileResult | CompileFailedError): any {
 }
 
 describe(`Native and WASM compilers produce the same results for all files`, () => {
-    const samples = searchRecursive("test/samples/solidity/", (name) => name.endsWith(".sol"));
+    const samples = searchRecursive(
+        "test/samples/solidity/",
+        (name) => name.endsWith(".sol") && !name.endsWith(".sourced.sol")
+    );
 
     /**
      * Skip samples, that are causing one of the compilers to crash or lead to OOM.
      */
-    const skipSamples = new Set<string>(["test/samples/solidity/latest_08.sourced.sol"]);
+    // const skipSamples = new Set<string>(["test/samples/solidity/latest_08.sourced.sol"]);
 
     const defaultCompilationOutput = [CompilationOutput.ALL];
     const defaultCompilerSettings = { optimizer: { enabled: false } };
@@ -131,9 +134,9 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
     for (const sample of samples) {
         const fileName = sample.replace(process.cwd() + "/", "");
 
-        if (skipSamples.has(fileName)) {
-            continue;
-        }
+        // if (skipSamples.has(fileName)) {
+        //     continue;
+        // }
 
         it(fileName, async () => {
             const source = fse.readFileSync(sample, { encoding: "utf8" });
