@@ -3,7 +3,6 @@ import {
     ASTKind,
     ASTNode,
     ASTReader,
-    CompilerKind,
     CompilerVersions04,
     CompilerVersions05,
     CompilerVersions06,
@@ -20,7 +19,6 @@ import {
     FunctionDefinition,
     Identifier,
     IdentifierPath,
-    PossibleCompilerKinds,
     resolveAny,
     StateVariableVisibility,
     StructDefinition,
@@ -93,124 +91,114 @@ const samples: Array<[string, string, ASTKind]> = [
 
 describe("resolveAny() correctly resolves all Identifiers/UserDefinedTypeNames/FunctionCalls", () => {
     for (const [sample, compilerVersion, astKind] of samples) {
-        for (const compilerKind of PossibleCompilerKinds) {
-            it(`[${compilerKind}] All definitions in ${sample} resolve correctly`, async () => {
-                const result = await compileSol(
-                    sample,
-                    "auto",
-                    [],
-                    undefined,
-                    undefined,
-                    compilerKind as CompilerKind
-                );
+        it(`All definitions in ${sample} resolve correctly`, async () => {
+            const result = await compileSol(sample, "auto", []);
 
-                expect(result.compilerVersion).toEqual(compilerVersion);
+            expect(result.compilerVersion).toEqual(compilerVersion);
 
-                const errors = detectCompileErrors(result.data);
+            const errors = detectCompileErrors(result.data);
 
-                expect(errors).toHaveLength(0);
+            expect(errors).toHaveLength(0);
 
-                const data = result.data;
+            const data = result.data;
 
-                const reader = new ASTReader();
-                const sourceUnits = reader.read(data, astKind);
+            const reader = new ASTReader();
+            const sourceUnits = reader.read(data, astKind);
 
-                for (const unit of sourceUnits) {
-                    for (const node of unit.getChildrenBySelector(
-                        (child) =>
-                            child instanceof Identifier ||
-                            child instanceof IdentifierPath ||
-                            child instanceof UserDefinedTypeName ||
-                            child instanceof FunctionCall ||
-                            child instanceof StructDefinition ||
-                            child instanceof EnumDefinition
-                    )) {
-                        const namedNode = node as
-                            | Identifier
-                            | UserDefinedTypeName
-                            | FunctionCall
-                            | IdentifierPath
-                            | StructDefinition
-                            | EnumDefinition;
+            for (const unit of sourceUnits) {
+                for (const node of unit.getChildrenBySelector(
+                    (child) =>
+                        child instanceof Identifier ||
+                        child instanceof IdentifierPath ||
+                        child instanceof UserDefinedTypeName ||
+                        child instanceof FunctionCall ||
+                        child instanceof StructDefinition ||
+                        child instanceof EnumDefinition
+                )) {
+                    const namedNode = node as
+                        | Identifier
+                        | UserDefinedTypeName
+                        | FunctionCall
+                        | IdentifierPath
+                        | StructDefinition
+                        | EnumDefinition;
 
-                        let def: ASTNode | undefined;
+                    let def: ASTNode | undefined;
 
+                    if (
+                        namedNode instanceof Identifier ||
+                        namedNode instanceof UserDefinedTypeName ||
+                        namedNode instanceof IdentifierPath ||
+                        namedNode instanceof FunctionCall
+                    ) {
+                        def = namedNode.vReferencedDeclaration;
+                    } else {
+                        def = namedNode;
+                    }
+
+                    let name: string;
+                    let ctx: ASTNode;
+
+                    if (namedNode instanceof FunctionCall) {
                         if (
-                            namedNode instanceof Identifier ||
-                            namedNode instanceof UserDefinedTypeName ||
-                            namedNode instanceof IdentifierPath ||
-                            namedNode instanceof FunctionCall
+                            namedNode.vFunctionCallType !== ExternalReferenceType.UserDefined ||
+                            namedNode.vFunctionName === "" ||
+                            namedNode.vReferencedDeclaration === undefined
                         ) {
-                            def = namedNode.vReferencedDeclaration;
-                        } else {
-                            def = namedNode;
-                        }
-
-                        let name: string;
-                        let ctx: ASTNode;
-
-                        if (namedNode instanceof FunctionCall) {
-                            if (
-                                namedNode.vFunctionCallType !== ExternalReferenceType.UserDefined ||
-                                namedNode.vFunctionName === "" ||
-                                namedNode.vReferencedDeclaration === undefined
-                            ) {
-                                continue;
-                            }
-
-                            name = namedNode.vFunctionName;
-
-                            ctx =
-                                namedNode.vReferencedDeclaration.vScope instanceof
-                                ContractDefinition
-                                    ? namedNode.vReferencedDeclaration
-                                    : namedNode;
-                        } else if (
-                            namedNode instanceof StructDefinition ||
-                            namedNode instanceof EnumDefinition
-                        ) {
-                            name = namedNode.canonicalName;
-                            ctx = namedNode;
-                        } else {
-                            if (namedNode.name === undefined) {
-                                continue;
-                            }
-
-                            name = namedNode.name;
-                            ctx = namedNode;
-                        }
-
-                        if (def === undefined || name === undefined) {
                             continue;
                         }
 
-                        const expectedID = def.id;
-                        const resolved = [...resolveAny(name, ctx, compilerVersion)];
+                        name = namedNode.vFunctionName;
 
-                        expect(resolved.length).toBeGreaterThanOrEqual(1);
-
-                        if (resolved.length > 1) {
-                            const areEvents = resolved[0] instanceof EventDefinition;
-
-                            expect(
-                                forAll(resolved, (def) =>
-                                    areEvents
-                                        ? def instanceof EventDefinition
-                                        : def instanceof FunctionDefinition ||
-                                          (def instanceof VariableDeclaration &&
-                                              def.stateVariable &&
-                                              def.visibility === StateVariableVisibility.Public)
-                                )
-                            ).toBeTruthy();
+                        ctx =
+                            namedNode.vReferencedDeclaration.vScope instanceof ContractDefinition
+                                ? namedNode.vReferencedDeclaration
+                                : namedNode;
+                    } else if (
+                        namedNode instanceof StructDefinition ||
+                        namedNode instanceof EnumDefinition
+                    ) {
+                        name = namedNode.canonicalName;
+                        ctx = namedNode;
+                    } else {
+                        if (namedNode.name === undefined) {
+                            continue;
                         }
 
-                        const resolvedIds = new Set(resolved.map((node) => node.id));
-
-                        expect(resolvedIds.has(expectedID)).toBeTruthy();
+                        name = namedNode.name;
+                        ctx = namedNode;
                     }
+
+                    if (def === undefined || name === undefined) {
+                        continue;
+                    }
+
+                    const expectedID = def.id;
+                    const resolved = [...resolveAny(name, ctx, compilerVersion)];
+
+                    expect(resolved.length).toBeGreaterThanOrEqual(1);
+
+                    if (resolved.length > 1) {
+                        const areEvents = resolved[0] instanceof EventDefinition;
+
+                        expect(
+                            forAll(resolved, (def) =>
+                                areEvents
+                                    ? def instanceof EventDefinition
+                                    : def instanceof FunctionDefinition ||
+                                      (def instanceof VariableDeclaration &&
+                                          def.stateVariable &&
+                                          def.visibility === StateVariableVisibility.Public)
+                            )
+                        ).toBeTruthy();
+                    }
+
+                    const resolvedIds = new Set(resolved.map((node) => node.id));
+
+                    expect(resolvedIds.has(expectedID)).toBeTruthy();
                 }
-            });
-        }
+            }
+        });
     }
 });
 
@@ -484,43 +472,34 @@ const unitSamples: Array<
 
 describe("resolveAny() unit tests", () => {
     for (const [sample, compilerVersion, astKind, sampleTests] of unitSamples) {
-        for (const compilerKind of PossibleCompilerKinds) {
-            describe(`[${compilerKind}] ${sample}`, async () => {
-                const result = await compileSol(
-                    sample,
-                    "auto",
-                    [],
-                    undefined,
-                    undefined,
-                    compilerKind as CompilerKind
-                );
+        describe(sample, async () => {
+            const result = await compileSol(sample, "auto", []);
 
-                expect(result.compilerVersion).toEqual(compilerVersion);
+            expect(result.compilerVersion).toEqual(compilerVersion);
 
-                const errors = detectCompileErrors(result.data);
+            const errors = detectCompileErrors(result.data);
 
-                expect(errors).toHaveLength(0);
+            expect(errors).toHaveLength(0);
 
-                const data = result.data;
+            const data = result.data;
 
-                const reader = new ASTReader();
+            const reader = new ASTReader();
 
-                reader.read(data, astKind);
+            reader.read(data, astKind);
 
-                for (const [ctxId, unitTests] of sampleTests) {
-                    const ctxNode = reader.context.locate(ctxId);
+            for (const [ctxId, unitTests] of sampleTests) {
+                const ctxNode = reader.context.locate(ctxId);
 
-                    for (const [name, expectedIds, testName] of unitTests) {
-                        it(testName, () => {
-                            const resolvedNodes = resolveAny(name, ctxNode, compilerVersion);
+                for (const [name, expectedIds, testName] of unitTests) {
+                    it(testName, () => {
+                        const resolvedNodes = resolveAny(name, ctxNode, compilerVersion);
 
-                            expect(new Set(expectedIds)).toEqual(
-                                new Set([...resolvedNodes].map((node) => node.id))
-                            );
-                        });
-                    }
+                        expect(new Set(expectedIds)).toEqual(
+                            new Set([...resolvedNodes].map((node) => node.id))
+                        );
+                    });
                 }
-            });
-        }
+            }
+        });
     }
 });
