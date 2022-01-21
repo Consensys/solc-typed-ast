@@ -78,6 +78,7 @@ function normalizeOutput(output: CompileResult | CompileFailedError): any {
         }
 
         const overlDecls = n["overloadedDeclarations"];
+
         if (overlDecls instanceof Array) {
             for (let i = 0; i < overlDecls.length; i++) {
                 if (overlDecls[i] < 0) {
@@ -110,12 +111,12 @@ function normalizeOutput(output: CompileResult | CompileFailedError): any {
 }
 
 describe(`Native and WASM compilers produce the same results for all files`, () => {
-    const samples = searchRecursive(
-        "test/samples/solidity/",
-        (name) => name.endsWith(".sol") && !name.endsWith(".sourced.sol")
-    );
+    const samples = searchRecursive("test/samples/solidity/", (name) => name.endsWith(".sol"));
 
-    // const skipSamples: string[] = [];
+    /**
+     * Skip samples, that are causing one of the compilers to crash or lead to OOM.
+     */
+    const skipSamples = new Set<string>(["test/samples/solidity/latest_08.sourced.sol"]);
 
     const defaultCompilationOutput = [CompilationOutput.ALL];
     const defaultCompilerSettings = { optimizer: { enabled: false } };
@@ -128,21 +129,28 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
     ]);
 
     for (const sample of samples) {
-        it(sample, async () => {
+        const fileName = sample.replace(process.cwd() + "/", "");
+
+        if (skipSamples.has(fileName)) {
+            continue;
+        }
+
+        it(fileName, async () => {
             const source = fse.readFileSync(sample, { encoding: "utf8" });
+            const args = additionalArgs.get(fileName);
             const versionStrategy = new VersionDetectionStrategy(
                 [source],
                 new LatestVersionInEachSeriesStrategy()
             );
-
-            const fileName = sample.replace(process.cwd() + "/", "");
-            const args = additionalArgs.get(fileName);
 
             const [remappings, outputs, settings] =
                 args === undefined ? [[], defaultCompilationOutput, defaultCompilerSettings] : args;
 
             let wasmResult: CompileResult | CompileFailedError;
             let nativeResult: CompileResult | CompileFailedError;
+
+            // Uncomment next line to see what file caused compiler crash:
+            // console.log(fileName);
 
             try {
                 wasmResult = await compileSol(
