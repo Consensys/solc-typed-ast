@@ -72,7 +72,7 @@ The second argument with the `"auto"` value specifies a compiler selection strat
 
 ### Native compilers
 
-Package supports switching between native binary Solc compilers and its WASM versions. The CLI option `--compiler-kind` and `kind` argument of `compile*()` functions familty may be used for that purpose. Native binary compilers are downloaded on demand to the directory `.compiler_cache` at the package installation directory (by default). The compiler cache location may be customized by setting `SOL_AST_COMPILER_CACHE` environment variable to a custom path. Example:
+Package supports switching between native binary Solc compilers and its WASM versions. The CLI option `--compiler-kind` and `kind` argument of `compile*()` functions family may be used for that purpose. Native binary compilers are downloaded on demand to the directory `.compiler_cache` at the package installation directory (by default). The compiler cache location may be customized by setting `SOL_AST_COMPILER_CACHE` environment variable to a custom path. For example:
 
 ```bash
 SOL_AST_COMPILER_CACHE=~/.compiler_cache solc-ast-compile sample.sol --compiler-kind native --tree
