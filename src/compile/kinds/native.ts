@@ -98,7 +98,7 @@ class NativeCompiler extends Compiler {
     }
 }
 
-const cacheDirDefault = path.join(__dirname, "..", "..", ".compiler_cache");
+const cacheDirDefault = path.join(__dirname, "..", "..", "..", ".compiler_cache");
 const cacheDirCustom = process.env["SOL_AST_COMPILER_CACHE"];
 
 const CACHE_DIR = cacheDirCustom === undefined ? cacheDirDefault : cacheDirCustom;
