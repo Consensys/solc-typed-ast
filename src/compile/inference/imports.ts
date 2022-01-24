@@ -2,7 +2,12 @@ import fse from "fs-extra";
 import { dirname, isAbsolute, join, normalize } from "path";
 import { ImportResolver, Remapping } from "..";
 import { assert } from "../..";
-import { FileLevelNodeKind, parseFileLevelDefinitions } from "./file_level_definitions_parser";
+import {
+    AnyFileLevelNode,
+    FileLevelNodeKind,
+    parseFileLevelDefinitions,
+    SyntaxError
+} from "./file_level_definitions_parser";
 
 function applyRemappings(remappings: Remapping[], path: string): string {
     for (const [, prefix, mapped_prefix] of remappings) {
@@ -29,9 +34,6 @@ function computeRealPath(
     imported: string,
     remappings: Remapping[]
 ): string {
-    // TODO(dimo): We have to check that the behavior of normalize(join(...)) below
-    // matches the behavior described in this section https://docs.soliditylang.org/en/v0.8.8/path-resolution.html#relative-imports
-    // and that it works for all compiler versions
     let result = applyRemappings(remappings, imported);
 
     if (importer !== undefined && isPathWithRelativePrefix(result)) {
@@ -89,8 +91,23 @@ export function findAllFiles(
 
         visited.add(realPath);
 
-        // TODO: Need to catch the underlying syntax error (if any) and wrap it into a PPAble error
-        const flds = parseFileLevelDefinitions(content);
+        let flds: AnyFileLevelNode[];
+
+        try {
+            flds = parseFileLevelDefinitions(content);
+        } catch (e: any) {
+            if (e instanceof SyntaxError) {
+                const start = e.location.start.offset;
+                const end = e.location.end.offset;
+                const length = end - start;
+
+                throw new Error(
+                    `Failed parsing imports at ${realPath}:${start}:${length} - ${e.message}`
+                );
+            }
+
+            throw e;
+        }
 
         for (const fld of flds) {
             if (fld.kind === FileLevelNodeKind.Import) {

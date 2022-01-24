@@ -58,7 +58,7 @@ for (const fileName of samples) {
             it("Written source compiles", () => {
                 const result = spawnSync(
                     "sol-ast-compile",
-                    ["--mode", "sol", "--stdin", "--tree"],
+                    ["--mode", "sol", "--stdin", "--tree", "--compiler-kind", kind],
                     {
                         input: outData,
                         encoding: "utf8"

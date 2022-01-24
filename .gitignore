@@ -1,4 +1,5 @@
 .nyc_output
+.compiler_cache
 /node_modules
 dist
 docs
@@ -6,4 +7,3 @@ coverage
 *.tgz
 src/types/typeStrings/typeString_parser.ts
 src/compile/inference/file_level_definitions_parser.ts
-.native_compilers_cache

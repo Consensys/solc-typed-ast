@@ -98,11 +98,10 @@ class NativeCompiler extends Compiler {
     }
 }
 
-// TODO: (dimo): This is causing test failures
-// TODO: (pavel): We need a more general solution for picking CACHE_DIR
-// TODO: The location of the CACHE_DIR should be documented
-// TODO: The locaiton of the CACHE_DIR should be settable by the user
-const CACHE_DIR = "./.native_compilers_cache/";
+const cacheDirDefault = path.join(__dirname, "..", "..", ".compiler_cache");
+const cacheDirCustom = process.env["SOL_AST_COMPILER_CACHE"];
+
+const CACHE_DIR = cacheDirCustom === undefined ? cacheDirDefault : cacheDirCustom;
 const BINARIES_URL = "https://binaries.soliditylang.org";
 
 async function getCompilerMDForPlatform(prefix: string): Promise<CompilerPlatformMetadata> {
@@ -137,9 +136,6 @@ export async function getNativeCompilerForVersion(
 
     if (version in md.releases) {
         const compilerFileName = md.releases[version];
-
-        fse.ensureDirSync(path.join(CACHE_DIR, prefix));
-
         const compilerLocalPath = path.join(CACHE_DIR, prefix, compilerFileName);
 
         if (!fse.existsSync(compilerLocalPath)) {
