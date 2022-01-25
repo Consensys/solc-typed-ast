@@ -8,9 +8,9 @@ describe("ContractDefinition (Solc 0.5.0)", () => {
     let mainUnit: SourceUnit;
     let contracts: readonly ContractDefinition[];
 
-    before(() => {
+    before(async () => {
         const reader = new ASTReader();
-        const { data } = compileJson(sample, "0.5.0", []);
+        const { data } = await compileJson(sample, "0.5.0");
 
         [mainUnit] = reader.read(data);
 

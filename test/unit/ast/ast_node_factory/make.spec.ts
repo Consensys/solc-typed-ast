@@ -1,25 +1,37 @@
 import {
     ASTNode,
     ASTNodeFactory,
+    Break,
+    Conditional,
+    Continue,
     ContractDefinition,
     ContractKind,
     DataLocation,
     ElementaryTypeNameExpression,
     EnumDefinition,
     EnumValue,
+    ErrorDefinition,
     EventDefinition,
     Expression,
+    ExpressionStatement,
+    ExternalReferenceType,
     FunctionDefinition,
     FunctionKind,
     FunctionStateMutability,
     FunctionVisibility,
+    Identifier,
     LiteralKind,
     ModifierDefinition,
     Mutability,
+    PlaceholderStatement,
     PragmaDirective,
+    Return,
     SourceUnit,
     StateVariableVisibility,
     StructDefinition,
+    Throw,
+    TupleExpression,
+    UserDefinedValueTypeDefinition,
     VariableDeclaration
 } from "../../../../src";
 import { verify } from "../common";
@@ -138,6 +150,24 @@ describe("ASTNodeFactory.make*()", () => {
             raw: undefined,
 
             name: "A"
+        });
+    });
+
+    it("makeErrorDefinition()", () => {
+        const factory = new ASTNodeFactory();
+        const parameters = factory.makeParameterList([]);
+        const node = factory.makeErrorDefinition("MyError", parameters, "doc string");
+
+        verify(node, ErrorDefinition, {
+            id: 2,
+            type: "ErrorDefinition",
+            src: "0:0:0",
+            children: [parameters],
+            raw: undefined,
+
+            name: "MyError",
+            vParameters: parameters,
+            documentation: "doc string"
         });
     });
 
@@ -333,7 +363,7 @@ describe("ASTNodeFactory.make*()", () => {
         });
     });
 
-    it("makeExpression", () => {
+    it("makeExpression()", () => {
         const factory = new ASTNodeFactory();
         const node = factory.makeExpression("uint256");
 
@@ -348,7 +378,7 @@ describe("ASTNodeFactory.make*()", () => {
         });
     });
 
-    it("makeElementaryTypeNameExpression", () => {
+    it("makeElementaryTypeNameExpression()", () => {
         const factory = new ASTNodeFactory();
         const type = factory.makeElementaryTypeName("uint32", "uint32");
         const node = factory.makeElementaryTypeNameExpression("uint32", type);
@@ -362,6 +392,203 @@ describe("ASTNodeFactory.make*()", () => {
 
             typeString: type.typeString,
             typeName: type
+        });
+    });
+
+    it("makeReturn()", () => {
+        const factory = new ASTNodeFactory();
+
+        const type = factory.makeElementaryTypeName("uint32", "uint32");
+        const variable = factory.makeVariableDeclaration(
+            false,
+            false,
+            "v",
+            0,
+            false,
+            DataLocation.Default,
+            StateVariableVisibility.Default,
+            Mutability.Mutable,
+            type.typeString,
+            undefined,
+            type,
+            undefined,
+            undefined
+        );
+
+        const parameters = factory.makeParameterList([variable]);
+        const expression = factory.makeLiteral(type.typeString, LiteralKind.Number, "ff", "255");
+        const node = factory.makeReturn(parameters.id, expression);
+
+        verify(node, Return, {
+            id: 5,
+            type: "Return",
+            src: "0:0:0",
+            children: [expression],
+            raw: undefined,
+
+            vExpression: expression,
+            vFunctionReturnParameters: parameters
+        });
+    });
+
+    it("makePlaceholderStatement()", () => {
+        const factory = new ASTNodeFactory();
+
+        const node = factory.makePlaceholderStatement();
+
+        verify(node, PlaceholderStatement, {
+            id: 1,
+            type: "PlaceholderStatement",
+            src: "0:0:0"
+        });
+    });
+
+    it("makeThrow()", () => {
+        const factory = new ASTNodeFactory();
+
+        const node = factory.makeThrow();
+
+        verify(node, Throw, {
+            id: 1,
+            type: "Throw",
+            src: "0:0:0"
+        });
+    });
+
+    it("makeContinue()", () => {
+        const factory = new ASTNodeFactory();
+
+        const node = factory.makeContinue();
+
+        verify(node, Continue, {
+            id: 1,
+            type: "Continue",
+            src: "0:0:0"
+        });
+    });
+
+    it("makeBreak()", () => {
+        const factory = new ASTNodeFactory();
+
+        const node = factory.makeBreak();
+
+        verify(node, Break, {
+            id: 1,
+            type: "Break",
+            src: "0:0:0"
+        });
+    });
+
+    it("makeIdentifier()", () => {
+        const factory = new ASTNodeFactory();
+
+        const type = factory.makeElementaryTypeName("uint32", "uint32");
+        const variable = factory.makeVariableDeclaration(
+            false,
+            false,
+            "v",
+            0,
+            false,
+            DataLocation.Default,
+            StateVariableVisibility.Default,
+            Mutability.Mutable,
+            type.typeString,
+            undefined,
+            type,
+            undefined,
+            undefined
+        );
+
+        const node = factory.makeIdentifier(variable.typeString, variable.name, variable.id);
+
+        verify(node, Identifier, {
+            id: 3,
+            type: "Identifier",
+            src: "0:0:0",
+
+            name: variable.name,
+            referencedDeclaration: variable.id,
+            typeString: variable.typeString,
+
+            vReferencedDeclaration: variable,
+            vIdentifierType: ExternalReferenceType.UserDefined
+        });
+    });
+
+    it("makeTupleExpression()", () => {
+        const factory = new ASTNodeFactory();
+
+        const expr1 = factory.makeLiteral("uint256", LiteralKind.Number, "01", "1");
+        const expr2 = factory.makeLiteral("bool", LiteralKind.Bool, "00", "false");
+
+        const components = [expr1, null, expr2];
+        const typeString = `tuple(${expr1.typeString},,${expr2.typeString})`;
+
+        const node = factory.makeTupleExpression(typeString, false, components);
+
+        verify(node, TupleExpression, {
+            id: 3,
+            type: "TupleExpression",
+            src: "0:0:0",
+            children: [expr1, expr2],
+
+            typeString: typeString,
+            isInlineArray: false,
+            components: [1, null, 2],
+            vOriginalComponents: components,
+            vComponents: [expr1, expr2]
+        });
+    });
+
+    it("makeUserDefinedValueTypeDefinition()", () => {
+        const factory = new ASTNodeFactory();
+
+        const type = factory.makeElementaryTypeName("uint256", "uint256");
+        const node = factory.makeUserDefinedValueTypeDefinition("MyCustomValeType", type);
+
+        verify(node, UserDefinedValueTypeDefinition, {
+            id: 2,
+            type: "UserDefinedValueTypeDefinition",
+            src: "0:0:0",
+            children: [type]
+        });
+    });
+
+    it("makeConditional()", () => {
+        const factory = new ASTNodeFactory();
+
+        const c = factory.makeLiteral("bool", LiteralKind.Bool, "00", "false");
+        const t = factory.makeLiteral("uint256", LiteralKind.Number, "01", "1");
+        const f = factory.makeLiteral("uint256", LiteralKind.Number, "02", "2");
+
+        const node = factory.makeConditional("uint256", c, t, f);
+
+        verify(node, Conditional, {
+            id: 4,
+            type: "Conditional",
+            src: "0:0:0",
+            children: [c, t, f],
+
+            typeString: "uint256",
+            vCondition: c,
+            vTrueExpression: t,
+            vFalseExpression: f
+        });
+    });
+
+    it("makeExpressionStatement()", () => {
+        const factory = new ASTNodeFactory();
+
+        const expr = factory.makeLiteral("bool", LiteralKind.Bool, "01", "true");
+        const node = factory.makeExpressionStatement(expr, "doc string");
+
+        verify(node, ExpressionStatement, {
+            id: 2,
+            type: "ExpressionStatement",
+            src: "0:0:0",
+            children: [expr],
+
+            documentation: "doc string"
         });
     });
 });

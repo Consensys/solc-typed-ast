@@ -1,10 +1,11 @@
 import expect from "expect";
-import { gte, lt } from "semver";
+import { lt } from "semver";
 import {
     AnyResolvable,
     assert,
     ASTKind,
     ASTReader,
+    CompilerKind,
     CompilerVersions08,
     compileSol,
     ContractDefinition,
@@ -16,6 +17,7 @@ import {
     FunctionType,
     FunctionVisibility,
     generalizeType,
+    PossibleCompilerKinds,
     resolveAny,
     SourceUnit,
     VariableDeclaration,
@@ -75,137 +77,161 @@ function resolveOne(
 
 describe("Check canonical signatures are generated correctly", () => {
     for (const [sample, compilerVersion, encoderVer] of samples) {
-        it(sample, () => {
-            const result = compileSol(sample, "auto", []);
+        for (const kind of PossibleCompilerKinds) {
+            it(`[${kind}] ${sample}`, async () => {
+                const result = await compileSol(
+                    sample,
+                    "auto",
+                    [],
+                    undefined,
+                    undefined,
+                    kind as CompilerKind
+                );
 
-            expect(result.compilerVersion).toEqual(compilerVersion);
+                expect(result.compilerVersion).toEqual(compilerVersion);
 
-            const errors = detectCompileErrors(result.data);
+                const errors = detectCompileErrors(result.data);
 
-            expect(errors).toHaveLength(0);
+                expect(errors).toHaveLength(0);
 
-            const data = result.data;
+                const data = result.data;
 
-            const reader = new ASTReader();
-            const sourceUnits = reader.read(data, ASTKind.Any);
-            const unit = sourceUnits[0];
+                const reader = new ASTReader();
+                const sourceUnits = reader.read(data, ASTKind.Any);
+                const unit = sourceUnits[0];
 
-            const runTestsHelper = (contractName: string, functionHashes: any, abiData: any) => {
-                for (const expectedSignature in functionHashes) {
-                    const defName = expectedSignature.slice(0, expectedSignature.indexOf("("));
-                    const def = resolveOne(defName, contractName, unit, compilerVersion);
+                const runTestsHelper = (
+                    contractName: string,
+                    functionHashes: any,
+                    abiData: any
+                ) => {
+                    for (const expectedSignature in functionHashes) {
+                        const defName = expectedSignature.slice(0, expectedSignature.indexOf("("));
+                        const def = resolveOne(defName, contractName, unit, compilerVersion);
 
-                    if (def === undefined) {
-                        continue;
+                        if (def === undefined) {
+                            continue;
+                        }
+
+                        let signature: string;
+
+                        if (def instanceof VariableDeclaration) {
+                            signature = def.getterCanonicalSignature(encoderVer);
+                        } else if (def instanceof FunctionDefinition) {
+                            signature = def.canonicalSignature(encoderVer);
+                        } else {
+                            throw new Error(`NYI: ${def.print()}`);
+                        }
+
+                        expect(signature).toEqual(expectedSignature);
                     }
 
-                    let signature: string;
-
-                    if (def instanceof VariableDeclaration) {
-                        signature = def.getterCanonicalSignature(encoderVer);
-                    } else if (def instanceof FunctionDefinition) {
-                        signature = def.canonicalSignature(encoderVer);
-                    } else {
-                        throw new Error(`NYI: ${def.print()}`);
+                    /// 0.4.x doesn't report internal types in the ABI so we skip the ABI checks.
+                    if (lt(compilerVersion, "0.5.0")) {
+                        return;
                     }
 
-                    expect(signature).toEqual(expectedSignature);
-                }
+                    for (const abiEntry of abiData) {
+                        /// @todo fix the test so we can remove these
+                        if (
+                            abiEntry.type === "constructor" ||
+                            abiEntry.type === "fallback" ||
+                            abiEntry.type === "receive"
+                        ) {
+                            continue;
+                        }
 
-                /// 0.4.x doesn't report internal types in the ABI so we skip the ABI checks.
-                if (lt(compilerVersion, "0.5.0")) {
-                    return;
-                }
+                        const def = resolveOne(abiEntry.name, contractName, unit, compilerVersion);
 
-                for (const abiEntry of abiData) {
-                    /// @todo fix the test so we can remove these
-                    if (
-                        abiEntry.type === "constructor" ||
-                        abiEntry.type === "fallback" ||
-                        abiEntry.type === "receive"
-                    ) {
-                        continue;
-                    }
+                        if (def === undefined) {
+                            continue;
+                        }
 
-                    const def = resolveOne(abiEntry.name, contractName, unit, compilerVersion);
+                        let funT: FunctionType;
 
-                    if (def === undefined) {
-                        continue;
-                    }
-
-                    let funT: FunctionType;
-
-                    if (def instanceof VariableDeclaration) {
-                        funT = def.getterFunType();
-                    } else if (def instanceof FunctionDefinition) {
-                        funT = new FunctionType(
-                            def.name,
-                            def.vParameters.vParameters.map(variableDeclarationToTypeNode),
-                            def.vReturnParameters.vParameters.map(variableDeclarationToTypeNode),
-                            def.visibility,
-                            def.stateMutability
-                        );
-                    } else if (def instanceof EventDefinition) {
-                        funT = new FunctionType(
-                            def.name,
-                            def.vParameters.vParameters.map(variableDeclarationToTypeNode),
-                            [],
-                            FunctionVisibility.Default,
-                            FunctionStateMutability.View
-                        );
-                    } else if (def instanceof ErrorDefinition) {
-                        funT = new FunctionType(
-                            def.name,
-                            def.vParameters.vParameters.map(variableDeclarationToTypeNode),
-                            [],
-                            FunctionVisibility.Default,
-                            FunctionStateMutability.View
-                        );
-                    } else {
-                        throw new Error(`NYI: ${def.print()}`);
-                    }
-
-                    expect(funT.parameters.length).toEqual(abiEntry.inputs.length);
-
-                    for (let i = 0; i < funT.parameters.length; i++) {
-                        expect(generalizeType(funT.parameters[i])[0].pp()).toEqual(
-                            abiEntry.inputs[i].internalType
-                        );
-                    }
-
-                    if (abiEntry.type === "function") {
-                        expect(funT.returns.length).toEqual(abiEntry.outputs.length);
-
-                        for (let i = 0; i < funT.returns.length; i++) {
-                            expect(generalizeType(funT.returns[i])[0].pp()).toEqual(
-                                abiEntry.outputs[i].internalType
+                        if (def instanceof VariableDeclaration) {
+                            funT = def.getterFunType();
+                        } else if (def instanceof FunctionDefinition) {
+                            funT = new FunctionType(
+                                def.name,
+                                def.vParameters.vParameters.map((param) =>
+                                    variableDeclarationToTypeNode(param)
+                                ),
+                                def.vReturnParameters.vParameters.map((param) =>
+                                    variableDeclarationToTypeNode(param)
+                                ),
+                                def.visibility,
+                                def.stateMutability
                             );
+                        } else if (def instanceof EventDefinition) {
+                            funT = new FunctionType(
+                                def.name,
+                                def.vParameters.vParameters.map((param) =>
+                                    variableDeclarationToTypeNode(param)
+                                ),
+                                [],
+                                FunctionVisibility.Default,
+                                FunctionStateMutability.View
+                            );
+                        } else if (def instanceof ErrorDefinition) {
+                            funT = new FunctionType(
+                                def.name,
+                                def.vParameters.vParameters.map((param) =>
+                                    variableDeclarationToTypeNode(param)
+                                ),
+                                [],
+                                FunctionVisibility.Default,
+                                FunctionStateMutability.View
+                            );
+                        } else {
+                            throw new Error(`NYI: ${def.print()}`);
+                        }
+
+                        expect(funT.parameters.length).toEqual(abiEntry.inputs.length);
+
+                        for (let i = 0; i < funT.parameters.length; i++) {
+                            expect(generalizeType(funT.parameters[i])[0].pp()).toEqual(
+                                abiEntry.inputs[i].internalType
+                            );
+                        }
+
+                        if (abiEntry.type === "function") {
+                            expect(funT.returns.length).toEqual(abiEntry.outputs.length);
+
+                            for (let i = 0; i < funT.returns.length; i++) {
+                                expect(generalizeType(funT.returns[i])[0].pp()).toEqual(
+                                    abiEntry.outputs[i].internalType
+                                );
+                            }
+                        }
+                    }
+                };
+
+                for (const fileName in data.contracts) {
+                    if ("functionHashes" in data.contracts[fileName]) {
+                        /**
+                         * Legacy compiler data structure
+                         */
+                        const contractName = fileName.slice(fileName.lastIndexOf(":") + 1);
+                        const contractData = data.contracts[fileName];
+                        const functionHashes = contractData.functionHashes;
+                        const abiData = JSON.parse(contractData.interface);
+
+                        runTestsHelper(contractName, functionHashes, abiData);
+                    } else {
+                        /**
+                         * Modern compiler data structure
+                         */
+                        for (const contractName in data.contracts[fileName]) {
+                            const contractData = data.contracts[fileName][contractName];
+                            const functionHashes = contractData.evm.methodIdentifiers;
+                            const abiData = contractData.abi;
+
+                            runTestsHelper(contractName, functionHashes, abiData);
                         }
                     }
                 }
-            };
-
-            // Standrad Json is laid out differently between 0.4.x and 0.5.x
-            if (gte(compilerVersion, "0.5.0")) {
-                for (const fileName in data.contracts) {
-                    for (const contractName in data.contracts[fileName]) {
-                        const contractData = data.contracts[fileName][contractName];
-                        const functionHashes = contractData.evm.methodIdentifiers;
-                        const abiData = contractData.abi;
-
-                        runTestsHelper(contractName, functionHashes, abiData);
-                    }
-                }
-            } else {
-                for (const fileAndContractName of Object.keys(data.contracts)) {
-                    const contractName = fileAndContractName.split(":")[1];
-                    const contractData = data.contracts[fileAndContractName];
-                    const functionHashes = contractData.functionHashes;
-                    const abiData = JSON.parse(contractData.interface);
-
-                    runTestsHelper(contractName, functionHashes, abiData);
-                }
-            }
-        });
+            });
+        }
     }
 });

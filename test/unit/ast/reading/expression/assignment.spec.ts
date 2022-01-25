@@ -23,9 +23,9 @@ describe("Assignment", () => {
                 ["^=", 44, "1", 43]
             ];
 
-            before(() => {
+            before(async () => {
                 const reader = new ASTReader();
-                const { data } = compileJson(sample, version, []);
+                const { data } = await compileJson(sample, version);
                 const [mainUnit] = reader.read(data);
 
                 nodes = mainUnit.getChildrenByType(Assignment);

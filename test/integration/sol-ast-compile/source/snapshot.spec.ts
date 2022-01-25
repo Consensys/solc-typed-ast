@@ -1,5 +1,6 @@
 import expect from "expect";
 import fse from "fs-extra";
+import { PossibleCompilerKinds } from "../../../../src";
 import { SolAstCompileCommand, SolAstCompileExec } from "../common";
 
 const cases: Array<[string, string]> = [
@@ -65,39 +66,40 @@ const cases: Array<[string, string]> = [
 ];
 
 for (const [fileName, sample] of cases) {
-    const args = [fileName, "--source"];
-    const command = SolAstCompileCommand(...args);
+    for (const kind of PossibleCompilerKinds) {
+        const args = [fileName, "--compiler-kind", kind, "--source"];
+        const command = SolAstCompileCommand(...args);
 
-    describe(command, () => {
-        let exitCode: number | null;
-        let outData: string;
-        let errData: string;
+        describe(command, () => {
+            let exitCode: number | null;
+            let outData: string;
+            let errData: string;
 
-        before(() => {
-            const result = SolAstCompileExec(...args);
+            before(() => {
+                const result = SolAstCompileExec(...args);
 
-            outData = result.stdout;
-            errData = result.stderr;
-            exitCode = result.status;
+                outData = result.stdout;
+                errData = result.stderr;
+                exitCode = result.status;
+            });
+
+            it("Exit code is valid", () => {
+                expect(exitCode).toEqual(0);
+            });
+
+            it("STDERR is empty", () => {
+                expect(errData).toContain("");
+            });
+
+            it("STDOUT is correct", () => {
+                const content = fse.readFileSync(sample, { encoding: "utf-8" });
+                const result = outData.replace(new RegExp(process.cwd(), "g"), "");
+
+                // Uncomment next line to update snapshots
+                // fse.writeFileSync(sample, result, { encoding: "utf-8" });
+
+                expect(result).toEqual(content);
+            });
         });
-
-        it("Exit code is valid", () => {
-            expect(exitCode).toEqual(0);
-        });
-
-        it("STDERR is empty", () => {
-            expect(errData).toContain("");
-        });
-
-        it("STDOUT is correct", () => {
-            const result = outData.replace(new RegExp(process.cwd(), "g"), "");
-
-            // Uncomment next line to update snapshots
-            // fse.writeFileSync(sample, result, { encoding: "utf-8" });
-
-            const content = fse.readFileSync(sample, { encoding: "utf-8" });
-
-            expect(result).toEqual(content);
-        });
-    });
+    }
 }

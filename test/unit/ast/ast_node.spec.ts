@@ -22,9 +22,9 @@ describe("ASTNode", () => {
             let mainUnit: SourceUnit;
             let nodes: ASTNode[];
 
-            before(() => {
+            before(async () => {
                 const reader = new ASTReader();
-                const { data } = compileJson(sample, version, []);
+                const { data } = await compileJson(sample, version);
 
                 [mainUnit] = reader.read(data);
 

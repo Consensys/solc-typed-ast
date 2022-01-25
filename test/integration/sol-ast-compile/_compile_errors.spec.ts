@@ -1,4 +1,5 @@
 import expect from "expect";
+import { PossibleCompilerKinds } from "../../../src";
 import { SolAstCompileCommand, SolAstCompileExec } from "./common";
 
 const cases: Array<[string, string[]]> = [
@@ -29,36 +30,36 @@ const cases: Array<[string, string[]]> = [
 ];
 
 for (const [fileName, stdErr] of cases) {
-    const args = [fileName];
-    const command = SolAstCompileCommand(...args);
+    for (const kind of PossibleCompilerKinds) {
+        const args = [fileName, "--compiler-kind", kind];
+        const command = SolAstCompileCommand(...args);
 
-    describe(command, () => {
-        let exitCode: number | null;
-        let outData: string;
-        let errData: string;
+        describe(command, () => {
+            let exitCode: number | null;
+            let outData: string;
+            let errData: string;
 
-        before((done) => {
-            const result = SolAstCompileExec(...args);
+            before(() => {
+                const result = SolAstCompileExec(...args);
 
-            outData = result.stdout;
-            errData = result.stderr;
-            exitCode = result.status;
+                outData = result.stdout;
+                errData = result.stderr;
+                exitCode = result.status;
+            });
 
-            done();
+            it("Exit code is valid", () => {
+                expect(exitCode).toEqual(1);
+            });
+
+            it("STDERR is correct", () => {
+                for (const value of stdErr) {
+                    expect(errData).toContain(value);
+                }
+            });
+
+            it("STDOUT is empty", () => {
+                expect(outData).toEqual("");
+            });
         });
-
-        it("Exit code is valid", () => {
-            expect(exitCode).toEqual(1);
-        });
-
-        it("STDERR is correct", () => {
-            for (const value of stdErr) {
-                expect(errData).toContain(value);
-            }
-        });
-
-        it("STDOUT is empty", () => {
-            expect(outData).toEqual("");
-        });
-    });
+    }
 }

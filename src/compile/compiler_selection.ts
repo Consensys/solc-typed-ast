@@ -70,18 +70,22 @@ export class LatestAndFirstVersionInEachSeriesStrategy implements CompilerVersio
 }
 
 export class VersionDetectionStrategy implements CompilerVersionSelectionStrategy {
-    source: string;
+    sources: string[];
     fallback: CompilerVersionSelectionStrategy;
     descending: boolean;
 
-    constructor(source: string, fallback: CompilerVersionSelectionStrategy, descending = true) {
-        this.source = source;
+    constructor(sources: string[], fallback: CompilerVersionSelectionStrategy, descending = true) {
+        this.sources = sources;
         this.fallback = fallback;
         this.descending = descending;
     }
 
     select(): Iterable<string> {
-        const specifiers = extractSpecifiersFromSource(this.source);
+        const specifiers: string[] = [];
+
+        for (const source of this.sources) {
+            specifiers.push(...extractSpecifiersFromSource(source));
+        }
 
         if (specifiers.length) {
             const versions = getCompilerVersionsBySpecifiers(specifiers, CompilerVersions);

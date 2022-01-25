@@ -11,9 +11,9 @@ describe("SourceUnit", () => {
         describe(`Solc ${version}: ${sample}`, () => {
             let units: SourceUnit[];
 
-            before(() => {
+            before(async () => {
                 const reader = new ASTReader();
-                const { data } = compileJson(sample, version, []);
+                const { data } = await compileJson(sample, version);
 
                 units = reader.read(data);
             });

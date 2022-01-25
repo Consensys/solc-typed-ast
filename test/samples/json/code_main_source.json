@@ -1,5 +1,4 @@
 {
-    "mainSource": "./test/sol_files/json_code/B.sol",
     "sources": {
         "./test/sol_files/json_code/A.sol": {
             "source": "contract A {\n    uint8 test;\n}\n"

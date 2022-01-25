@@ -1,6 +1,15 @@
 {
     "extension": [".ts"],
-    "exclude": ["**/*.d.ts", "**/node_modules/**", "**/test/**", "**/coverage/**", "**/docs/**", "src/types/typeStrings/typeString_parser*.ts"],
+    "exclude": [
+        "**/*.d.ts",
+        "**/node_modules/**",
+        "**/test/**",
+        "**/coverage/**",
+        "**/docs/**",
+        "**/.compiler_cache/**",
+        "src/types/typeStrings/typeString_parser*.ts",
+        "src/compile/inference/file_level_definitions_parser*.ts"
+    ],
     "reporter": ["html", "text-summary"],
     "all": true,
     "check-coverage": true,

@@ -1,21 +1,21 @@
 import fse from "fs-extra";
 import path from "path";
-import { lt, satisfies } from "semver";
+import { FileSystemResolver, ImportResolver, LocalNpmResolver } from ".";
 import {
     CompilerVersionSelectionStrategy,
     LatestVersionInEachSeriesStrategy,
     RangeVersionStrategy,
     VersionDetectionStrategy
 } from "./compiler_selection";
-import { CompilationOutput } from "./constants";
+import { CompilationOutput, CompilerKind } from "./constants";
+import { Remapping } from "./import_resolver";
+import { findAllFiles, normalizeImportPath } from "./inference";
+import { createCompilerInput } from "./input";
 import {
-    FileSystemResolver,
-    ImportResolver,
-    LocalNpmResolver,
-    Remapping,
-    RemappingResolver
-} from "./import_resolver";
-import { isExact } from "./version";
+    getCompilerPrefixForOs,
+    getNativeCompilerForVersion,
+    getWasmCompilerForVersion
+} from "./kinds";
 
 export interface MemoryStorage {
     [path: string]: {
@@ -41,100 +41,13 @@ export class CompileFailedError extends Error {
         super();
 
         this.failures = entries;
+
+        const formattedErrorStr = entries.map(
+            (entry) => `==== ${entry.compilerVersion} ===:\n ${entry.errors.join("\n")}\n`
+        );
+
+        this.message = `Compiler Errors: ${formattedErrorStr}`;
     }
-}
-
-export type ImportFinder = (filePath: string) => { contents: string } | { error: string };
-
-export function getCompilerForVersion(version: string): any {
-    if (isExact(version)) {
-        return require("solc-" + version);
-    }
-
-    throw new Error(
-        "Version string must contain exact SemVer-formatted version without any operators"
-    );
-}
-
-interface PartialSolcInput {
-    language: "Solidity";
-    settings: { remappings: string[]; outputSelection: any; [otherKeys: string]: any };
-    [otherKeys: string]: any;
-}
-
-interface Solc04Input extends PartialSolcInput {
-    sources: { [fileName: string]: string };
-}
-
-interface Solc05Input extends PartialSolcInput {
-    sources: { [fileName: string]: { content: string } };
-}
-
-function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, settings: any): T {
-    if (settings !== undefined) {
-        for (const key in settings) {
-            if (key === "remappings" || key === "outputSelection") {
-                continue;
-            }
-
-            input.settings[key] = settings[key];
-        }
-    }
-
-    return input;
-}
-
-function createCompilerInput(
-    fileName: string,
-    version: string,
-    content: string,
-    output: CompilationOutput[],
-    remappings: string[],
-    compilerSettings: any
-): Solc04Input | Solc05Input {
-    let fileOutput: string[] = [];
-    let contractOutput: string[] = [];
-
-    for (const outputSel of output) {
-        if (outputSel === CompilationOutput.ALL) {
-            fileOutput = [CompilationOutput.ALL];
-            contractOutput = [CompilationOutput.ALL];
-            break;
-        }
-
-        if (outputSel === CompilationOutput.AST) {
-            fileOutput.push(outputSel);
-        } else {
-            contractOutput.push(outputSel);
-        }
-    }
-
-    const partialInp: PartialSolcInput = {
-        language: "Solidity",
-        settings: {
-            remappings,
-            outputSelection: {
-                "*": {
-                    "*": contractOutput,
-                    "": fileOutput
-                }
-            }
-        }
-    };
-
-    if (lt(version, "0.5.0")) {
-        partialInp.sources = {
-            [fileName]: content
-        };
-    } else {
-        partialInp.sources = {
-            [fileName]: { content }
-        };
-    }
-
-    const inp = partialInp as Solc04Input | Solc05Input;
-
-    return mergeCompilerSettings(inp, compilerSettings);
 }
 
 function consistentlyContainsOneOf(
@@ -152,54 +65,6 @@ function consistentlyContainsOneOf(
     return false;
 }
 
-function fillFilesFromSources(
-    files: Map<string, string>,
-    sources: { [fileName: string]: any }
-): void {
-    for (const [fileName, section] of Object.entries(sources)) {
-        if (section && typeof section.source === "string") {
-            files.set(fileName, section.source);
-        }
-    }
-}
-
-function detectMainFileName(data: any): string | undefined {
-    if (data.sources) {
-        const sources = data.sources;
-
-        if (data.mainSource && data.mainSource in sources) {
-            return data.mainSource;
-        }
-
-        const main = Object.values(sources).find((section: any) => section.main);
-
-        if (main) {
-            for (const key in sources) {
-                if (sources[key] === main) {
-                    return key;
-                }
-            }
-        }
-    }
-
-    return undefined;
-}
-
-function getCompilerVersionStrategy(
-    sourceCode: string,
-    versionOrStrategy: string | CompilerVersionSelectionStrategy
-): CompilerVersionSelectionStrategy {
-    if (versionOrStrategy === "auto") {
-        return new VersionDetectionStrategy(sourceCode, new LatestVersionInEachSeriesStrategy());
-    }
-
-    if (typeof versionOrStrategy === "string") {
-        return new RangeVersionStrategy([versionOrStrategy]);
-    }
-
-    return versionOrStrategy;
-}
-
 export function parsePathRemapping(remapping: string[]): Remapping[] {
     const rxRemapping = /^(([^:]*):)?([^=]*)=(.+)$/;
     const result: Array<[string, string, string]> = remapping.map((entry) => {
@@ -215,101 +80,79 @@ export function parsePathRemapping(remapping: string[]): Remapping[] {
     return result;
 }
 
-export function createFileSystemImportFinder(
-    fileName: string,
+export function resolveFiles(
     files: Map<string, string>,
-    remapping: Remapping[]
-): ImportFinder {
-    const basePath = path.dirname(fileName);
-    const resolvers: ImportResolver[] = [
-        new FileSystemResolver(),
-        new RemappingResolver(remapping),
-        new LocalNpmResolver(basePath)
-    ];
+    remapping: string[],
+    resolvers: ImportResolver[]
+): void {
+    const parsedRemapping = parsePathRemapping(remapping);
+    const additionalFiles = findAllFiles(files, parsedRemapping, resolvers);
 
-    return (filePath) => {
-        try {
-            for (const resolver of resolvers) {
-                const resolvedPath = resolver.resolve(filePath);
-
-                if (resolvedPath) {
-                    const contents = fse.readFileSync(resolvedPath).toString();
-
-                    files.set(filePath, contents);
-
-                    return { contents };
-                }
-            }
-
-            throw new Error(`Unable to find import path "${filePath}"`);
-        } catch (e: any) {
-            return { error: e.message };
-        }
-    };
+    for (const [fileName, source] of additionalFiles) {
+        files.set(fileName, source);
+    }
 }
 
-export function createMemoryImportFinder(
-    storage: MemoryStorage,
-    files: Map<string, string>
-): ImportFinder {
-    if (storage === null || storage === undefined) {
-        throw new Error("Storage must be an object");
+function fillFilesFromSources(
+    files: Map<string, string>,
+    sources: { [fileName: string]: any }
+): void {
+    for (const [fileName, section] of Object.entries(sources)) {
+        if (section && typeof section.source === "string") {
+            files.set(fileName, section.source);
+        }
+    }
+}
+
+function getCompilerVersionStrategy(
+    sources: string[],
+    versionOrStrategy: string | CompilerVersionSelectionStrategy
+): CompilerVersionSelectionStrategy {
+    if (versionOrStrategy === "auto") {
+        return new VersionDetectionStrategy(sources, new LatestVersionInEachSeriesStrategy());
     }
 
-    return (filePath) => {
-        const entry = storage[filePath];
+    if (typeof versionOrStrategy === "string") {
+        return new RangeVersionStrategy([versionOrStrategy]);
+    }
 
-        if (!entry) {
-            return { error: `Import path "${filePath}" not found in storage` };
-        }
-
-        if (entry.source === undefined) {
-            return { error: `Entry at "${filePath}" contains no "source" property` };
-        }
-
-        const contents = entry.source;
-
-        files.set(filePath, contents);
-
-        return { contents };
-    };
+    return versionOrStrategy;
 }
 
-export function compile(
-    fileName: string,
-    content: string,
+export async function compile(
+    files: Map<string, string>,
     version: string,
-    finder: ImportFinder,
-    remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
-    compilerSettings?: any
-): any {
-    const compiler = getCompilerForVersion(version);
-    const input = createCompilerInput(
-        fileName,
+    compilerSettings?: any,
+    kind = CompilerKind.WASM
+): Promise<any> {
+    const compilerInput = createCompilerInput(
+        files,
         version,
-        content,
+        kind,
         compilationOutput,
-        remapping,
         compilerSettings
     );
 
-    if (satisfies(version, "0.4")) {
-        const output = compiler.compile(input, 1, finder);
+    if (kind === CompilerKind.WASM) {
+        const compiler = getWasmCompilerForVersion(version);
 
-        return output;
+        return compiler.compile(compilerInput);
     }
 
-    if (satisfies(version, "0.5")) {
-        const output = compiler.compile(JSON.stringify(input), finder);
+    if (kind === CompilerKind.Native) {
+        const compiler = await getNativeCompilerForVersion(version);
 
-        return JSON.parse(output);
+        if (compiler === undefined) {
+            throw new Error(
+                `Couldn't find native compiler for version ${version} for current platform ${getCompilerPrefixForOs()}`
+            );
+        }
+
+        return compiler.compile(compilerInput);
     }
 
-    const callbacks = { import: finder };
-    const output = compiler.compile(JSON.stringify(input), callbacks);
-
-    return JSON.parse(output);
+    throw new Error(`Unsupported compiler kind "${kind}"`);
 }
 
 export function detectCompileErrors(data: any): string[] {
@@ -340,34 +183,35 @@ export function detectCompileErrors(data: any): string[] {
     return errors;
 }
 
-export function compileSourceString(
+export async function compileSourceString(
     fileName: string,
     sourceCode: string,
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
-    compilerSettings?: any
-): CompileResult {
-    const compilerVersionStrategy = getCompilerVersionStrategy(sourceCode, version);
-    const files = new Map([[fileName, sourceCode]]);
+    compilerSettings?: any,
+    kind?: CompilerKind
+): Promise<CompileResult> {
+    const entryFileName = normalizeImportPath(fileName);
+    const entryFileDir = path.dirname(entryFileName);
+
+    const files = new Map([[entryFileName, sourceCode]]);
+    const resolvers = [new FileSystemResolver(), new LocalNpmResolver(entryFileDir)];
+
+    resolveFiles(files, remapping, resolvers);
+
+    const compilerVersionStrategy = getCompilerVersionStrategy([sourceCode], version);
     const failures: CompileFailure[] = [];
 
     for (const compilerVersion of compilerVersionStrategy.select()) {
-        const finder = createFileSystemImportFinder(
-            fileName,
+        const data = await compile(
             files,
-            satisfies(compilerVersion, "0.4") ? parsePathRemapping(remapping) : []
+            compilerVersion,
+            compilationOutput,
+            compilerSettings,
+            kind
         );
 
-        const data = compile(
-            fileName,
-            sourceCode,
-            compilerVersion,
-            finder,
-            remapping,
-            compilationOutput,
-            compilerSettings
-        );
         const errors = detectCompileErrors(data);
 
         if (errors.length === 0) {
@@ -380,33 +224,35 @@ export function compileSourceString(
     throw new CompileFailedError(failures);
 }
 
-export function compileSol(
+export async function compileSol(
     fileName: string,
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
-    compilerSettings?: any
-): CompileResult {
-    const source = fse.readFileSync(fileName, { encoding: "utf-8" });
+    compilerSettings?: any,
+    kind?: CompilerKind
+): Promise<CompileResult> {
+    const sourceCode = fse.readFileSync(fileName, { encoding: "utf-8" });
 
     return compileSourceString(
         fileName,
-        source,
+        sourceCode,
         version,
         remapping,
         compilationOutput,
-        compilerSettings
+        compilerSettings,
+        kind
     );
 }
 
-export function compileJsonData(
+export async function compileJsonData(
     fileName: string,
     data: any,
     version: string | CompilerVersionSelectionStrategy,
-    remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
-    compilerSettings?: any
-): CompileResult {
+    compilerSettings?: any,
+    kind?: CompilerKind
+): Promise<CompileResult> {
     const files = new Map<string, string>();
 
     if (!(data instanceof Object && data.sources instanceof Object)) {
@@ -429,31 +275,20 @@ export function compileJsonData(
     }
 
     if (consistentlyContainsOneOf(sources, "source")) {
-        const mainFileName = detectMainFileName(data);
-        const sourceCode: string | undefined = mainFileName
-            ? sources[mainFileName].source
-            : undefined;
-
-        if (!(mainFileName && sourceCode)) {
-            throw new Error("Unable to detect main source to compile");
+        for (const [fileName, fileData] of Object.entries<{ source: string }>(sources)) {
+            files.set(fileName, fileData.source);
         }
 
-        const compilerVersionStrategy = getCompilerVersionStrategy(sourceCode, version);
-
-        files.set(mainFileName, sourceCode);
-
-        const finder = createMemoryImportFinder(sources, files);
+        const compilerVersionStrategy = getCompilerVersionStrategy([...files.values()], version);
         const failures: CompileFailure[] = [];
 
         for (const compilerVersion of compilerVersionStrategy.select()) {
-            const compileData = compile(
-                mainFileName,
-                sourceCode,
+            const compileData = await compile(
+                files,
                 compilerVersion,
-                finder,
-                remapping,
                 compilationOutput,
-                compilerSettings
+                compilerSettings,
+                kind
             );
 
             const errors = detectCompileErrors(compileData);
@@ -473,14 +308,14 @@ export function compileJsonData(
     );
 }
 
-export function compileJson(
+export async function compileJson(
     fileName: string,
     version: string | CompilerVersionSelectionStrategy,
-    remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
-    compilerSettings?: any
-): CompileResult {
+    compilerSettings?: any,
+    kind?: CompilerKind
+): Promise<CompileResult> {
     const data = fse.readJSONSync(fileName);
 
-    return compileJsonData(fileName, data, version, remapping, compilationOutput, compilerSettings);
+    return compileJsonData(fileName, data, version, compilationOutput, compilerSettings, kind);
 }
