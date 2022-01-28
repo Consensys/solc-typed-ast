@@ -6,7 +6,9 @@ export function searchRecursive(targetPath: string, filter: (entry: string) => b
     const results: string[] = [];
 
     if (stat.isFile()) {
-        results.push(path.resolve(targetPath));
+        if (filter(targetPath)) {
+            results.push(path.resolve(targetPath));
+        }
 
         return results;
     }

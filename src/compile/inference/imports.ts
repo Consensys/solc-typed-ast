@@ -1,7 +1,6 @@
 import fse from "fs-extra";
 import { dirname, isAbsolute, join, normalize } from "path";
-import { ImportResolver, Remapping } from "..";
-import { assert } from "../..";
+import { CompileInferenceError, ImportResolver, Remapping } from "..";
 import {
     AnyFileLevelNode,
     FileLevelNodeKind,
@@ -9,6 +8,10 @@ import {
     SyntaxError
 } from "./file_level_definitions_parser";
 
+/**
+ * Apply the first remapping in `remappings` that fits `path` and
+ * return the updated path.
+ */
 function applyRemappings(remappings: Remapping[], path: string): string {
     for (const [, prefix, mapped_prefix] of remappings) {
         if (path.startsWith(prefix)) {
@@ -25,10 +28,22 @@ export function normalizeImportPath(path: string): string {
     return isAbsolute(normalized) ? normalized : "./" + normalized;
 }
 
+/**
+ * Check that `path` starts with a relative prefix "." or "./".  Note that we
+ * don't use `!path.isAbsolute(path)` on purpose.  Otherwise it might consider
+ * paths like `@open-zeppelin/...` as relative.
+ */
 function isPathWithRelativePrefix(path: string): boolean {
     return path.startsWith("./") || path.startsWith("../");
 }
 
+/**
+ * Given the `importer` unit path, and the path `imported` of an import directive
+ * inside the unit, compute the real path of the imported unit.
+ *
+ * This takes into account remappings, relative and absolute paths.
+ * Note: The returned path is not neccessarily absolute!
+ */
 function computeRealPath(
     importer: string | undefined,
     imported: string,
@@ -45,6 +60,13 @@ function computeRealPath(
     return result;
 }
 
+/**
+ * Given a partial map `files` from file names to file contents, a list of
+ * `remappings` and a list of `ImportResolver`s `resolvers`, find and return all
+ * ADDITIONAL files that are imported from the starting set `files` but are
+ * missing in `files`. The return value is also a map from file names to file
+ * contents.
+ */
 export function findAllFiles(
     files: Map<string, string>,
     remappings: Remapping[],
@@ -84,7 +106,11 @@ export function findAllFiles(
                 }
             }
 
-            assert(content !== undefined, 'Couldn\'t find "{0}"', imported);
+            if (content === undefined) {
+                throw new CompileInferenceError(
+                    `Couldn't find ${realPath} imported from ${importer}`
+                );
+            }
 
             result.set(isPathWithRelativePrefix(imported) ? realPath : imported, content);
         }
@@ -101,7 +127,7 @@ export function findAllFiles(
                 const end = e.location.end.offset;
                 const length = end - start;
 
-                throw new Error(
+                throw new CompileInferenceError(
                     `Failed parsing imports at ${realPath}:${start}:${length} - ${e.message}`
                 );
             }

@@ -11,11 +11,8 @@ import { CompilationOutput, CompilerKind } from "./constants";
 import { Remapping } from "./import_resolver";
 import { findAllFiles, normalizeImportPath } from "./inference";
 import { createCompilerInput } from "./input";
-import {
-    getCompilerPrefixForOs,
-    getNativeCompilerForVersion,
-    getWasmCompilerForVersion
-} from "./kinds";
+import { getNativeCompilerForVersion, getWasmCompilerForVersion } from "./kinds";
+import { getCompilerPrefixForOs } from "./kinds/md";
 
 export interface MemoryStorage {
     [path: string]: {
@@ -33,6 +30,8 @@ export interface CompileFailure {
     errors: string[];
     compilerVersion?: string;
 }
+
+export class CompileInferenceError extends Error {}
 
 export class CompileFailedError extends Error {
     failures: CompileFailure[];
@@ -200,7 +199,7 @@ export async function compileSourceString(
 
     resolveFiles(files, remapping, resolvers);
 
-    const compilerVersionStrategy = getCompilerVersionStrategy([sourceCode], version);
+    const compilerVersionStrategy = getCompilerVersionStrategy([...files.values()], version);
     const failures: CompileFailure[] = [];
 
     for (const compilerVersion of compilerVersionStrategy.select()) {

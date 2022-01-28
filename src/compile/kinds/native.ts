@@ -1,53 +1,19 @@
-import axios from "axios";
 import { spawn } from "child_process";
-import fse from "fs-extra";
-import os from "os";
-import path from "path";
+import axios from "axios";
 import * as stream from "stream";
 import { promisify } from "util";
 import { SolcInput } from "../input";
 import { Compiler } from "./compiler";
-
-export function getCompilerPrefixForOs(): string | undefined {
-    const arch = os.arch();
-
-    /**
-     * Only 64 bit native compilers built
-     */
-    if (arch !== "x64" && arch !== "ia64") {
-        return undefined;
-    }
-
-    const type = os.type();
-
-    if (type === "Linux") {
-        return "linux-amd64";
-    }
-
-    if (type === "Windows_NT") {
-        return "windows-amd64";
-    }
-
-    if (type === "Darwin") {
-        return "windows-amd64";
-    }
-
-    return undefined;
-}
-
-interface CompilerPlatformMetadata {
-    builds: VersionListEntry[];
-    releases: { [version: string]: string };
-}
-
-interface VersionListEntry {
-    path: string;
-    version: string;
-    longVersion: string;
-    keccak256: string;
-    sha256: string;
-    urls: string[];
-}
+import {
+    BINARIES_URL,
+    CACHE_DIR,
+    getCompilerMDForPlatform,
+    getCompilerPrefixForOs,
+    isSubDir
+} from "./md";
+import fse from "fs-extra";
+import path from "path";
+import { assert } from "../../misc/utils";
 
 class NativeCompiler extends Compiler {
     constructor(public readonly version: string, public readonly path: string) {
@@ -98,31 +64,6 @@ class NativeCompiler extends Compiler {
     }
 }
 
-const cacheDirDefault = path.join(__dirname, "..", "..", "..", ".compiler_cache");
-const cacheDirCustom = process.env["SOL_AST_COMPILER_CACHE"];
-
-const CACHE_DIR = cacheDirCustom === undefined ? cacheDirDefault : cacheDirCustom;
-const BINARIES_URL = "https://binaries.soliditylang.org";
-
-async function getCompilerMDForPlatform(prefix: string): Promise<CompilerPlatformMetadata> {
-    const cachedListPath = path.join(CACHE_DIR, prefix, "list.json");
-
-    if (fse.existsSync(cachedListPath)) {
-        return fse.readJSONSync(cachedListPath) as CompilerPlatformMetadata;
-    }
-
-    const response = await axios.get<CompilerPlatformMetadata>(
-        `${BINARIES_URL}/${prefix}/list.json`
-    );
-
-    const metaData = response.data;
-
-    fse.ensureDirSync(path.join(CACHE_DIR, prefix));
-    fse.writeJSONSync(cachedListPath, metaData);
-
-    return metaData;
-}
-
 export async function getNativeCompilerForVersion(
     version: string
 ): Promise<NativeCompiler | undefined> {
@@ -133,26 +74,30 @@ export async function getNativeCompilerForVersion(
     }
 
     const md = await getCompilerMDForPlatform(prefix);
+    const compilerFileName = md.releases[version];
 
-    if (version in md.releases) {
-        const compilerFileName = md.releases[version];
-        const compilerLocalPath = path.join(CACHE_DIR, prefix, compilerFileName);
-
-        if (!fse.existsSync(compilerLocalPath)) {
-            const response = await axios({
-                method: "GET",
-                url: `${BINARIES_URL}/${prefix}/${compilerFileName}`,
-                responseType: "stream"
-            });
-
-            const target = fse.createWriteStream(compilerLocalPath, { mode: 0o555 });
-            const pipeline = promisify(stream.pipeline);
-
-            await pipeline(response.data, target);
-        }
-
-        return new NativeCompiler(version, compilerLocalPath);
+    if (compilerFileName === undefined) {
+        return undefined;
     }
 
-    return undefined;
+    const compilerLocalPath = path.join(CACHE_DIR, prefix, compilerFileName);
+    assert(
+        isSubDir(compilerLocalPath, CACHE_DIR),
+        `Path ${compilerLocalPath} escapes from cache dir ${CACHE_DIR}`
+    );
+
+    if (!fse.existsSync(compilerLocalPath)) {
+        const response = await axios({
+            method: "GET",
+            url: `${BINARIES_URL}/${prefix}/${compilerFileName}`,
+            responseType: "stream"
+        });
+
+        const target = fse.createWriteStream(compilerLocalPath, { mode: 0o555 });
+        const pipeline = promisify(stream.pipeline);
+
+        await pipeline(response.data, target);
+    }
+
+    return new NativeCompiler(version, compilerLocalPath);
 }
