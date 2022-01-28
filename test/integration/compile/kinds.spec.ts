@@ -187,9 +187,8 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
             }
 
             /**
-             * Comparing the compiler outputs is tricky as there are subtle differences:
-             * 1. For example for 0.4.x wasm always reports the old-style AST, while native reports
-             * both the legacy and modern ast.
+             * Comparing the compiler outputs is tricky as there are subtle differences.
+             * See comment on `normalizeOutput` for details.
              */
 
             const normalizedWasmResult = normalizeOutput(wasmResult);

@@ -57,3 +57,35 @@ describe("findAllFiles() find all needed imports", () => {
         });
     }
 });
+
+describe("findAllFiles() throws proper errors", () => {
+    it("Parsing error", () => {
+        const files = new Map<string, string>([
+            [
+                "foo.sol",
+                `import a
+contract Foo {
+}
+`
+            ]
+        ]);
+
+        expect(() => findAllFiles(files, [], [new FileSystemResolver()])).toThrow(
+            /Failed parsing imports/
+        );
+    });
+
+    it("Missing file error", () => {
+        const files = new Map<string, string>([
+            [
+                "foo.sol",
+                `import "a.sol";
+contract Foo {
+}
+`
+            ]
+        ]);
+
+        expect(() => findAllFiles(files, [], [])).toThrow(/Couldn't find a.sol/);
+    });
+});

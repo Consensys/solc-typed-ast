@@ -31,6 +31,12 @@ function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, se
     return input;
 }
 
+/**
+ * Create valid standard JSON input for the solidity compiler as specified in
+ * https://docs.soliditylang.org/en/latest/using-the-compiler.html.
+ *
+ * This handles the differences in the JSON input between different compiler versions.
+ */
 export function createCompilerInput(
     files: Map<string, string>,
     version: string,
@@ -69,6 +75,8 @@ export function createCompilerInput(
 
     partialInp.sources = {};
 
+    // Note that prior to 0.5.0 the WASM compiler had a slightly
+    // different format for specifying versions.
     if (lt(version, "0.5.0") && kind === CompilerKind.WASM) {
         for (const [fileName, content] of files.entries()) {
             partialInp.sources[fileName] = content;
