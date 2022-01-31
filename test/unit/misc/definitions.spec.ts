@@ -288,59 +288,6 @@ const unitSamples: Array<
         ]
     ],
     [
-        "./test/samples/solidity/resolving/imports_and_source_unit_function_overloading.sol",
-        CompilerVersions08[CompilerVersions08.length - 1],
-        ASTKind.Modern,
-        [
-            [
-                62, // Function declaration for moo in "foo.sol"
-                [
-                    // ["foo", [68], 'foo in "foo.sol" refers to struct def imported from "boo.sol"'],
-                    // [
-                    //     "roo",
-                    //     [68],
-                    //     'roo in "foo.sol" refers to struct def imported via alias from "boo.sol"'
-                    // ]
-                ]
-            ],
-            [
-                15, // Body of function declaration for moo in "imports_and_source_unit_function_overloading.sol"
-                [
-                    // [
-                    //     "moo",
-                    //     [16, 63],
-                    //     'moo in the body of "moo()" refers to both overloaded functions'
-                    // ]
-                ]
-            ],
-            [
-                41, // Body of main in "imports_and_source_unit_function_overloading.sol"
-                [
-                    // [
-                    //     "moo",
-                    //     [16, 63],
-                    //     'moo in the body of "main()" refers to both overloaded functions'
-                    // ],
-                    // [
-                    //     "goo",
-                    //     [20, 63],
-                    //     'moo in the body of "main()" refers to both overloaded functions'
-                    // ],
-                    // [
-                    //     "roo",
-                    //     [68],
-                    //     'roo in the body of "main()" refers to the struct def in "boo.sol"'
-                    // ],
-                    // [
-                    //     "foo",
-                    //     [68],
-                    //     'foo in the body of "main()" refers to the struct def in "boo.sol"'
-                    // ]
-                ]
-            ]
-        ]
-    ],
-    [
         "./test/samples/solidity/resolving/shadowing_overloading_and_overriding.sol",
         CompilerVersions08[CompilerVersions08.length - 1],
         ASTKind.Modern,
