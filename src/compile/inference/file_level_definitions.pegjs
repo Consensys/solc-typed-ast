@@ -7,8 +7,8 @@ SourceUnit =
         return flds as FileLevelNode<any>[];
     }
 
-FileLevelDefinition
-    = Pragma
+FileLevelDefinition =
+    Pragma
     / ImportDirective
     / Constant
     / FreeFunction
@@ -21,7 +21,9 @@ FileLevelDefinition
 
 // ==== Pragma
 
-PragmaValue = NonSemicolonSoup { return text().trim(); }
+PragmaValue =
+    NonSemicolonSoup { return text().trim(); }
+
 Pragma =
     PRAGMA __ name: Identifier __ value: PragmaValue __ ";" {
         return { kind: FileLevelNodeKind.Pragma, location: location(), name, value } as FLPragma;
@@ -64,8 +66,8 @@ ImportDirective =
 // ==== Global Constants
 
 // global constants don't support reference types I think?
-ConstantType 
-    = Identifier (__ LBRACKET Number? RBRACKET)*  { return text(); }
+ConstantType =
+    Identifier (__ LBRACKET Number? RBRACKET)*  { return text(); }
 
 Constant = ConstantType __ CONSTANT  __ name: Identifier __ EQUAL __ value: NonSemicolonSoup __  SEMICOLON {
     return { kind: FileLevelNodeKind.Constant, location: location(), name, value } as FLConstant;
@@ -165,26 +167,31 @@ ErrorDef = ERROR __ name: Identifier __ args: ErrorArgs __ SEMICOLON {
 // ==== Soups - helper rules for matching semi-structured text with comments and strings inside,
 // that still try to account for either matching () or matching {}, or for an ending semicolon.
 NonSemicolonSoup =
-    (([^"'/;]+ ("/" [^/'"*;])?) // non-comment, non-string-literal, non-semicolon anything
-     / StringLiteral // string literal
-     / Comment // comment
+    (
+        ([^"'/;]+ ("/" [^/'"*;])?) // non-comment, non-string-literal, non-semicolon anything
+        / StringLiteral // string literal
+        / Comment // comment
     )* { return text(); }
 
-ParenSoup
-    = ((
-        ([^"'()/]+ ("/" [^/*"'()])?)  // non-comment, non-string literal, non-parenthesis anything
-        / StringLiteral  // string literal
-        / Comment // comment 
-      )
-    / LPAREN __ ParenSoup __ RPAREN)*
+ParenSoup =
+    (
+        (
+            ([^"'()/]+ ("/" [^/*"'()])?)  // non-comment, non-string literal, non-parenthesis anything
+            / StringLiteral  // string literal
+            / Comment // comment 
+        )
+        / LPAREN __ ParenSoup __ RPAREN
+    )*
 
-BraceSoup
-    = ((
-        ([^"'{}/]+ ("/" [^/*'"{}])?)  // non-comment, non string literal, non-braces anything
-        / StringLiteral  // string literal
-        / Comment // comment 
-       )   
-    / LBRACE __ BraceSoup __ RBRACE)*
+BraceSoup =
+    (
+        (
+            ([^"'{}/]+ ("/" [^/*'"{}])?)  // non-comment, non string literal, non-braces anything
+            / StringLiteral  // string literal
+            / Comment // comment 
+        )   
+        / LBRACE __ BraceSoup __ RBRACE
+    )*
 
 // ==== White space
 
@@ -283,6 +290,7 @@ EscapeSequence =
     / "0" !DecDigit { return "\0"; }
     / HexEscapeSequence
     / UnicodeEscapeSequence
+    / AnyChar // Allow invalid hex sequences as a fallback
 
 CharEscapeSequence =
     SingleEscapeChar
@@ -343,4 +351,4 @@ Number =
     value: (HexNumber / DecNumber)
 
 Identifier =
-    id: ([a-zA-Z_][a-zA-Z0-9_]*) { return text(); }
+    id: ([a-zA-Z$_][a-zA-Z$0-9_]*) { return text(); }

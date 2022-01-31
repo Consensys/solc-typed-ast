@@ -41,8 +41,27 @@ const good_samples: Array<[string, string, any]> = [
         `string constant a = 'asdfasd; nasdf (;)}{;/**/ // /*';`,
         [{ name: "a", kind: "constant", value: `'asdfasd; nasdf (;)}{;/**/ // /*'` }]
     ],
+    [
+        "invalid escape sequence (legacy)",
+        `string constant a = '\\2';`,
+        [{ name: "a", kind: "constant", value: `'\\2'` }]
+    ],
 
     // Free functions
+    [
+        "free fun $foo$",
+        `function $foo$(uint $arg) {}`,
+        [
+            {
+                kind: "function",
+                name: "$foo$",
+                args: "(uint $arg)",
+                mutability: "",
+                returns: null,
+                body: "{}"
+            }
+        ]
+    ],
     [
         "free fun foo0",
         `function foo0() {}`,
@@ -500,19 +519,22 @@ function expectTopLevelNodesMatch(a: any[], b: any[]) {
 }
 
 describe("File-level definitions parser unit tests", () => {
-    for (const [name, sample, expectedParsed] of good_samples) {
-        it(`Sample ${name} should parse successfully`, () => {
+    for (const [name, sample, expected] of good_samples) {
+        it(`${name} should parse successfully`, () => {
             const parsed = parseFileLevelDefinitions(sample);
 
-            expectTopLevelNodesMatch(parsed, expectedParsed);
+            expectTopLevelNodesMatch(parsed, expected);
         });
     }
 });
 
+const SAMPLES_DIR =
+    process.env.SOLC_SAMPLES_TEST_DIR === undefined
+        ? "test/samples/solidity"
+        : process.env.SOLC_SAMPLES_TEST_DIR;
+
 describe("File-level definitions parser samples test", () => {
-    for (const fileName of searchRecursive("test/samples/solidity", (name) =>
-        name.endsWith(".sol")
-    )) {
+    for (const fileName of searchRecursive(SAMPLES_DIR, (name) => name.endsWith(".sol"))) {
         it(fileName, () => {
             const contents = fse.readFileSync(fileName).toString();
 
