@@ -1,5 +1,5 @@
 import expect from "expect";
-import { LatestAndFirstVersionInEachSeriesStrategy } from "../../../../src";
+import { LatestAndFirstVersionInEachSeriesStrategy, PossibleCompilerKinds } from "../../../../src";
 import { SolAstCompileCommand, SolAstCompileExec } from "../common";
 
 const sample = "test/samples/solidity/missing_pragma.sol";
@@ -28,36 +28,36 @@ const values = [
 ];
 
 for (const version of versions) {
-    const args = [sample, "--compiler-version", version];
-    const command = SolAstCompileCommand(...args);
+    for (const kind of PossibleCompilerKinds) {
+        const args = [sample, "--compiler-kind", kind, "--compiler-version", version];
+        const command = SolAstCompileCommand(...args);
 
-    describe(command, () => {
-        let exitCode: number | null;
-        let outData: string;
-        let errData: string;
+        describe(command, () => {
+            let exitCode: number | null;
+            let outData: string;
+            let errData: string;
 
-        before((done) => {
-            const result = SolAstCompileExec(...args);
+            before(() => {
+                const result = SolAstCompileExec(...args);
 
-            outData = result.stdout;
-            errData = result.stderr;
-            exitCode = result.status;
+                outData = result.stdout;
+                errData = result.stderr;
+                exitCode = result.status;
+            });
 
-            done();
+            it("Exit code is valid", () => {
+                expect(exitCode).toEqual(0);
+            });
+
+            it("STDERR is empty", () => {
+                expect(errData).toEqual("");
+            });
+
+            it("STDOUT is correct", () => {
+                for (const value of values) {
+                    expect(outData).toContain(value);
+                }
+            });
         });
-
-        it("Exit code is valid", () => {
-            expect(exitCode).toEqual(0);
-        });
-
-        it("STDERR is empty", () => {
-            expect(errData).toEqual("");
-        });
-
-        it("STDOUT is correct", () => {
-            for (const value of values) {
-                expect(outData).toContain(value);
-            }
-        });
-    });
+    }
 }

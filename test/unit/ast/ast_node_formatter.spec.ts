@@ -5,6 +5,9 @@ describe("ASTNodeFormatter", () => {
     const formatter = new ASTNodeFormatter();
 
     const context = new ASTContext();
+
+    context.id = 555;
+
     const node = new ASTNode(1, "1:2:3", undefined);
 
     context.register(node);
@@ -40,7 +43,7 @@ describe("ASTNodeFormatter", () => {
                 "ASTNode #1",
                 "    id: 1",
                 '    src: "1:2:3"',
-                "    context: ASTContext #1",
+                "    context: ASTContext #555",
                 '    <getter> type: "ASTNode"',
                 "    <getter> children: Array(0)",
                 "    <getter> firstChild: undefined",

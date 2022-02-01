@@ -17,9 +17,9 @@ describe("UsingForDirective", () => {
         describe(`Solc ${version}: ${sample}`, () => {
             let uses: UsingForDirective[];
 
-            before(() => {
+            before(async () => {
                 const reader = new ASTReader();
-                const { data } = compileJson(sample, version, []);
+                const { data } = await compileJson(sample, version);
                 const [mainUnit] = reader.read(data);
 
                 uses = mainUnit.getChildrenByType(UsingForDirective);

@@ -1,4 +1,5 @@
 import expect from "expect";
+import { PossibleCompilerKinds } from "../../../../src";
 import { SolAstCompileCommand, SolAstCompileExec } from "../common";
 
 const sample = "test/samples/solidity/missing_pragma.sol";
@@ -25,41 +26,43 @@ const values = [
     'value: "1"'
 ];
 
-const args = [
+const sampleArgs = [
     sample,
     "--compiler-settings",
     `{"optimizer": {"enabled": true, "runs": 1}}`,
     "--compiler-version",
     "0.6.0"
 ];
-const command = SolAstCompileCommand(...args);
 
-describe(command, () => {
-    let exitCode: number | null;
-    let outData: string;
-    let errData: string;
+for (const kind of PossibleCompilerKinds) {
+    const args = [...sampleArgs, "--compiler-kind", kind];
+    const command = SolAstCompileCommand(...args);
 
-    before((done) => {
-        const result = SolAstCompileExec(...args);
+    describe(command, () => {
+        let exitCode: number | null;
+        let outData: string;
+        let errData: string;
 
-        outData = result.stdout;
-        errData = result.stderr;
-        exitCode = result.status;
+        before(() => {
+            const result = SolAstCompileExec(...args);
 
-        done();
+            outData = result.stdout;
+            errData = result.stderr;
+            exitCode = result.status;
+        });
+
+        it("Exit code is valid", () => {
+            expect(exitCode).toEqual(0);
+        });
+
+        it("STDERR is empty", () => {
+            expect(errData).toEqual("");
+        });
+
+        it("STDOUT is correct", () => {
+            for (const value of values) {
+                expect(outData).toContain(value);
+            }
+        });
     });
-
-    it("Exit code is valid", () => {
-        expect(exitCode).toEqual(0);
-    });
-
-    it("STDERR is empty", () => {
-        expect(errData).toEqual("");
-    });
-
-    it("STDOUT is correct", () => {
-        for (const value of values) {
-            expect(outData).toContain(value);
-        }
-    });
-});
+}

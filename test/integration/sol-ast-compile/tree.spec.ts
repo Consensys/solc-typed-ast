@@ -1,5 +1,6 @@
 import expect from "expect";
 import fse from "fs-extra";
+import { PossibleCompilerKinds } from "../../../src";
 import { SolAstCompileCommand, SolAstCompileExec } from "./common";
 
 const cases = [
@@ -16,34 +17,36 @@ const cases = [
 ];
 
 for (const [sample, snapshot] of cases) {
-    const args = [sample, "--tree"];
-    const command = SolAstCompileCommand(...args);
+    for (const kind of PossibleCompilerKinds) {
+        const args = [sample, "--compiler-kind", kind, "--tree"];
+        const command = SolAstCompileCommand(...args);
 
-    describe(command, () => {
-        let exitCode: number | null;
-        let outData: string;
-        let errData: string;
+        describe(command, () => {
+            let exitCode: number | null;
+            let outData: string;
+            let errData: string;
 
-        before(() => {
-            const result = SolAstCompileExec(...args);
+            before(() => {
+                const result = SolAstCompileExec(...args);
 
-            outData = result.stdout;
-            errData = result.stderr;
-            exitCode = result.status;
+                outData = result.stdout;
+                errData = result.stderr;
+                exitCode = result.status;
+            });
+
+            it("Exit code is valid", () => {
+                expect(exitCode).toEqual(0);
+            });
+
+            it("STDERR is empty", () => {
+                expect(errData).toEqual("");
+            });
+
+            it("STDOUT is correct", () => {
+                const snapshotData = fse.readFileSync(snapshot, { encoding: "utf8" });
+
+                expect(outData.replace(process.cwd(), "")).toContain(snapshotData);
+            });
         });
-
-        it("Exit code is valid", () => {
-            expect(exitCode).toEqual(0);
-        });
-
-        it("STDERR is empty", () => {
-            expect(errData).toEqual("");
-        });
-
-        it("STDOUT is correct", () => {
-            const snapshotData = fse.readFileSync(snapshot, { encoding: "utf8" });
-
-            expect(outData.replace(process.cwd(), "")).toContain(snapshotData);
-        });
-    });
+    }
 }

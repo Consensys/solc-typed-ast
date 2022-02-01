@@ -1,4 +1,5 @@
 import expect from "expect";
+import { PossibleCompilerKinds } from "../../../../src";
 import { SolAstCompileCommand, SolAstCompileExec } from "../common";
 
 const error = "Error: Unable to auto-detect mode for the file name";
@@ -16,36 +17,36 @@ const cases: Array<[string, string, number, string, string[]]> = [
 ];
 
 for (const [fileName, mode, expectedExitCode, stdErr, stdOut] of cases) {
-    const args = [fileName, "--mode", mode];
-    const command = SolAstCompileCommand(...args);
+    for (const kind of PossibleCompilerKinds) {
+        const args = [fileName, "--compiler-kind", kind, "--mode", mode];
+        const command = SolAstCompileCommand(...args);
 
-    describe(command, () => {
-        let exitCode: number | null;
-        let outData: string;
-        let errData: string;
+        describe(command, () => {
+            let exitCode: number | null;
+            let outData: string;
+            let errData: string;
 
-        before((done) => {
-            const result = SolAstCompileExec(...args);
+            before(() => {
+                const result = SolAstCompileExec(...args);
 
-            outData = result.stdout;
-            errData = result.stderr;
-            exitCode = result.status;
+                outData = result.stdout;
+                errData = result.stderr;
+                exitCode = result.status;
+            });
 
-            done();
+            it("Exit code is valid", () => {
+                expect(exitCode).toEqual(expectedExitCode);
+            });
+
+            it("STDERR is correct", () => {
+                expect(errData).toContain(stdErr);
+            });
+
+            it("STDOUT is correct", () => {
+                for (const value of stdOut) {
+                    expect(outData).toContain(value);
+                }
+            });
         });
-
-        it("Exit code is valid", () => {
-            expect(exitCode).toEqual(expectedExitCode);
-        });
-
-        it("STDERR is correct", () => {
-            expect(errData).toContain(stdErr);
-        });
-
-        it("STDOUT is correct", () => {
-            for (const value of stdOut) {
-                expect(outData).toContain(value);
-            }
-        });
-    });
+    }
 }

@@ -46,13 +46,13 @@ import { CompileFailedError, CompileResult, compileSol } from "solc-typed-ast";
 let result: CompileResult;
 
 try {
-    result = compileSol("sample.sol", "auto", []);
+    result = await compileSol("sample.sol", "auto", []);
 } catch (e) {
     if (e instanceof CompileFailedError) {
         console.error("Compile errors encountered:");
 
         for (const failure of e.failures) {
-            console.error(`SolcJS ${failure.compilerVersion}:`);
+            console.error(`Solc ${failure.compilerVersion}:`);
 
             for (const error of failure.errors) {
                 console.error(error);
@@ -68,7 +68,15 @@ console.log(result);
 
 The second argument with the `"auto"` value specifies a compiler selection strategy. If `"auto"` is specified and source code contains valid `pragma solidity` directive, then compiler version will be automatically picked from it. If compile process will not succedd, the execution will fall back to _"compiler guessing"_: trying to compile source with a few different versions of the new and old Solidity compilers. The other option would be to specify a concrete supported compiler version string, like `"0.7.0"` for example. There is also a support for various compiler selection strategies, including used-defined custom ones (`CompilerVersionSelectionStrategy` interface implementations).
 
-**NOTE:** We want to notify that **the package preinstalls 50+ SolcJS compilers** (since 0.4.13), so be ready that it will occupy fair amount of free space. At some point we may consider to move compilers away from this package. It will mostly depend on users feedback.
+**NOTE:** We want to notify that **the package preinstalls 50+ versions of Solc compilers** (since 0.4.13), so be ready that it will occupy fair amount of free space. At some point we may consider to move compilers away from this package. It will mostly depend on users feedback.
+
+### Native compilers
+
+Package supports switching between native binary Solc compilers and its WASM versions. The CLI option `--compiler-kind` and `kind` argument of `compile*()` functions family may be used for that purpose. Native binary compilers are downloaded on demand to the directory `.compiler_cache` at the package installation directory (by default). The compiler cache location may be customized by setting `SOL_AST_COMPILER_CACHE` environment variable to a custom path. For example:
+
+```bash
+SOL_AST_COMPILER_CACHE=~/.compiler_cache solc-ast-compile sample.sol --compiler-kind native --tree
+```
 
 ### Typed universal AST
 
@@ -130,6 +138,7 @@ Use `--help` to see all available features.
 The project have following directory structure:
 
 ```
+├── .compiler_cache             # Cache of downloaded native compilers.
 ├── coverage                    # Test coverage report, produced by "npm test" command.
 ├── dist                        # Generated JavaScript sources for package distribution (produced by "npm run build" and published by "npm publish" commands).
 ├── docs                        # Project documentation and API reference, produced by "npm run docs:render" or "npm run docs:refresh" commands.

@@ -11,9 +11,9 @@ describe("ElementaryTypeName", () => {
         describe(`Solc ${version}: ${sample}`, () => {
             let nodes: ElementaryTypeName[];
 
-            before(() => {
+            before(async () => {
                 const reader = new ASTReader();
-                const { data } = compileJson(sample, version, []);
+                const { data } = await compileJson(sample, version);
                 const [mainUnit] = reader.read(data);
 
                 nodes = mainUnit.getChildrenByType(ElementaryTypeName);

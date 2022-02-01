@@ -16,9 +16,9 @@ describe("Throw (Solc 0.4.13)", () => {
     let mainUnit: SourceUnit;
     let funcs: FunctionDefinition[];
 
-    before(() => {
+    before(async () => {
         const reader = new ASTReader();
-        const { data } = compileJson(sample, "0.4.13", []);
+        const { data } = await compileJson(sample, "0.4.13");
         const units = reader.read(data);
 
         mainUnit = units[0];

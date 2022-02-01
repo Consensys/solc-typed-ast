@@ -2,30 +2,29 @@ import expect from "expect";
 import fse from "fs-extra";
 import {
     compileJson,
-    createFileSystemImportFinder,
-    createMemoryImportFinder,
     detectCompileErrors,
-    getCompilerForVersion,
+    getWasmCompilerForVersion,
     LatestAndFirstVersionInEachSeriesStrategy,
     LatestCompilerVersion,
-    parsePathRemapping
+    parsePathRemapping,
+    WasmCompiler
 } from "../../../src";
 
 describe("Compile general utils", () => {
-    describe("getCompilerForVersion()", () => {
+    describe("getWasmCompilerForVersion()", () => {
         it("Non-exact version of compiler triggers an error", () => {
-            expect(() => getCompilerForVersion("^0.5.0")).toThrow();
+            expect(() => getWasmCompilerForVersion("^0.5.0")).toThrow();
         });
 
         it("Unsupported version of compiler triggers an error", () => {
-            expect(() => getCompilerForVersion("0.4.10")).toThrow();
+            expect(() => getWasmCompilerForVersion("0.4.10").module).toThrow();
         });
 
         const strategy = new LatestAndFirstVersionInEachSeriesStrategy();
 
         for (const version of strategy.select()) {
             it(`Compiler ${version} is accessible`, () => {
-                expect(getCompilerForVersion(version)).toBeInstanceOf(Object);
+                expect(getWasmCompilerForVersion(version)).toBeInstanceOf(WasmCompiler);
             });
         }
     });
@@ -46,85 +45,6 @@ describe("Compile general utils", () => {
 
         it(`Invalid input triggers an error`, () => {
             expect(() => parsePathRemapping(["???"])).toThrow();
-        });
-    });
-
-    describe("createFileSystemImportFinder()", () => {
-        const files = new Map<string, string>();
-        const finder = createFileSystemImportFinder(
-            "test/samples/solidity/node.sol",
-            files,
-            parsePathRemapping(["@x/=test/samples/solidity/"])
-        );
-
-        const cases = [
-            ["test/samples/solidity/node.sol", "pragma solidity"],
-            ["@x/missing_pragma.sol", "contract Test"],
-            [".bin/tsc", "#!/usr/bin/env"]
-        ];
-
-        for (const [fileName, contentPrefix] of cases) {
-            it(`Created finder resolves "${fileName}"`, () => {
-                const result = finder(fileName) as { contents: string };
-
-                expect(result.contents).toBeDefined();
-                expect(result.contents.startsWith(contentPrefix)).toEqual(true);
-
-                const cacheValue = files.get(fileName) as string;
-
-                expect(cacheValue).toBeDefined();
-                expect(cacheValue.startsWith(contentPrefix)).toEqual(true);
-            });
-        }
-
-        it('Created finder not resolves "missing"', () => {
-            const result = finder("missing") as { error: string };
-
-            expect(result.error).toBeDefined();
-            expect(result.error).toMatch(/^Unable to find import path "[^"]+"$/);
-        });
-    });
-
-    describe("createMemoryImportFinder()", () => {
-        const storage: any = {
-            "a/b.sol": {
-                source: "test"
-            },
-            "c.sol": {}
-        };
-
-        const files = new Map<string, string>();
-        const finder = createMemoryImportFinder(storage, files);
-
-        it(`Created finder resolves "a/b.sol"`, () => {
-            const result = finder("a/b.sol") as { contents: string };
-
-            expect(result.contents).toBeDefined();
-            expect(result.contents).toEqual("test");
-
-            const cacheValue = files.get("a/b.sol") as string;
-
-            expect(cacheValue).toBeDefined();
-            expect(cacheValue).toEqual("test");
-        });
-
-        it('Created finder not resolves "c.sol"', () => {
-            const result = finder("c.sol") as { error: string };
-
-            expect(result.error).toBeDefined();
-            expect(result.error).toMatch(/^Entry at "[^"]+" contains no "source" property$/);
-        });
-
-        it('Created finder not resolves "missing"', () => {
-            const result = finder("missing") as { error: string };
-
-            expect(result.error).toBeDefined();
-            expect(result.error).toMatch(/^Import path "[^"]+" not found in storage$/);
-        });
-
-        it("Creation of finder fails for null or undefined", () => {
-            expect(() => createMemoryImportFinder(undefined as any, new Map())).toThrow();
-            expect(() => createMemoryImportFinder(null as any, new Map())).toThrow();
         });
     });
 
@@ -174,16 +94,7 @@ describe("Compile general utils", () => {
                 undefined,
                 /^Unable to process data structure: neither consistent AST or code values are present$/
             ],
-            [
-                "test/samples/json/code_no_main.json",
-                undefined,
-                /^Unable to detect main source to compile$/
-            ],
-            [
-                "test/samples/json/code_main_source_invalid.json",
-                undefined,
-                /^Unable to detect main source to compile$/
-            ],
+            ["test/samples/json/code_no_main.json", LatestCompilerVersion, undefined],
             ["test/samples/json/code_and_ast.json", undefined, undefined],
             ["test/samples/json/code_main_source.json", LatestCompilerVersion, undefined],
             ["test/samples/json/code_main_in_sources.json", LatestCompilerVersion, undefined]
@@ -191,12 +102,18 @@ describe("Compile general utils", () => {
 
         for (const [fileName, version, result] of cases) {
             if (result instanceof RegExp) {
-                it(`Throws an error for ${JSON.stringify(fileName)}`, () => {
-                    expect(() => compileJson(fileName, "auto", [])).toThrow(result);
+                it(`Throws an error for ${JSON.stringify(fileName)}`, async () => {
+                    expect.assertions(1);
+
+                    try {
+                        await compileJson(fileName, "auto");
+                    } catch (e: any) {
+                        expect(e.message).toMatch(result);
+                    }
                 });
             } else {
-                it(`Compiles ${JSON.stringify(fileName)} successfully`, () => {
-                    const { data, compilerVersion, files } = compileJson(fileName, "auto", []);
+                it(`Compiles ${JSON.stringify(fileName)} successfully`, async () => {
+                    const { data, compilerVersion, files } = await compileJson(fileName, "auto");
 
                     expect(data.sources).toBeDefined();
                     expect(detectCompileErrors(data)).toHaveLength(0);

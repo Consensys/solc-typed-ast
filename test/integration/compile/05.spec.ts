@@ -3,9 +3,11 @@ import fse from "fs-extra";
 import {
     ASTKind,
     ASTReader,
+    CompilerKind,
     CompilerVersions05,
     compileSol,
     detectCompileErrors,
+    PossibleCompilerKinds,
     SourceUnit
 } from "../../../src";
 import { createImprint } from "./common";
@@ -50,59 +52,68 @@ const encounters = new Map<string, number>([
 
 describe(`Compile ${sample} with any available 0.5.x compiler`, () => {
     for (const version of CompilerVersions05) {
-        describe(`Solc ${version}`, () => {
-            let data: any = {};
-            let sourceUnits: SourceUnit[];
+        for (const compilerKind of PossibleCompilerKinds) {
+            describe(`[${compilerKind}] ${version}`, () => {
+                let data: any = {};
+                let sourceUnits: SourceUnit[];
 
-            before("Compile", () => {
-                const result = compileSol(sample, version, []);
+                before("Compile", async () => {
+                    const result = await compileSol(
+                        sample,
+                        version,
+                        [],
+                        undefined,
+                        undefined,
+                        compilerKind as CompilerKind
+                    );
 
-                expect(result.compilerVersion).toEqual(version);
-                expect(result.files).toEqual(expectedFiles);
+                    expect(result.compilerVersion).toEqual(version);
+                    expect(result.files).toEqual(expectedFiles);
 
-                const errors = detectCompileErrors(result.data);
+                    const errors = detectCompileErrors(result.data);
 
-                expect(errors).toHaveLength(0);
+                    expect(errors).toHaveLength(0);
 
-                data = result.data;
+                    data = result.data;
+                });
+
+                for (const astKind of [ASTKind.Modern, ASTKind.Legacy]) {
+                    it(`Process compiler output (${astKind})`, () => {
+                        const reader = new ASTReader();
+
+                        sourceUnits = reader.read(data, astKind);
+
+                        expect(sourceUnits.length).toEqual(1);
+
+                        const sourceUnit = sourceUnits[0];
+
+                        expect(sourceUnit.id).toEqual(207);
+                        expect(sourceUnit.src).toEqual("0:1581:0");
+                        expect(sourceUnit.absolutePath).toEqual(sample);
+                        expect(sourceUnit.children.length).toEqual(2);
+                        expect(sourceUnit.getChildren().length).toEqual(206);
+                    });
+
+                    it(`Validate processed output (${astKind})`, () => {
+                        const sourceUnit = sourceUnits[0];
+                        const sourceUnitImprint = createImprint(sourceUnit);
+
+                        expect(sourceUnitImprint.ASTNode).toBeUndefined();
+
+                        for (const [type, count] of encounters.entries()) {
+                            expect(sourceUnitImprint[type]).toBeDefined();
+                            expect(sourceUnitImprint[type].length).toEqual(count);
+
+                            const nodes = sourceUnit.getChildrenBySelector(
+                                (node) => node.type === type,
+                                type === "SourceUnit"
+                            );
+
+                            expect(nodes.length).toEqual(count);
+                        }
+                    });
+                }
             });
-
-            for (const kind of [ASTKind.Modern, ASTKind.Legacy]) {
-                it(`Process compiler output (${kind})`, () => {
-                    const reader = new ASTReader();
-
-                    sourceUnits = reader.read(data, kind);
-
-                    expect(sourceUnits.length).toEqual(1);
-
-                    const sourceUnit = sourceUnits[0];
-
-                    expect(sourceUnit.id).toEqual(207);
-                    expect(sourceUnit.src).toEqual("0:1581:0");
-                    expect(sourceUnit.absolutePath).toEqual(sample);
-                    expect(sourceUnit.children.length).toEqual(2);
-                    expect(sourceUnit.getChildren().length).toEqual(206);
-                });
-
-                it(`Validate processed output (${kind})`, () => {
-                    const sourceUnit = sourceUnits[0];
-                    const sourceUnitImprint = createImprint(sourceUnit);
-
-                    expect(sourceUnitImprint.ASTNode).toBeUndefined();
-
-                    for (const [type, count] of encounters.entries()) {
-                        expect(sourceUnitImprint[type]).toBeDefined();
-                        expect(sourceUnitImprint[type].length).toEqual(count);
-
-                        const nodes = sourceUnit.getChildrenBySelector(
-                            (node) => node.type === type,
-                            type === "SourceUnit"
-                        );
-
-                        expect(nodes.length).toEqual(count);
-                    }
-                });
-            }
-        });
+        }
     }
 });
