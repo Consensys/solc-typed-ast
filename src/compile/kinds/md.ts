@@ -56,11 +56,13 @@ export const BINARIES_URL = "https://binaries.soliditylang.org";
  */
 export function isSubDir(child: string, parent: string): boolean {
     const relPath = relative(parent, child);
+
     return !isAbsolute(relPath) && !relPath.startsWith("..");
 }
 
 export async function getCompilerMDForPlatform(prefix: string): Promise<CompilerPlatformMetadata> {
     const cachedListPath = path.join(CACHE_DIR, prefix, "list.json");
+
     assert(
         isSubDir(cachedListPath, CACHE_DIR),
         `Path ${cachedListPath} escapes from cache dir ${CACHE_DIR}`

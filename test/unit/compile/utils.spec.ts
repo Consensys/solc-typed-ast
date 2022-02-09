@@ -2,8 +2,9 @@ import expect from "expect";
 import fse from "fs-extra";
 import {
     compileJson,
+    CompilerKind,
     detectCompileErrors,
-    getWasmCompilerForVersion,
+    getCompilerForVersion,
     LatestAndFirstVersionInEachSeriesStrategy,
     LatestCompilerVersion,
     parsePathRemapping,
@@ -11,20 +12,36 @@ import {
 } from "../../../src";
 
 describe("Compile general utils", () => {
-    describe("getWasmCompilerForVersion()", () => {
-        it("Non-exact version of compiler triggers an error", () => {
-            expect(() => getWasmCompilerForVersion("^0.5.0")).toThrow();
+    describe("getCompilerForVersion()", () => {
+        it("Non-exact version of compiler triggers an error", async () => {
+            expect.assertions(1);
+
+            try {
+                await getCompilerForVersion("^0.5.0", CompilerKind.WASM);
+            } catch (e: any) {
+                expect(e.message).toMatch(
+                    "Version string must contain exact SemVer-formatted version without any operators"
+                );
+            }
         });
 
-        it("Unsupported version of compiler triggers an error", () => {
-            expect(() => getWasmCompilerForVersion("0.4.10").module).toThrow();
+        it("Unsupported version of compiler triggers an error", async () => {
+            expect.assertions(1);
+
+            try {
+                await getCompilerForVersion("0.4.10", CompilerKind.WASM);
+            } catch (e: any) {
+                expect(e.message).toMatch("");
+            }
         });
 
         const strategy = new LatestAndFirstVersionInEachSeriesStrategy();
 
         for (const version of strategy.select()) {
-            it(`Compiler ${version} is accessible`, () => {
-                expect(getWasmCompilerForVersion(version)).toBeInstanceOf(WasmCompiler);
+            it(`Compiler ${version} is accessible`, async () => {
+                expect(await getCompilerForVersion(version, CompilerKind.WASM)).toBeInstanceOf(
+                    WasmCompiler
+                );
             });
         }
     });

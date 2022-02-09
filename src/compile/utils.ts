@@ -1,6 +1,6 @@
 import fse from "fs-extra";
 import path from "path";
-import { FileSystemResolver, ImportResolver, LocalNpmResolver } from ".";
+import { FileSystemResolver, getCompilerForVersion, ImportResolver, LocalNpmResolver } from ".";
 import {
     CompilerVersionSelectionStrategy,
     LatestVersionInEachSeriesStrategy,
@@ -11,8 +11,6 @@ import { CompilationOutput, CompilerKind } from "./constants";
 import { Remapping } from "./import_resolver";
 import { findAllFiles, normalizeImportPath } from "./inference";
 import { createCompilerInput } from "./input";
-import { getNativeCompilerForVersion, getWasmCompilerForVersion } from "./kinds";
-import { getCompilerPrefixForOs } from "./kinds/md";
 
 export interface MemoryStorage {
     [path: string]: {
@@ -133,25 +131,15 @@ export async function compile(
         compilerSettings
     );
 
-    if (kind === CompilerKind.WASM) {
-        const compiler = getWasmCompilerForVersion(version);
+    const compiler = await getCompilerForVersion(version, kind);
 
-        return compiler.compile(compilerInput);
+    if (compiler === undefined) {
+        throw new Error(
+            `Couldn't find "${kind}" compiler for version ${version} for current platform`
+        );
     }
 
-    if (kind === CompilerKind.Native) {
-        const compiler = await getNativeCompilerForVersion(version);
-
-        if (compiler === undefined) {
-            throw new Error(
-                `Couldn't find native compiler for version ${version} for current platform ${getCompilerPrefixForOs()}`
-            );
-        }
-
-        return compiler.compile(compilerInput);
-    }
-
-    throw new Error(`Unsupported compiler kind "${kind}"`);
+    return compiler.compile(compilerInput);
 }
 
 export function detectCompileErrors(data: any): string[] {

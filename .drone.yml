@@ -11,7 +11,9 @@ steps:
       environment:
           CODECOV_TOKEN:
               from_secret: CODECOV_TOKEN
+          SOL_AST_COMPILER_CACHE: /.compiler_cache
       commands:
+          - ./docker/download.sh
           - npm install --unsafe-perm
           - npm link --unsafe-perm
           - npm run lint
