@@ -3,7 +3,11 @@ import { CompilationOutput, CompilerKind } from "./constants";
 
 export interface PartialSolcInput {
     language: "Solidity";
-    settings: { outputSelection: any; [otherKeys: string]: any };
+    settings: {
+        outputSelection: any;
+        remappings: string[];
+        [otherKeys: string]: any;
+    };
     [otherKeys: string]: any;
 }
 
@@ -39,6 +43,7 @@ function mergeCompilerSettings<T extends Solc04Input | Solc05Input>(input: T, se
  */
 export function createCompilerInput(
     files: Map<string, string>,
+    remappings: string[],
     version: string,
     kind: CompilerKind,
     output: CompilationOutput[],
@@ -64,6 +69,7 @@ export function createCompilerInput(
     const partialInp: PartialSolcInput = {
         language: "Solidity",
         settings: {
+            remappings,
             outputSelection: {
                 "*": {
                     "*": contractOutput,
