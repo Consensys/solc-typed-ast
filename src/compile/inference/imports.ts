@@ -98,12 +98,7 @@ export function findAllFiles(
     resolvers: ImportResolver[]
 ): void {
     // Queue of source unit names to process
-    const queue: string[] = [];
-
-    for (const fileName of files.keys()) {
-        queue.push(fileName);
-    }
-
+    const queue: string[] = [...files.keys()];
     const visited = new Set<string>();
 
     while (queue.length > 0) {
