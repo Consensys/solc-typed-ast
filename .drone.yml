@@ -11,7 +11,10 @@ steps:
       environment:
           CODECOV_TOKEN:
               from_secret: CODECOV_TOKEN
+          SOL_AST_COMPILER_CACHE: /.compiler_cache
       commands:
+          - apt-get -qq update && apt-get -qq install jq
+          - ./docker/download.sh 'linux-amd64'
           - npm install --unsafe-perm
           - npm link --unsafe-perm
           - npm run lint
