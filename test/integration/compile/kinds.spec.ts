@@ -124,7 +124,11 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
     const additionalArgs = new Map<string, [string[], CompilationOutput[], any]>([
         [
             "test/samples/solidity/path_remapping/entry.sol",
-            [["@missing=./local"], defaultCompilationOutput, defaultCompilerSettings]
+            [
+                ["@missing=test/samples/solidity/path_remapping/local"],
+                defaultCompilationOutput,
+                defaultCompilerSettings
+            ]
         ]
     ]);
 

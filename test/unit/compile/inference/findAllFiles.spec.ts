@@ -2,7 +2,7 @@ import expect from "expect";
 import fse from "fs-extra";
 import { join } from "path";
 import { FileSystemResolver } from "../../../../src";
-import { findAllFiles, normalizeImportPath } from "../../../../src/compile/inference";
+import { findAllFiles } from "../../../../src/compile/inference";
 
 const SAMPLES_DIR = join("test", "samples", "solidity");
 
@@ -50,10 +50,9 @@ describe("findAllFiles() find all needed imports", () => {
     for (const [fileName, expectedAllFiles] of samples) {
         it(`All imports for ${fileName} should be ${expectedAllFiles.join(", ")}`, () => {
             const contents = fse.readFileSync(fileName).toString();
-            const files = new Map<string, string>([[normalizeImportPath(fileName), contents]]);
-            const additionalFiles = findAllFiles(files, [], [new FileSystemResolver()]);
-            const allFiles = new Set([normalizeImportPath(fileName), ...additionalFiles.keys()]);
-            expect(allFiles).toEqual(new Set(expectedAllFiles.map(normalizeImportPath)));
+            const files = new Map<string, string>([[fileName, contents]]);
+            findAllFiles(files, [], [new FileSystemResolver()]);
+            expect(new Set(files.keys())).toEqual(new Set(expectedAllFiles));
         });
     }
 });
