@@ -74,7 +74,7 @@ const samples = [
 
 for (const [sample, version] of samples) {
     for (const kind of PossibleCompilerKinds) {
-        describe(`Check mappings of ${sample} (version ${version}, kind ${kind})`, async () => {
+        it(`Check mappings of ${sample} (version ${version}, kind ${kind})`, async () => {
             const units = await readAST(sample, version, kind as CompilerKind);
 
             /**
@@ -102,10 +102,8 @@ for (const [sample, version] of samples) {
                     const solcLen = sourceInfo.length;
 
                     if (!sourceMap.has(node)) {
-                        it(`Missing node ${node.type}#${node.id} must be an empty parameter list`, () => {
-                            expect(node.type).toEqual("ParameterList");
-                            expect((node as ParameterList).vParameters.length).toEqual(0);
-                        });
+                        expect(node.type).toEqual("ParameterList");
+                        expect((node as ParameterList).vParameters.length).toEqual(0);
 
                         continue;
                     }
