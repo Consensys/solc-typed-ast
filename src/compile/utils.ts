@@ -9,7 +9,7 @@ import {
 } from "./compiler_selection";
 import { CompilationOutput, CompilerKind } from "./constants";
 import { Remapping } from "./import_resolver";
-import { findAllFiles, normalizeImportPath } from "./inference";
+import { findAllFiles } from "./inference";
 import { createCompilerInput } from "./input";
 
 export interface MemoryStorage {
@@ -83,11 +83,7 @@ export function resolveFiles(
     resolvers: ImportResolver[]
 ): void {
     const parsedRemapping = parsePathRemapping(remapping);
-    const additionalFiles = findAllFiles(files, parsedRemapping, resolvers);
-
-    for (const [fileName, source] of additionalFiles) {
-        files.set(fileName, source);
-    }
+    findAllFiles(files, parsedRemapping, resolvers);
 }
 
 function fillFilesFromSources(
@@ -118,6 +114,7 @@ function getCompilerVersionStrategy(
 
 export async function compile(
     files: Map<string, string>,
+    remapping: string[],
     version: string,
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
@@ -125,8 +122,7 @@ export async function compile(
 ): Promise<any> {
     const compilerInput = createCompilerInput(
         files,
-        version,
-        kind,
+        remapping,
         compilationOutput,
         compilerSettings
     );
@@ -179,10 +175,10 @@ export async function compileSourceString(
     compilerSettings?: any,
     kind?: CompilerKind
 ): Promise<CompileResult> {
-    const entryFileName = normalizeImportPath(fileName);
-    const entryFileDir = path.dirname(entryFileName);
+    const entrySourceUnit = fileName;
+    const entryFileDir = path.dirname(entrySourceUnit);
 
-    const files = new Map([[entryFileName, sourceCode]]);
+    const files = new Map([[entrySourceUnit, sourceCode]]);
     const resolvers = [new FileSystemResolver(), new LocalNpmResolver(entryFileDir)];
 
     resolveFiles(files, remapping, resolvers);
@@ -193,6 +189,7 @@ export async function compileSourceString(
     for (const compilerVersion of compilerVersionStrategy.select()) {
         const data = await compile(
             files,
+            remapping,
             compilerVersion,
             compilationOutput,
             compilerSettings,
@@ -272,6 +269,7 @@ export async function compileJsonData(
         for (const compilerVersion of compilerVersionStrategy.select()) {
             const compileData = await compile(
                 files,
+                [],
                 compilerVersion,
                 compilationOutput,
                 compilerSettings,

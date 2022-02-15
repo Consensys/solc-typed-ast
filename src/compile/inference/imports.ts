@@ -1,6 +1,7 @@
 import fse from "fs-extra";
-import { dirname, isAbsolute, join, normalize } from "path";
+import { dirname, normalize } from "path";
 import { CompileInferenceError, ImportResolver, Remapping } from "..";
+import { assert } from "../..";
 import {
     AnyFileLevelNode,
     FileLevelNodeKind,
@@ -22,12 +23,6 @@ function applyRemappings(remappings: Remapping[], path: string): string {
     return path;
 }
 
-export function normalizeImportPath(path: string): string {
-    const normalized = normalize(path);
-
-    return isAbsolute(normalized) ? normalized : "./" + normalized;
-}
-
 /**
  * Check that `path` starts with a relative prefix "." or "./".  Note that we
  * don't use `!path.isAbsolute(path)` on purpose.  Otherwise it might consider
@@ -38,66 +33,92 @@ function isPathWithRelativePrefix(path: string): boolean {
 }
 
 /**
- * Given the `importer` unit path, and the path `imported` of an import directive
- * inside the unit, compute the real path of the imported unit.
- *
- * This takes into account remappings, relative and absolute paths.
- * Note: The returned path is not neccessarily absolute!
+ * Normalize a relative import path as described in
+ * https://docs.soliditylang.org/en/v0.8.8/path-resolution.html#relative-imports
+ * @param importer - source unit name of importing unit
+ * @param imported - path of import directive
  */
-function computeRealPath(
-    importer: string | undefined,
-    imported: string,
-    remappings: Remapping[]
-): string {
-    let result = applyRemappings(remappings, imported);
+function normalizeRelativeImportPath(importer: string, imported: string): string {
+    imported = normalize(imported);
+    let prefix = dirname(importer);
+    const importedSegments = imported.split("/").filter((s) => s != "");
+    let strippedSegments = 0;
 
-    if (importer !== undefined && isPathWithRelativePrefix(result)) {
-        const importingFileDir = dirname(importer);
-
-        result = normalizeImportPath(join(importingFileDir, result));
+    while (
+        strippedSegments < importedSegments.length &&
+        importedSegments[strippedSegments] === ".."
+    ) {
+        prefix = dirname(prefix);
+        strippedSegments++;
     }
 
-    return result;
+    // According to https://docs.soliditylang.org/en/v0.8.8/path-resolution.html#relative-imports when prefix
+    // is empty there is no leading "./". However `dirname` always returns non-empty prefixes.
+    // Handle this edge case.
+    if (prefix === "." && !importer.startsWith(".")) {
+        prefix = "";
+    }
+
+    assert(prefix === "" || !prefix.endsWith("/"), `Invalid prefix ${prefix}`);
+    const suffix = importedSegments.slice(strippedSegments).join("/");
+    return prefix === "" ? suffix : prefix + "/" + suffix;
 }
 
 /**
- * Given a partial map `files` from file names to file contents, a list of
- * `remappings` and a list of `ImportResolver`s `resolvers`, find and return all
- * ADDITIONAL files that are imported from the starting set `files` but are
- * missing in `files`. The return value is also a map from file names to file
- * contents.
+ * Given the `importer` source unit path, and the path `imported` of an import
+ * directive compute the expected **source unit name** of the imported file.
+ * This is the name the compiler will look for in its "VFS" as defined starting
+ * here:
+ *
+ * https://docs.soliditylang.org/en/v0.8.8/path-resolution.html
+ *
+ * This takes into account relative and absolute paths and remappings.
+ */
+function computeSourceUnitName(
+    importerSourceUnit: string,
+    imported: string,
+    remappings: Remapping[]
+): string {
+    if (isPathWithRelativePrefix(imported)) {
+        return normalizeRelativeImportPath(importerSourceUnit, imported);
+    }
+
+    return applyRemappings(remappings, imported);
+}
+
+/**
+ * Given a partial map `files` from **source unit names** to file contents, a list of
+ * `remappings` and a list of `ImportResolver`s - `resolvers`, find all
+ * files that are imported from the starting set `files` but are
+ * **missing** in `files` and add them into the files map.
  */
 export function findAllFiles(
     files: Map<string, string>,
     remappings: Remapping[],
     resolvers: ImportResolver[]
-): Map<string, string> {
-    const queue: Array<[string | undefined, string]> = [];
-
-    for (const fileName of files.keys()) {
-        queue.push([undefined, fileName]);
-    }
-
+): void {
+    // Queue of source unit names to process
+    const queue: string[] = [...files.keys()];
     const visited = new Set<string>();
-    const result = new Map<string, string>();
 
     while (queue.length > 0) {
-        const [importer, imported] = queue.pop() as [string | undefined, string];
-
-        const realPath = computeRealPath(importer, imported, remappings);
+        const sourceUnitName = queue.pop() as string;
 
         /**
-         * Skip already processed imports
+         * Skip already processed units
          */
-        if (visited.has(realPath)) {
+        if (visited.has(sourceUnitName)) {
             continue;
         }
 
-        let content = files.get(realPath);
+        visited.add(sourceUnitName);
 
+        let content = files.get(sourceUnitName);
+
+        // Missing contents - try and fill them in from the resolvers
         if (content === undefined) {
             for (const resolver of resolvers) {
-                const resolvedPath = resolver.resolve(realPath);
+                const resolvedPath = resolver.resolve(sourceUnitName);
 
                 if (resolvedPath !== undefined) {
                     content = fse.readFileSync(resolvedPath, { encoding: "utf-8" });
@@ -107,15 +128,11 @@ export function findAllFiles(
             }
 
             if (content === undefined) {
-                throw new CompileInferenceError(
-                    `Couldn't find ${realPath} imported from ${importer}`
-                );
+                throw new CompileInferenceError(`Couldn't find ${sourceUnitName}`);
             }
 
-            result.set(isPathWithRelativePrefix(imported) ? realPath : imported, content);
+            files.set(sourceUnitName, content);
         }
-
-        visited.add(realPath);
 
         let flds: AnyFileLevelNode[];
 
@@ -128,7 +145,7 @@ export function findAllFiles(
                 const length = end - start;
 
                 throw new CompileInferenceError(
-                    `Failed parsing imports at ${realPath}:${start}:${length} - ${e.message}`
+                    `Failed parsing imports at ${sourceUnitName}:${start}:${length} - ${e.message}`
                 );
             }
 
@@ -137,10 +154,8 @@ export function findAllFiles(
 
         for (const fld of flds) {
             if (fld.kind === FileLevelNodeKind.Import) {
-                queue.push([realPath, fld.path]);
+                queue.push(computeSourceUnitName(sourceUnitName, fld.path, remappings));
             }
         }
     }
-
-    return result;
 }

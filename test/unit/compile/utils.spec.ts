@@ -7,6 +7,7 @@ import {
     getCompilerForVersion,
     LatestAndFirstVersionInEachSeriesStrategy,
     LatestCompilerVersion,
+    NativeCompiler,
     parsePathRemapping,
     WasmCompiler
 } from "../../../src";
@@ -41,6 +42,10 @@ describe("Compile general utils", () => {
             it(`Compiler ${version} is accessible`, async () => {
                 expect(await getCompilerForVersion(version, CompilerKind.WASM)).toBeInstanceOf(
                     WasmCompiler
+                );
+
+                expect(await getCompilerForVersion(version, CompilerKind.Native)).toBeInstanceOf(
+                    NativeCompiler
                 );
             });
         }

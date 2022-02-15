@@ -1,6 +1,6 @@
 {
     "name": "solc-typed-ast",
-    "version": "8.0.0",
+    "version": "8.0.1",
     "description": "A TypeScript library providing a normalized typed Solidity AST along with the utilities necessary to generate the AST (from Solc) and traverse/manipulate it.",
     "keywords": [],
     "files": [
@@ -34,8 +34,7 @@
         "jsel": "^1.1.6",
         "minimist": "^1.2.5",
         "semver": "^7.3.5",
-        "solc-0.4.26": "npm:solc@0.4.26",
-        "solc-0.8.11": "npm:solc@0.8.11",
+        "solc": "^0.8.11",
         "src-location": "^1.1.0",
         "web3-eth-abi": "^1.7.0"
     },

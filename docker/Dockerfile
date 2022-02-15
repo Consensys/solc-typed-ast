@@ -6,7 +6,7 @@ RUN apt-get update && \
 COPY download.sh /download.sh
 
 RUN ./download.sh 'linux-amd64'
-RUN ./download.sh 'wasm'
+RUN ./download.sh 'bin'
 
 FROM node:12.22.9
 COPY --from=build /.compiler_cache /.compiler_cache

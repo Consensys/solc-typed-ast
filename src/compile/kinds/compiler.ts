@@ -2,7 +2,6 @@ import axios from "axios";
 import { spawn } from "child_process";
 import fse from "fs-extra";
 import path from "path";
-import { satisfies } from "semver";
 import * as stream from "stream";
 import { promisify } from "util";
 import { CompilerKind, CompilerVersions } from "..";
@@ -17,8 +16,7 @@ import {
     isSubDir
 } from "./md";
 
-const solc0426 = require("solc-0.4.26");
-const solc0811 = require("solc-0.8.11");
+const solc = require("solc");
 
 export abstract class Compiler {
     constructor(public readonly version: string, public readonly path: string) {}
@@ -26,7 +24,7 @@ export abstract class Compiler {
     abstract compile(inputJson: SolcInput): Promise<any>;
 }
 
-class NativeCompiler extends Compiler {
+export class NativeCompiler extends Compiler {
     async compile(input: SolcInput): Promise<any> {
         const child = spawn(this.path, ["--standard-json"], {});
 
@@ -74,15 +72,7 @@ class NativeCompiler extends Compiler {
 export class WasmCompiler extends Compiler {
     async compile(input: SolcInput): Promise<any> {
         const module = require(this.path);
-
-        if (satisfies(this.version, "^0.4.13")) {
-            const wrappedModule = solc0426.setupMethods(module);
-            const output = wrappedModule.compile(input, 1);
-
-            return output;
-        }
-
-        const wrappedModule = solc0811.setupMethods(module);
+        const wrappedModule = solc.setupMethods(module);
         const output = wrappedModule.compile(JSON.stringify(input));
 
         return JSON.parse(output);
@@ -105,7 +95,14 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
     if (kind === CompilerKind.Native) {
         prefix = getCompilerPrefixForOs();
     } else if (kind === CompilerKind.WASM) {
-        prefix = "wasm";
+        /**
+         * Using BIN distribution here due to WASM distributions do not have 0.5.17 build.
+         *
+         * @see https://github.com/ethereum/solidity/issues/10329
+         *
+         * @todo Reconsider using WASM releases when all builds will be in place.
+         */
+        prefix = "bin";
     } else {
         throw new Error(`Unsupported compiler kind "${kind}"`);
     }
@@ -151,5 +148,5 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
         return new WasmCompiler(version, compilerLocalPath);
     }
 
-    throw new Error(`Unable to pick detemine compiler constructor for kind "${kind}"`);
+    throw new Error(`Unable to detemine compiler constructor for kind "${kind}"`);
 }
