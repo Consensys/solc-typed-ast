@@ -17,6 +17,7 @@ steps:
           - apt-get -qq update && apt-get -qq install jq
           - ./docker/download.sh 'linux-amd64'
           - ./docker/download.sh 'bin'
+          - ./docker/download.sh 'wasm'
           # remove list and one rarely used compiler to still test downloading on-demand
           - rm /.compiler_cache/linux-amd64/list.json
           - rm /.compiler_cache/linux-amd64/solc-linux-amd64-v0.5.17+commit.d19bba13

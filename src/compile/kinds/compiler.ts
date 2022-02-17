@@ -2,6 +2,7 @@ import axios from "axios";
 import { spawn } from "child_process";
 import fse from "fs-extra";
 import path from "path";
+import { lt } from "semver";
 import * as stream from "stream";
 import { promisify } from "util";
 import { CompilerKind, CompilerVersions } from "..";
@@ -102,7 +103,7 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
          *
          * @todo Reconsider using WASM releases when all builds will be in place.
          */
-        prefix = "bin";
+        prefix = lt(version, "0.6.0") ? "bin" : "wasm";
     } else {
         throw new Error(`Unsupported compiler kind "${kind}"`);
     }
