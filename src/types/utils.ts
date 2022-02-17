@@ -284,7 +284,7 @@ export function enumToIntType(decl: EnumDefinition): IntType {
     let size: number | undefined;
 
     for (let n = 8; n <= 32; n += 8) {
-        if (length < 2 ** n) {
+        if (length <= 2 ** n) {
             size = n;
 
             break;
