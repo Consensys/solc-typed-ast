@@ -27,6 +27,12 @@ export const BuiltinSymbols = new Map<string, VersionDependentType>([
      * @see https://github.com/ethereum/solidity/releases/tag/v0.8.4
      */
     ["bytes", [new BuiltinStructType("bytes", new Map()), ">=0.8.4"]],
+
+    /**
+     * @todo Add support for concat()
+     * @see https://github.com/ethereum/solidity/releases/tag/v0.8.12
+     */
+    ["string", [new BuiltinStructType("string", new Map()), ">=0.8.12"]],
     [
         "block",
         [

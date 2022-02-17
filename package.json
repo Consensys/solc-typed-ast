@@ -20,7 +20,7 @@
         "build": "npm run clean && npm run build-parsers && npm run transpile",
         "lint": "eslint src/ test/ --ext=ts",
         "lint:fix": "eslint src/ test/ --ext=ts --fix",
-        "test": "NODE_OPTIONS='--max-old-space-size=4096' nyc mocha",
+        "test": "NODE_OPTIONS='--max-old-space-size=2048' nyc mocha",
         "coverage:upload": "nyc report --reporter=text-lcov > coverage.lcov && codecov -t $CODECOV_TOKEN",
         "docs:render": "typedoc",
         "docs:clear": "rm -rf docs/",
