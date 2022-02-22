@@ -236,6 +236,23 @@ contract Builtins_0811 {
         bytes memory payload = abi.encodeCall(this.some, (1, -1, 0xFFFF));
     }
 }
+
+contract Features_0812 {
+    function() external internal externalStorage;
+
+    function comparePtr() public {
+        function() external externalLocal1;
+        function() external externalLocal2;
+        externalLocal1 == externalLocal2;
+        externalLocal1 != externalLocal2;
+        externalLocal1 == externalStorage;
+        externalStorage != externalLocal2;
+        abi.encodeCall(Builtins_0811.some, (1, -1, 0x0102));
+        string memory a = "abc";
+        string memory b = "def";
+        string memory c = string.concat(a, b);
+    }
+}
 // ------------------------------------------------------------
 // /test/samples/solidity/latest_imports_08.sol
 // ------------------------------------------------------------

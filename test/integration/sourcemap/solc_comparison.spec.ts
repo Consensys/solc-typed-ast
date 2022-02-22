@@ -74,93 +74,94 @@ const samples = [
 
 for (const [sample, version] of samples) {
     for (const kind of PossibleCompilerKinds) {
-        describe(`Check mappings of ${sample} (version ${version}, kind ${kind})`, async () => {
-            const units = await readAST(sample, version, kind as CompilerKind);
+        describe(`Check source mapping of ${sample} (version ${version}, kind ${kind})`, () => {
+            let writtenUnits: SourceUnit[];
+            let writtenSource: string;
+            let sourceMap: Map<ASTNode, [number, number]>;
 
-            /**
-             * Remove StructuredDoumentation nodes due to unstable behavior,
-             * related to compiler bugs.
-             */
-            removeStructuredDocumentationNodes(units);
+            before(async () => {
+                const units = await readAST(sample, version, kind as CompilerKind);
 
-            const [writtenSource] = writeAST(units, version);
+                /**
+                 * Remove StructuredDoumentation nodes due to unstable behavior,
+                 * related to compiler bugs.
+                 */
+                removeStructuredDocumentationNodes(units);
 
-            const writtenUnits = await readAST(
-                sample,
-                version,
-                kind as CompilerKind,
-                writtenSource
-            );
+                [writtenSource] = writeAST(units, version);
 
-            const [, sourceMap] = writeAST(writtenUnits, version);
+                writtenUnits = await readAST(sample, version, kind as CompilerKind, writtenSource);
 
-            for (const unit of writtenUnits) {
-                for (const node of unit.getChildren(true)) {
-                    const sourceInfo = node.sourceInfo;
+                [, sourceMap] = writeAST(writtenUnits, version);
+            });
 
-                    const solcStart = sourceInfo.offset;
-                    const solcLen = sourceInfo.length;
+            it("Source map from ASTWriter is compatible with source map from Solc", async () => {
+                for (const unit of writtenUnits) {
+                    for (const node of unit.getChildren(true)) {
+                        const sourceInfo = node.sourceInfo;
 
-                    if (!sourceMap.has(node)) {
-                        it(`Missing node ${node.type}#${node.id} must be an empty parameter list`, () => {
+                        const solcStart = sourceInfo.offset;
+                        const solcLen = sourceInfo.length;
+
+                        if (!sourceMap.has(node)) {
                             expect(node.type).toEqual("ParameterList");
                             expect((node as ParameterList).vParameters.length).toEqual(0);
-                        });
 
-                        continue;
+                            continue;
+                        }
+
+                        const [compStart, compLen] = sourceMap.get(node) as [number, number];
+
+                        /**
+                         * Skip nodes without written source.
+                         * Usually these nodes are empty return `ParameterList`s.
+                         */
+                        if (solcLen === compLen && solcLen === 0) {
+                            continue;
+                        }
+
+                        const solcCoords = solcStart + ":" + solcLen;
+                        const compCoords = compStart + ":" + compLen;
+
+                        const solcFragment = getSourceFragment(solcStart, solcLen, writtenSource);
+                        const compFragment = getSourceFragment(compStart, compLen, writtenSource);
+
+                        if (compFragment === solcFragment && compCoords === solcCoords) {
+                            continue;
+                        }
+
+                        /**
+                         * Known edge cases where we differ from solc
+                         *
+                         * Edge-case with typecast to `address payable`
+                         */
+                        if (
+                            (node instanceof ElementaryTypeNameExpression ||
+                                node instanceof ElementaryTypeName) &&
+                            compFragment === "payable" &&
+                            solcFragment === "payable("
+                        ) {
+                            continue;
+                        }
+
+                        /**
+                         * Edge-case with function typenames
+                         */
+                        if (node instanceof FunctionTypeName) {
+                            continue;
+                        }
+
+                        console.log(`------ Solc ------ [${solcCoords}]`);
+                        console.log(solcFragment);
+                        console.log(`---- Computed ---- [${compCoords}]`);
+                        console.log(compFragment);
+                        console.log("------------------");
+
+                        expect(compCoords).toEqual(solcCoords);
+                        expect(compFragment).toEqual(solcFragment);
                     }
-
-                    const [compStart, compLen] = sourceMap.get(node) as [number, number];
-
-                    /**
-                     * Skip nodes without written source.
-                     * Usually these nodes are empty return `ParameterList`s.
-                     */
-                    if (solcLen === compLen && solcLen === 0) {
-                        continue;
-                    }
-
-                    const solcCoords = solcStart + ":" + solcLen;
-                    const compCoords = compStart + ":" + compLen;
-
-                    const solcFragment = getSourceFragment(solcStart, solcLen, writtenSource);
-                    const compFragment = getSourceFragment(compStart, compLen, writtenSource);
-
-                    if (compFragment === solcFragment && compCoords === solcCoords) {
-                        continue;
-                    }
-
-                    /**
-                     * Known edge cases where we differ from solc
-                     *
-                     * Edge-case with typecast to `address payable`
-                     */
-                    if (
-                        (node instanceof ElementaryTypeNameExpression ||
-                            node instanceof ElementaryTypeName) &&
-                        compFragment === "payable" &&
-                        solcFragment === "payable("
-                    ) {
-                        continue;
-                    }
-
-                    /**
-                     * Edge-case with function typenames
-                     */
-                    if (node instanceof FunctionTypeName) {
-                        continue;
-                    }
-
-                    console.log(`------ Solc ------ [${solcCoords}]`);
-                    console.log(solcFragment);
-                    console.log(`---- Computed ---- [${compCoords}]`);
-                    console.log(compFragment);
-                    console.log("------------------");
-
-                    expect(compCoords).toEqual(solcCoords);
-                    expect(compFragment).toEqual(solcFragment);
                 }
-            }
+            });
         });
     }
 }

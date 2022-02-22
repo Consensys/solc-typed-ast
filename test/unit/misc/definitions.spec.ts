@@ -100,10 +100,8 @@ describe("resolveAny() correctly resolves all Identifiers/UserDefinedTypeNames/F
 
             expect(errors).toHaveLength(0);
 
-            const data = result.data;
-
             const reader = new ASTReader();
-            const sourceUnits = reader.read(data, astKind);
+            const sourceUnits = reader.read(result.data, astKind);
 
             for (const unit of sourceUnits) {
                 for (const node of unit.getChildrenBySelector(
@@ -420,25 +418,24 @@ const unitSamples: Array<
 describe("resolveAny() unit tests", () => {
     for (const [sample, compilerVersion, astKind, sampleTests] of unitSamples) {
         describe(sample, async () => {
-            const result = await compileSol(sample, "auto", []);
-
-            expect(result.compilerVersion).toEqual(compilerVersion);
-
-            const errors = detectCompileErrors(result.data);
-
-            expect(errors).toHaveLength(0);
-
-            const data = result.data;
-
             const reader = new ASTReader();
 
-            reader.read(data, astKind);
+            before(async () => {
+                const result = await compileSol(sample, "auto", []);
+
+                expect(result.compilerVersion).toEqual(compilerVersion);
+
+                const errors = detectCompileErrors(result.data);
+
+                expect(errors).toHaveLength(0);
+
+                reader.read(result.data, astKind);
+            });
 
             for (const [ctxId, unitTests] of sampleTests) {
-                const ctxNode = reader.context.locate(ctxId);
-
                 for (const [name, expectedIds, testName] of unitTests) {
                     it(testName, () => {
+                        const ctxNode = reader.context.locate(ctxId);
                         const resolvedNodes = resolveAny(name, ctxNode, compilerVersion);
 
                         expect(new Set(expectedIds)).toEqual(
