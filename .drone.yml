@@ -13,15 +13,17 @@ steps:
               from_secret: CODECOV_TOKEN
           SOL_AST_COMPILER_CACHE: /.compiler_cache
       commands:
-          # pre-download compilers
+          # pre-download compilers fro historical builds archive
+          # see https://github.com/ethereum/solc-bin
+          # see https://binaries.soliditylang.org/
           - apt-get -qq update && apt-get -qq install jq
           - ./docker/download.sh 'linux-amd64'
-          - ./docker/download.sh 'bin'
+          - ./docker/download.sh 'wasm'
           # remove list and one rarely used compiler to still test downloading on-demand
           - rm /.compiler_cache/linux-amd64/list.json
           - rm /.compiler_cache/linux-amd64/solc-linux-amd64-v0.5.17+commit.d19bba13
-          - rm /.compiler_cache/bin/list.json
-          - rm /.compiler_cache/bin/soljson-v0.5.17+commit.d19bba13.js
+          - rm /.compiler_cache/wasm/list.json
+          - rm /.compiler_cache/wasm/soljson-v0.5.17+commit.d19bba13.js
           # perform testing
           - npm install --unsafe-perm
           - npm link --unsafe-perm

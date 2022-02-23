@@ -31,5 +31,6 @@ export const options = [
     "tree",
     "source",
     "xpath",
-    "depth"
+    "depth",
+    "locate-compiler-cache"
 ];

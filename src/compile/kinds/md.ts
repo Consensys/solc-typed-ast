@@ -1,8 +1,8 @@
 import axios from "axios";
-import { assert } from "console";
 import fse from "fs-extra";
 import os from "os";
-import path, { isAbsolute, relative } from "path";
+import path from "path";
+import { assert } from "../../misc/utils";
 
 export function getCompilerPrefixForOs(): string | undefined {
     const arch = os.arch();
@@ -55,9 +55,9 @@ export const BINARIES_URL = "https://binaries.soliditylang.org";
  * Return true IFF child is a subdirectory of parent.
  */
 export function isSubDir(child: string, parent: string): boolean {
-    const relPath = relative(parent, child);
+    const relPath = path.relative(parent, child);
 
-    return !isAbsolute(relPath) && !relPath.startsWith("..");
+    return !path.isAbsolute(relPath) && !relPath.startsWith("..");
 }
 
 export async function getCompilerMDForPlatform(prefix: string): Promise<CompilerPlatformMetadata> {

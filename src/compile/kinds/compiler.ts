@@ -95,14 +95,7 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
     if (kind === CompilerKind.Native) {
         prefix = getCompilerPrefixForOs();
     } else if (kind === CompilerKind.WASM) {
-        /**
-         * Using BIN distribution here due to WASM distributions do not have 0.5.17 build and also OOM issues.
-         *
-         * @see https://github.com/ethereum/solidity/issues/10329
-         *
-         * @todo Reconsider this at some point.
-         */
-        prefix = "bin";
+        prefix = "wasm";
     } else {
         throw new Error(`Unsupported compiler kind "${kind}"`);
     }
