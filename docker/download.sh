@@ -1,7 +1,11 @@
 #!/bin/bash
 
 ARCH="${1}"
-TARGET_DIR="/.compiler_cache/$ARCH"
+CACHE_DIR="${2}"
+TARGET_DIR="$CACHE_DIR/$ARCH"
+
+echo "Pre-downloading compilers to $TARGET_DIR"
+
 mkdir -p $TARGET_DIR
 
 curl -s https://binaries.soliditylang.org/$ARCH/list.json --output $TARGET_DIR/list.json

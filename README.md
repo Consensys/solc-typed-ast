@@ -207,6 +207,15 @@ npm install
 npm link
 ```
 
+Prior to running tests the compiler pre-downloading script `docker/download.sh` may be used to setup local compiler cache:
+
+```bash
+docker/download.sh 'linux-amd64' '.compiler_cache'  # platform-dependent native compiler builds
+docker/download.sh 'wasm' '.compiler_cache'         # cross-platform WASM compiler builds
+```
+
+Supported platforms are listed here: https://github.com/ethereum/solc-bin
+
 ## Project documentation and API reference
 
 The project documentation is contained in the `docs/` directory. It could be built via following command:
