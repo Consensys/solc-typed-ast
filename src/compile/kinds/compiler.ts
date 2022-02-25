@@ -15,8 +15,6 @@ import {
     isSubDir
 } from "./md";
 
-const solc = require("solc");
-
 export abstract class Compiler {
     constructor(public readonly version: string, public readonly path: string) {}
 
@@ -70,6 +68,7 @@ export class NativeCompiler extends Compiler {
 
 export class WasmCompiler extends Compiler {
     async compile(input: SolcInput): Promise<any> {
+        const solc = require("solc");
         const module = require(this.path);
         const wrappedModule = solc.setupMethods(module);
         const output = wrappedModule.compile(JSON.stringify(input));
