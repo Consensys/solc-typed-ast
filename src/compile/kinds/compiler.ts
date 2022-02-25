@@ -127,9 +127,7 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
             `Unable to find build metadata for ${prefix} compiler ${version} in "list.json"`
         );
 
-        const response = await axios({
-            method: "GET",
-            url: `${BINARIES_URL}/${prefix}/${compilerFileName}`,
+        const response = await axios.get<Buffer>(`${BINARIES_URL}/${prefix}/${compilerFileName}`, {
             responseType: "arraybuffer"
         });
 
@@ -144,7 +142,13 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
             `Downloaded ${prefix} compiler ${version} hash ${digest} does not match hash ${build.sha256} from "list.json"`
         );
 
-        fse.writeFileSync(compilerLocalPath, response.data);
+        /**
+         * Native compilers are exeutable files, so give them valid permissions.
+         * WASM compilers are loaded by NodeJS, so write them as common files.
+         */
+        const options = kind === CompilerKind.Native ? { mode: 0o555 } : undefined;
+
+        await fse.writeFile(compilerLocalPath, response.data, options);
     }
 
     if (kind === CompilerKind.Native) {
