@@ -143,7 +143,7 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
         );
 
         /**
-         * Native compilers are exeutable files, so give them valid permissions.
+         * Native compilers are exeсutable files, so give them valid permissions.
          * WASM compilers are loaded by NodeJS, so write them as common files.
          */
         const options = kind === CompilerKind.Native ? { mode: 0o555 } : undefined;

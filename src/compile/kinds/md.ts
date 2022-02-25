@@ -69,7 +69,7 @@ export async function getCompilerMDForPlatform(prefix: string): Promise<Compiler
     );
 
     if (fse.existsSync(cachedListPath)) {
-        return fse.readJSONSync(cachedListPath) as CompilerPlatformMetadata;
+        return fse.readJSON(cachedListPath) as Promise<CompilerPlatformMetadata>;
     }
 
     const response = await axios.get<CompilerPlatformMetadata>(
@@ -78,8 +78,8 @@ export async function getCompilerMDForPlatform(prefix: string): Promise<Compiler
 
     const metaData = response.data;
 
-    fse.ensureDirSync(path.join(CACHE_DIR, prefix));
-    fse.writeJSONSync(cachedListPath, metaData);
+    await fse.ensureDir(path.join(CACHE_DIR, prefix));
+    await fse.writeJSON(cachedListPath, metaData);
 
     return metaData;
 }
