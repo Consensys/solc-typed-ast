@@ -27,6 +27,7 @@ import {
     MappingType,
     ModuleType,
     PointerType,
+    RationalLiteralType,
     StringLiteralType,
     StringType,
     TupleType,

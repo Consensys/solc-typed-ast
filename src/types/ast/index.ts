@@ -13,6 +13,7 @@ export * from "./mapping_type";
 export * from "./module_type";
 export * from "./packed_array_type";
 export * from "./pointer";
+export * from "./rational_literal";
 export * from "./string";
 export * from "./string_literal";
 export * from "./tuple_type";
