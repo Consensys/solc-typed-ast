@@ -8,6 +8,7 @@ import {
     ASTNodeFormatter,
     ASTReader,
     ASTWriter,
+    CACHE_DIR,
     CompilationOutput,
     CompileFailedError,
     compileJson,
@@ -43,7 +44,8 @@ const cli = {
         "raw",
         "with-sources",
         "tree",
-        "source"
+        "source",
+        "locate-compiler-cache"
     ],
     number: ["depth"],
     string: [
@@ -78,6 +80,8 @@ const cli = {
         ].join("\n");
 
         console.log(message);
+    } else if (args["locate-compiler-cache"]) {
+        console.log(CACHE_DIR);
     } else if (args.help || (!args._.length && !args.stdin)) {
         const message = `Compiles Solidity input and prints typed AST.
 
@@ -115,6 +119,7 @@ OPTIONS:
     --depth                 Number of children for each of AST node to print.
                             Minimum value is 0. Not affects "raw", "tree" and "source".
                             Default value: ${cli.default.depth}
+    --locate-compiler-cache Print location of cache directory, that is used to store downloaded compilers.
 `;
 
         console.log(message);

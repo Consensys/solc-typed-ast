@@ -1,9 +1,8 @@
 import axios from "axios";
 import { spawn } from "child_process";
+import crypto from "crypto";
 import fse from "fs-extra";
 import path from "path";
-import * as stream from "stream";
-import { promisify } from "util";
 import { CompilerKind, CompilerVersions } from "..";
 import { assert } from "../../misc";
 import { SolcInput } from "../input";
@@ -15,8 +14,6 @@ import {
     getCompilerPrefixForOs,
     isSubDir
 } from "./md";
-
-const solc = require("solc");
 
 export abstract class Compiler {
     constructor(public readonly version: string, public readonly path: string) {}
@@ -71,6 +68,7 @@ export class NativeCompiler extends Compiler {
 
 export class WasmCompiler extends Compiler {
     async compile(input: SolcInput): Promise<any> {
+        const solc = require("solc");
         const module = require(this.path);
         const wrappedModule = solc.setupMethods(module);
         const output = wrappedModule.compile(JSON.stringify(input));
@@ -95,14 +93,7 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
     if (kind === CompilerKind.Native) {
         prefix = getCompilerPrefixForOs();
     } else if (kind === CompilerKind.WASM) {
-        /**
-         * Using BIN distribution here due to WASM distributions do not have 0.5.17 build and also OOM issues.
-         *
-         * @see https://github.com/ethereum/solidity/issues/10329
-         *
-         * @todo Reconsider this at some point.
-         */
-        prefix = "bin";
+        prefix = "wasm";
     } else {
         throw new Error(`Unsupported compiler kind "${kind}"`);
     }
@@ -128,16 +119,35 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
     );
 
     if (!fse.existsSync(compilerLocalPath)) {
-        const response = await axios({
-            method: "GET",
-            url: `${BINARIES_URL}/${prefix}/${compilerFileName}`,
-            responseType: "stream"
+        const build = md.builds.find((b) => b.version === version);
+
+        assert(
+            build !== undefined,
+            `Unable to find build metadata for ${prefix} compiler ${version} in "list.json"`
+        );
+
+        const response = await axios.get<Buffer>(`${BINARIES_URL}/${prefix}/${compilerFileName}`, {
+            responseType: "arraybuffer"
         });
 
-        const target = fse.createWriteStream(compilerLocalPath, { mode: 0o555 });
-        const pipeline = promisify(stream.pipeline);
+        const hash = crypto.createHash("sha256");
 
-        await pipeline(response.data, target);
+        hash.update(response.data);
+
+        const digest = "0x" + hash.digest("hex");
+
+        assert(
+            digest === build.sha256,
+            `Downloaded ${prefix} compiler ${version} hash ${digest} does not match hash ${build.sha256} from "list.json"`
+        );
+
+        /**
+         * Native compilers are exeсutable files, so give them proper permissions.
+         * WASM compilers are loaded by NodeJS, so write them as readonly common files.
+         */
+        const permissions = kind === CompilerKind.Native ? 0o555 : 0o444;
+
+        await fse.writeFile(compilerLocalPath, response.data, { mode: permissions });
     }
 
     if (kind === CompilerKind.Native) {

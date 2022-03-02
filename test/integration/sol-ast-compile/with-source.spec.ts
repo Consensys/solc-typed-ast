@@ -37,10 +37,9 @@ for (const kind of PossibleCompilerKinds) {
             expect(data.sources).toBeInstanceOf(Object);
 
             const entries: Iterable<[string, any]> = Object.entries(data.sources);
-            const options = { encoding: "utf-8" };
 
             for (const [key, entry] of entries) {
-                expect(entry.source).toEqual(fse.readFileSync(key, options));
+                expect(entry.source).toEqual(fse.readFileSync(key, "utf-8"));
             }
         });
     });

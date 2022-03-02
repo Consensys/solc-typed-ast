@@ -11,7 +11,7 @@ A TypeScript package providing a normalized typed Solidity AST along with the ut
 
 ## Features
 
--   Various [solc-js](https://www.npmjs.com/package/solc) compiler versions support, starting from **0.4.13**.
+-   Various [Solidity](https://github.com/ethereum/solidity) compiler versions support, starting from **0.4.13**.
 -   Various compiler selection strategies, including compiler auto-detection via `pragma solidity` directives in Solidity sources with possible fallback options.
 -   Interaction with AST nodes, using type definitions.
 -   Compensation of differences between legacy and compact Solidity AST.
@@ -68,15 +68,33 @@ console.log(result);
 
 The second argument with the `"auto"` value specifies a compiler selection strategy. If `"auto"` is specified and source code contains valid `pragma solidity` directive, then compiler version will be automatically picked from it. If compile process will not succedd, the execution will fall back to _"compiler guessing"_: trying to compile source with a few different versions of the new and old Solidity compilers. The other option would be to specify a concrete supported compiler version string, like `"0.7.0"` for example. There is also a support for various compiler selection strategies, including used-defined custom ones (`CompilerVersionSelectionStrategy` interface implementations).
 
-**NOTE:** We want to notify that **the package preinstalls 50+ versions of Solc compilers** (since 0.4.13), so be ready that it will occupy fair amount of free space. At some point we may consider to move compilers away from this package. It will mostly depend on users feedback.
+### Used compilers
 
-### Native compilers
-
-Package supports switching between native binary Solc compilers and its WASM versions. The CLI option `--compiler-kind` and `kind` argument of `compile*()` functions family may be used for that purpose. Native binary compilers are downloaded on demand to the directory `.compiler_cache` at the package installation directory (by default). The compiler cache location may be customized by setting `SOL_AST_COMPILER_CACHE` environment variable to a custom path. For example:
+Package supports switching between native binary Solc compilers and its WASM versions. The CLI option `--compiler-kind` and `kind` argument of `compile*()` functions family may be used for that purpose. Compilers **are downloaded on-demand** to the directory `.compiler_cache` at the package installation directory (by default). The compiler cache location may be customized by setting `SOL_AST_COMPILER_CACHE` environment variable to a custom path. For example:
 
 ```bash
-SOL_AST_COMPILER_CACHE=~/.compiler_cache solc-ast-compile sample.sol --compiler-kind native --tree
+SOL_AST_COMPILER_CACHE=~/.compiler_cache sol-ast-compile sample.sol --compiler-kind native --tree
 ```
+
+or
+
+```bash
+export SOL_AST_COMPILER_CACHE=~/.compiler_cache
+
+sol-ast-compile sample.sol --compiler-kind native --tree
+```
+
+#### Invalidation of downloaded compler cache
+
+If there is a need to invalidate the downloaded compiler cache, then follow next steps:
+
+1. Locate `.compiler_cache` directory:
+
+```bash
+sol-ast-compile --locate-compiler-cache
+```
+
+2. Manually remove `list.json` files to invalidate list of available compilers, remove certain compilers, or remove entire directory. Missing pieces will be downloaded again.
 
 ### Typed universal AST
 
@@ -138,7 +156,7 @@ Use `--help` to see all available features.
 The project have following directory structure:
 
 ```
-├── .compiler_cache             # Cache of downloaded native compilers.
+├── .compiler_cache             # Cache of downloaded compilers (by default, if not configured by SOL_AST_COMPILER_CACHE).
 ├── coverage                    # Test coverage report, produced by "npm test" command.
 ├── dist                        # Generated JavaScript sources for package distribution (produced by "npm run build" and published by "npm publish" commands).
 ├── docs                        # Project documentation and API reference, produced by "npm run docs:render" or "npm run docs:refresh" commands.
@@ -174,23 +192,29 @@ A key points for better understanding:
 
 ## Development installation
 
-Install prerequisites:
+### Prerequisites
 
--   NodeJS version **12.x** or newer.
--   NPM version **6.9.0** or newer.
+We suggest to use latest NodeJS LTS release `lts/gallium` (v16.14.0) and associated version of NPM. If there is a need to run different NodeJS versions, consider using [NVM](https://github.com/nvm-sh/nvm) or similar tool, that is available for your platform.
 
-Clone repository:
+### Clone and build
+
+Clone repository, install and link:
 
 ```bash
 git clone https://github.com/ConsenSys/solc-typed-ast.git
-```
-
-Install and link:
-
-```bash
+cd solc-typed-ast/
 npm install
 npm link
 ```
+
+Prior to running tests the compiler pre-downloading script `docker/download.sh` may be used to setup local compiler cache:
+
+```bash
+docker/download.sh 'linux-amd64' '.compiler_cache'  # platform-dependent native compiler builds
+docker/download.sh 'wasm' '.compiler_cache'         # cross-platform WASM compiler builds
+```
+
+Supported platforms are listed here: https://github.com/ethereum/solc-bin
 
 ## Project documentation and API reference
 
