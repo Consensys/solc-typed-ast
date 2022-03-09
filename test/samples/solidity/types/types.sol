@@ -46,5 +46,7 @@ contract TestStorage {
         uint[4] memory t;
 
         t;
+
+        1.1;
     }
 }

@@ -7,16 +7,16 @@ interface Rational {
 }
 
 export class RationalLiteralType extends TypeNode {
-    public readonly literal?: Rational;
+    public readonly literal: Rational;
 
-    constructor(literal?: Rational, src?: Range) {
+    constructor(literal: Rational, src?: Range) {
         super(src);
 
         this.literal = literal;
     }
 
     pp(): string {
-        return `rational_const${this.literal !== undefined ? ` ${ppRational(this.literal)}` : ""}`;
+        return `rational_const ${ppRational(this.literal)}`;
     }
 
     getFields(): any[] {
