@@ -79,6 +79,17 @@ export class WasmCompiler extends Compiler {
 
 type CompilerMapping = [CompilerKind.Native, NativeCompiler] | [CompilerKind.WASM, WasmCompiler];
 
+export function getCompilerLocalPath(prefix: string, compilerFileName: string): string {
+    const compilerLocalPath = path.join(CACHE_DIR, prefix, compilerFileName);
+
+    assert(
+        isSubDir(compilerLocalPath, CACHE_DIR),
+        `Path ${compilerLocalPath} escapes from cache dir ${CACHE_DIR}`
+    );
+
+    return compilerLocalPath;
+}
+
 export async function getCompilerForVersion<T extends CompilerMapping>(
     version: string,
     kind: T[0]
@@ -104,19 +115,14 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
         return undefined;
     }
 
-    const md = await getCompilerMDForPlatform(prefix);
+    const md = await getCompilerMDForPlatform(prefix, version);
     const compilerFileName = md.releases[version];
 
     if (compilerFileName === undefined) {
         return undefined;
     }
 
-    const compilerLocalPath = path.join(CACHE_DIR, prefix, compilerFileName);
-
-    assert(
-        isSubDir(compilerLocalPath, CACHE_DIR),
-        `Path ${compilerLocalPath} escapes from cache dir ${CACHE_DIR}`
-    );
+    const compilerLocalPath = getCompilerLocalPath(prefix, compilerFileName);
 
     if (!fse.existsSync(compilerLocalPath)) {
         const build = md.builds.find((b) => b.version === version);
