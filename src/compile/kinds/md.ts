@@ -60,17 +60,18 @@ export function isSubDir(child: string, parent: string): boolean {
     return !path.isAbsolute(relPath) && !relPath.startsWith("..");
 }
 
-export async function getCompilerMDForPlatform(prefix: string): Promise<CompilerPlatformMetadata> {
-    const cachedListPath = path.join(CACHE_DIR, prefix, "list.json");
+export function getCachedMDPath(prefix: string): string {
+    const listPath = path.join(CACHE_DIR, prefix, "list.json");
 
-    assert(
-        isSubDir(cachedListPath, CACHE_DIR),
-        `Path ${cachedListPath} escapes from cache dir ${CACHE_DIR}`
-    );
+    assert(isSubDir(listPath, CACHE_DIR), `Path ${listPath} escapes from cache dir ${CACHE_DIR}`);
 
-    if (fse.existsSync(cachedListPath)) {
-        return fse.readJSON(cachedListPath) as Promise<CompilerPlatformMetadata>;
-    }
+    return listPath;
+}
+
+export async function downloadCompilerMDForPlatform(
+    prefix: string
+): Promise<CompilerPlatformMetadata> {
+    const cachedListPath = getCachedMDPath(prefix);
 
     const response = await axios.get<CompilerPlatformMetadata>(
         `${BINARIES_URL}/${prefix}/list.json`
@@ -78,8 +79,25 @@ export async function getCompilerMDForPlatform(prefix: string): Promise<Compiler
 
     const metaData = response.data;
 
-    await fse.ensureDir(path.join(CACHE_DIR, prefix));
+    await fse.ensureDir(path.dirname(cachedListPath));
     await fse.writeJSON(cachedListPath, metaData);
 
     return metaData;
+}
+
+export async function getCompilerMDForPlatform(
+    prefix: string,
+    version: string
+): Promise<CompilerPlatformMetadata> {
+    const cachedListPath = getCachedMDPath(prefix);
+
+    if (fse.existsSync(cachedListPath)) {
+        const md = await fse.readJSON(cachedListPath);
+
+        if (version in md.releases) {
+            return md;
+        }
+    }
+
+    return downloadCompilerMDForPlatform(prefix);
 }
