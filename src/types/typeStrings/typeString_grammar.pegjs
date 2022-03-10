@@ -241,7 +241,7 @@ IntLiteralType =
 
 RationalLiteralType =
     RATIONAL_CONST __ numerator: MaybeNegNumber __ "/" __ denominator: Number {
-        throw new Error(`NYI rational literal type: ${text()}`);
+        return new RationalLiteralType({numerator: numerator, denominator: denominator})
     }
 
 BoolType =
