@@ -43,7 +43,7 @@ const samples: Array<[string, string, ABIEncoderVersion]> = [
     ["test/samples/solidity/compile_04.sol", "0.4.26", ABIEncoderVersion.V1],
     ["test/samples/solidity/compile_05.sol", "0.5.17", ABIEncoderVersion.V1],
     ["test/samples/solidity/compile_06.sol", "0.6.12", ABIEncoderVersion.V1],
-    ["test/samples/solidity/library_signatures.sol", "0.8.7", ABIEncoderVersion.V2]
+    ["test/samples/solidity/signatures.sol", "0.8.7", ABIEncoderVersion.V2]
 ];
 
 function resolveOne(
