@@ -12,6 +12,7 @@ import {
     BoolType,
     BytesType,
     FixedBytesType,
+    FunctionType,
     IntType,
     MappingType,
     StringType,
@@ -37,7 +38,9 @@ export const ABIEncoderVersions = new Set<string>([ABIEncoderVersion.V1, ABIEnco
  * 1. Contract definitions turned to address.
  * 2. Enum definitions turned to uint of minimal fitting size.
  * 3. Any storage pointer types are converted to memory pointer types.
- * 4. Throw an error on any nested mapping types
+ * 4. Throw an error on any nested mapping types.
+ *
+ * @see https://docs.soliditylang.org/en/latest/abi-spec.html
  */
 export function toABIEncodedType(
     type: TypeNode,
@@ -126,6 +129,10 @@ export function abiTypeToCanonicalName(t: TypeNode): string {
         return abiTypeToCanonicalName(t.to);
     }
 
+    if (t instanceof FunctionType) {
+        return "function";
+    }
+
     assert(false, "Unexpected ABI Type: {0}", t);
 }
 
@@ -177,6 +184,10 @@ export function abiTypeToLibraryCanonicalName(t: TypeNode): string {
         const valueName = abiTypeToLibraryCanonicalName(t.valueType);
 
         return `mapping(${keyName} => ${valueName})`;
+    }
+
+    if (t instanceof FunctionType) {
+        return "function";
     }
 
     assert(false, "Unexpected ABI Type: {0}", t);

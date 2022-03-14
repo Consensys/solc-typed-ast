@@ -9,6 +9,7 @@ library Lib {
         struct S1 {
                 S s;
                 mapping(uint=>uint) m;
+                function () external f;
         }
 
         function f1(uint[] storage x) public {}
@@ -19,4 +20,5 @@ library Lib {
         function f5(S storage s) external {}
         function f6(S calldata s) external {}
         function f7(address payable a) public {}
+        function f8(function (address) external returns (bool) fn) external returns (bool) {}
 }
