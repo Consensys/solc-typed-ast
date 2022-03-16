@@ -1,0 +1,11 @@
+SourceUnit #3 -> /test/samples/solidity/multifile/A.sol
+|   ImportDirective #1
+|   ContractDefinition #2 -> contract A
+
+SourceUnit #6 -> /test/samples/solidity/multifile/C.sol
+|   ImportDirective #4
+|   ContractDefinition #5 -> contract C
+
+SourceUnit #8 -> package-x/contracts/X.sol
+|   ContractDefinition #7 -> contract X
+

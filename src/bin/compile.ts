@@ -33,7 +33,13 @@ import {
     XPath
 } from "..";
 
-const modes = ["auto", "sol", "json"];
+enum CompileMode {
+    Auto = "auto",
+    Sol = "sol",
+    Json = "json"
+}
+
+const compileModes = Object.values(CompileMode);
 
 const cli = {
     boolean: [
@@ -58,7 +64,7 @@ const cli = {
     ],
     default: {
         depth: Number.MAX_SAFE_INTEGER,
-        mode: modes[0],
+        mode: CompileMode.Auto,
         "compiler-version": "auto",
         "compiler-kind": CompilerKind.WASM
     }
@@ -94,11 +100,11 @@ OPTIONS:
     --version               Print package version.
     --solidity-versions     Print information about supported Solidity versions.
     --stdin                 Read input from STDIN instead of files.
-                            Requires "mode" to be explicitly set to "sol" or "json".
+                            Requires "mode" to be explicitly set to "${CompileMode.Sol}" or "${CompileMode.Json}".
     --mode                  One of the following input types:
-                                - ${modes[1]} (Solidity source)
-                                - ${modes[2]} (JSON compiler artifact)
-                                - ${modes[0]} (try to detect by file extension)
+                                - ${CompileMode.Sol} (Solidity source)
+                                - ${CompileMode.Json} (JSON compiler artifact)
+                                - ${CompileMode.Auto} (try to detect by file extension)
                             Default value: ${cli.default.mode}
     --compiler-version      Solc version to use:
                                 - ${LatestCompilerVersion} (exact SemVer version specifier)
@@ -125,7 +131,7 @@ OPTIONS:
         console.log(message);
     } else {
         const stdin: boolean = args.stdin;
-        const mode: string = args.mode;
+        const mode: CompileMode = args.mode;
         const compilerKind: CompilerKind = args["compiler-kind"];
 
         if (!PossibleCompilerKinds.has(compilerKind)) {
@@ -136,8 +142,8 @@ OPTIONS:
             );
         }
 
-        if (!modes.includes(mode)) {
-            throw new Error(`Invalid mode "${mode}". Possible values: ${modes.join(", ")}.`);
+        if (!compileModes.includes(mode)) {
+            throw new Error(`Invalid mode "${mode}". Possible values: ${compileModes.join(", ")}.`);
         }
 
         const compilerVersion: string = args["compiler-version"];
@@ -169,7 +175,6 @@ OPTIONS:
 
         const compilationOutput: CompilationOutput[] = [CompilationOutput.ALL];
 
-        let fileName = args._[0];
         let result: CompileResult;
 
         try {
@@ -180,9 +185,8 @@ OPTIONS:
                     );
                 }
 
-                fileName = "stdin";
-
-                const content = fse.readFileSync(0, { encoding: "utf-8" });
+                const fileName = "stdin";
+                const content = await fse.readFile(0, { encoding: "utf-8" });
 
                 result =
                     mode === "json"
@@ -204,49 +208,42 @@ OPTIONS:
                               compilerKind
                           );
             } else {
-                fileName = path.resolve(process.cwd(), args._[0]);
+                const fileNames = args._.map((fileName) => path.resolve(fileName));
+                const singleFileName = fileNames[0];
+                const iSingleFileName = singleFileName.toLowerCase();
+
+                let isSol: boolean;
+                let isJson: boolean;
 
                 if (mode === "auto") {
-                    const iFileName = fileName.toLowerCase();
-
-                    if (iFileName.endsWith(".sol")) {
-                        result = await compileSol(
-                            fileName,
-                            compilerVersion,
-                            pathRemapping,
-                            compilationOutput,
-                            compilerSettings,
-                            compilerKind
-                        );
-                    } else if (iFileName.endsWith(".json")) {
-                        result = await compileJson(
-                            fileName,
-                            compilerVersion,
-                            compilationOutput,
-                            compilerSettings,
-                            compilerKind
-                        );
-                    } else {
-                        throw new Error(
-                            "Unable to auto-detect mode for the file name: " + fileName
-                        );
-                    }
+                    isSol = iSingleFileName.endsWith(".sol");
+                    isJson = iSingleFileName.endsWith(".json");
                 } else {
-                    result =
-                        mode === "json"
-                            ? await compileJson(
-                                  fileName,
-                                  compilerVersion,
-                                  compilationOutput,
-                                  compilerSettings
-                              )
-                            : await compileSol(
-                                  fileName,
-                                  compilerVersion,
-                                  pathRemapping,
-                                  compilationOutput,
-                                  compilerSettings
-                              );
+                    isSol = mode === "sol";
+                    isJson = mode === "json";
+                }
+
+                if (isSol) {
+                    result = await compileSol(
+                        fileNames,
+                        compilerVersion,
+                        pathRemapping,
+                        compilationOutput,
+                        compilerSettings,
+                        compilerKind
+                    );
+                } else if (isJson) {
+                    result = await compileJson(
+                        singleFileName,
+                        compilerVersion,
+                        compilationOutput,
+                        compilerSettings,
+                        compilerKind
+                    );
+                } else {
+                    throw new Error(
+                        "Unable to auto-detect mode by the file name: " + singleFileName
+                    );
                 }
             }
         } catch (e) {
