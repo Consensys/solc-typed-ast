@@ -8,6 +8,7 @@ import { UserDefinedValueTypeDefinition } from "../declaration/user_defined_valu
 import { VariableDeclaration } from "../declaration/variable_declaration";
 import { ImportDirective } from "./import_directive";
 import { PragmaDirective } from "./pragma_directive";
+import { UsingForDirective } from "./using_for_directive";
 
 export type ExportedSymbol =
     | ContractDefinition
@@ -143,6 +144,15 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
         return this.ownChildren.filter(
             (node) => node instanceof UserDefinedValueTypeDefinition
         ) as UserDefinedValueTypeDefinition[];
+    }
+
+    /**
+     * References to file-level using-for directives
+     */
+    get vUsingForDirectives(): readonly UsingForDirective[] {
+        return this.ownChildren.filter(
+            (node) => node instanceof UsingForDirective
+        ) as UsingForDirective[];
     }
 
     /**

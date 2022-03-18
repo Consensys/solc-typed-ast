@@ -720,23 +720,25 @@ class PlaceholderStatementWriter extends SimpleStatementWriter<PlaceholderStatem
 
 class InlineAssemblyWriter extends ASTNodeWriter {
     writeInner(node: InlineAssembly, writer: ASTWriter): SrcDesc {
-        let yul: string | undefined;
+        const result: SrcDesc = ["assembly "];
+
+        if (node.flags !== undefined) {
+            const quotedFlags = node.flags.map((flag) => `"${flag}"`);
+
+            result.push("(", ...quotedFlags, ") ");
+        }
 
         if (node.operations !== undefined) {
-            yul = node.operations;
-        }
-
-        if (node.yul !== undefined) {
+            result.push(node.operations);
+        } else if (node.yul !== undefined) {
             const yulWriter = new YulWriter(DefaultYulWriterMapping, writer.formatter);
 
-            yul = yulWriter.write(node.yul);
-        }
-
-        if (yul === undefined) {
+            result.push(yulWriter.write(node.yul));
+        } else {
             throw new Error("Unable to detect Yul data in inline assembly node: " + node.print());
         }
 
-        return ["assembly " + yul];
+        return result;
     }
 
     writeWhole(node: InlineAssembly, writer: ASTWriter): SrcDesc {
@@ -1118,13 +1120,30 @@ class FunctionDefinitionWriter extends ASTNodeWriter {
 
 class UsingForDirectiveWriter extends ASTNodeWriter {
     writeInner(node: UsingForDirective, writer: ASTWriter): SrcDesc {
-        return writer.desc(
-            "using ",
-            node.vLibraryName,
-            " for ",
-            node.vTypeName ? node.vTypeName : "*",
-            ";"
-        );
+        const result: DescArgs = ["using "];
+
+        if (
+            (node.vLibraryName && node.vFunctionList) ||
+            !(node.vLibraryName || node.vFunctionList)
+        ) {
+            throw new Error("Malformed using-for directive: " + node.print());
+        }
+
+        if (node.vLibraryName) {
+            result.push(node.vLibraryName);
+        } else if (node.vFunctionList) {
+            result.push("{ ", ...join(node.vFunctionList, ", "), " }");
+        }
+
+        result.push(" for ", node.vTypeName ? node.vTypeName : "*");
+
+        if (node.isGlobal) {
+            result.push(" global");
+        }
+
+        result.push(";");
+
+        return writer.desc(...result);
     }
 }
 
@@ -1322,6 +1341,10 @@ class SourceUnitWriter extends ASTNodeWriter {
 
         if (typeDefs.length > 0) {
             result.push(...flatJoin(typeDefs.map(writeLineFn), wrap), wrap);
+        }
+
+        if (node.vUsingForDirectives.length > 0) {
+            result.push(...flatten(node.vUsingForDirectives.map(writeLineFn)), wrap);
         }
 
         if (node.vVariables.length > 0) {

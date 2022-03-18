@@ -14,12 +14,17 @@ export class InlineAssembly extends Statement {
     operations?: string;
     yul?: YulNode;
 
+    flags?: string[];
+    evmVersion?: string;
+
     constructor(
         id: number,
         src: string,
         externalReferences: any[],
         operations?: string,
         yul?: YulNode,
+        flags?: string[],
+        evmVersion?: string,
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
@@ -28,5 +33,7 @@ export class InlineAssembly extends Statement {
         this.externalReferences = externalReferences;
         this.operations = operations;
         this.yul = yul;
+        this.flags = flags;
+        this.evmVersion = evmVersion;
     }
 }

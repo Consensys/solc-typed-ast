@@ -20,6 +20,6 @@ export class LegacyInlineAssemblyProcessor extends LegacyNodeProcessor<InlineAss
          */
         const yul = undefined;
 
-        return [id, src, externalReferences, operations, yul, undefined, raw];
+        return [id, src, externalReferences, operations, yul, undefined, undefined, undefined, raw];
     }
 }

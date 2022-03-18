@@ -1,39 +1,41 @@
+{
+    // Dummy uses to silence unused function TSC errors in auto-generated code
+    expected;
+    error;
+}
+
 SourceUnit =
     __ flds: (t: FileLevelDefinition __  { return t; })* {
-        // Dummy uses to silence unused function TSC errors in auto-generated code
-        expected;
-        error;
-
-        return flds as FileLevelNode<any>[];
+        return flds;
     }
 
 FileLevelDefinition =
-    Pragma
+    PragmaDirective
     / ImportDirective
     / Constant
     / FreeFunction
     / ContractDefinition
     / EnumDef
+    / ErrorDef
     / StructDef
     / UserValueTypeDef
-    / ErrorDef
-
+    / UsingForDirective
 
 // ==== Pragma
 
 PragmaValue =
     NonSemicolonSoup { return text().trim(); }
 
-Pragma =
+PragmaDirective =
     PRAGMA __ name: Identifier __ value: PragmaValue __ ";" {
-        return { kind: FileLevelNodeKind.Pragma, location: location(), name, value } as FLPragma;
+        return { kind: FileLevelNodeKind.Pragma, location: location(), name, value };
     }
 
 // ==== Import Directives
 
 Symbol = 
     name: (Identifier) alias: (__ AS __ Identifier)? {
-        return { name, alias: alias !== null ? alias[3] : null } as SymbolDesc;
+        return { name, alias: alias !== null ? alias[3] : null };
     }
 
 SymbolList =
@@ -51,16 +53,16 @@ SymbolList =
 
 ImportDirective =
     IMPORT __ path: StringLiteral __ SEMICOLON {
-        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias: null, symbols: [] } as FLImportDirective;
+        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias: null, symbols: [] };
     }
     / IMPORT __ path: StringLiteral __ AS __ unitAlias: Identifier __ SEMICOLON {
-        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] } as FLImportDirective;
+        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] };
     }
     / IMPORT __ ASTERISK __ AS __ unitAlias: Identifier __ FROM __ path: StringLiteral __ SEMICOLON {
-        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] } as FLImportDirective;
+        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] };
     }
     / IMPORT __ LBRACE __ symbols: SymbolList __ RBRACE __ FROM __ path: StringLiteral __ SEMICOLON {
-        return { kind: FileLevelNodeKind.Import, location: location(), symbols, path, unitAlias: null } as FLImportDirective;
+        return { kind: FileLevelNodeKind.Import, location: location(), symbols, path, unitAlias: null };
     }
 
 // ==== Global Constants
@@ -70,7 +72,7 @@ ConstantType =
     Identifier (__ LBRACKET Number? RBRACKET)*  { return text(); }
 
 Constant = ConstantType __ CONSTANT  __ name: Identifier __ EQUAL __ value: NonSemicolonSoup __  SEMICOLON {
-    return { kind: FileLevelNodeKind.Constant, location: location(), name, value } as FLConstant;
+    return { kind: FileLevelNodeKind.Constant, location: location(), name, value };
 }
 
 // ==== Free Functions
@@ -90,7 +92,7 @@ FreeFunction = FUNCTION __ name: Identifier __ args: FreeFunArgs __ mutability: 
         mutability: mutability.trim(),
         returns,
         body
-    } as FLFreeFunction;
+    };
 }
 
 // ==== Contract definitions
@@ -114,7 +116,7 @@ ContractDefinition = abstract: (ABSTRACT __)? kind: (CONTRACT / LIBRARY / INTERF
         name,
         bases: bases !== null ? bases[3].trim() : null,
         body
-    } as FLContractDefinition
+    };
 }
 
 // ==== Struct definitions
@@ -126,7 +128,7 @@ StructDef = STRUCT __ name: Identifier __ body: StructBody {
         location: location(),
         name,
         body
-    } as FLStructDefinition
+    };
 }
 
 // ==== Enum definitions
@@ -138,18 +140,7 @@ EnumDef = ENUM __ name: Identifier __ body: EnumDefBody {
         location: location(),
         name,
         body
-    } as FLEnumDefinition
-}
-
-// ==== User-defined value types
-
-UserValueTypeDef = TYPE __ name: Identifier __ IS __ valueType: NonSemicolonSoup __ SEMICOLON {
-    return {
-        kind: FileLevelNodeKind.UserValueType,
-        location: location(),
-        name,
-        valueType
-    } as FLUserValueType
+    };
 }
 
 // ==== Error
@@ -161,8 +152,51 @@ ErrorDef = ERROR __ name: Identifier __ args: ErrorArgs __ SEMICOLON {
         location: location(),
         name,
         args 
-    } as FLErrorDefinition;
+    };
 }
+
+// ==== User-defined value types
+
+UserValueTypeDef = TYPE __ name: Identifier __ IS __ valueType: NonSemicolonSoup __ SEMICOLON {
+    return {
+        kind: FileLevelNodeKind.UserValueType,
+        location: location(),
+        name,
+        valueType
+    };
+}
+
+// ==== Using-for directives
+
+IdentifierPathList =
+    head: IdentifierPath __ tail: (__ COMMA __ IdentifierPath __ )* {
+        return tail.reduce(
+            (acc: string[], el: string) => {
+                acc.push(el[3]);
+
+                return acc;
+            },
+            [head]
+        );
+    }
+
+UsingForDirective =
+    USING __ utils: (IdentifierPath / ("{" __ IdentifierPathList __ "}")) __ FOR __ typeName: IdentifierPath __ isGlobal: (GLOBAL)? SEMICOLON {
+        const node: FLUsingForDirective = {
+            kind: FileLevelNodeKind.UsingForDirective,
+            location: location(),
+            typeName,
+            isGlobal: isGlobal !== null
+        };
+
+        if (typeof utils === "string") {
+            node.libraryName = utils;
+        } else {
+            node.functionList = utils[2];
+        }
+
+        return node;
+    }
 
 // ==== Soups - helper rules for matching semi-structured text with comments and strings inside,
 // that still try to account for either matching () or matching {}, or for an ending semicolon.
@@ -262,6 +296,9 @@ TYPE = "type"
 RETURNS = "returns"
 PRAGMA = "pragma"
 ERROR = "error"
+USING = "using"
+FOR = "for"
+GLOBAL = "global"
 
 // ==== String literals
 

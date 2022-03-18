@@ -403,7 +403,8 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
                 "vFunctions",
                 "vVariables",
                 "vErrors",
-                "vUserDefinedValueTypes"
+                "vUserDefinedValueTypes",
+                "vUsingForDirectives"
             );
         } else if (node instanceof ImportDirective) {
             /**
@@ -451,7 +452,7 @@ export function checkSane(unit: SourceUnit, ctx: ASTContext): void {
             checkVFieldCtx(node, "vParameters", ctx);
             checkDirectChildren(node, "vParameters");
         } else if (node instanceof UsingForDirective) {
-            checkDirectChildren(node, "vLibraryName", "vTypeName");
+            checkDirectChildren(node, "vLibraryName", "vFunctionList", "vTypeName");
         } else if (node instanceof ContractDefinition) {
             checkFieldAndVFieldMatch(node, "scope", "vScope");
             checkVFieldCtx(node, "vScope", ctx);

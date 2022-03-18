@@ -1,4 +1,5 @@
 import { ASTReader, ASTReaderConfiguration } from "../ast_reader";
+import { IdentifierPath } from "../implementation/meta";
 import { UsingForDirective } from "../implementation/meta/using_for_directive";
 import { TypeName } from "../implementation/type/type_name";
 import { UserDefinedTypeName } from "../implementation/type/user_defined_type_name";
@@ -12,11 +13,22 @@ export class ModernUsingForDirectiveProcessor extends ModernNodeProcessor<UsingF
     ): ConstructorParameters<typeof UsingForDirective> {
         const [id, src] = super.process(reader, config, raw);
 
-        const libraryName = reader.convert(raw.libraryName, config) as UserDefinedTypeName;
+        const libraryName = raw.libraryName
+            ? (reader.convert(raw.libraryName, config) as UserDefinedTypeName)
+            : undefined;
+
+        const functionList: IdentifierPath[] | undefined = raw.functionList
+            ? raw.functionList.map(
+                  (entry: any) => reader.convert(entry.function, config) as IdentifierPath
+              )
+            : undefined;
+
         const typeName = raw.typeName
             ? (reader.convert(raw.typeName, config) as TypeName)
             : undefined;
 
-        return [id, src, libraryName, typeName, raw];
+        const isGlobal = raw.global === true;
+
+        return [id, src, isGlobal, libraryName, functionList, typeName, raw];
     }
 }
