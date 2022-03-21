@@ -18,7 +18,7 @@ export class LegacyUsingForDirectiveProcessor extends LegacyNodeProcessor<UsingF
         ];
 
         /**
-         * The "global" and "functionList" are only appering since Solidity 0.8.13.
+         * The "global" and "functionList" are only appearing since Solidity 0.8.13.
          * The legacy AST should not ever contain these properties.
          */
         const isGlobal = false;

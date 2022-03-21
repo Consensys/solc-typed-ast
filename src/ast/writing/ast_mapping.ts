@@ -725,7 +725,7 @@ class InlineAssemblyWriter extends ASTNodeWriter {
         if (node.flags !== undefined) {
             const quotedFlags = node.flags.map((flag) => `"${flag}"`);
 
-            result.push("(", ...quotedFlags, ") ");
+            result.push("(", ...join(quotedFlags, ", "), ") ");
         }
 
         if (node.operations !== undefined) {
