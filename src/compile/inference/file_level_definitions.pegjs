@@ -6,7 +6,7 @@
 
 SourceUnit =
     __ flds: (t: FileLevelDefinition __  { return t; })* {
-        return flds;
+        return flds as AnyFileLevelNode[];
     }
 
 FileLevelDefinition =
@@ -28,14 +28,14 @@ PragmaValue =
 
 PragmaDirective =
     PRAGMA __ name: Identifier __ value: PragmaValue __ ";" {
-        return { kind: FileLevelNodeKind.Pragma, location: location(), name, value };
+        return { kind: FileLevelNodeKind.Pragma, location: location(), name, value } as FLPragma;
     }
 
 // ==== Import Directives
 
 Symbol = 
     name: (Identifier) alias: (__ AS __ Identifier)? {
-        return { name, alias: alias !== null ? alias[3] : null };
+        return { name, alias: alias !== null ? alias[3] : null } as SymbolDesc;
     }
 
 SymbolList =
@@ -53,16 +53,16 @@ SymbolList =
 
 ImportDirective =
     IMPORT __ path: StringLiteral __ SEMICOLON {
-        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias: null, symbols: [] };
+        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias: null, symbols: [] } as FLImportDirective;
     }
     / IMPORT __ path: StringLiteral __ AS __ unitAlias: Identifier __ SEMICOLON {
-        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] };
+        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] } as FLImportDirective;
     }
     / IMPORT __ ASTERISK __ AS __ unitAlias: Identifier __ FROM __ path: StringLiteral __ SEMICOLON {
-        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] };
+        return { kind: FileLevelNodeKind.Import, location: location(), path, unitAlias, symbols: [] } as FLImportDirective;
     }
     / IMPORT __ LBRACE __ symbols: SymbolList __ RBRACE __ FROM __ path: StringLiteral __ SEMICOLON {
-        return { kind: FileLevelNodeKind.Import, location: location(), symbols, path, unitAlias: null };
+        return { kind: FileLevelNodeKind.Import, location: location(), symbols, path, unitAlias: null } as FLImportDirective;
     }
 
 // ==== Global Constants
@@ -72,7 +72,7 @@ ConstantType =
     Identifier (__ LBRACKET Number? RBRACKET)*  { return text(); }
 
 Constant = ConstantType __ CONSTANT  __ name: Identifier __ EQUAL __ value: NonSemicolonSoup __  SEMICOLON {
-    return { kind: FileLevelNodeKind.Constant, location: location(), name, value };
+    return { kind: FileLevelNodeKind.Constant, location: location(), name, value } as FLConstant;
 }
 
 // ==== Free Functions
@@ -88,11 +88,11 @@ FreeFunction = FUNCTION __ name: Identifier __ args: FreeFunArgs __ mutability: 
         kind: FileLevelNodeKind.Function,
         location: location(),
         name,
-        args ,
+        args,
         mutability: mutability.trim(),
         returns,
         body
-    };
+    } as FLFreeFunction;
 }
 
 // ==== Contract definitions
@@ -116,7 +116,7 @@ ContractDefinition = abstract: (ABSTRACT __)? kind: (CONTRACT / LIBRARY / INTERF
         name,
         bases: bases !== null ? bases[3].trim() : null,
         body
-    };
+    } as FLContractDefinition;
 }
 
 // ==== Struct definitions
@@ -128,7 +128,7 @@ StructDef = STRUCT __ name: Identifier __ body: StructBody {
         location: location(),
         name,
         body
-    };
+    } as FLStructDefinition;
 }
 
 // ==== Enum definitions
@@ -140,7 +140,7 @@ EnumDef = ENUM __ name: Identifier __ body: EnumDefBody {
         location: location(),
         name,
         body
-    };
+    } as FLEnumDefinition;
 }
 
 // ==== Error
@@ -152,7 +152,7 @@ ErrorDef = ERROR __ name: Identifier __ args: ErrorArgs __ SEMICOLON {
         location: location(),
         name,
         args 
-    };
+    } as FLErrorDefinition;
 }
 
 // ==== User-defined value types
@@ -163,7 +163,7 @@ UserValueTypeDef = TYPE __ name: Identifier __ IS __ valueType: NonSemicolonSoup
         location: location(),
         name,
         valueType
-    };
+    } as FLUserValueType;
 }
 
 // ==== Using-for directives
