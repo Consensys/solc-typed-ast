@@ -1,5 +1,6 @@
 import fse from "fs-extra";
 import path from "path";
+import { assert } from "../misc";
 
 const findUpSync = require("findup-sync");
 
@@ -16,13 +17,15 @@ export class FileSystemResolver implements ImportResolver {
 export type Remapping = [string, string, string];
 
 export class LocalNpmResolver implements ImportResolver {
-    private baseDir: string;
+    baseDir?: string;
 
-    constructor(baseDir: string) {
+    constructor(baseDir?: string) {
         this.baseDir = baseDir;
     }
 
     resolve(fileName: string): string | undefined {
+        assert(this.baseDir !== undefined, "LocalNpmResolver: base directory is not set");
+
         let currentDir = this.baseDir;
 
         while (true) {

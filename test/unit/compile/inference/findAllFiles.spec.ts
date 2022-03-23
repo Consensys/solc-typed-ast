@@ -48,17 +48,19 @@ const samples: Array<[string, string[]]> = [
 
 describe("findAllFiles() find all needed imports", () => {
     for (const [fileName, expectedAllFiles] of samples) {
-        it(`All imports for ${fileName} should be ${expectedAllFiles.join(", ")}`, () => {
+        it(`All imports for ${fileName} should be ${expectedAllFiles.join(", ")}`, async () => {
             const contents = fse.readFileSync(fileName).toString();
             const files = new Map<string, string>([[fileName, contents]]);
-            findAllFiles(files, [], [new FileSystemResolver()]);
+
+            await findAllFiles(files, [], [new FileSystemResolver()]);
+
             expect(new Set(files.keys())).toEqual(new Set(expectedAllFiles));
         });
     }
 });
 
 describe("findAllFiles() throws proper errors", () => {
-    it("Parsing error", () => {
+    it("Parsing error", async () => {
         const files = new Map<string, string>([
             [
                 "foo.sol",
@@ -69,12 +71,10 @@ contract Foo {
             ]
         ]);
 
-        expect(() => findAllFiles(files, [], [new FileSystemResolver()])).toThrow(
-            /Failed parsing imports/
-        );
+        await expect(findAllFiles(files, [], [])).rejects.toThrow(/Failed parsing imports/);
     });
 
-    it("Missing file error", () => {
+    it("Missing file error", async () => {
         const files = new Map<string, string>([
             [
                 "foo.sol",
@@ -85,6 +85,6 @@ contract Foo {
             ]
         ]);
 
-        expect(() => findAllFiles(files, [], [])).toThrow(/Couldn't find a.sol/);
+        await expect(findAllFiles(files, [], [])).rejects.toThrow(/Couldn't find a.sol/);
     });
 });

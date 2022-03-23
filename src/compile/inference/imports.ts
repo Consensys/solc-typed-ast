@@ -35,13 +35,16 @@ function isPathWithRelativePrefix(path: string): boolean {
 /**
  * Normalize a relative import path as described in
  * https://docs.soliditylang.org/en/v0.8.8/path-resolution.html#relative-imports
+ *
  * @param importer - source unit name of importing unit
  * @param imported - path of import directive
  */
 function normalizeRelativeImportPath(importer: string, imported: string): string {
     imported = normalize(imported);
+
+    const importedSegments = imported.split("/").filter((s) => s !== "");
+
     let prefix = dirname(importer);
-    const importedSegments = imported.split("/").filter((s) => s != "");
     let strippedSegments = 0;
 
     while (
@@ -49,6 +52,7 @@ function normalizeRelativeImportPath(importer: string, imported: string): string
         importedSegments[strippedSegments] === ".."
     ) {
         prefix = dirname(prefix);
+
         strippedSegments++;
     }
 
@@ -60,7 +64,9 @@ function normalizeRelativeImportPath(importer: string, imported: string): string
     }
 
     assert(prefix === "" || !prefix.endsWith("/"), `Invalid prefix ${prefix}`);
+
     const suffix = importedSegments.slice(strippedSegments).join("/");
+
     return prefix === "" ? suffix : prefix + "/" + suffix;
 }
 
@@ -92,14 +98,16 @@ function computeSourceUnitName(
  * files that are imported from the starting set `files` but are
  * **missing** in `files` and add them into the files map.
  */
-export function findAllFiles(
+export async function findAllFiles(
     files: Map<string, string>,
     remappings: Remapping[],
-    resolvers: ImportResolver[]
-): void {
-    // Queue of source unit names to process
+    resolvers: ImportResolver[],
+    visited = new Set<string>()
+): Promise<void> {
+    /**
+     * Queue of source unit names to process
+     */
     const queue: string[] = [...files.keys()];
-    const visited = new Set<string>();
 
     while (queue.length > 0) {
         const sourceUnitName = queue.pop() as string;
@@ -121,7 +129,7 @@ export function findAllFiles(
                 const resolvedPath = resolver.resolve(sourceUnitName);
 
                 if (resolvedPath !== undefined) {
-                    content = fse.readFileSync(resolvedPath, { encoding: "utf-8" });
+                    content = await fse.readFile(resolvedPath, "utf-8");
 
                     break;
                 }

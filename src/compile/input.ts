@@ -2,16 +2,22 @@ import { CompilationOutput } from "./constants";
 
 export interface PartialSolcInput {
     language: "Solidity";
+
     settings: {
         outputSelection: any;
         remappings: string[];
         [otherKeys: string]: any;
     };
+
     [otherKeys: string]: any;
 }
 
 export interface SolcInput extends PartialSolcInput {
-    sources: { [fileName: string]: { content: string } };
+    sources: {
+        [fileName: string]: {
+            content: string;
+        };
+    };
 }
 
 function mergeCompilerSettings<T extends SolcInput>(input: T, settings: any): T {

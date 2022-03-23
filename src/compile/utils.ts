@@ -1,6 +1,7 @@
 import fse from "fs-extra";
 import path from "path";
-import { FileSystemResolver, getCompilerForVersion, ImportResolver, LocalNpmResolver } from ".";
+import { FileSystemResolver, getCompilerForVersion, LocalNpmResolver } from ".";
+import { assert } from "../misc";
 import {
     CompilerVersionSelectionStrategy,
     LatestVersionInEachSeriesStrategy,
@@ -77,15 +78,6 @@ export function parsePathRemapping(remapping: string[]): Remapping[] {
     return result;
 }
 
-export function resolveFiles(
-    files: Map<string, string>,
-    remapping: string[],
-    resolvers: ImportResolver[]
-): void {
-    const parsedRemapping = parsePathRemapping(remapping);
-    findAllFiles(files, parsedRemapping, resolvers);
-}
-
 function fillFilesFromSources(
     files: Map<string, string>,
     sources: { [fileName: string]: any }
@@ -129,11 +121,10 @@ export async function compile(
 
     const compiler = await getCompilerForVersion(version, kind);
 
-    if (compiler === undefined) {
-        throw new Error(
-            `Couldn't find "${kind}" compiler for version ${version} for current platform`
-        );
-    }
+    assert(
+        compiler !== undefined,
+        `Couldn't find "${kind}" compiler for version ${version} for current platform`
+    );
 
     return compiler.compile(compilerInput);
 }
@@ -175,13 +166,12 @@ export async function compileSourceString(
     compilerSettings?: any,
     kind?: CompilerKind
 ): Promise<CompileResult> {
-    const entrySourceUnit = fileName;
-    const entryFileDir = path.dirname(entrySourceUnit);
+    const fileDir = path.dirname(fileName);
+    const resolvers = [new FileSystemResolver(), new LocalNpmResolver(fileDir)];
+    const parsedRemapping = parsePathRemapping(remapping);
+    const files = new Map([[fileName, sourceCode]]);
 
-    const files = new Map([[entrySourceUnit, sourceCode]]);
-    const resolvers = [new FileSystemResolver(), new LocalNpmResolver(entryFileDir)];
-
-    resolveFiles(files, remapping, resolvers);
+    await findAllFiles(files, parsedRemapping, resolvers);
 
     const compilerVersionStrategy = getCompilerVersionStrategy([...files.values()], version);
     const failures: CompileFailure[] = [];
@@ -212,21 +202,70 @@ export async function compileSol(
     fileName: string,
     version: string | CompilerVersionSelectionStrategy,
     remapping: string[],
+    compilationOutput?: CompilationOutput[],
+    compilerSettings?: any,
+    kind?: CompilerKind
+): Promise<CompileResult>;
+export async function compileSol(
+    fileNames: string[],
+    version: string | CompilerVersionSelectionStrategy,
+    remapping: string[],
+    compilationOutput?: CompilationOutput[],
+    compilerSettings?: any,
+    kind?: CompilerKind
+): Promise<CompileResult>;
+export async function compileSol(
+    input: string | string[],
+    version: string | CompilerVersionSelectionStrategy,
+    remapping: string[],
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
     kind?: CompilerKind
 ): Promise<CompileResult> {
-    const sourceCode = fse.readFileSync(fileName, { encoding: "utf-8" });
+    const fileNames = typeof input === "string" ? [input] : input;
 
-    return compileSourceString(
-        fileName,
-        sourceCode,
-        version,
-        remapping,
-        compilationOutput,
-        compilerSettings,
-        kind
-    );
+    assert(fileNames.length > 0, "There must be at least one file to compile");
+
+    const fsResolver = new FileSystemResolver();
+    const npmResolver = new LocalNpmResolver();
+    const resolvers = [fsResolver, npmResolver];
+    const parsedRemapping = parsePathRemapping(remapping);
+    const files = new Map<string, string>();
+    const visited = new Set<string>();
+
+    for (const fileName of fileNames) {
+        const sourceCode = await fse.readFile(fileName, "utf-8");
+
+        npmResolver.baseDir = path.dirname(fileName);
+
+        files.set(fileName, sourceCode);
+
+        await findAllFiles(files, parsedRemapping, resolvers, visited);
+    }
+
+    const compilerVersionStrategy = getCompilerVersionStrategy([...files.values()], version);
+    const failures: CompileFailure[] = [];
+
+    for (const compilerVersion of compilerVersionStrategy.select()) {
+        const data = await compile(
+            files,
+            remapping,
+            compilerVersion,
+            compilationOutput,
+            compilerSettings,
+            kind
+        );
+
+        const errors = detectCompileErrors(data);
+
+        if (errors.length === 0) {
+            return { data, compilerVersion, files };
+        }
+
+        failures.push({ compilerVersion, errors });
+    }
+
+    throw new CompileFailedError(failures);
 }
 
 export async function compileJsonData(
@@ -300,7 +339,7 @@ export async function compileJson(
     compilerSettings?: any,
     kind?: CompilerKind
 ): Promise<CompileResult> {
-    const data = fse.readJSONSync(fileName);
+    const data = await fse.readJSON(fileName);
 
     return compileJsonData(fileName, data, version, compilationOutput, compilerSettings, kind);
 }

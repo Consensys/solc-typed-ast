@@ -2,7 +2,7 @@ import expect from "expect";
 import { PossibleCompilerKinds } from "../../../../src";
 import { SolAstCompileCommand, SolAstCompileExec } from "../common";
 
-const error = "Error: Unable to auto-detect mode for the file name";
+const error = "Unable to auto-detect mode by the file name";
 const output = ["SourceUnit #2", "ContractDefinition #1", 'name: "Test"', 'kind: "contract"'];
 
 const cases: Array<[string, string, number, string, string[]]> = [
