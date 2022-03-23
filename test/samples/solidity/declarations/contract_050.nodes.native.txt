@@ -15,6 +15,7 @@ SourceUnit #146
     <getter> vFunctions: Array(0)
     <getter> vVariables: Array(0)
     <getter> vUserDefinedValueTypes: Array(0)
+    <getter> vUsingForDirectives: Array(0)
     <getter> vExportedSymbols: Map(3) { "A" -> ContractDefinition #90, "B" -> ContractDefinition #100, "C" -> ContractDefinition #145 }
     <getter> children: Array(3) [ ContractDefinition #90, ContractDefinition #100, ContractDefinition #145 ]
     <getter> type: "SourceUnit"
@@ -915,6 +916,7 @@ SourceUnit #146
             src: "0:0:0"
             vLibraryName: UserDefinedTypeName #114
             vTypeName: ElementaryTypeName #115
+            isGlobal: false
             context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> children: Array(2) [ UserDefinedTypeName #114, ElementaryTypeName #115 ]

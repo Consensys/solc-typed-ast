@@ -501,6 +501,54 @@ is /*3*/ int24/*;*/;`,
                 value: `0.8.9/*;*/`
             }
         ]
+    ],
+    [
+        "using-for library global",
+        `using /*;*/ A for XXX global; // oh yeah;`,
+        [
+            {
+                kind: "usingForDirective",
+                typeName: "XXX",
+                isGlobal: true,
+                libraryName: "A"
+            }
+        ]
+    ],
+    [
+        "using-for library locally",
+        `using B for YYY;`,
+        [
+            {
+                kind: "usingForDirective",
+                typeName: "YYY",
+                isGlobal: false,
+                libraryName: "B"
+            }
+        ]
+    ],
+    [
+        "using-for tuple globally",
+        `using {a, /*!!*/ b, /*!!*/ L.c} for ZZZ /*!!*/ global;`,
+        [
+            {
+                kind: "usingForDirective",
+                typeName: "ZZZ",
+                isGlobal: true,
+                functionList: ["a", "b", "L.c"]
+            }
+        ]
+    ],
+    [
+        "using-for tuple locally",
+        `using {a, b, L.c} for TTT;`,
+        [
+            {
+                kind: "usingForDirective",
+                typeName: "TTT",
+                isGlobal: false,
+                functionList: ["a", "b", "L.c"]
+            }
+        ]
     ]
 ];
 
@@ -510,7 +558,7 @@ is /*3*/ int24/*;*/;`,
  */
 function expectTopLevelNodesMatch(a: any[], b: any[]) {
     // Uncomment the next line to see the parsed nodes for which the match fails
-    //console.error(`a: ${JSON.stringify(a)} b: ${JSON.stringify(b)}`);
+    // console.error(`a: ${JSON.stringify(a)} b: ${JSON.stringify(b)}`);
     expect(a.length).toEqual(b.length);
 
     for (let i = 0; i < a.length; i++) {

@@ -1,30 +1,32 @@
+{
+    // Dummy uses to silence unused function TSC errors in auto-generated code
+    expected;
+    error;
+}
+
 SourceUnit =
     __ flds: (t: FileLevelDefinition __  { return t; })* {
-        // Dummy uses to silence unused function TSC errors in auto-generated code
-        expected;
-        error;
-
-        return flds as FileLevelNode<any>[];
+        return flds as AnyFileLevelNode[];
     }
 
 FileLevelDefinition =
-    Pragma
+    PragmaDirective
     / ImportDirective
     / Constant
     / FreeFunction
     / ContractDefinition
     / EnumDef
+    / ErrorDef
     / StructDef
     / UserValueTypeDef
-    / ErrorDef
-
+    / UsingForDirective
 
 // ==== Pragma
 
 PragmaValue =
     NonSemicolonSoup { return text().trim(); }
 
-Pragma =
+PragmaDirective =
     PRAGMA __ name: Identifier __ value: PragmaValue __ ";" {
         return { kind: FileLevelNodeKind.Pragma, location: location(), name, value } as FLPragma;
     }
@@ -86,7 +88,7 @@ FreeFunction = FUNCTION __ name: Identifier __ args: FreeFunArgs __ mutability: 
         kind: FileLevelNodeKind.Function,
         location: location(),
         name,
-        args ,
+        args,
         mutability: mutability.trim(),
         returns,
         body
@@ -114,7 +116,7 @@ ContractDefinition = abstract: (ABSTRACT __)? kind: (CONTRACT / LIBRARY / INTERF
         name,
         bases: bases !== null ? bases[3].trim() : null,
         body
-    } as FLContractDefinition
+    } as FLContractDefinition;
 }
 
 // ==== Struct definitions
@@ -126,7 +128,7 @@ StructDef = STRUCT __ name: Identifier __ body: StructBody {
         location: location(),
         name,
         body
-    } as FLStructDefinition
+    } as FLStructDefinition;
 }
 
 // ==== Enum definitions
@@ -138,18 +140,7 @@ EnumDef = ENUM __ name: Identifier __ body: EnumDefBody {
         location: location(),
         name,
         body
-    } as FLEnumDefinition
-}
-
-// ==== User-defined value types
-
-UserValueTypeDef = TYPE __ name: Identifier __ IS __ valueType: NonSemicolonSoup __ SEMICOLON {
-    return {
-        kind: FileLevelNodeKind.UserValueType,
-        location: location(),
-        name,
-        valueType
-    } as FLUserValueType
+    } as FLEnumDefinition;
 }
 
 // ==== Error
@@ -163,6 +154,49 @@ ErrorDef = ERROR __ name: Identifier __ args: ErrorArgs __ SEMICOLON {
         args 
     } as FLErrorDefinition;
 }
+
+// ==== User-defined value types
+
+UserValueTypeDef = TYPE __ name: Identifier __ IS __ valueType: NonSemicolonSoup __ SEMICOLON {
+    return {
+        kind: FileLevelNodeKind.UserValueType,
+        location: location(),
+        name,
+        valueType
+    } as FLUserValueType;
+}
+
+// ==== Using-for directives
+
+IdentifierPathList =
+    head: IdentifierPath __ tail: (__ COMMA __ IdentifierPath __ )* {
+        return tail.reduce(
+            (acc: string[], el: string) => {
+                acc.push(el[3]);
+
+                return acc;
+            },
+            [head]
+        );
+    }
+
+UsingForDirective =
+    USING __ utils: (IdentifierPath / ("{" __ IdentifierPathList __ "}")) __ FOR __ typeName: IdentifierPath __ isGlobal: (GLOBAL)? SEMICOLON {
+        const node: FLUsingForDirective = {
+            kind: FileLevelNodeKind.UsingForDirective,
+            location: location(),
+            typeName,
+            isGlobal: isGlobal !== null
+        };
+
+        if (typeof utils === "string") {
+            node.libraryName = utils;
+        } else {
+            node.functionList = utils[2];
+        }
+
+        return node;
+    }
 
 // ==== Soups - helper rules for matching semi-structured text with comments and strings inside,
 // that still try to account for either matching () or matching {}, or for an ending semicolon.
@@ -262,6 +296,9 @@ TYPE = "type"
 RETURNS = "returns"
 PRAGMA = "pragma"
 ERROR = "error"
+USING = "using"
+FOR = "for"
+GLOBAL = "global"
 
 // ==== String literals
 

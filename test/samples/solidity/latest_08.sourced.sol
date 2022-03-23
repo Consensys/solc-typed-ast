@@ -12,8 +12,30 @@ type Price is uint128;
 
 type Quantity is uint128;
 
+type RestrictedNumber_0813 is int256;
+
+using A_0813 for RestrictedNumber_0813;
+using { plusOne, minusOne, A_0813.add } for RestrictedNumber_0813 global;
+
 /// UnitLevelError error docstring
 error UnitLevelError084(uint code);
+
+function plusOne(RestrictedNumber_0813 x) pure returns (RestrictedNumber_0813) {
+    unchecked {
+        return RestrictedNumber_0813.wrap(RestrictedNumber_0813.unwrap(x) + 1);
+    }
+}
+
+function minusOne(RestrictedNumber_0813 x) pure returns (RestrictedNumber_0813) {
+    unchecked {
+        return RestrictedNumber_0813.wrap(RestrictedNumber_0813.unwrap(x) - 1);
+    }
+}
+
+function createRestrictedNumber_0813(int256 value) pure returns (RestrictedNumber_0813) {
+    require((value <= 100) && ((-value) <= 100));
+    return RestrictedNumber_0813.wrap(value);
+}
 
 contract UncheckedMathExample {
     function test() public pure returns (uint) {
@@ -251,6 +273,20 @@ contract Features_0812 {
         string memory a = "abc";
         string memory b = "def";
         string memory c = string.concat(a, b);
+    }
+}
+
+library A_0813 {
+    function add(RestrictedNumber_0813 a, RestrictedNumber_0813 b) internal returns (RestrictedNumber_0813 c) {
+        c = RestrictedNumber_0813.wrap(RestrictedNumber_0813.unwrap(a) + RestrictedNumber_0813.unwrap(b));
+    }
+}
+
+contract Features_0813 {
+    function memorySafeAsm() public {
+        assembly ("memory-safe") {}
+        /// @solidity memory-safe-assembly
+        assembly {}
     }
 }
 // ------------------------------------------------------------

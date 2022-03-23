@@ -30,49 +30,50 @@ const encounters = new Map<string, number>([
     ["ImportDirective", 1],
     ["EnumDefinition", 2],
     ["EnumValue", 6],
-    ["ContractDefinition", 14],
-    ["FunctionDefinition", 26],
-    ["ParameterList", 69],
-    ["VariableDeclaration", 54],
-    ["ElementaryTypeName", 47],
-    ["Block", 42],
+    ["ContractDefinition", 16],
+    ["FunctionDefinition", 31],
+    ["ParameterList", 79],
+    ["VariableDeclaration", 63],
+    ["ElementaryTypeName", 49],
+    ["Block", 47],
     ["VariableDeclarationStatement", 16],
-    ["Literal", 31],
-    ["UncheckedBlock", 2],
-    ["ExpressionStatement", 14],
-    ["UnaryOperation", 4],
-    ["Identifier", 64],
-    ["Return", 11],
+    ["Literal", 35],
+    ["UncheckedBlock", 4],
+    ["ExpressionStatement", 16],
+    ["UnaryOperation", 5],
+    ["Identifier", 81],
+    ["Return", 14],
     ["InheritanceSpecifier", 1],
-    ["IdentifierPath", 19],
-    ["UsingForDirective", 1],
-    ["UserDefinedTypeName", 14],
+    ["IdentifierPath", 33],
+    ["UsingForDirective", 3],
+    ["UserDefinedTypeName", 24],
     ["ModifierInvocation", 2],
-    ["FunctionCall", 30],
-    ["MemberAccess", 28],
+    ["FunctionCall", 39],
+    ["MemberAccess", 36],
     ["OverrideSpecifier", 1],
     ["ElementaryTypeNameExpression", 4],
     ["NewExpression", 2],
     ["TryStatement", 2],
     ["TryCatchClause", 8],
     ["IfStatement", 3],
-    ["BinaryOperation", 14],
+    ["BinaryOperation", 20],
     ["EventDefinition", 1],
     ["ModifierDefinition", 1],
     ["PlaceholderStatement", 1],
-    ["TupleExpression", 6],
+    ["TupleExpression", 9],
     ["EmitStatement", 1],
     ["WhileStatement", 1],
     ["Continue", 1],
     ["DoWhileStatement", 1],
     ["Break", 1],
     ["ForStatement", 1],
-    ["InlineAssembly", 4],
+    ["InlineAssembly", 6],
     ["ErrorDefinition", 3],
     ["StructuredDocumentation", 3],
     ["RevertStatement", 3],
-    ["UserDefinedValueTypeDefinition", 4],
-    ["FunctionTypeName", 4]
+    ["UserDefinedValueTypeDefinition", 5],
+    ["FunctionTypeName", 4],
+    ["Assignment", 1]
 ]);
 
 for (const compilerKind of PossibleCompilerKinds) {
@@ -115,11 +116,11 @@ for (const compilerKind of PossibleCompilerKinds) {
             // console.log(sourceUnit.print());
             // console.log(sourceUnit.getChildren().length);
 
-            expect(sourceUnit.id).toEqual(577);
-            expect(sourceUnit.src).toEqual("0:7057:0");
+            expect(sourceUnit.id).toEqual(695);
+            expect(sourceUnit.src).toEqual("0:8189:0");
             expect(sourceUnit.absolutePath).toEqual(mainSample);
-            expect(sourceUnit.children.length).toEqual(21);
-            expect(sourceUnit.getChildren().length).toEqual(570);
+            expect(sourceUnit.children.length).toEqual(29);
+            expect(sourceUnit.getChildren().length).toEqual(688);
         });
 
         it(`Validate parsed output (${astKind})`, () => {

@@ -442,7 +442,9 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
     [
         UsingForDirective,
         (node: UsingForDirective): Specific<ConstructorParameters<typeof UsingForDirective>> => [
+            node.isGlobal,
             node.vLibraryName,
+            node.vFunctionList,
             node.vTypeName,
             node.raw
         ]
@@ -531,6 +533,8 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.externalReferences,
             node.operations,
             node.yul,
+            node.flags,
+            node.evmVersion,
             node.documentation,
             node.raw
         ]
@@ -1143,6 +1147,7 @@ export class ASTNodeFactory {
 
         if (
             node instanceof Identifier ||
+            node instanceof IdentifierPath ||
             node instanceof MemberAccess ||
             node instanceof UserDefinedTypeName
         ) {

@@ -8,8 +8,9 @@ export enum FileLevelNodeKind {
     Contract = "contract",
     Struct = "struct",
     Enum = "enum",
+    Error = "error",
     UserValueType = "userValueType",
-    Error = "error"
+    UsingForDirective = "usingForDirective"
 }
 
 export interface FileLevelNode<T extends FileLevelNodeKind> {
@@ -64,9 +65,21 @@ export interface FLEnumDefinition extends FileLevelNode<FileLevelNodeKind.Enum> 
     body: string;
 }
 
+export interface FLErrorDefinition extends FileLevelNode<FileLevelNodeKind.Error> {
+    name: string;
+    args: string;
+}
+
 export interface FLUserValueType extends FileLevelNode<FileLevelNodeKind.UserValueType> {
     name: string;
     valueType: string;
+}
+
+export interface FLUsingForDirective extends FileLevelNode<FileLevelNodeKind.UsingForDirective> {
+    libraryName?: string;
+    functionList?:  string[];
+    typeName: string;
+    isGlobal: boolean;
 }
 
 export type AnyFileLevelNode = FLPragma
@@ -76,12 +89,9 @@ export type AnyFileLevelNode = FLPragma
     | FLContractDefinition
     | FLStructDefinition
     | FLEnumDefinition
-    | FLUserValueType;
-
-export interface FLErrorDefinition extends FileLevelNode<FileLevelNodeKind.Error> {
-    name: string;
-    args: string;
-}
+    | FLErrorDefinition
+    | FLUserValueType
+    | FLUsingForDirective;
 
 export function parseFileLevelDefinitions(contents: string): Array<AnyFileLevelNode> {
     // @ts-ignore
