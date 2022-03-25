@@ -23,6 +23,7 @@ export interface CompileResult {
     data: any;
     compilerVersion?: string;
     files: Map<string, string>;
+    inferredRemappings: Remapping[];
 }
 
 export interface CompileFailure {
@@ -167,7 +168,8 @@ export async function compileSourceString(
     kind?: CompilerKind
 ): Promise<CompileResult> {
     const fileDir = path.dirname(fileName);
-    const resolvers = [new FileSystemResolver(), new LocalNpmResolver(fileDir)];
+    const npmResolver = new LocalNpmResolver(fileDir);
+    const resolvers = [new FileSystemResolver(), npmResolver];
     const parsedRemapping = parsePathRemapping(remapping);
     const files = new Map([[fileName, sourceCode]]);
 
@@ -189,7 +191,12 @@ export async function compileSourceString(
         const errors = detectCompileErrors(data);
 
         if (errors.length === 0) {
-            return { data, compilerVersion, files };
+            return {
+                data,
+                compilerVersion,
+                files,
+                inferredRemappings: npmResolver.inferredRemappings
+            };
         }
 
         failures.push({ compilerVersion, errors });
@@ -259,7 +266,12 @@ export async function compileSol(
         const errors = detectCompileErrors(data);
 
         if (errors.length === 0) {
-            return { data, compilerVersion, files };
+            return {
+                data,
+                compilerVersion,
+                files,
+                inferredRemappings: npmResolver.inferredRemappings
+            };
         }
 
         failures.push({ compilerVersion, errors });
@@ -294,7 +306,7 @@ export async function compileJsonData(
 
         fillFilesFromSources(files, sources);
 
-        return { data, compilerVersion, files };
+        return { data, compilerVersion, files, inferredRemappings: [] };
     }
 
     if (consistentlyContainsOneOf(sources, "source")) {
@@ -318,7 +330,7 @@ export async function compileJsonData(
             const errors = detectCompileErrors(compileData);
 
             if (errors.length === 0) {
-                return { data: compileData, compilerVersion, files };
+                return { data: compileData, compilerVersion, files, inferredRemappings: [] };
             }
 
             failures.push({ compilerVersion, errors });
