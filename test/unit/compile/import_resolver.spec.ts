@@ -1,6 +1,6 @@
 import expect from "expect";
 import path from "path";
-import { FileSystemResolver, LocalNpmResolver } from "../../../src";
+import { FileSystemResolver, LocalNpmResolver, Remapping } from "../../../src";
 
 describe("FileSystemResolver", () => {
     describe("resolve()", () => {
@@ -20,17 +20,26 @@ describe("FileSystemResolver", () => {
 
 describe("LocalNpmResolver", () => {
     describe("resolve()", () => {
-        const resolver = new LocalNpmResolver("test/");
+        const inferredRemappings = new Map<string, Remapping>();
+        const resolver = new LocalNpmResolver("test/", inferredRemappings);
 
         const cases: Array<[string, string | undefined]> = [
             [".bin/tsc", path.resolve("node_modules/.bin/tsc")],
             [".bin/missing", undefined]
         ];
 
+        const expectedInferredRemapping = new Map<string, Remapping>([
+            [".bin/tsc", ["", ".bin", path.resolve("node_modules/.bin")]]
+        ]);
+
         for (const [fileName, result] of cases) {
             it(`Returns ${JSON.stringify(result)} for "${fileName}"`, () => {
                 expect(resolver.resolve(fileName)).toEqual(result);
             });
         }
+
+        it("Inferred path remappings map is valid", () => {
+            expect(inferredRemappings).toEqual(expectedInferredRemapping);
+        });
     });
 });

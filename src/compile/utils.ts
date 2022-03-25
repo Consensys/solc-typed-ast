@@ -23,7 +23,7 @@ export interface CompileResult {
     data: any;
     compilerVersion?: string;
     files: Map<string, string>;
-    inferredRemappings: Remapping[];
+    inferredRemappings: Map<string, Remapping>;
 }
 
 export interface CompileFailure {
@@ -168,8 +168,12 @@ export async function compileSourceString(
     kind?: CompilerKind
 ): Promise<CompileResult> {
     const fileDir = path.dirname(fileName);
-    const npmResolver = new LocalNpmResolver(fileDir);
-    const resolvers = [new FileSystemResolver(), npmResolver];
+
+    const inferredRemappings = new Map<string, Remapping>();
+    const fsResolver = new FileSystemResolver();
+    const npmResolver = new LocalNpmResolver(fileDir, inferredRemappings);
+    const resolvers = [fsResolver, npmResolver];
+
     const parsedRemapping = parsePathRemapping(remapping);
     const files = new Map([[fileName, sourceCode]]);
 
@@ -195,7 +199,7 @@ export async function compileSourceString(
                 data,
                 compilerVersion,
                 files,
-                inferredRemappings: npmResolver.inferredRemappings
+                inferredRemappings
             };
         }
 
@@ -233,9 +237,11 @@ export async function compileSol(
 
     assert(fileNames.length > 0, "There must be at least one file to compile");
 
+    const inferredRemappings = new Map<string, Remapping>();
     const fsResolver = new FileSystemResolver();
-    const npmResolver = new LocalNpmResolver();
+    const npmResolver = new LocalNpmResolver(undefined, inferredRemappings);
     const resolvers = [fsResolver, npmResolver];
+
     const parsedRemapping = parsePathRemapping(remapping);
     const files = new Map<string, string>();
     const visited = new Set<string>();
@@ -270,7 +276,7 @@ export async function compileSol(
                 data,
                 compilerVersion,
                 files,
-                inferredRemappings: npmResolver.inferredRemappings
+                inferredRemappings
             };
         }
 
@@ -306,7 +312,7 @@ export async function compileJsonData(
 
         fillFilesFromSources(files, sources);
 
-        return { data, compilerVersion, files, inferredRemappings: [] };
+        return { data, compilerVersion, files, inferredRemappings: new Map() };
     }
 
     if (consistentlyContainsOneOf(sources, "source")) {
@@ -330,7 +336,7 @@ export async function compileJsonData(
             const errors = detectCompileErrors(compileData);
 
             if (errors.length === 0) {
-                return { data: compileData, compilerVersion, files, inferredRemappings: [] };
+                return { data: compileData, compilerVersion, files, inferredRemappings: new Map() };
             }
 
             failures.push({ compilerVersion, errors });

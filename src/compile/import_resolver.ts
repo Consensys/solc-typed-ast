@@ -18,16 +18,11 @@ export type Remapping = [string, string, string];
 
 export class LocalNpmResolver implements ImportResolver {
     baseDir?: string;
-    /// Array of all remappings that were "inferred" by the npm resolver
-    private _inferedRemappings: Remapping[];
+    inferedRemappings?: Map<string, Remapping>;
 
-    constructor(baseDir?: string) {
+    constructor(baseDir?: string, inferedRemappings?: Map<string, Remapping>) {
         this.baseDir = baseDir;
-        this._inferedRemappings = [];
-    }
-
-    get inferredRemappings(): Remapping[] {
-        return this._inferedRemappings;
+        this.inferedRemappings = inferedRemappings;
     }
 
     resolve(fileName: string): string | undefined {
@@ -36,6 +31,7 @@ export class LocalNpmResolver implements ImportResolver {
         let currentDir = this.baseDir;
 
         const normalizedFileName = path.normalize(fileName);
+
         while (true) {
             const modulesPath = findUpSync("node_modules/", { cwd: currentDir });
 
@@ -46,17 +42,18 @@ export class LocalNpmResolver implements ImportResolver {
             const modulePath = path.join(modulesPath, normalizedFileName);
 
             if (fse.existsSync(modulePath)) {
-                const parts = normalizedFileName.split("/");
+                if (this.inferedRemappings) {
+                    const [prefix] = normalizedFileName.split("/");
 
-                /// If the normalized paths begins with a proper directory name X (not . or ..),
-                /// Then we can infer a remapping from X to modulesPath/X/
-                if (
-                    parts.length > 0 &&
-                    parts[0] !== "." &&
-                    parts[0] !== ".." &&
-                    parts[0].length > 0
-                ) {
-                    this._inferedRemappings.push(["", parts[0], path.join(modulesPath, parts[0])]);
+                    /**
+                     * If the normalized paths begins with a proper directory name X (not "." or ".."),
+                     * then we can infer a remapping from X to modulesPath/X/
+                     */
+                    if (prefix && prefix !== "." && prefix !== "..") {
+                        const remapping: Remapping = ["", prefix, path.join(modulesPath, prefix)];
+
+                        this.inferedRemappings.set(fileName, remapping);
+                    }
                 }
 
                 return modulePath;
