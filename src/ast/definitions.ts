@@ -1,4 +1,5 @@
 import { gte, lt } from "semver";
+import { FunctionVisibility } from ".";
 import { forAll, pp } from "../misc";
 import { ABIEncoderVersion } from "../types/abi";
 import { ASTNode } from "./ast_node";
@@ -169,7 +170,7 @@ function* lookupInSourceUnit(
             } else if (child.vSymbolAliases.length === 0) {
                 // import "..."
                 // @todo maybe its better to go through child.vSourceUnit.vExportedSymbols here?
-                yield* lookupInScope(name, child.vSourceUnit, visitedUnits);
+                yield* lookupInScope(name, child.vSourceUnit, visitedUnits, false);
             } else {
                 // `import {<name>} from "..."` or `import {a as <name>} from "..."`
                 for (const [foreignDef, alias] of child.vSymbolAliases) {
@@ -207,7 +208,8 @@ function* lookupInSourceUnit(
  */
 function* lookupInContractDefinition(
     name: string,
-    scope: ContractDefinition
+    scope: ContractDefinition,
+    ignoreVisiblity: boolean
 ): Iterable<AnyResolvable> {
     const overridenSigHashes = new Set<string>();
 
@@ -224,6 +226,19 @@ function* lookupInContractDefinition(
                     child instanceof UserDefinedValueTypeDefinition) &&
                 child.name === name
             ) {
+                // If we are not ignoring visibility, and the node is a private function or state var
+                // in a base class different from scope, then ignore it
+                if (
+                    !ignoreVisiblity &&
+                    ((child instanceof VariableDeclaration &&
+                        child.visibility === StateVariableVisibility.Private) ||
+                        (child instanceof FunctionDefinition &&
+                            child.visibility === FunctionVisibility.Private)) &&
+                    base !== scope
+                ) {
+                    continue;
+                }
+
                 let sigHash: string | undefined;
 
                 if (child instanceof FunctionDefinition) {
@@ -295,14 +310,15 @@ function* lookupInBlock(name: string, scope: Block | UncheckedBlock): Iterable<A
 function lookupInScope(
     name: string,
     scope: ScopeNode,
-    visitedUnits = new Set<SourceUnit>()
+    visitedUnits = new Set<SourceUnit>(),
+    ignoreVisiblity: boolean
 ): Set<AnyResolvable> {
     let results: Iterable<AnyResolvable>;
 
     if (scope instanceof SourceUnit) {
         results = lookupInSourceUnit(name, scope, visitedUnits);
     } else if (scope instanceof ContractDefinition) {
-        results = lookupInContractDefinition(name, scope);
+        results = lookupInContractDefinition(name, scope, ignoreVisiblity);
     } else if (scope instanceof FunctionDefinition) {
         results = lookupInFunctionDefinition(name, scope);
     } else if (scope instanceof ModifierDefinition) {
@@ -341,7 +357,8 @@ export function resolveAny(
     name: string,
     ctx: ASTNode,
     version: string,
-    inclusive = false
+    inclusive = false,
+    ignoreVisiblity = false
 ): Set<AnyResolvable> {
     let scope: ScopeNode | undefined =
         inclusive && isScope(ctx, version) ? ctx : getContainingScope(ctx, version);
@@ -357,7 +374,7 @@ export function resolveAny(
             // If this is the first element (e.g. `A` in `A.B.C`), walk up the
             // stack of scopes starting from the current context, looking for `A`
             while (scope !== undefined) {
-                res = lookupInScope(element, scope);
+                res = lookupInScope(element, scope, undefined, ignoreVisiblity);
 
                 if (res.size > 0) {
                     // Sanity check - when multiple results are found, they must either be overloaded events
@@ -401,7 +418,7 @@ export function resolveAny(
         } else {
             // If this is a later segment (e.g. `B` or `C` in `A.B.C`),
             // then resolve it recursively in the current scope.
-            res = resolveAny(element, scope as ASTNode, version, true);
+            res = resolveAny(element, scope as ASTNode, version, true, ignoreVisiblity);
         }
 
         // We didn't find anything - return empty set

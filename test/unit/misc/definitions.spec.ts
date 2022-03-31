@@ -9,6 +9,7 @@ import {
     CompilerVersions07,
     CompilerVersions08,
     compileSol,
+    compileSourceString,
     ContractDefinition,
     detectCompileErrors,
     EnumDefinition,
@@ -20,6 +21,7 @@ import {
     Identifier,
     IdentifierPath,
     resolveAny,
+    SourceUnit,
     StateVariableVisibility,
     StructDefinition,
     UserDefinedTypeName,
@@ -446,4 +448,77 @@ describe("resolveAny() unit tests", () => {
             }
         });
     }
+});
+
+describe("resolveAny() correctly handles visibility", async () => {
+    const reader = new ASTReader();
+    const sample = `contract Base {
+    uint private privX;
+    uint internal intX;
+    uint public pubX;
+
+    function privPlusOne(uint x) private pure returns (uint) {
+        return x + 1;
+    }
+
+    function intPlusOne(uint x) internal pure returns (uint) {
+        return x + 1;
+    }
+
+    function pubPlusOne(uint x) internal pure returns (uint) {
+        return x + 1;
+    }
+
+    function extPlusOne(uint x) external pure returns (uint) {
+        return x + 1;
+    }
+}
+
+contract Child is Base {
+     function foo(uint x) public {}
+}`;
+    let unit: SourceUnit;
+    let foo: ASTNode;
+
+    before(async () => {
+        const compResult = await compileSourceString("sample.sol", sample, "0.8.13", []);
+        [unit] = reader.read(compResult.data);
+        foo = unit.getChildrenBySelector(
+            (nd) => nd instanceof FunctionDefinition && nd.name === "foo"
+        )[0];
+    });
+
+    it(`Without ignoreVisiblity`, async () => {
+        const tests: Array<[string, number]> = [
+            ["privX", 0],
+            ["intX", 1],
+            ["pubX", 1],
+            ["privPlusOne", 0],
+            ["intPlusOne", 1],
+            ["pubPlusOne", 1],
+            ["extPlusOne", 1]
+        ];
+
+        for (const [name, expCount] of tests) {
+            const res = resolveAny(name, foo, "0.8.13");
+            expect(res.size).toEqual(expCount);
+        }
+    });
+
+    it(`With ignoreVisiblity`, async () => {
+        const tests: Array<[string, number]> = [
+            ["privX", 1],
+            ["intX", 1],
+            ["pubX", 1],
+            ["privPlusOne", 1],
+            ["intPlusOne", 1],
+            ["pubPlusOne", 1],
+            ["extPlusOne", 1]
+        ];
+
+        for (const [name, expCount] of tests) {
+            const res = resolveAny(name, foo, "0.8.13", false, true);
+            expect(res.size).toEqual(expCount);
+        }
+    });
 });
