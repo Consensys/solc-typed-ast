@@ -33,7 +33,7 @@ export class Return extends Statement {
     }
 
     get children(): readonly ASTNode[] {
-        return this.pickNodes(this.vExpression);
+        return this.pickNodes(this.documentation, this.vExpression);
     }
 
     /**

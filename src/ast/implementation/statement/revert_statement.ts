@@ -24,6 +24,6 @@ export class RevertStatement extends Statement {
     }
 
     get children(): readonly ASTNode[] {
-        return this.pickNodes(this.errorCall);
+        return this.pickNodes(this.documentation, this.errorCall);
     }
 }

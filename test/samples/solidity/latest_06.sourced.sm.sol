@@ -214,7 +214,7 @@ contract PublicVarOverride is SomeInterface {
 // Mapping#23 (409:22:0) -> 241:22:0
 // VariableDeclaration#24 (409:24:0) -> 241:24:0
 // StructDefinition#25 (288:148:0) -> 120:148:0
-// StructuredDocumentation#26 (438:65:0) -> 270:65:0
+// StructuredDocumentation#26 (438:65:0) -> 270:64:0
 // ElementaryTypeName#27 (569:3:0) -> 401:3:0
 // VariableDeclaration#28 (569:8:0) -> 401:8:0
 // ElementaryTypeName#29 (579:4:0) -> 411:4:0
@@ -231,7 +231,7 @@ contract PublicVarOverride is SomeInterface {
 // Block#40 (610:37:0) -> 442:37:0
 // FunctionDefinition#41 (531:116:0) -> 363:116:0
 // ContractDefinition#42 (503:146:0) -> 335:146:0
-// StructuredDocumentation#43 (651:74:0) -> 483:74:0
+// StructuredDocumentation#43 (651:74:0) -> 483:73:0
 // ElementaryTypeName#44 (774:6:0) -> 606:6:0
 // VariableDeclaration#45 (774:17:0) -> 606:17:0
 // ParameterList#46 (773:19:0) -> 605:19:0
@@ -242,7 +242,7 @@ contract PublicVarOverride is SomeInterface {
 // ContractDefinition#51 (725:102:0) -> 557:102:0
 // ElementaryTypeName#52 (868:3:0) -> 700:3:0
 // VariableDeclaration#53 (868:17:0) -> 700:17:0
-// StructuredDocumentation#54 (892:36:0) -> 724:40:0
+// StructuredDocumentation#54 (892:36:0) -> 724:35:0
 // ElementaryTypeName#55 (954:3:0) -> 785:3:0
 // VariableDeclaration#56 (954:5:0) -> 785:5:0
 // ParameterList#57 (953:7:0) -> 784:7:0
@@ -264,7 +264,7 @@ contract PublicVarOverride is SomeInterface {
 // ParameterList#74 (1090:17:0) -> 921:17:0
 // FunctionDefinition#75 (1032:76:0) -> 863:76:0
 // ContractDefinition#76 (829:281:0) -> 661:280:0
-// StructuredDocumentation#77 (1112:36:0) -> 943:37:0
+// StructuredDocumentation#77 (1112:36:0) -> 943:36:0
 // ContractDefinition#78 (1148:17:0) -> 980:17:0
 // ParameterList#79 (1206:2:0) -> 1038:2:0
 // Block#81 (1224:2:0) -> 1056:2:0
@@ -273,7 +273,7 @@ contract PublicVarOverride is SomeInterface {
 // UserDefinedTypeName#84 (1253:14:0) -> 1085:14:0
 // Literal#85 (1268:1:0) -> 1100:1:0
 // InheritanceSpecifier#86 (1253:17:0) -> 1085:17:0
-// StructuredDocumentation#87 (1277:38:0) -> 1109:43:0
+// StructuredDocumentation#87 (1277:38:0) -> 1109:38:0
 // ElementaryTypeName#88 (1332:7:0) -> 1164:7:0
 // VariableDeclaration#89 (1332:14:0) -> 1164:14:0
 // ElementaryTypeName#90 (1348:6:0) -> 1180:6:0
@@ -291,7 +291,7 @@ contract PublicVarOverride is SomeInterface {
 // ElementaryTypeName#102 (1499:4:0) -> 1331:4:0
 // ArrayTypeName#103 (1499:6:0) -> 1331:6:0
 // VariableDeclaration#104 (1499:20:0) -> 1331:20:0
-// StructuredDocumentation#105 (1526:47:0) -> 1358:51:0
+// StructuredDocumentation#105 (1526:47:0) -> 1358:46:0
 // ElementaryTypeName#106 (1599:3:0) -> 1430:3:0
 // VariableDeclaration#107 (1599:5:0) -> 1430:5:0
 // ParameterList#108 (1598:7:0) -> 1429:7:0
@@ -303,7 +303,7 @@ contract PublicVarOverride is SomeInterface {
 // ExpressionStatement#114 (1636:9:0) -> 1467:9:0
 // Block#115 (1615:37:0) -> 1446:37:0
 // ModifierDefinition#116 (1578:74:0) -> 1409:74:0
-// StructuredDocumentation#117 (1658:89:0) -> 1489:94:0
+// StructuredDocumentation#117 (1658:89:0) -> 1489:89:0
 // ParameterList#118 (1783:2:0) -> 1614:2:0
 // Identifier#119 (1796:7:0) -> 1627:7:0
 // Identifier#120 (1804:4:0) -> 1635:4:0
@@ -400,7 +400,7 @@ contract PublicVarOverride is SomeInterface {
 // ExpressionStatement#214 (2504:105:0) -> 2335:105:0
 // Block#215 (2225:391:0) -> 2056:391:0
 // FunctionDefinition#216 (2196:420:0) -> 2027:420:0
-// StructuredDocumentation#217 (2622:26:0) -> 2453:31:0
+// StructuredDocumentation#217 (2622:26:0) -> 2453:26:0
 // ParameterList#218 (2677:2:0) -> 2508:2:0
 // ElementaryTypeName#219 (2701:6:0) -> 2532:6:0
 // VariableDeclaration#220 (2701:6:0) -> 2532:6:0
@@ -412,7 +412,7 @@ contract PublicVarOverride is SomeInterface {
 // Return#226 (2719:40:0) -> 2550:40:0
 // Block#227 (2709:57:0) -> 2540:57:0
 // FunctionDefinition#228 (2653:113:0) -> 2484:113:0
-// StructuredDocumentation#229 (2772:31:0) -> 2603:36:0
+// StructuredDocumentation#229 (2772:31:0) -> 2603:31:0
 // ParameterList#230 (2827:2:0) -> 2658:2:0
 // ElementaryTypeName#232 (2853:4:0) -> 2684:4:0
 // VariableDeclaration#233 (2853:6:0) -> 2684:6:0
@@ -687,7 +687,7 @@ contract PublicVarOverride is SomeInterface {
 // Block#520 (4623:2:0) -> 4454:2:0
 // FunctionDefinition#521 (4603:22:0) -> 4434:22:0
 // ContractDefinition#522 (1230:3397:0) -> 1062:3396:0
-// StructuredDocumentation#523 (4658:29:0) -> 4489:34:0
+// StructuredDocumentation#523 (4658:29:0) -> 4489:29:0
 // ElementaryTypeName#524 (4692:4:0) -> 4523:4:0
 // ArrayTypeName#525 (4692:6:0) -> 4523:6:0
 // VariableDeclaration#526 (4692:22:0) -> 4523:22:0
@@ -813,7 +813,7 @@ contract PublicVarOverride is SomeInterface {
 // ContractDefinition#653 (5496:88:0) -> 5289:88:0
 // UserDefinedTypeName#654 (5616:13:0) -> 5409:13:0
 // InheritanceSpecifier#655 (5616:13:0) -> 5409:13:0
-// StructuredDocumentation#656 (5636:60:0) -> 5429:64:0
+// StructuredDocumentation#656 (5636:60:0) -> 5429:59:0
 // ElementaryTypeName#657 (5701:15:0) -> 5493:15:0
 // OverrideSpecifier#658 (5734:8:0) -> 5526:8:0
 // ElementaryTypeName#659 (5750:7:0) -> 5542:7:0

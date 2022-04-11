@@ -31,6 +31,6 @@ export class DoWhileStatement extends Statement {
     }
 
     get children(): readonly ASTNode[] {
-        return this.pickNodes(this.vCondition, this.vBody);
+        return this.pickNodes(this.documentation, this.vCondition, this.vBody);
     }
 }

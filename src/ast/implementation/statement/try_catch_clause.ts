@@ -39,6 +39,6 @@ export class TryCatchClause extends Statement {
     }
 
     get children(): readonly ASTNode[] {
-        return this.pickNodes(this.vParameters, this.vBlock);
+        return this.pickNodes(this.documentation, this.vParameters, this.vBlock);
     }
 }

@@ -49,6 +49,7 @@ export class ForStatement extends Statement {
 
     get children(): readonly ASTNode[] {
         return this.pickNodes(
+            this.documentation,
             this.vInitializationExpression,
             this.vCondition,
             this.vLoopExpression,

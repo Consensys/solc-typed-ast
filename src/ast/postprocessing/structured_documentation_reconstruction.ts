@@ -1,4 +1,4 @@
-import { ASTNode } from "../ast_node";
+import { ASTNode, ASTNodeWithChildren } from "../ast_node";
 import { ASTContext, ASTNodePostprocessor } from "../ast_reader";
 import {
     ContractDefinition,
@@ -12,9 +12,20 @@ import { SourceUnit } from "../implementation/meta/source_unit";
 import { StructuredDocumentation } from "../implementation/meta/structured_documentation";
 import { Statement, StatementWithChildren } from "../implementation/statement/statement";
 
+type FragmentCoordinates = [number, number, number];
+
 export class StructuredDocumentationReconstructor {
-    process(node: ASTNode, source: string): StructuredDocumentation | undefined {
-        const [from, to, sourceIndex] = this.getGapInfo(node);
+    /**
+     * Extracts fragment at provided source location,
+     * then tries to find documentation and construct dummy `StructuredDocumentation`.
+     * Returns produced `StructuredDocumentation` on success or `undefined`
+     * if documentation was not detected in extracted fragment.
+     */
+    fragmentCoordsToStructDoc(
+        fragmentCoords: FragmentCoordinates,
+        source: string
+    ): StructuredDocumentation | undefined {
+        const [from, to, sourceIndex] = fragmentCoords;
         const fragment = source.slice(from, to);
         const comments = this.extractComments(fragment);
         const docBlock = comments.length > 0 ? this.detectDocumentationBlock(comments) : undefined;
@@ -31,8 +42,9 @@ export class StructuredDocumentationReconstructor {
         return new StructuredDocumentation(0, src, text);
     }
 
-    private getGapInfo(node: ASTNode): [number, number, number] {
+    getPrecedingGapCoordinates(node: ASTNode): FragmentCoordinates {
         const curInfo = node.sourceInfo;
+
         const to = curInfo.offset;
         const sourceIndex = curInfo.sourceIndex;
 
@@ -54,6 +66,27 @@ export class StructuredDocumentationReconstructor {
             const prevInfo = prev.sourceInfo;
 
             from = prevInfo.offset + prevInfo.length;
+        }
+
+        return [from, to, sourceIndex];
+    }
+
+    getDanglingGapCoordinates(node: ASTNode): FragmentCoordinates {
+        const curInfo = node.sourceInfo;
+
+        const to = curInfo.offset + curInfo.length;
+        const sourceIndex = curInfo.sourceIndex;
+
+        const lastChild = node.lastChild;
+
+        let from: number;
+
+        if (lastChild === undefined) {
+            from = curInfo.offset;
+        } else {
+            const lastChildInfo = lastChild.sourceInfo;
+
+            from = lastChildInfo.offset + lastChildInfo.length;
         }
 
         return [from, to, sourceIndex];
@@ -86,7 +119,7 @@ export class StructuredDocumentationReconstructor {
                 buffer.push(comment);
 
                 break;
-            } else if (comment.trimLeft().startsWith("///")) {
+            } else if (comment.trimStart().startsWith("///")) {
                 buffer.push(comment);
 
                 stopOnNextGap = true;
@@ -106,7 +139,7 @@ export class StructuredDocumentationReconstructor {
         const lines = docBlock.split("\n");
 
         for (let line of lines) {
-            line = line.trimLeft();
+            line = line.trimStart();
 
             for (const replacer of replacers) {
                 line = line.replace(replacer, "");
@@ -135,7 +168,7 @@ export class StructuredDocumentationReconstructingPostprocessor
     private reconstructor = new StructuredDocumentationReconstructor();
 
     process(node: SupportedNode, context: ASTContext, sources?: Map<string, string>): void {
-        if (node.documentation instanceof StructuredDocumentation || sources === undefined) {
+        if (sources === undefined) {
             return;
         }
 
@@ -146,19 +179,47 @@ export class StructuredDocumentationReconstructingPostprocessor
             return;
         }
 
-        const structDocNode = this.reconstructor.process(node, source);
+        /**
+         * Skip reconstructing preceding strcutured documentation
+         * when related fields is already an instance of StructuredDocumentation.
+         */
+        if (!(node.documentation instanceof StructuredDocumentation)) {
+            const precedingGap = this.reconstructor.getPrecedingGapCoordinates(node);
+            const preceding = this.reconstructor.fragmentCoordsToStructDoc(precedingGap, source);
 
-        if (structDocNode === undefined) {
-            return;
+            if (preceding) {
+                preceding.id = context.lastId + 1;
+
+                context.register(preceding);
+
+                node.documentation = preceding;
+
+                if (preceding.parent !== node) {
+                    preceding.parent = node;
+                }
+            }
         }
 
-        structDocNode.id = context.lastId + 1;
+        /**
+         * Dangling structured documentation can only be located in statements,
+         * that may have nested children (`Block` or `UncheckedBlock`).
+         */
+        if (node instanceof ASTNodeWithChildren) {
+            const danglingGap = this.reconstructor.getDanglingGapCoordinates(node);
+            const dangling = this.reconstructor.fragmentCoordsToStructDoc(danglingGap, source);
 
-        context.register(structDocNode);
+            if (dangling) {
+                dangling.id = context.lastId + 1;
 
-        node.documentation = structDocNode;
+                context.register(dangling);
 
-        structDocNode.parent = node;
+                node.danglingDocumentation = dangling;
+
+                if (dangling.parent !== node) {
+                    dangling.parent = node;
+                }
+            }
+        }
     }
 
     isSupportedNode(node: ASTNode): node is SupportedNode {

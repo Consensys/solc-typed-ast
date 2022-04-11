@@ -16,6 +16,7 @@ import { VariableDeclaration } from "./variable_declaration";
 
 export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
     private docString?: string;
+    private danglingDocString?: string;
 
     /**
      * The contract name
@@ -108,9 +109,21 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
             return this.docString;
         }
 
-        return this.ownChildren.find((node) => node instanceof StructuredDocumentation) as
-            | StructuredDocumentation
-            | undefined;
+        const ownLoc = this.sourceInfo;
+
+        for (let c = 0; c < this.ownChildren.length; c++) {
+            const child = this.ownChildren[c];
+
+            if (child instanceof StructuredDocumentation) {
+                const childLoc = child.sourceInfo;
+
+                if (childLoc.offset <= ownLoc.offset) {
+                    return child;
+                }
+            }
+        }
+
+        return undefined;
     }
 
     set documentation(value: string | StructuredDocumentation | undefined) {
@@ -132,6 +145,57 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
             }
 
             this.docString = value;
+        }
+    }
+    /**
+     * Optional documentation that is dangling in the source fragment,
+     * that is after end of last child and before the end of the current node.
+     *
+     * It is:
+     * - Is `undefined` when not detected.
+     * - Is type of `string` for compatibility reasons.
+     */
+    get danglingDocumentation(): string | StructuredDocumentation | undefined {
+        if (this.danglingDocString !== undefined) {
+            return this.danglingDocString;
+        }
+
+        const ownLoc = this.sourceInfo;
+
+        for (let c = this.ownChildren.length - 1; c >= 0; c--) {
+            const child = this.ownChildren[c];
+
+            if (child instanceof StructuredDocumentation) {
+                const childLoc = child.sourceInfo;
+
+                if (childLoc.offset > ownLoc.offset) {
+                    return child;
+                }
+            }
+        }
+
+        return undefined;
+    }
+
+    set danglingDocumentation(value: string | StructuredDocumentation | undefined) {
+        const old = this.danglingDocumentation;
+
+        if (value instanceof StructuredDocumentation) {
+            this.danglingDocString = undefined;
+
+            if (old instanceof StructuredDocumentation) {
+                if (value !== old) {
+                    this.replaceChild<any, any>(value, old);
+                }
+            } else {
+                this.appendChild(value as any);
+            }
+        } else {
+            if (old instanceof StructuredDocumentation) {
+                this.removeChild(old as any);
+            }
+
+            this.danglingDocString = value;
         }
     }
 

@@ -41,6 +41,7 @@ SourceUnit #146
         context: ASTContext #1000
         parent: SourceUnit #146
         <getter> documentation: undefined
+        <getter> danglingDocumentation: undefined
         <getter> vScope: SourceUnit #146
         <getter> vLinearizedBaseContracts: Array(1) [ ContractDefinition #90 ]
         <getter> vUsedErrors: Array(0)
@@ -265,10 +266,12 @@ SourceUnit #146
             Block #88
                 id: 88
                 src: "0:0:0"
-                documentation: undefined
+                docString: undefined
                 context: ASTContext #1000
                 parent: FunctionDefinition #89
                 <getter> vStatements: Array(1) [ ExpressionStatement #87 ]
+                <getter> documentation: undefined
+                <getter> danglingDocumentation: undefined
                 <getter> children: Array(1) [ ExpressionStatement #87 ]
                 <getter> type: "Block"
                 <getter> firstChild: ExpressionStatement #87
@@ -402,6 +405,7 @@ SourceUnit #146
         context: ASTContext #1000
         parent: SourceUnit #146
         <getter> documentation: undefined
+        <getter> danglingDocumentation: undefined
         <getter> vScope: SourceUnit #146
         <getter> vLinearizedBaseContracts: Array(1) [ ContractDefinition #100 ]
         <getter> vUsedErrors: Array(0)
@@ -638,6 +642,7 @@ SourceUnit #146
         context: ASTContext #1000
         parent: SourceUnit #146
         <getter> documentation: undefined
+        <getter> danglingDocumentation: undefined
         <getter> vScope: SourceUnit #146
         <getter> vLinearizedBaseContracts: Array(2) [ ContractDefinition #145, ContractDefinition #100 ]
         <getter> vUsedErrors: Array(0)
@@ -1073,10 +1078,12 @@ SourceUnit #146
             Block #128
                 id: 128
                 src: "0:0:0"
-                documentation: undefined
+                docString: undefined
                 context: ASTContext #1000
                 parent: FunctionDefinition #129
                 <getter> vStatements: Array(1) [ ExpressionStatement #127 ]
+                <getter> documentation: undefined
+                <getter> danglingDocumentation: undefined
                 <getter> children: Array(1) [ ExpressionStatement #127 ]
                 <getter> type: "Block"
                 <getter> firstChild: ExpressionStatement #127
@@ -1422,10 +1429,12 @@ SourceUnit #146
             Block #143
                 id: 143
                 src: "0:0:0"
-                documentation: undefined
+                docString: undefined
                 context: ASTContext #1000
                 parent: FunctionDefinition #144
                 <getter> vStatements: Array(1) [ Return #142 ]
+                <getter> documentation: undefined
+                <getter> danglingDocumentation: undefined
                 <getter> children: Array(1) [ Return #142 ]
                 <getter> type: "Block"
                 <getter> firstChild: Return #142
