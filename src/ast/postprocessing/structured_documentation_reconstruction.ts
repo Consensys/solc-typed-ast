@@ -1,4 +1,4 @@
-import { ASTNode, ASTNodeWithChildren } from "../ast_node";
+import { ASTNode } from "../ast_node";
 import { ASTContext, ASTNodePostprocessor } from "../ast_reader";
 import {
     ContractDefinition,
@@ -22,10 +22,10 @@ export class StructuredDocumentationReconstructor {
      * if documentation was not detected in extracted fragment.
      */
     fragmentCoordsToStructDoc(
-        fragmentCoords: FragmentCoordinates,
+        coords: FragmentCoordinates,
         source: string
     ): StructuredDocumentation | undefined {
-        const [from, to, sourceIndex] = fragmentCoords;
+        const [from, to, sourceIndex] = coords;
         const fragment = source.slice(from, to);
         const comments = this.extractComments(fragment);
         const docBlock = comments.length > 0 ? this.detectDocumentationBlock(comments) : undefined;
@@ -79,21 +79,21 @@ export class StructuredDocumentationReconstructor {
 
         const lastChild = node.lastChild;
 
-        let from: number;
+        let from = curInfo.offset;
 
-        if (lastChild === undefined) {
-            from = curInfo.offset;
-        } else {
+        if (lastChild) {
             const lastChildInfo = lastChild.sourceInfo;
 
-            from = lastChildInfo.offset + lastChildInfo.length;
+            if (lastChildInfo.offset > curInfo.offset) {
+                from = lastChildInfo.offset + lastChildInfo.length;
+            }
         }
 
         return [from, to, sourceIndex];
     }
 
     private extractComments(fragment: string): string[] {
-        const rx = /(\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|([^\n\r]*\/\/.*[\n\r]+)|[\n\r]/g;
+        const rx = /(\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|([^\n\r]*\/\/.*[\n\r]+)/g;
         const result: string[] = [];
 
         let match = rx.exec(fragment);
@@ -114,12 +114,22 @@ export class StructuredDocumentationReconstructor {
 
         let stopOnNextGap = false;
 
+        const rxRemoveGarbage = /^[^/]+/;
+
         for (const comment of comments) {
-            if (comment.startsWith("/**")) {
+            /**
+             * Remove any leading garbage characters
+             */
+            const cleanComment = comment.replace(rxRemoveGarbage, "");
+
+            /**
+             * Consider if comment is valid single-line or multi-line DocBlock
+             */
+            if (cleanComment.startsWith("/**")) {
                 buffer.push(comment);
 
                 break;
-            } else if (comment.trimStart().startsWith("///")) {
+            } else if (cleanComment.startsWith("///")) {
                 buffer.push(comment);
 
                 stopOnNextGap = true;
@@ -128,7 +138,15 @@ export class StructuredDocumentationReconstructor {
             }
         }
 
-        return buffer.length > 0 ? buffer.reverse().join("").trim() : undefined;
+        if (buffer.length === 0) {
+            return undefined;
+        }
+
+        if (buffer.length > 1) {
+            buffer.reverse();
+        }
+
+        return buffer.join("").trim().replace(rxRemoveGarbage, "");
     }
 
     private extractText(docBlock: string): string {
@@ -202,9 +220,9 @@ export class StructuredDocumentationReconstructingPostprocessor
 
         /**
          * Dangling structured documentation can only be located in statements,
-         * that may have nested children (`Block` or `UncheckedBlock`).
+         * that may have nested children (`StatementWithChildren` or `ContractDefinition`).
          */
-        if (node instanceof ASTNodeWithChildren) {
+        if (node instanceof StatementWithChildren || node instanceof ContractDefinition) {
             const danglingGap = this.reconstructor.getDanglingGapCoordinates(node);
             const dangling = this.reconstructor.fragmentCoordsToStructDoc(danglingGap, source);
 

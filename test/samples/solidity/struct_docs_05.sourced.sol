@@ -11,6 +11,7 @@ contract StmtDocs04 {
     modifier modStructDocs() {
         /// PlaceholderStatement docstring
         _;
+        /// Modifier dangling docstring
     }
 
     function stmtStructDocs() public modStructDocs() {
@@ -19,7 +20,9 @@ contract StmtDocs04 {
         /// ExpressionStatement docstring
         1;
         /// Block docstring
-        {}
+        {
+            /// Block dangling docstring
+        }
         /// EmitStatement docstring
         emit Ev(1);
         /// WhileStatement docstring
@@ -32,6 +35,9 @@ contract StmtDocs04 {
         do {
             /// Break docstring
             break;
+            /// Do-While
+            ///  Dangling
+            ///   Docstring
         } while(true);
         /// ForStatement docstring
         for (/// Init VariableDeclarationStatement docstring
@@ -40,11 +46,20 @@ contract StmtDocs04 {
         {}
         /// IfStatement docstring
         if (false) /// True body Block docstring
-        {} else /// False body Block docstring
-        {}
+        {
+            /// True body dangling docstring
+        } else /// False body Block docstring
+        {
+            /// False body dangling docstring
+        }
         /// InlineAssembly docstring
         assembly { }
         /// Return docstring
         return;
+        /// Function body docstring
     }
+    /// Contract
+    /// 
+    /// Dangling
+    /// Docstring
 }

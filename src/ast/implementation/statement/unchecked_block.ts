@@ -1,3 +1,4 @@
+import { ASTNode } from "../../ast_node";
 import { StructuredDocumentation } from "../meta";
 import { Statement, StatementWithChildren } from "./statement";
 
@@ -5,7 +6,9 @@ import { Statement, StatementWithChildren } from "./statement";
  * UncheckedBlock is a compound statement that indicates
  * the underflow and overflow effects are permitted in math expressions.
  */
-export class UncheckedBlock extends StatementWithChildren<Statement> {
+export class UncheckedBlock extends StatementWithChildren<
+    Statement | StatementWithChildren<ASTNode> | StructuredDocumentation
+> {
     constructor(
         id: number,
         src: string,
@@ -23,7 +26,9 @@ export class UncheckedBlock extends StatementWithChildren<Statement> {
     /**
      * An array of the member statements
      */
-    get vStatements(): Statement[] {
-        return this.ownChildren as Statement[];
+    get vStatements(): Array<Statement | StatementWithChildren<ASTNode>> {
+        return this.ownChildren.filter(
+            (node) => node instanceof Statement || node instanceof StatementWithChildren
+        );
     }
 }
