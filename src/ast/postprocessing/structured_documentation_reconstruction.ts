@@ -93,7 +93,7 @@ export class StructuredDocumentationReconstructor {
     }
 
     private extractComments(fragment: string): string[] {
-        const rx = /(\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|([^\n\r]*\/\/.*[\n\r]+)/g;
+        const rx = /(\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|([^\n\r]*\/\/.*[\n\r]+)|[\n\r]/g;
         const result: string[] = [];
 
         let match = rx.exec(fragment);
@@ -153,7 +153,6 @@ export class StructuredDocumentationReconstructor {
         const result: string[] = [];
 
         const replacers = docBlock.startsWith("///") ? ["/// ", "///"] : ["/**", "*/", "* ", "*"];
-
         const lines = docBlock.split("\n");
 
         for (let line of lines) {
