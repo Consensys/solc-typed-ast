@@ -1,7 +1,7 @@
 import { ASTNode, ASTNodeWithChildren } from "./ast_node";
 import { StructuredDocumentation } from "./implementation/meta";
 
-export interface WithPreceedingDocs {
+export interface WithPrecedingDocs {
     documentation?: string | StructuredDocumentation;
     docString?: string;
 }
@@ -12,7 +12,7 @@ export interface WithDanglingDocs {
 }
 
 export function getDocumentation(
-    node: WithPreceedingDocs & ASTNodeWithChildren<ASTNode>
+    node: WithPrecedingDocs & ASTNodeWithChildren<ASTNode>
 ): string | StructuredDocumentation | undefined {
     if (node.docString !== undefined) {
         return node.docString;
@@ -37,7 +37,7 @@ export function getDocumentation(
 }
 
 export function setDocumentation(
-    node: WithPreceedingDocs & ASTNodeWithChildren<ASTNode>,
+    node: WithPrecedingDocs & ASTNodeWithChildren<ASTNode>,
     value: string | StructuredDocumentation | undefined
 ): void {
     const old = node.documentation;

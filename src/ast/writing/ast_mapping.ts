@@ -212,7 +212,7 @@ function wrapWithParens(
     return desc;
 }
 
-function writePreceedingDocs(
+function writePrecedingDocs(
     documentation: string | StructuredDocumentation | undefined,
     writer: ASTWriter
 ): SrcDesc {
@@ -530,7 +530,7 @@ abstract class SimpleStatementWriter<T extends Statement> extends ASTNodeWriter 
     writeWhole(node: T, writer: ASTWriter): SrcDesc {
         const stmtDesc = super.writeWhole(node, writer);
 
-        stmtDesc.unshift(...writePreceedingDocs(node.documentation, writer));
+        stmtDesc.unshift(...writePrecedingDocs(node.documentation, writer));
         stmtDesc.push(";");
 
         return stmtDesc;
@@ -549,7 +549,7 @@ class ExpressionStatementWriter extends SimpleStatementWriter<ExpressionStatemen
     writeWhole(node: ExpressionStatement, writer: ASTWriter): SrcDesc {
         const stmtDesc: SrcDesc = [[node, this.writeInner(node, writer)]];
 
-        stmtDesc.unshift(...writePreceedingDocs(node.documentation, writer));
+        stmtDesc.unshift(...writePrecedingDocs(node.documentation, writer));
 
         if (!(node.parent instanceof ForStatement && node.parent.vLoopExpression === node)) {
             stmtDesc.push(";");
@@ -625,7 +625,7 @@ abstract class CompoundStatementWriter<
 
         pushSemicolonsDown(stmtDesc);
 
-        return writePreceedingDocs(node.documentation, writer).concat(
+        return writePrecedingDocs(node.documentation, writer).concat(
             wrapCompoundStatement(node, stmtDesc)
         );
     }
@@ -747,7 +747,7 @@ class InlineAssemblyWriter extends ASTNodeWriter {
 
     writeWhole(node: InlineAssembly, writer: ASTWriter): SrcDesc {
         return [
-            ...writePreceedingDocs(node.documentation, writer),
+            ...writePrecedingDocs(node.documentation, writer),
             [node, this.writeInner(node, writer)]
         ];
     }
@@ -779,7 +779,7 @@ class TryCatchClauseWriter extends ASTNodeWriter {
 
     writeWhole(node: TryCatchClause, writer: ASTWriter): SrcDesc {
         return [
-            ...writePreceedingDocs(node.documentation, writer),
+            ...writePrecedingDocs(node.documentation, writer),
             [node, this.writeInner(node, writer)]
         ];
     }
@@ -792,7 +792,7 @@ class TryStatementWriter extends ASTNodeWriter {
 
     writeWhole(node: TryStatement, writer: ASTWriter): SrcDesc {
         return [
-            ...writePreceedingDocs(node.documentation, writer),
+            ...writePrecedingDocs(node.documentation, writer),
             [node, this.writeInner(node, writer)]
         ];
     }
@@ -811,7 +811,7 @@ class VariableDeclarationWriter extends ASTNodeWriter {
 
     writeWhole(node: VariableDeclaration, writer: ASTWriter): SrcDesc {
         return [
-            ...writePreceedingDocs(node.documentation, writer),
+            ...writePrecedingDocs(node.documentation, writer),
             [node, this.writeInner(node, writer)]
         ];
     }
@@ -925,7 +925,7 @@ class BlockWriter extends ASTNodeWriter {
 
     writeWhole(node: Block, writer: ASTWriter): SrcDesc {
         return [
-            ...writePreceedingDocs(node.documentation, writer),
+            ...writePrecedingDocs(node.documentation, writer),
             [node, this.writeInner(node, writer)]
         ];
     }
@@ -968,7 +968,7 @@ class UncheckedBlockWriter extends ASTNodeWriter {
 
     writeWhole(node: UncheckedBlock, writer: ASTWriter): SrcDesc {
         return [
-            ...writePreceedingDocs(node.documentation, writer),
+            ...writePrecedingDocs(node.documentation, writer),
             [node, this.writeInner(node, writer)]
         ];
     }
@@ -981,7 +981,7 @@ class ErrorDefinitionWriter extends ASTNodeWriter {
 
     writeWhole(node: ErrorDefinition, writer: ASTWriter): SrcDesc {
         return [
-            ...writePreceedingDocs(node.documentation, writer),
+            ...writePrecedingDocs(node.documentation, writer),
             [node, this.writeInner(node, writer)]
         ];
     }
@@ -1000,7 +1000,7 @@ class EventDefinitionWriter extends ASTNodeWriter {
 
     writeWhole(node: EventDefinition, writer: ASTWriter): SrcDesc {
         return [
-            ...writePreceedingDocs(node.documentation, writer),
+            ...writePrecedingDocs(node.documentation, writer),
             [node, this.writeInner(node, writer)]
         ];
     }
@@ -1065,7 +1065,7 @@ class ModifierDefinitionWriter extends ASTNodeWriter {
 
     writeWhole(node: ModifierDefinition, writer: ASTWriter): SrcDesc {
         return [
-            ...writePreceedingDocs(node.documentation, writer),
+            ...writePrecedingDocs(node.documentation, writer),
             [node, this.writeInner(node, writer)]
         ];
     }
@@ -1104,7 +1104,7 @@ class FunctionDefinitionWriter extends ASTNodeWriter {
 
     writeWhole(node: FunctionDefinition, writer: ASTWriter): SrcDesc {
         return [
-            ...writePreceedingDocs(node.documentation, writer),
+            ...writePrecedingDocs(node.documentation, writer),
             [node, this.writeInner(node, writer)]
         ];
     }
@@ -1233,7 +1233,7 @@ class ContractDefinitionWriter extends ASTNodeWriter {
 
     writeWhole(node: ContractDefinition, writer: ASTWriter): SrcDesc {
         return [
-            ...writePreceedingDocs(node.documentation, writer),
+            ...writePrecedingDocs(node.documentation, writer),
             [node, this.writeInner(node, writer)]
         ];
     }

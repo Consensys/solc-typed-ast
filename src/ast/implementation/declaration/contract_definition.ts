@@ -7,7 +7,7 @@ import {
     setDanglingDocumentation,
     setDocumentation,
     WithDanglingDocs,
-    WithPreceedingDocs
+    WithPrecedingDocs
 } from "../../documentation";
 import { InheritanceSpecifier } from "../meta/inheritance_specifier";
 import { SourceUnit } from "../meta/source_unit";
@@ -24,7 +24,7 @@ import { VariableDeclaration } from "./variable_declaration";
 
 export class ContractDefinition
     extends ASTNodeWithChildren<ASTNode>
-    implements WithPreceedingDocs, WithDanglingDocs
+    implements WithPrecedingDocs, WithDanglingDocs
 {
     docString?: string;
     danglingDocString?: string;

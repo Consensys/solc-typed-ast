@@ -5,7 +5,7 @@ import {
     setDanglingDocumentation,
     setDocumentation,
     WithDanglingDocs,
-    WithPreceedingDocs
+    WithPrecedingDocs
 } from "../../documentation";
 import { StructuredDocumentation } from "../meta";
 
@@ -35,7 +35,7 @@ export class Statement extends ASTNode {
 
 export class StatementWithChildren<T extends ASTNode>
     extends ASTNodeWithChildren<T>
-    implements WithPreceedingDocs, WithDanglingDocs
+    implements WithPrecedingDocs, WithDanglingDocs
 {
     docString?: string;
     danglingDocString?: string;
