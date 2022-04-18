@@ -114,13 +114,27 @@ export class StructuredDocumentationReconstructor {
 
         let stopOnNextGap = false;
 
-        const rxRemoveGarbage = /^[^/]+/;
+        const rxCleanBeforeSlash = /^[^/]+/;
 
         for (const comment of comments) {
             /**
-             * Remove any leading garbage characters
+             * Remove ANY leading characters before first `/` character.
+             *
+             * This is mostly actual for dangling documentation candidates,
+             * as their source range starts from very beginnig of parent node.
+             * This leads to an effect that part of parent source symbols are
+             * preceding the `///` or `/**`. Skip them for detection reasons.
+             *
+             * Consider following example:
+             * ```
+             * unchecked {
+             *     /// dangling
+             * }
+             * ```
+             * Source range would include the `unchecked {` part,
+             * however interesting part for us starts only since `///`.
              */
-            const cleanComment = comment.replace(rxRemoveGarbage, "");
+            const cleanComment = comment.replace(rxCleanBeforeSlash, "");
 
             /**
              * Consider if comment is valid single-line or multi-line DocBlock
@@ -146,7 +160,27 @@ export class StructuredDocumentationReconstructor {
             buffer.reverse();
         }
 
-        return buffer.join("").trim().replace(rxRemoveGarbage, "");
+        /**
+         * When joining back DocBlock, remove leading garbage characters again,
+         * but only before first `/` (not in each line, like before).
+         *
+         * Need to preserve whitespace charactes in multiline comments like
+         * ```
+         * {
+         *      /// A
+         *          /// B
+         *              /// C
+         * }
+         * ```
+         * to have following result
+         * ```
+         * /// A
+         *          /// B
+         *              /// C
+         * ```
+         * NOTE that this is affecting documentation node source range.
+         */
+        return buffer.join("").trim().replace(rxCleanBeforeSlash, "");
     }
 
     private extractText(docBlock: string): string {
@@ -211,9 +245,7 @@ export class StructuredDocumentationReconstructingPostprocessor
 
                 node.documentation = preceding;
 
-                if (preceding.parent !== node) {
-                    preceding.parent = node;
-                }
+                preceding.parent = node;
             }
         }
 
@@ -232,9 +264,7 @@ export class StructuredDocumentationReconstructingPostprocessor
 
                 node.danglingDocumentation = dangling;
 
-                if (dangling.parent !== node) {
-                    dangling.parent = node;
-                }
+                dangling.parent = node;
             }
         }
     }

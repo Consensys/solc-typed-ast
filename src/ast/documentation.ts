@@ -3,11 +3,21 @@ import { StructuredDocumentation } from "./implementation/meta";
 
 export interface WithPrecedingDocs {
     documentation?: string | StructuredDocumentation;
+
+    /**
+     * This field is used as a storage field for string,
+     * if string is set as value for `documentation`.
+     */
     docString?: string;
 }
 
 export interface WithDanglingDocs {
     danglingDocumentation?: string | StructuredDocumentation;
+
+    /**
+     * This field is used as a storage field for string,
+     * if string is set as value for `danglingDocumentation`.
+     */
     danglingDocString?: string;
 }
 
@@ -27,6 +37,10 @@ export function getDocumentation(
         if (child instanceof StructuredDocumentation) {
             const childLoc = child.sourceInfo;
 
+            /**
+             * Note that preceding documentation nodes are
+             * EXCLUDED from source range of parent node.
+             */
             if (childLoc.offset <= ownLoc.offset) {
                 return child;
             }
@@ -77,6 +91,10 @@ export function getDanglingDocumentation(
         if (child instanceof StructuredDocumentation) {
             const childLoc = child.sourceInfo;
 
+            /**
+             * Note that preceding documentation nodes are
+             * INCLUDED from source range of parent node.
+             */
             if (childLoc.offset > ownLoc.offset) {
                 return child;
             }
