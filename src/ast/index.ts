@@ -8,6 +8,7 @@ export * from "./ast_node_formatter";
 export * from "./ast_node";
 export * from "./ast_reader";
 export * from "./constants";
+export * from "./documentation";
 export * from "./postprocessing";
 export * from "./writing";
 export * from "./dispatch";

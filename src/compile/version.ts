@@ -50,7 +50,7 @@ export function normalizeSpecifier(specifier: string): string {
         .replace(rx.space, "")
         .replace(rx.operator, " $1")
         .replace(rx.spaceDash, "$1 ")
-        .trimLeft();
+        .trimStart();
 }
 
 export function extractSpecifiersFromSource(source: string): string[] {

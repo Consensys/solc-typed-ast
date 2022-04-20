@@ -24,6 +24,6 @@ export class EmitStatement extends Statement {
     }
 
     get children(): readonly ASTNode[] {
-        return this.pickNodes(this.vEventCall);
+        return this.pickNodes(this.documentation, this.vEventCall);
     }
 }

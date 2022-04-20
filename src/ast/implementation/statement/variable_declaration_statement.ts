@@ -41,6 +41,6 @@ export class VariableDeclarationStatement extends Statement {
     }
 
     get children(): readonly ASTNode[] {
-        return this.pickNodes(this.vDeclarations, this.vInitialValue);
+        return this.pickNodes(this.documentation, this.vDeclarations, this.vInitialValue);
     }
 }

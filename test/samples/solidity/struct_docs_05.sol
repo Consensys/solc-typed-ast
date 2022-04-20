@@ -9,7 +9,7 @@ contract StmtDocs04 {
 
     modifier modStructDocs() {
         /// PlaceholderStatement docstring
-        _;
+        _; /// Modifier dangling docstring
     }
 
     function stmtStructDocs() modStructDocs() public {
@@ -20,7 +20,9 @@ contract StmtDocs04 {
         1;
 
         /// Block docstring
-        {}
+        {
+            /// Block dangling docstring
+        }
 
         /// EmitStatement docstring
         emit Ev(1);
@@ -39,6 +41,10 @@ contract StmtDocs04 {
         {
             /// Break docstring
             break;
+
+            /// Do-While
+            ///  Dangling
+            ///   Docstring
         }
         while(true);
 
@@ -57,17 +63,25 @@ contract StmtDocs04 {
         /// IfStatement docstring
         if (false)
         /// True body Block docstring
-        {}
+        { /// True body dangling docstring
+        }
         else
         /// False body Block docstring
-        {}
+        { /**False body dangling docstring*/ }
 
         /// InlineAssembly docstring
         assembly {}
 
-
         /// Return docstring
         return;
-    }
-}
 
+        /**
+         * Function body docstring
+         */
+    }
+
+    /// Contract
+
+    /// Dangling
+    /// Docstring
+}

@@ -1,6 +1,14 @@
 import { ABIEncoderVersion } from "../../../types/abi";
 import { ASTNode, ASTNodeWithChildren } from "../../ast_node";
 import { ContractKind, StateVariableVisibility } from "../../constants";
+import {
+    getDanglingDocumentation,
+    getDocumentation,
+    setDanglingDocumentation,
+    setDocumentation,
+    WithDanglingDocs,
+    WithPrecedingDocs
+} from "../../documentation";
 import { InheritanceSpecifier } from "../meta/inheritance_specifier";
 import { SourceUnit } from "../meta/source_unit";
 import { StructuredDocumentation } from "../meta/structured_documentation";
@@ -14,8 +22,12 @@ import { StructDefinition } from "./struct_definition";
 import { UserDefinedValueTypeDefinition } from "./user_defined_value_type_definition";
 import { VariableDeclaration } from "./variable_declaration";
 
-export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
-    private docString?: string;
+export class ContractDefinition
+    extends ASTNodeWithChildren<ASTNode>
+    implements WithPrecedingDocs, WithDanglingDocs
+{
+    docString?: string;
+    danglingDocString?: string;
 
     /**
      * The contract name
@@ -104,35 +116,27 @@ export class ContractDefinition extends ASTNodeWithChildren<ASTNode> {
      * - Is instance of `StructuredDocumentation` when specified and compiler version is `0.6.3` or newer.
      */
     get documentation(): string | StructuredDocumentation | undefined {
-        if (this.docString !== undefined) {
-            return this.docString;
-        }
-
-        return this.ownChildren.find((node) => node instanceof StructuredDocumentation) as
-            | StructuredDocumentation
-            | undefined;
+        return getDocumentation(this);
     }
 
     set documentation(value: string | StructuredDocumentation | undefined) {
-        const old = this.documentation;
+        setDocumentation(this, value);
+    }
 
-        if (value instanceof StructuredDocumentation) {
-            this.docString = undefined;
+    /**
+     * Optional documentation that is dangling in the source fragment,
+     * that is after end of last child and before the end of the current node.
+     *
+     * It is:
+     * - Is `undefined` when not detected.
+     * - Is type of `string` for compatibility reasons.
+     */
+    get danglingDocumentation(): string | StructuredDocumentation | undefined {
+        return getDanglingDocumentation(this);
+    }
 
-            if (old instanceof StructuredDocumentation) {
-                if (value !== old) {
-                    this.replaceChild(value, old);
-                }
-            } else {
-                this.insertAtBeginning(value);
-            }
-        } else {
-            if (old instanceof StructuredDocumentation) {
-                this.removeChild(old);
-            }
-
-            this.docString = value;
-        }
+    set danglingDocumentation(value: string | StructuredDocumentation | undefined) {
+        setDanglingDocumentation(this, value);
     }
 
     /**

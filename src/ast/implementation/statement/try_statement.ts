@@ -32,6 +32,6 @@ export class TryStatement extends Statement {
     }
 
     get children(): readonly ASTNode[] {
-        return this.pickNodes(this.vExternalCall, this.vClauses);
+        return this.pickNodes(this.documentation, this.vExternalCall, this.vClauses);
     }
 }

@@ -38,6 +38,6 @@ export class IfStatement extends Statement {
     }
 
     get children(): readonly ASTNode[] {
-        return this.pickNodes(this.vCondition, this.vTrueBody, this.vFalseBody);
+        return this.pickNodes(this.documentation, this.vCondition, this.vTrueBody, this.vFalseBody);
     }
 }

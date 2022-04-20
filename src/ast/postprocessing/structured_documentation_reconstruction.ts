@@ -12,9 +12,20 @@ import { SourceUnit } from "../implementation/meta/source_unit";
 import { StructuredDocumentation } from "../implementation/meta/structured_documentation";
 import { Statement, StatementWithChildren } from "../implementation/statement/statement";
 
+type FragmentCoordinates = [number, number, number];
+
 export class StructuredDocumentationReconstructor {
-    process(node: ASTNode, source: string): StructuredDocumentation | undefined {
-        const [from, to, sourceIndex] = this.getGapInfo(node);
+    /**
+     * Extracts fragment at provided source location,
+     * then tries to find documentation and construct dummy `StructuredDocumentation`.
+     * Returns produced `StructuredDocumentation` on success or `undefined`
+     * if documentation was not detected in extracted fragment.
+     */
+    fragmentCoordsToStructDoc(
+        coords: FragmentCoordinates,
+        source: string
+    ): StructuredDocumentation | undefined {
+        const [from, to, sourceIndex] = coords;
         const fragment = source.slice(from, to);
         const comments = this.extractComments(fragment);
         const docBlock = comments.length > 0 ? this.detectDocumentationBlock(comments) : undefined;
@@ -31,8 +42,9 @@ export class StructuredDocumentationReconstructor {
         return new StructuredDocumentation(0, src, text);
     }
 
-    private getGapInfo(node: ASTNode): [number, number, number] {
+    getPrecedingGapCoordinates(node: ASTNode): FragmentCoordinates {
         const curInfo = node.sourceInfo;
+
         const to = curInfo.offset;
         const sourceIndex = curInfo.sourceIndex;
 
@@ -54,6 +66,27 @@ export class StructuredDocumentationReconstructor {
             const prevInfo = prev.sourceInfo;
 
             from = prevInfo.offset + prevInfo.length;
+        }
+
+        return [from, to, sourceIndex];
+    }
+
+    getDanglingGapCoordinates(node: ASTNode): FragmentCoordinates {
+        const curInfo = node.sourceInfo;
+
+        const to = curInfo.offset + curInfo.length;
+        const sourceIndex = curInfo.sourceIndex;
+
+        const lastChild = node.lastChild;
+
+        let from = curInfo.offset;
+
+        if (lastChild) {
+            const lastChildInfo = lastChild.sourceInfo;
+
+            if (lastChildInfo.offset > curInfo.offset) {
+                from = lastChildInfo.offset + lastChildInfo.length;
+            }
         }
 
         return [from, to, sourceIndex];
@@ -81,12 +114,36 @@ export class StructuredDocumentationReconstructor {
 
         let stopOnNextGap = false;
 
+        const rxCleanBeforeSlash = /^[^/]+/;
+
         for (const comment of comments) {
-            if (comment.startsWith("/**")) {
+            /**
+             * Remove ANY leading characters before first `/` character.
+             *
+             * This is mostly actual for dangling documentation candidates,
+             * as their source range starts from very beginnig of parent node.
+             * This leads to an effect that part of parent source symbols are
+             * preceding the `///` or `/**`. Skip them for detection reasons.
+             *
+             * Consider following example:
+             * ```
+             * unchecked {
+             *     /// dangling
+             * }
+             * ```
+             * Source range would include the `unchecked {` part,
+             * however interesting part for us starts only since `///`.
+             */
+            const cleanComment = comment.replace(rxCleanBeforeSlash, "");
+
+            /**
+             * Consider if comment is valid single-line or multi-line DocBlock
+             */
+            if (cleanComment.startsWith("/**")) {
                 buffer.push(comment);
 
                 break;
-            } else if (comment.trimLeft().startsWith("///")) {
+            } else if (cleanComment.startsWith("///")) {
                 buffer.push(comment);
 
                 stopOnNextGap = true;
@@ -95,18 +152,45 @@ export class StructuredDocumentationReconstructor {
             }
         }
 
-        return buffer.length > 0 ? buffer.reverse().join("").trim() : undefined;
+        if (buffer.length === 0) {
+            return undefined;
+        }
+
+        if (buffer.length > 1) {
+            buffer.reverse();
+        }
+
+        /**
+         * When joining back DocBlock, remove leading garbage characters again,
+         * but only before first `/` (not in each line, like before).
+         *
+         * Need to preserve whitespace charactes in multiline comments like
+         * ```
+         * {
+         *      /// A
+         *          /// B
+         *              /// C
+         * }
+         * ```
+         * to have following result
+         * ```
+         * /// A
+         *          /// B
+         *              /// C
+         * ```
+         * NOTE that this is affecting documentation node source range.
+         */
+        return buffer.join("").trim().replace(rxCleanBeforeSlash, "");
     }
 
     private extractText(docBlock: string): string {
         const result: string[] = [];
 
         const replacers = docBlock.startsWith("///") ? ["/// ", "///"] : ["/**", "*/", "* ", "*"];
-
         const lines = docBlock.split("\n");
 
         for (let line of lines) {
-            line = line.trimLeft();
+            line = line.trimStart();
 
             for (const replacer of replacers) {
                 line = line.replace(replacer, "");
@@ -135,7 +219,7 @@ export class StructuredDocumentationReconstructingPostprocessor
     private reconstructor = new StructuredDocumentationReconstructor();
 
     process(node: SupportedNode, context: ASTContext, sources?: Map<string, string>): void {
-        if (node.documentation instanceof StructuredDocumentation || sources === undefined) {
+        if (sources === undefined) {
             return;
         }
 
@@ -146,19 +230,43 @@ export class StructuredDocumentationReconstructingPostprocessor
             return;
         }
 
-        const structDocNode = this.reconstructor.process(node, source);
+        /**
+         * Skip reconstructing preceding strcutured documentation
+         * when related fields is already an instance of StructuredDocumentation.
+         */
+        if (!(node.documentation instanceof StructuredDocumentation)) {
+            const precedingGap = this.reconstructor.getPrecedingGapCoordinates(node);
+            const preceding = this.reconstructor.fragmentCoordsToStructDoc(precedingGap, source);
 
-        if (structDocNode === undefined) {
-            return;
+            if (preceding) {
+                preceding.id = context.lastId + 1;
+
+                context.register(preceding);
+
+                node.documentation = preceding;
+
+                preceding.parent = node;
+            }
         }
 
-        structDocNode.id = context.lastId + 1;
+        /**
+         * Dangling structured documentation can only be located in statements,
+         * that may have nested children (`StatementWithChildren` or `ContractDefinition`).
+         */
+        if (node instanceof StatementWithChildren || node instanceof ContractDefinition) {
+            const danglingGap = this.reconstructor.getDanglingGapCoordinates(node);
+            const dangling = this.reconstructor.fragmentCoordsToStructDoc(danglingGap, source);
 
-        context.register(structDocNode);
+            if (dangling) {
+                dangling.id = context.lastId + 1;
 
-        node.documentation = structDocNode;
+                context.register(dangling);
 
-        structDocNode.parent = node;
+                node.danglingDocumentation = dangling;
+
+                dangling.parent = node;
+            }
+        }
     }
 
     isSupportedNode(node: ASTNode): node is SupportedNode {
