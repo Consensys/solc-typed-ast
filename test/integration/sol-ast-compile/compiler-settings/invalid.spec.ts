@@ -6,7 +6,7 @@ const sample = "test/samples/solidity/missing_pragma.sol";
 const badArgsSamples: Array<[string[], string]> = [
     [
         [sample, "--compiler-settings", "{blahblah}"],
-        `Error: Invalid compiler settings '{blahblah}'. Compiler settings must be a valid JSON object.`
+        `Invalid compiler settings '{blahblah}'. Compiler settings must be a valid JSON object`
     ]
 ];
 

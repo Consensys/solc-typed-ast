@@ -9,7 +9,27 @@ export interface ImportResolver {
 }
 
 export class FileSystemResolver implements ImportResolver {
+    basePath?: string;
+    includePaths?: string[];
+
+    constructor(basePath?: string, includePaths?: string[]) {
+        this.basePath = basePath;
+        this.includePaths = includePaths;
+    }
+
     resolve(fileName: string): string | undefined {
+        const prefixes = [this.basePath ? this.basePath : ""].concat(
+            this.includePaths ? this.includePaths : []
+        );
+
+        for (const prefix of prefixes) {
+            const prefixedFileName = prefix ? path.join(prefix, fileName) : fileName;
+
+            if (fse.existsSync(prefixedFileName)) {
+                return prefixedFileName;
+            }
+        }
+
         return fse.existsSync(fileName) ? fileName : undefined;
     }
 }
@@ -17,18 +37,18 @@ export class FileSystemResolver implements ImportResolver {
 export type Remapping = [string, string, string];
 
 export class LocalNpmResolver implements ImportResolver {
-    baseDir?: string;
+    basePath?: string;
     inferedRemappings?: Map<string, Remapping>;
 
-    constructor(baseDir?: string, inferedRemappings?: Map<string, Remapping>) {
-        this.baseDir = baseDir;
+    constructor(basePath?: string, inferedRemappings?: Map<string, Remapping>) {
+        this.basePath = basePath;
         this.inferedRemappings = inferedRemappings;
     }
 
     resolve(fileName: string): string | undefined {
-        assert(this.baseDir !== undefined, "LocalNpmResolver: base directory is not set");
+        assert(this.basePath !== undefined, "LocalNpmResolver: base path is not set");
 
-        let currentDir = this.baseDir;
+        let currentDir = this.basePath;
 
         const normalizedFileName = path.normalize(fileName);
 
@@ -46,8 +66,9 @@ export class LocalNpmResolver implements ImportResolver {
                     const [prefix] = normalizedFileName.split("/");
 
                     /**
-                     * If the normalized paths begins with a proper directory name X (not "." or ".."),
-                     * then we can infer a remapping from X to modulesPath/X/
+                     * If the normalized paths are starting with
+                     * a proper directory name X (not "." or ".."),
+                     * then we can infer a remapping from X to "modulesPath/X/"
                      */
                     if (prefix && prefix !== "." && prefix !== "..") {
                         const remapping: Remapping = ["", prefix, path.join(modulesPath, prefix)];

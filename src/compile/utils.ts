@@ -249,7 +249,7 @@ export async function compileSol(
     for (const fileName of fileNames) {
         const sourceCode = await fse.readFile(fileName, "utf-8");
 
-        npmResolver.baseDir = path.dirname(fileName);
+        npmResolver.basePath = path.dirname(fileName);
 
         files.set(fileName, sourceCode);
 

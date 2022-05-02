@@ -1,6 +1,6 @@
 #!/usr/bin/env node
+import { Command } from "commander";
 import fse from "fs-extra";
-import minimist from "minimist";
 import path from "path";
 import {
     ASTKind,
@@ -41,43 +41,85 @@ enum CompileMode {
 
 const compileModes = Object.values(CompileMode);
 
-const cli = {
-    boolean: [
-        "version",
-        "help",
-        "solidity-versions",
-        "stdin",
-        "raw",
-        "with-sources",
-        "tree",
-        "source",
-        "locate-compiler-cache"
-    ],
-    number: ["depth"],
-    string: [
-        "mode",
-        "compiler-version",
-        "path-remapping",
-        "xpath",
-        "compiler-settings",
-        "compiler-kind"
-    ],
-    default: {
-        depth: Number.MAX_SAFE_INTEGER,
-        mode: CompileMode.Auto,
-        "compiler-version": "auto",
-        "compiler-kind": CompilerKind.WASM
+function terminate(message?: string, exitCode = 0): never {
+    if (message !== undefined) {
+        if (exitCode === 0) {
+            console.log(message);
+        } else {
+            console.error(message);
+        }
     }
-};
 
-(async function () {
-    const args = minimist(process.argv.slice(2), cli);
+    process.exit(exitCode);
+}
 
-    if (args.version) {
-        const { version } = require("../../package.json");
+function error(message: string): never {
+    terminate(message, 1);
+}
 
-        console.log(version);
-    } else if (args["solidity-versions"]) {
+(async () => {
+    const { version } = require("../../package.json");
+
+    const program = new Command();
+
+    program
+        .name("sol-ast-compile")
+        .description("Compiles Solidity input and prints typed AST.")
+        .version(version, "-v, --version", "Print package version.")
+        .helpOption("-h, --help", "Print help message.");
+
+    program.argument(
+        "[file(s)]",
+        "Either one or more Solidity files, one JSON compiler output file."
+    );
+
+    program
+        .option("--solidity-versions", "Print information about supported Solidity versions.")
+        .option("--stdin", "Read input from STDIN instead of files.")
+        .option(
+            "--mode <mode>",
+            `One of the following input modes: ${CompileMode.Sol} (Solidity source), ${CompileMode.Json} (JSON compiler artifact), ${CompileMode.Auto} (try to detect by file extension)`,
+            CompileMode.Auto
+        )
+        .option(
+            "--compiler-version <compilerVersion>",
+            `Solc version to use: ${LatestCompilerVersion} (exact SemVer version specifier), auto (try to detect suitable compiler version)`,
+            "auto"
+        )
+        .option(
+            "--compiler-kind <compilerKind>",
+            `Type of Solidity compiler to use. Currently supported values are ${CompilerKind.WASM} and ${CompilerKind.Native}.`,
+            CompilerKind.WASM
+        )
+        .option("--path-remapping <pathRemapping>", "Path remapping input for Solc.")
+        .option(
+            "--compiler-settings <compilerSettings>",
+            `Additional settings passed to the solc compiler in the form of a JSON string (e.g. '{"optimizer": {"enabled": true, "runs": 200}}'). Note the double quotes. For more details see https://docs.soliditylang.org/en/latest/using-the-compiler.html#input-description.`
+        )
+        .option("--raw", "Print raw Solc compilation output.")
+        .option(
+            "--with-sources",
+            'When used with "raw", adds "source" property with source files content to the compiler artifact.'
+        )
+        .option("--tree", "Print short tree of parent-child relations in AST.")
+        .option("--source", "Print source code, assembled from Solc-generated AST.")
+        .option("--xpath <xpath>", "XPath selector to perform for each source unit.")
+        .option(
+            "--depth <depth>",
+            'Number of children for each of AST node to print. Minimum value is 0. Not affects "raw", "tree" and "source".',
+            `${Number.MAX_SAFE_INTEGER}`
+        )
+        .option(
+            "--locate-compiler-cache",
+            "Print location of cache directory, that is used to store downloaded compilers."
+        );
+
+    program.parse(process.argv);
+
+    const args = program.args;
+    const options = program.opts();
+
+    if (options.solidityVersions) {
         const message = [
             "Latest supported version: " + LatestCompilerVersion,
             "",
@@ -85,346 +127,302 @@ const cli = {
             ...CompilerVersions
         ].join("\n");
 
-        console.log(message);
-    } else if (args["locate-compiler-cache"]) {
-        console.log(CACHE_DIR);
-    } else if (args.help || (!args._.length && !args.stdin)) {
-        const message = `Compiles Solidity input and prints typed AST.
+        terminate(message);
+    }
 
-USAGE:
+    if (options.locateCompilerCache) {
+        terminate(CACHE_DIR);
+    }
 
-$ sol-ast-compile <filename>
+    if (options.help || (!args.length && !options.stdin)) {
+        terminate(program.helpInformation());
+    }
 
-OPTIONS:
-    --help                  Print help message.
-    --version               Print package version.
-    --solidity-versions     Print information about supported Solidity versions.
-    --stdin                 Read input from STDIN instead of files.
-                            Requires "mode" to be explicitly set to "${CompileMode.Sol}" or "${CompileMode.Json}".
-    --mode                  One of the following input types:
-                                - ${CompileMode.Sol} (Solidity source)
-                                - ${CompileMode.Json} (JSON compiler artifact)
-                                - ${CompileMode.Auto} (try to detect by file extension)
-                            Default value: ${cli.default.mode}
-    --compiler-version      Solc version to use:
-                                - ${LatestCompilerVersion} (exact SemVer version specifier)
-                                - auto (try to detect suitable compiler version)
-                            Default value: ${cli.default["compiler-version"]}
-    --compiler-kind         What type of Solidity compiler to use. Currently supported values are 'wasm' and 'native'.
-                            Default value: ${cli.default["compiler-kind"]}
-    --path-remapping        Path remapping input for Solc.
-    --compiler-settings     Additional settings passed to the solc compiler in the form of a
-                            JSON string (e.g. '{"optimizer": {"enabled": true, "runs": 200}}').
-                            Note the double quotes. For more details see https://docs.soliditylang.org/en/latest/using-the-compiler.html#input-description.
-    --raw                   Print raw Solc compilation output.
-    --with-sources          When used with "raw", adds "source" property with 
-                            source files content to the compiler artifact.
-    --tree                  Print short tree of parent-child relations in AST.
-    --source                Print source code, assembled from Solc-generated AST.
-    --xpath                 XPath selector to perform for each source unit.
-    --depth                 Number of children for each of AST node to print.
-                            Minimum value is 0. Not affects "raw", "tree" and "source".
-                            Default value: ${cli.default.depth}
-    --locate-compiler-cache Print location of cache directory, that is used to store downloaded compilers.
-`;
+    const stdin: boolean = options.stdin;
+    const mode: CompileMode = options.mode;
+    const compilerKind: CompilerKind = options.compilerKind;
 
-        console.log(message);
-    } else {
-        const stdin: boolean = args.stdin;
-        const mode: CompileMode = args.mode;
-        const compilerKind: CompilerKind = args["compiler-kind"];
+    if (!PossibleCompilerKinds.has(compilerKind)) {
+        error(
+            `Invalid compiler kind "${compilerKind}". Possible values: ${[
+                ...PossibleCompilerKinds.values()
+            ].join(", ")}.`
+        );
+    }
 
-        if (!PossibleCompilerKinds.has(compilerKind)) {
-            throw new Error(
-                `Invalid compiler kind "${compilerKind}". Possible values: ${[
-                    ...PossibleCompilerKinds.values()
-                ].join(", ")}.`
+    if (!compileModes.includes(mode)) {
+        error(`Invalid mode "${mode}". Possible values: ${compileModes.join(", ")}.`);
+    }
+
+    const compilerVersion: string = options.compilerVersion;
+
+    if (!(compilerVersion === "auto" || isExact(compilerVersion))) {
+        const message = [
+            `Invalid compiler version "${compilerVersion}".`,
+            'Possible values: "auto" or exact version string.'
+        ].join(" ");
+
+        error(message);
+    }
+
+    const pathRemapping: string[] = options.pathRemapping ? options.pathRemapping.split(";") : [];
+
+    let compilerSettings: any = undefined;
+
+    if (options.compilerSettings) {
+        try {
+            compilerSettings = JSON.parse(options.compilerSettings);
+        } catch (e) {
+            error(
+                `Invalid compiler settings '${options.compilerSettings}'. Compiler settings must be a valid JSON object (${e}).`
             );
         }
+    }
 
-        if (!compileModes.includes(mode)) {
-            throw new Error(`Invalid mode "${mode}". Possible values: ${compileModes.join(", ")}.`);
-        }
+    const compilationOutput: CompilationOutput[] = [CompilationOutput.ALL];
 
-        const compilerVersion: string = args["compiler-version"];
+    let result: CompileResult;
 
-        if (!(compilerVersion === "auto" || isExact(compilerVersion))) {
-            const message = [
-                `Invalid compiler version "${compilerVersion}".`,
-                'Possible values: "auto" or exact version string.'
-            ].join(" ");
-
-            throw new Error(message);
-        }
-
-        const pathRemapping: string[] = args["path-remapping"]
-            ? args["path-remapping"].split(";")
-            : [];
-
-        let compilerSettings: any = undefined;
-
-        if (args["compiler-settings"]) {
-            try {
-                compilerSettings = JSON.parse(args["compiler-settings"]);
-            } catch (e) {
-                throw new Error(
-                    `Invalid compiler settings '${args["compiler-settings"]}'. Compiler settings must be a valid JSON object.(${e})`
+    try {
+        if (stdin) {
+            if (mode === "auto") {
+                error(
+                    'Mode "auto" is not supported for the input from STDIN. Explicitly specify "mode" as "sol" or "json" instead.'
                 );
             }
-        }
 
-        const compilationOutput: CompilationOutput[] = [CompilationOutput.ALL];
+            const fileName = "stdin";
+            const content = await fse.readFile(0, { encoding: "utf-8" });
 
-        let result: CompileResult;
+            result =
+                mode === "json"
+                    ? await compileJsonData(
+                          fileName,
+                          JSON.parse(content),
+                          compilerVersion,
+                          compilationOutput,
+                          compilerSettings,
+                          compilerKind
+                      )
+                    : await compileSourceString(
+                          fileName,
+                          content,
+                          compilerVersion,
+                          pathRemapping,
+                          compilationOutput,
+                          compilerSettings,
+                          compilerKind
+                      );
+        } else {
+            const fileNames = args.map((fileName) => path.resolve(fileName));
+            const singleFileName = fileNames[0];
+            const iSingleFileName = singleFileName.toLowerCase();
 
-        try {
-            if (stdin) {
-                if (mode === "auto") {
-                    throw new Error(
-                        'Mode "auto" is not supported for the input from STDIN. Explicitly specify "mode" as "sol" or "json" instead.'
-                    );
-                }
+            let isSol: boolean;
+            let isJson: boolean;
 
-                const fileName = "stdin";
-                const content = await fse.readFile(0, { encoding: "utf-8" });
-
-                result =
-                    mode === "json"
-                        ? await compileJsonData(
-                              fileName,
-                              JSON.parse(content),
-                              compilerVersion,
-                              compilationOutput,
-                              compilerSettings,
-                              compilerKind
-                          )
-                        : await compileSourceString(
-                              fileName,
-                              content,
-                              compilerVersion,
-                              pathRemapping,
-                              compilationOutput,
-                              compilerSettings,
-                              compilerKind
-                          );
+            if (mode === "auto") {
+                isSol = iSingleFileName.endsWith(".sol");
+                isJson = iSingleFileName.endsWith(".json");
             } else {
-                const fileNames = args._.map((fileName) => path.resolve(fileName));
-                const singleFileName = fileNames[0];
-                const iSingleFileName = singleFileName.toLowerCase();
-
-                let isSol: boolean;
-                let isJson: boolean;
-
-                if (mode === "auto") {
-                    isSol = iSingleFileName.endsWith(".sol");
-                    isJson = iSingleFileName.endsWith(".json");
-                } else {
-                    isSol = mode === "sol";
-                    isJson = mode === "json";
-                }
-
-                if (isSol) {
-                    result = await compileSol(
-                        fileNames,
-                        compilerVersion,
-                        pathRemapping,
-                        compilationOutput,
-                        compilerSettings,
-                        compilerKind
-                    );
-                } else if (isJson) {
-                    result = await compileJson(
-                        singleFileName,
-                        compilerVersion,
-                        compilationOutput,
-                        compilerSettings,
-                        compilerKind
-                    );
-                } else {
-                    throw new Error(
-                        "Unable to auto-detect mode by the file name: " + singleFileName
-                    );
-                }
-            }
-        } catch (e) {
-            if (e instanceof CompileFailedError) {
-                console.error("Compile errors encountered:");
-
-                for (const failure of e.failures) {
-                    console.error(
-                        failure.compilerVersion
-                            ? `SolcJS ${failure.compilerVersion}:`
-                            : "Unknown compiler:"
-                    );
-
-                    for (const error of failure.errors) {
-                        console.error(error);
-                    }
-                }
-
-                process.exit(1);
+                isSol = mode === "sol";
+                isJson = mode === "json";
             }
 
-            throw e;
+            if (isSol) {
+                result = await compileSol(
+                    fileNames,
+                    compilerVersion,
+                    pathRemapping,
+                    compilationOutput,
+                    compilerSettings,
+                    compilerKind
+                );
+            } else if (isJson) {
+                result = await compileJson(
+                    singleFileName,
+                    compilerVersion,
+                    compilationOutput,
+                    compilerSettings,
+                    compilerKind
+                );
+            } else {
+                error("Unable to auto-detect mode by the file name: " + singleFileName);
+            }
+        }
+    } catch (e: any) {
+        if (e instanceof CompileFailedError) {
+            console.error("Compile errors encountered:");
+
+            for (const failure of e.failures) {
+                console.error(
+                    failure.compilerVersion
+                        ? `SolcJS ${failure.compilerVersion}:`
+                        : "Unknown compiler:"
+                );
+
+                for (const error of failure.errors) {
+                    console.error(error);
+                }
+            }
+
+            error("Unable to compile due to errors above.");
         }
 
-        const { data, files } = result;
+        error(e.message);
+    }
 
-        if (args.raw) {
-            if (args["with-sources"] && files.size > 0) {
-                if (!data.sources) {
-                    data.sources = {};
-                }
+    const { data, files } = result;
 
-                for (const [key, value] of files) {
-                    if (!data.sources[key]) {
-                        data.sources[key] = {};
-                    }
-
-                    data.sources[key].source = value;
-                }
+    if (options.raw) {
+        if (options.withSources && files.size > 0) {
+            if (!data.sources) {
+                data.sources = {};
             }
 
-            const output = JSON.stringify(data, undefined, 4);
+            for (const [key, value] of files) {
+                if (!data.sources[key]) {
+                    data.sources[key] = {};
+                }
 
-            console.log(output);
-
-            process.exit(0);
+                data.sources[key].source = value;
+            }
         }
 
-        const separator = "-".repeat(60);
-        const depth = args.depth;
+        const output = JSON.stringify(data, undefined, 4);
 
-        const reader = new ASTReader();
-        const units = reader.read(data, ASTKind.Any, files);
+        terminate(output);
+    }
 
-        if (args.tree) {
-            const INDENT = "|   ";
+    const separator = "-".repeat(60);
+    const depth = parseInt(options.depth);
 
-            const encoderVersion = result.compilerVersion
-                ? getABIEncoderVersion(units, result.compilerVersion as string)
-                : undefined;
+    const reader = new ASTReader();
+    const units = reader.read(data, ASTKind.Any, files);
 
-            const walker: ASTNodeCallback = (node) => {
-                const level = node.getParents().length;
-                const indent = INDENT.repeat(level);
+    if (options.tree) {
+        const INDENT = "|   ";
 
-                let message = node.type + " #" + node.id;
+        const encoderVersion = result.compilerVersion
+            ? getABIEncoderVersion(units, result.compilerVersion as string)
+            : undefined;
 
-                if (node instanceof SourceUnit) {
-                    message += " -> " + node.absolutePath;
-                } else if (node instanceof ContractDefinition) {
-                    message += " -> " + node.kind + " " + node.name;
+        const walker: ASTNodeCallback = (node) => {
+            const level = node.getParents().length;
+            const indent = INDENT.repeat(level);
 
-                    const interfaceId = encoderVersion
-                        ? node.interfaceId(encoderVersion)
+            let message = node.type + " #" + node.id;
+
+            if (node instanceof SourceUnit) {
+                message += " -> " + node.absolutePath;
+            } else if (node instanceof ContractDefinition) {
+                message += " -> " + node.kind + " " + node.name;
+
+                const interfaceId = encoderVersion ? node.interfaceId(encoderVersion) : undefined;
+
+                if (interfaceId !== undefined) {
+                    message += ` [id: ${interfaceId}]`;
+                }
+            } else if (node instanceof FunctionDefinition) {
+                const signature =
+                    node.vScope instanceof ContractDefinition &&
+                    (node.visibility === FunctionVisibility.Public ||
+                        node.visibility === FunctionVisibility.External) &&
+                    encoderVersion
+                        ? node.canonicalSignature(encoderVersion)
                         : undefined;
 
-                    if (interfaceId !== undefined) {
-                        message += ` [id: ${interfaceId}]`;
-                    }
-                } else if (node instanceof FunctionDefinition) {
-                    const signature =
-                        node.vScope instanceof ContractDefinition &&
-                        (node.visibility === FunctionVisibility.Public ||
-                            node.visibility === FunctionVisibility.External) &&
-                        encoderVersion
-                            ? node.canonicalSignature(encoderVersion)
+                if (signature && encoderVersion) {
+                    const selector = node.canonicalSignatureHash(encoderVersion);
+
+                    message += ` -> ${signature} [selector: ${selector}]`;
+                } else {
+                    message += ` -> ${node.kind}`;
+                }
+            } else if (node instanceof VariableDeclaration) {
+                if (node.stateVariable) {
+                    message += ` -> ${node.typeString} ${node.visibility} ${node.name}`;
+
+                    if (node.visibility === StateVariableVisibility.Public) {
+                        const signature = encoderVersion
+                            ? node.getterCanonicalSignature(encoderVersion)
                             : undefined;
 
-                    if (signature && encoderVersion) {
-                        const selector = node.canonicalSignatureHash(encoderVersion);
+                        const selector = encoderVersion
+                            ? node.getterCanonicalSignatureHash(encoderVersion)
+                            : undefined;
 
-                        message += ` -> ${signature} [selector: ${selector}]`;
-                    } else {
-                        message += ` -> ${node.kind}`;
+                        message += ` [getter: ${signature}, selector: ${selector}]`;
                     }
-                } else if (node instanceof VariableDeclaration) {
-                    if (node.stateVariable) {
-                        message += ` -> ${node.typeString} ${node.visibility} ${node.name}`;
-
-                        if (node.visibility === StateVariableVisibility.Public) {
-                            const signature = encoderVersion
-                                ? node.getterCanonicalSignature(encoderVersion)
-                                : undefined;
-
-                            const selector = encoderVersion
-                                ? node.getterCanonicalSignatureHash(encoderVersion)
-                                : undefined;
-
-                            message += ` [getter: ${signature}, selector: ${selector}]`;
-                        }
-                    } else {
-                        message +=
-                            node.name === ""
-                                ? ` -> ${node.typeString}`
-                                : ` -> ${node.typeString} ${node.name}`;
-                    }
+                } else {
+                    message +=
+                        node.name === ""
+                            ? ` -> ${node.typeString}`
+                            : ` -> ${node.typeString} ${node.name}`;
                 }
-
-                console.log(indent + message);
-            };
-
-            for (const unit of units) {
-                unit.walk(walker);
-
-                console.log();
             }
 
-            process.exit(0);
-        }
-
-        if (args.xpath) {
-            const selector = args.xpath;
-            const formatter = new ASTNodeFormatter();
-
-            for (const unit of units) {
-                const xp = new XPath(unit);
-                const queryResult = xp.query(selector);
-                const output =
-                    queryResult instanceof Array
-                        ? queryResult.map((value) => formatter.format(value, depth)).join("\n")
-                        : formatter.format(queryResult, depth);
-
-                console.log(unit.sourceEntryKey);
-                console.log(separator);
-                console.log(output);
-            }
-
-            process.exit(0);
-        }
-
-        if (args.source) {
-            let targetCompilerVersion: string;
-
-            if (result.compilerVersion) {
-                targetCompilerVersion = result.compilerVersion;
-            } else if (compilerVersion !== "auto") {
-                targetCompilerVersion = compilerVersion;
-            } else {
-                targetCompilerVersion = LatestCompilerVersion;
-            }
-
-            const formatter = new PrettyFormatter(4, 0);
-            const writer = new ASTWriter(DefaultASTWriterMapping, formatter, targetCompilerVersion);
-
-            for (const unit of units) {
-                console.log("// " + separator);
-                console.log("// " + unit.absolutePath);
-                console.log("// " + separator);
-                console.log(writer.write(unit));
-            }
-
-            process.exit(0);
-        }
+            console.log(indent + message);
+        };
 
         for (const unit of units) {
-            console.log(unit.print(depth));
+            unit.walk(walker);
+
+            console.log();
         }
 
-        process.exit(0);
+        terminate();
     }
-})().catch((reason) => {
-    console.error(reason);
-    process.exit(1);
+
+    if (options.xpath) {
+        const selector = options.xpath;
+        const formatter = new ASTNodeFormatter();
+
+        for (const unit of units) {
+            const xp = new XPath(unit);
+            const queryResult = xp.query(selector);
+            const output =
+                queryResult instanceof Array
+                    ? queryResult.map((value) => formatter.format(value, depth)).join("\n")
+                    : formatter.format(queryResult, depth);
+
+            console.log(unit.sourceEntryKey);
+            console.log(separator);
+            console.log(output);
+        }
+
+        terminate();
+    }
+
+    if (options.source) {
+        let targetCompilerVersion: string;
+
+        if (result.compilerVersion) {
+            targetCompilerVersion = result.compilerVersion;
+        } else if (compilerVersion !== "auto") {
+            targetCompilerVersion = compilerVersion;
+        } else {
+            targetCompilerVersion = LatestCompilerVersion;
+        }
+
+        const formatter = new PrettyFormatter(4, 0);
+        const writer = new ASTWriter(DefaultASTWriterMapping, formatter, targetCompilerVersion);
+
+        for (const unit of units) {
+            console.log("// " + separator);
+            console.log("// " + unit.absolutePath);
+            console.log("// " + separator);
+            console.log(writer.write(unit));
+        }
+
+        terminate();
+    }
+
+    for (const unit of units) {
+        console.log(unit.print(depth));
+    }
+
+    terminate();
+})().catch((e) => {
+    error(e.message);
 });

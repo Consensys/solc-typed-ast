@@ -27,7 +27,7 @@ for (const kind of PossibleCompilerKinds) {
 
         it("STDERR is correct", () => {
             expect(errData).toContain(
-                'Error: Invalid compiler version "^0.4.0". Possible values: "auto" or exact version string.'
+                'Invalid compiler version "^0.4.0". Possible values: "auto" or exact version string.'
             );
         });
 

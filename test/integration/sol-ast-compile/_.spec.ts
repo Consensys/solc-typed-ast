@@ -25,7 +25,7 @@ describe(command, () => {
     });
 
     it("STDOUT is correct", () => {
-        expect(outData).toContain("$ sol-ast-compile <filename>");
+        expect(outData).toContain("sol-ast-compile [options] [file(s)]");
         expect(outData.match(/--[^\s]+/g)).toEqual(options.map((option) => "--" + option));
     });
 });
