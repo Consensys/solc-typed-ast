@@ -24,6 +24,8 @@ export const options = [
     "compiler-version",
     "compiler-kind",
     "path-remapping",
+    "base-path",
+    "include-path",
     "compiler-settings",
     "raw",
     "with-sources",

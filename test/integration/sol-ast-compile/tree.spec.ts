@@ -1,40 +1,59 @@
 import expect from "expect";
 import fse from "fs-extra";
-import { PossibleCompilerKinds } from "../../../src";
+import { PathOptions, PossibleCompilerKinds } from "../../../src";
 import { SolAstCompileCommand, SolAstCompileExec } from "./common";
 
-const cases: Array<[string[], string]> = [
+const cases: Array<[string[], PathOptions, string]> = [
     [
         ["test/samples/solidity/declarations/interface_060.sol"],
+        {},
         "test/samples/solidity/declarations/interface_060.tree.txt"
     ],
-    [["test/samples/solidity/interface_id.sol"], "test/samples/solidity/interface_id.tree.txt"],
+    [["test/samples/solidity/interface_id.sol"], {}, "test/samples/solidity/interface_id.tree.txt"],
     [
         ["test/samples/solidity/library_fun_overloads.sol"],
+        {},
         "test/samples/solidity/library_fun_overloads.tree.txt"
     ],
-    [["test/samples/solidity/fun_selectors.sol"], "test/samples/solidity/fun_selectors.tree.txt"],
+    [
+        ["test/samples/solidity/fun_selectors.sol"],
+        {},
+        "test/samples/solidity/fun_selectors.tree.txt"
+    ],
     [
         ["test/samples/solidity/multifile/A.sol", "test/samples/solidity/multifile/B.sol"],
+        {},
         "test/samples/solidity/multifile/A_B.tree.txt"
     ],
     [
         ["test/samples/solidity/multifile/A.sol", "test/samples/solidity/multifile/C.sol"],
+        {},
         "test/samples/solidity/multifile/A_C.tree.txt"
     ],
     [
-        [
-            "test/samples/solidity/multifile/A.sol",
-            "test/samples/solidity/multifile/B.sol",
-            "test/samples/solidity/multifile/C.sol"
-        ],
+        ["A.sol", "B.sol", "C.sol"],
+        {
+            basePath: "test/samples/solidity/multifile/",
+            includePath: ["test/samples/solidity/multifile/node_modules"]
+        },
         "test/samples/solidity/multifile/A_B_C.tree.txt"
     ]
 ];
 
-for (const [samples, snapshot] of cases) {
+for (const [samples, pathOptions, snapshot] of cases) {
     for (const kind of PossibleCompilerKinds) {
-        const args = [...samples, "--compiler-kind", kind, "--tree"];
+        const args = [...samples, "--compiler-kind", kind];
+
+        if (pathOptions.basePath) {
+            args.push("--base-path", pathOptions.basePath);
+        }
+
+        if (pathOptions.includePath) {
+            args.push("--include-path", ...pathOptions.includePath);
+        }
+
+        args.push("--tree");
+
         const command = SolAstCompileCommand(...args);
 
         describe(command, () => {

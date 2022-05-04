@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// /test/samples/solidity/compile_06.sol
+// test/samples/solidity/compile_06.sol
 // ------------------------------------------------------------
 pragma solidity ^0.6.0;
 

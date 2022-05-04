@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// /test/samples/solidity/struct_docs_04.sol
+// test/samples/solidity/struct_docs_04.sol
 // ------------------------------------------------------------
 pragma solidity 0.4.24;
 

@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// /test/samples/solidity/statements/variable_declaration_0413.sol
+// test/samples/solidity/statements/variable_declaration_0413.sol
 // ------------------------------------------------------------
 pragma solidity ^0.4.13;
 

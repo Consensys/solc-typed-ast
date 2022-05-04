@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// /test/samples/solidity/latest_06.sol
+// test/samples/solidity/latest_06.sol
 // ------------------------------------------------------------
 pragma solidity ^0.6.0;
 pragma experimental ABIEncoderV2;

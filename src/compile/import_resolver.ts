@@ -8,6 +8,8 @@ export interface ImportResolver {
     resolve(fileName: string): string | undefined;
 }
 
+export type Remapping = [string, string, string];
+
 export class FileSystemResolver implements ImportResolver {
     basePath?: string;
     includePaths?: string[];
@@ -23,18 +25,24 @@ export class FileSystemResolver implements ImportResolver {
         );
 
         for (const prefix of prefixes) {
-            const prefixedFileName = prefix ? path.join(prefix, fileName) : fileName;
+            let candidate: string;
 
-            if (fse.existsSync(prefixedFileName)) {
-                return prefixedFileName;
+            if (prefix) {
+                const relative = path.relative(prefix, fileName);
+
+                candidate = path.join(prefix, relative.startsWith("../") ? fileName : relative);
+            } else {
+                candidate = fileName;
+            }
+
+            if (fse.existsSync(candidate)) {
+                return candidate;
             }
         }
 
-        return fse.existsSync(fileName) ? fileName : undefined;
+        return undefined;
     }
 }
-
-export type Remapping = [string, string, string];
 
 export class LocalNpmResolver implements ImportResolver {
     basePath?: string;

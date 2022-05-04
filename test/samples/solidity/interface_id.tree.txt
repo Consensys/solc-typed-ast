@@ -1,4 +1,4 @@
-SourceUnit #203 -> /test/samples/solidity/interface_id.sol
+SourceUnit #203 -> test/samples/solidity/interface_id.sol
 |   ContractDefinition #67 -> interface ERC20 [id: 36372b07]
 |   |   FunctionDefinition #5 -> totalSupply() [selector: 18160ddd]
 |   |   |   ParameterList #1

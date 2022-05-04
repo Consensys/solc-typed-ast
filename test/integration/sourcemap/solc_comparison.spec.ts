@@ -30,8 +30,16 @@ async function readAST(
     const reader = new ASTReader();
 
     const result = await (source === undefined
-        ? compileSol(fileName, version, [], undefined, undefined, compilerKind)
-        : compileSourceString(fileName, source, version, [], undefined, undefined, compilerKind));
+        ? compileSol(fileName, version, undefined, undefined, undefined, compilerKind)
+        : compileSourceString(
+              fileName,
+              source,
+              version,
+              undefined,
+              undefined,
+              undefined,
+              compilerKind
+          ));
 
     return reader.read(result.data);
 }

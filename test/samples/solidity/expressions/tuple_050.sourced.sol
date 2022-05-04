@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// /test/samples/solidity/expressions/tuple.sol
+// test/samples/solidity/expressions/tuple.sol
 // ------------------------------------------------------------
 contract SomeContract {
     function tupleSimple() public {

@@ -94,7 +94,7 @@ const samples: Array<[string, string, ASTKind]> = [
 describe("resolveAny() correctly resolves all Identifiers/UserDefinedTypeNames/FunctionCalls", () => {
     for (const [sample, compilerVersion, astKind] of samples) {
         it(`All definitions in ${sample} resolve correctly`, async () => {
-            const result = await compileSol(sample, "auto", []);
+            const result = await compileSol(sample, "auto");
 
             expect(result.compilerVersion).toEqual(compilerVersion);
 
@@ -423,7 +423,7 @@ describe("resolveAny() unit tests", () => {
             const reader = new ASTReader();
 
             before(async () => {
-                const result = await compileSol(sample, "auto", []);
+                const result = await compileSol(sample, "auto");
 
                 expect(result.compilerVersion).toEqual(compilerVersion);
 
@@ -481,7 +481,7 @@ contract Child is Base {
     let foo: ASTNode;
 
     before(async () => {
-        const compResult = await compileSourceString("sample.sol", sample, "0.8.13", []);
+        const compResult = await compileSourceString("sample.sol", sample, "0.8.13");
         [unit] = reader.read(compResult.data);
         foo = unit.getChildrenBySelector(
             (nd) => nd instanceof FunctionDefinition && nd.name === "foo"

@@ -100,7 +100,7 @@ async function resolveSourceUnitName(
         const resolvedPath = resolver.resolve(sourceUnitName);
 
         if (resolvedPath !== undefined) {
-            return await fse.readFile(resolvedPath, "utf-8");
+            return fse.readFile(resolvedPath, "utf-8");
         }
     }
 

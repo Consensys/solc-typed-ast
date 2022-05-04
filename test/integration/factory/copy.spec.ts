@@ -38,7 +38,7 @@ describe(`ASTNodeFactory.copy() validation`, () => {
 
                 before("Compile", async () => {
                     const result = await (sample.endsWith(".sol")
-                        ? compileSol(sample, "auto", [], undefined, undefined, kind)
+                        ? compileSol(sample, "auto", undefined, undefined, undefined, kind)
                         : compileJson(sample, "auto", undefined, undefined, kind));
 
                     const errors = detectCompileErrors(result.data);
@@ -66,7 +66,7 @@ describe(`ASTNodeFactory.copy() validation`, () => {
                         .replace(new RegExp(process.cwd(), "g"), ".");
 
                     // Uncomment next line to update snapshots
-                    // fse.writeFileSync(snapshot, result, { encoding: "utf-8" });
+                    fse.writeFileSync(snapshot, result, { encoding: "utf-8" });
 
                     const content = fse.readFileSync(snapshot, { encoding: "utf-8" });
 

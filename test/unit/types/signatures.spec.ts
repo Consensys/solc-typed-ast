@@ -82,7 +82,7 @@ describe("Check canonical signatures are generated correctly", () => {
                 const result = await compileSol(
                     sample,
                     "auto",
-                    [],
+                    undefined,
                     undefined,
                     undefined,
                     kind as CompilerKind

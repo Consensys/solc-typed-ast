@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import fse from "fs-extra";
-import path from "path";
 import {
     ASTKind,
     ASTNodeCallback,
@@ -32,6 +31,7 @@ import {
     VariableDeclaration,
     XPath
 } from "..";
+import { PathOptions } from "../compile";
 
 enum CompileMode {
     Auto = "auto",
@@ -92,6 +92,11 @@ function error(message: string): never {
             CompilerKind.WASM
         )
         .option("--path-remapping <pathRemapping>", "Path remapping input for Solc.")
+        .option("--base-path <basePath>", "Base path for compiler to look for files Solc.")
+        .option(
+            "--include-path <includePath...>",
+            "Include paths for compiler to additinally look for files. Supports multiple entries."
+        )
         .option(
             "--compiler-settings <compilerSettings>",
             `Additional settings passed to the solc compiler in the form of a JSON string (e.g. '{"optimizer": {"enabled": true, "runs": 200}}'). Note the double quotes. For more details see https://docs.soliditylang.org/en/latest/using-the-compiler.html#input-description.`
@@ -165,7 +170,11 @@ function error(message: string): never {
         error(message);
     }
 
-    const pathRemapping: string[] = options.pathRemapping ? options.pathRemapping.split(";") : [];
+    const pathOptions: PathOptions = {
+        remapping: options.pathRemapping ? options.pathRemapping.split(";") : [],
+        basePath: options.basePath,
+        includePath: options.includePath
+    };
 
     let compilerSettings: any = undefined;
 
@@ -192,7 +201,7 @@ function error(message: string): never {
             }
 
             const fileName = "stdin";
-            const content = await fse.readFile(0, { encoding: "utf-8" });
+            const content = await fse.readFile(process.stdin.fd, { encoding: "utf-8" });
 
             result =
                 mode === "json"
@@ -208,13 +217,13 @@ function error(message: string): never {
                           fileName,
                           content,
                           compilerVersion,
-                          pathRemapping,
+                          pathOptions,
                           compilationOutput,
                           compilerSettings,
                           compilerKind
                       );
         } else {
-            const fileNames = args.map((fileName) => path.resolve(fileName));
+            const fileNames = args;
             const singleFileName = fileNames[0];
             const iSingleFileName = singleFileName.toLowerCase();
 
@@ -233,7 +242,7 @@ function error(message: string): never {
                 result = await compileSol(
                     fileNames,
                     compilerVersion,
-                    pathRemapping,
+                    pathOptions,
                     compilationOutput,
                     compilerSettings,
                     compilerKind
@@ -424,5 +433,6 @@ function error(message: string): never {
 
     terminate();
 })().catch((e) => {
+    console.log(e);
     error(e.message);
 });

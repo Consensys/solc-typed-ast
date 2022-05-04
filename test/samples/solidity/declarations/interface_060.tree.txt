@@ -1,4 +1,4 @@
-SourceUnit #101 -> /test/samples/solidity/declarations/interface_060.sol
+SourceUnit #101 -> test/samples/solidity/declarations/interface_060.sol
 |   PragmaDirective #1
 |   ContractDefinition #9 -> interface A [id: 092f1b5f]
 |   |   FunctionDefinition #8 -> doA(uint256) [selector: 092f1b5f]

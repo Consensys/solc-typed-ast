@@ -61,7 +61,7 @@ describe(`Compile ${sample} with any available 0.4.x compiler`, () => {
                     const result = await compileSol(
                         sample,
                         version,
-                        [],
+                        undefined,
                         undefined,
                         undefined,
                         kind as CompilerKind
