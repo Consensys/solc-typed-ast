@@ -1,5 +1,4 @@
 import {
-    ASTNode,
     ASTNodeFactory,
     Break,
     Conditional,
@@ -12,7 +11,6 @@ import {
     EnumValue,
     ErrorDefinition,
     EventDefinition,
-    Expression,
     ExpressionStatement,
     ExternalReferenceType,
     FunctionDefinition,
@@ -37,19 +35,6 @@ import {
 import { verify } from "../common";
 
 describe("ASTNodeFactory.make*()", () => {
-    it("makeNode()", () => {
-        const factory = new ASTNodeFactory();
-        const node = factory.makeNode();
-
-        verify(node, ASTNode, {
-            id: 1,
-            type: "ASTNode",
-            src: "0:0:0",
-            children: [],
-            raw: undefined
-        });
-    });
-
     it("makeSourceUnit()", () => {
         const factory = new ASTNodeFactory();
         const exportedSymbols = new Map();
@@ -360,21 +345,6 @@ describe("ASTNodeFactory.make*()", () => {
             vValue: value,
 
             vScope: contract
-        });
-    });
-
-    it("makeExpression()", () => {
-        const factory = new ASTNodeFactory();
-        const node = factory.makeExpression("uint256");
-
-        verify(node, Expression, {
-            id: 1,
-            type: "Expression",
-            src: "0:0:0",
-            children: [],
-            raw: undefined,
-
-            typeString: "uint256"
         });
     });
 

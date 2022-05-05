@@ -433,6 +433,5 @@ function error(message: string): never {
 
     terminate();
 })().catch((e) => {
-    console.log(e);
     error(e.message);
 });

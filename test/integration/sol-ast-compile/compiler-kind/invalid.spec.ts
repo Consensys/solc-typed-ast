@@ -1,8 +1,8 @@
 import expect from "expect";
 import { SolAstCompileCommand, SolAstCompileExec } from "../common";
 
-const sample = "test/samples/solidity/missing_pragma.sol";
-const args = [sample, "--compiler-settings", "{blahblah}"];
+const sample = "test/samples/solidity/any.sol";
+const args = [sample, "--compiler-kind", "invalid"];
 const command = SolAstCompileCommand(...args);
 
 describe(command, () => {
@@ -24,7 +24,7 @@ describe(command, () => {
 
     it("STDERR is correct", () => {
         expect(errData).toContain(
-            "Invalid compiler settings '{blahblah}'. Compiler settings must be a valid JSON object"
+            'Invalid compiler kind "invalid". Possible values: wasm, native.'
         );
     });
 

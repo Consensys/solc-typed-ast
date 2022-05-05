@@ -1,6 +1,6 @@
 import expect from "expect";
 import {
-    ASTNode,
+    assert,
     ASTNodeFactory,
     BinaryOperation,
     Block,
@@ -10,7 +10,6 @@ import {
     EnumDefinition,
     EnumValue,
     EventDefinition,
-    Expression,
     FunctionDefinition,
     FunctionKind,
     FunctionStateMutability,
@@ -29,35 +28,11 @@ import {
     StructuredDocumentation,
     TimeUnit,
     UnaryOperation,
-    VariableDeclaration,
-    assert
+    VariableDeclaration
 } from "../../../../src";
 import { verify } from "../common";
 
 describe("ASTNodeFactory.copy()", () => {
-    it("ASTNode", () => {
-        const factory = new ASTNodeFactory();
-        const original = factory.makeNode();
-
-        const props: any = {
-            id: 1,
-            type: "ASTNode",
-            src: "0:0:0",
-            children: [],
-            raw: undefined
-        } as Partial<ASTNode>;
-
-        verify(original, ASTNode, props);
-
-        const clone = factory.copy(original);
-
-        expect(clone === original).toBeFalsy();
-
-        props.id = 2;
-
-        verify(clone, ASTNode, props);
-    });
-
     it("EnumDefinition", () => {
         const factory = new ASTNodeFactory();
 
@@ -443,25 +418,6 @@ describe("ASTNodeFactory.copy()", () => {
 
             vScope: unitClone,
             vSourceUnit: importedUnit
-        });
-    });
-
-    it("Expression", () => {
-        const factory = new ASTNodeFactory();
-
-        const expr = factory.makeExpression("uint8");
-        const exprClone = factory.copy(expr);
-
-        expect(exprClone === expr).toBeFalsy();
-
-        verify(exprClone, Expression, {
-            id: 2,
-            type: "Expression",
-            src: "0:0:0",
-            children: [],
-            raw: undefined,
-
-            typeString: "uint8"
         });
     });
 
