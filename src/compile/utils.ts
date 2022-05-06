@@ -262,7 +262,10 @@ export async function compileSol(
     const isDynamicBasePath = pathOptions.basePath === undefined;
 
     for (const fileName of fileNames) {
-        const resolvedFileName = fsResolver.resolve(fileName) || path.resolve(fileName);
+        const resolvedFileName = fsResolver.resolve(fileName);
+
+        assert(resolvedFileName !== undefined, `Unable to find "${resolvedFileName}"`);
+
         const sourceCode = await fse.readFile(resolvedFileName, "utf-8");
 
         if (isDynamicBasePath) {

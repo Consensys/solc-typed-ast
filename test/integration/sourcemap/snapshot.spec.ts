@@ -79,7 +79,7 @@ describe("Source map snapshot tests", () => {
                     const result = parts.join("\n") + "\n";
 
                     // Uncomment next line to update snapshots
-                    fse.writeFileSync(sample, result, { encoding: "utf-8" });
+                    // fse.writeFileSync(sample, result, { encoding: "utf-8" });
 
                     const expectation = fse.readFileSync(sample, { encoding: "utf-8" });
 
