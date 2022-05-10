@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// /test/samples/solidity/latest_07.sol
+// test/samples/solidity/latest_07.sol
 // ------------------------------------------------------------
 pragma solidity ^0.7.0;
 pragma abicoder v2;

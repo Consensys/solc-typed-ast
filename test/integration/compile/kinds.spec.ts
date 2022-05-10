@@ -7,6 +7,7 @@ import {
     CompilerKind,
     compileSol,
     LatestVersionInEachSeriesStrategy,
+    PathOptions,
     VersionDetectionStrategy
 } from "../../../src";
 import { searchRecursive } from "../../utils";
@@ -121,11 +122,35 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
     const defaultCompilationOutput = [CompilationOutput.ALL];
     const defaultCompilerSettings = { optimizer: { enabled: false } };
 
-    const additionalArgs = new Map<string, [string[], CompilationOutput[], any]>([
+    const additionalArgs = new Map<string, [PathOptions, CompilationOutput[], any]>([
+        [
+            "test/samples/solidity/meta/imports/lib2/D.sol",
+            [
+                { basePath: "test/samples/solidity/meta/imports" },
+                defaultCompilationOutput,
+                defaultCompilerSettings
+            ]
+        ],
+        [
+            "test/samples/solidity/meta/imports/lib2/C.sol",
+            [
+                { basePath: "test/samples/solidity/meta/imports" },
+                defaultCompilationOutput,
+                defaultCompilerSettings
+            ]
+        ],
+        [
+            "test/samples/solidity/meta/imports/lib/B.sol",
+            [
+                { basePath: "test/samples/solidity/meta/imports" },
+                defaultCompilationOutput,
+                defaultCompilerSettings
+            ]
+        ],
         [
             "test/samples/solidity/path_remapping/entry.sol",
             [
-                ["@missing=test/samples/solidity/path_remapping/local"],
+                { remapping: ["@missing=test/samples/solidity/path_remapping/local"] },
                 defaultCompilationOutput,
                 defaultCompilerSettings
             ]
@@ -147,8 +172,8 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
                 new LatestVersionInEachSeriesStrategy()
             );
 
-            const [remappings, outputs, settings] =
-                args === undefined ? [[], defaultCompilationOutput, defaultCompilerSettings] : args;
+            const [pathOptions, outputs, settings] =
+                args === undefined ? [{}, defaultCompilationOutput, defaultCompilerSettings] : args;
 
             let wasmResult: CompileResult | CompileFailedError;
             let nativeResult: CompileResult | CompileFailedError;
@@ -160,7 +185,7 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
                 wasmResult = await compileSol(
                     fileName,
                     versionStrategy,
-                    remappings,
+                    pathOptions,
                     outputs,
                     settings,
                     CompilerKind.WASM
@@ -177,7 +202,7 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
                 nativeResult = await compileSol(
                     fileName,
                     versionStrategy,
-                    remappings,
+                    pathOptions,
                     outputs,
                     settings,
                     CompilerKind.Native

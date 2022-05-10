@@ -87,7 +87,7 @@ for (const compilerKind of PossibleCompilerKinds) {
             const result = await compileSol(
                 mainSample,
                 "auto",
-                [],
+                undefined,
                 undefined,
                 undefined,
                 compilerKind as CompilerKind

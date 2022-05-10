@@ -1,4 +1,4 @@
-SourceUnit #94 -> /test/samples/solidity/library_fun_overloads.sol
+SourceUnit #94 -> test/samples/solidity/library_fun_overloads.sol
 |   ContractDefinition #38 -> library Some
 |   |   StructDefinition #3
 |   |   |   VariableDeclaration #2 -> uint256 id

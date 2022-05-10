@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// /test/samples/solidity/writer_edge_cases.sol
+// test/samples/solidity/writer_edge_cases.sol
 // ------------------------------------------------------------
 pragma solidity ^0.4.13;
 

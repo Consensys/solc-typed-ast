@@ -1,14 +1,14 @@
-SourceUnit #3 -> /test/samples/solidity/multifile/A.sol
-|   ImportDirective #1
-|   ContractDefinition #2 -> contract A
+SourceUnit #2 -> package-x/contracts/X.sol
+|   ContractDefinition #1 -> contract X
 
-SourceUnit #6 -> /test/samples/solidity/multifile/B.sol
-|   ImportDirective #4
-|   ContractDefinition #5 -> contract B
+SourceUnit #4 -> package-y/contracts/Y.sol
+|   ContractDefinition #3 -> contract Y
 
-SourceUnit #8 -> package-x/contracts/X.sol
-|   ContractDefinition #7 -> contract X
+SourceUnit #7 -> test/samples/solidity/multifile/A.sol
+|   ImportDirective #5
+|   ContractDefinition #6 -> contract A
 
-SourceUnit #10 -> package-y/contracts/Y.sol
-|   ContractDefinition #9 -> contract Y
+SourceUnit #10 -> test/samples/solidity/multifile/B.sol
+|   ImportDirective #8
+|   ContractDefinition #9 -> contract B
 

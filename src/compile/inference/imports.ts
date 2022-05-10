@@ -92,6 +92,21 @@ function computeSourceUnitName(
     return applyRemappings(remappings, imported);
 }
 
+async function resolveSourceUnitName(
+    sourceUnitName: string,
+    resolvers: ImportResolver[]
+): Promise<string | undefined> {
+    for (const resolver of resolvers) {
+        const resolvedPath = resolver.resolve(sourceUnitName);
+
+        if (resolvedPath !== undefined) {
+            return fse.readFile(resolvedPath, "utf-8");
+        }
+    }
+
+    return undefined;
+}
+
 /**
  * Given a partial map `files` from **source unit names** to file contents, a list of
  * `remappings` and a list of `ImportResolver`s - `resolvers`, find all
@@ -125,15 +140,7 @@ export async function findAllFiles(
 
         // Missing contents - try and fill them in from the resolvers
         if (content === undefined) {
-            for (const resolver of resolvers) {
-                const resolvedPath = resolver.resolve(sourceUnitName);
-
-                if (resolvedPath !== undefined) {
-                    content = await fse.readFile(resolvedPath, "utf-8");
-
-                    break;
-                }
-            }
+            content = await resolveSourceUnitName(sourceUnitName, resolvers);
 
             if (content === undefined) {
                 throw new CompileInferenceError(`Couldn't find ${sourceUnitName}`);

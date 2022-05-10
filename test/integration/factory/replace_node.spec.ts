@@ -78,7 +78,7 @@ describe(`replaceNode() validation`, () => {
 
                 before("Compile", async () => {
                     const result = await (sample.endsWith(".sol")
-                        ? compileSol(sample, "auto", [], undefined, undefined, kind as CompilerKind)
+                        ? compileSol(sample, "auto", {}, undefined, undefined, kind as CompilerKind)
                         : compileJson(sample, "auto", undefined, undefined, kind as CompilerKind));
 
                     const errors = detectCompileErrors(result.data);

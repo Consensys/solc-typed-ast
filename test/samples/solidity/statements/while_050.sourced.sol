@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// /test/samples/solidity/statements/while_050.sol
+// test/samples/solidity/statements/while_050.sol
 // ------------------------------------------------------------
 pragma solidity ^0.5.0;
 

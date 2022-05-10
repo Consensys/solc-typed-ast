@@ -13,6 +13,12 @@ import { Remapping } from "./import_resolver";
 import { findAllFiles } from "./inference";
 import { createCompilerInput } from "./input";
 
+export interface PathOptions {
+    remapping?: string[];
+    basePath?: string;
+    includePath?: string[];
+}
+
 export interface MemoryStorage {
     [path: string]: {
         source: string | undefined;
@@ -162,16 +168,21 @@ export async function compileSourceString(
     fileName: string,
     sourceCode: string,
     version: string | CompilerVersionSelectionStrategy,
-    remapping: string[],
+    pathOptions: PathOptions = {},
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
     kind?: CompilerKind
 ): Promise<CompileResult> {
-    const fileDir = path.dirname(fileName);
+    const basePath =
+        pathOptions.basePath === undefined ? path.dirname(fileName) : pathOptions.basePath;
+
+    const includePath = pathOptions.includePath;
+    const remapping = pathOptions.remapping || [];
 
     const inferredRemappings = new Map<string, Remapping>();
-    const fsResolver = new FileSystemResolver();
-    const npmResolver = new LocalNpmResolver(fileDir, inferredRemappings);
+
+    const fsResolver = new FileSystemResolver(basePath, includePath);
+    const npmResolver = new LocalNpmResolver(basePath, inferredRemappings);
     const resolvers = [fsResolver, npmResolver];
 
     const parsedRemapping = parsePathRemapping(remapping);
@@ -212,7 +223,7 @@ export async function compileSourceString(
 export async function compileSol(
     fileName: string,
     version: string | CompilerVersionSelectionStrategy,
-    remapping: string[],
+    pathOptions?: PathOptions,
     compilationOutput?: CompilationOutput[],
     compilerSettings?: any,
     kind?: CompilerKind
@@ -220,7 +231,7 @@ export async function compileSol(
 export async function compileSol(
     fileNames: string[],
     version: string | CompilerVersionSelectionStrategy,
-    remapping: string[],
+    pathOptions?: PathOptions,
     compilationOutput?: CompilationOutput[],
     compilerSettings?: any,
     kind?: CompilerKind
@@ -228,7 +239,7 @@ export async function compileSol(
 export async function compileSol(
     input: string | string[],
     version: string | CompilerVersionSelectionStrategy,
-    remapping: string[],
+    pathOptions: PathOptions = {},
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
     compilerSettings?: any,
     kind?: CompilerKind
@@ -238,20 +249,33 @@ export async function compileSol(
     assert(fileNames.length > 0, "There must be at least one file to compile");
 
     const inferredRemappings = new Map<string, Remapping>();
-    const fsResolver = new FileSystemResolver();
-    const npmResolver = new LocalNpmResolver(undefined, inferredRemappings);
+    const fsResolver = new FileSystemResolver(pathOptions.basePath, pathOptions.includePath);
+    const npmResolver = new LocalNpmResolver(pathOptions.basePath, inferredRemappings);
     const resolvers = [fsResolver, npmResolver];
 
+    const remapping = pathOptions.remapping || [];
     const parsedRemapping = parsePathRemapping(remapping);
+
     const files = new Map<string, string>();
     const visited = new Set<string>();
 
+    const isDynamicBasePath = pathOptions.basePath === undefined;
+
     for (const fileName of fileNames) {
-        const sourceCode = await fse.readFile(fileName, "utf-8");
+        const resolvedFileName = fsResolver.resolve(fileName);
 
-        npmResolver.baseDir = path.dirname(fileName);
+        assert(resolvedFileName !== undefined, `Unable to find "${resolvedFileName}"`);
 
-        files.set(fileName, sourceCode);
+        const sourceCode = await fse.readFile(resolvedFileName, "utf-8");
+
+        if (isDynamicBasePath) {
+            const basePath = path.dirname(resolvedFileName);
+
+            fsResolver.basePath = basePath;
+            npmResolver.basePath = basePath;
+        }
+
+        files.set(resolvedFileName, sourceCode);
 
         await findAllFiles(files, parsedRemapping, resolvers, visited);
     }

@@ -8,27 +8,55 @@ export interface ImportResolver {
     resolve(fileName: string): string | undefined;
 }
 
+export type Remapping = [string, string, string];
+
 export class FileSystemResolver implements ImportResolver {
+    basePath?: string;
+    includePaths?: string[];
+
+    constructor(basePath?: string, includePaths?: string[]) {
+        this.basePath = basePath;
+        this.includePaths = includePaths;
+    }
+
     resolve(fileName: string): string | undefined {
-        return fse.existsSync(fileName) ? fileName : undefined;
+        const prefixes = [this.basePath ? this.basePath : ""].concat(
+            this.includePaths ? this.includePaths : []
+        );
+
+        for (const prefix of prefixes) {
+            let candidate: string;
+
+            if (prefix) {
+                const relative = path.relative(prefix, fileName);
+
+                candidate = path.join(prefix, relative.startsWith("../") ? fileName : relative);
+            } else {
+                candidate = fileName;
+            }
+
+            if (fse.existsSync(candidate)) {
+                return candidate;
+            }
+        }
+
+        return undefined;
     }
 }
 
-export type Remapping = [string, string, string];
-
 export class LocalNpmResolver implements ImportResolver {
-    baseDir?: string;
+    basePath?: string;
     inferedRemappings?: Map<string, Remapping>;
 
-    constructor(baseDir?: string, inferedRemappings?: Map<string, Remapping>) {
-        this.baseDir = baseDir;
+    constructor(basePath?: string, inferedRemappings?: Map<string, Remapping>) {
+        this.basePath = basePath;
         this.inferedRemappings = inferedRemappings;
     }
 
     resolve(fileName: string): string | undefined {
-        assert(this.baseDir !== undefined, "LocalNpmResolver: base directory is not set");
+        assert(this.basePath !== undefined, "LocalNpmResolver: base path is not set");
 
-        let currentDir = this.baseDir;
+        let currentDir = this.basePath;
 
         const normalizedFileName = path.normalize(fileName);
 
@@ -46,8 +74,9 @@ export class LocalNpmResolver implements ImportResolver {
                     const [prefix] = normalizedFileName.split("/");
 
                     /**
-                     * If the normalized paths begins with a proper directory name X (not "." or ".."),
-                     * then we can infer a remapping from X to modulesPath/X/
+                     * If the normalized paths are starting with
+                     * a proper directory name X (not "." or ".."),
+                     * then we can infer a remapping from X to "modulesPath/X/"
                      */
                     if (prefix && prefix !== "." && prefix !== "..") {
                         const remapping: Remapping = ["", prefix, path.join(modulesPath, prefix)];

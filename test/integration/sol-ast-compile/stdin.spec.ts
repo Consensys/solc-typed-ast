@@ -5,7 +5,7 @@ import { PossibleCompilerKinds } from "../../../src";
 import { SolAstCompileCommand } from "./common";
 
 const error =
-    'Error: Mode "auto" is not supported for the input from STDIN. Explicitly specify "mode" as "sol" or "json" instead.';
+    'Mode "auto" is not supported for the input from STDIN. Explicitly specify "mode" as "sol" or "json" instead.';
 
 const output = ["SourceUnit #2", "ContractDefinition #1", 'name: "Test"', 'kind: "contract"'];
 

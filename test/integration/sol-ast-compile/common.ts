@@ -17,7 +17,6 @@ export function SolAstCompileExec(...params: string[]): SpawnSyncReturns<string>
 export const separator = "-".repeat(60);
 
 export const options = [
-    "help",
     "version",
     "solidity-versions",
     "stdin",
@@ -25,6 +24,8 @@ export const options = [
     "compiler-version",
     "compiler-kind",
     "path-remapping",
+    "base-path",
+    "include-path",
     "compiler-settings",
     "raw",
     "with-sources",
@@ -32,5 +33,6 @@ export const options = [
     "source",
     "xpath",
     "depth",
-    "locate-compiler-cache"
+    "locate-compiler-cache",
+    "help"
 ];

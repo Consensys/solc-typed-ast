@@ -1,4 +1,4 @@
-SourceUnit #466 -> /test/samples/solidity/fun_selectors.sol
+SourceUnit #466 -> test/samples/solidity/fun_selectors.sol
 |   ContractDefinition #3 -> contract D
 |   |   VariableDeclaration #2 -> uint256 public a [getter: a(), selector: 0dbe671f]
 |   |   |   ElementaryTypeName #1

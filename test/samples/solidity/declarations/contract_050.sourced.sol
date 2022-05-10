@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// /test/samples/solidity/declarations/contract_050.sol
+// test/samples/solidity/declarations/contract_050.sol
 // ------------------------------------------------------------
 library A {
     function add(uint a, uint b) public returns (uint c) {

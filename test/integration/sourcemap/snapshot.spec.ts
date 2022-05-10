@@ -36,7 +36,7 @@ describe("Source map snapshot tests", () => {
                     const result = await compileSol(
                         fileName,
                         "auto",
-                        [],
+                        {},
                         undefined,
                         undefined,
                         kind as CompilerKind

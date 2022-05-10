@@ -1,5 +1,5 @@
 // ------------------------------------------------------------
-// /test/samples/solidity/statements/inline_assembly_060.sol
+// test/samples/solidity/statements/inline_assembly_060.sol
 // ------------------------------------------------------------
 pragma solidity ^0.6.0;
 

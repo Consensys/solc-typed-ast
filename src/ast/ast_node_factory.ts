@@ -769,10 +769,6 @@ export class ASTNodeFactory {
         return this.make(ElementaryTypeNameExpression, ...args);
     }
 
-    makeExpression(...args: Specific<ConstructorParameters<typeof Expression>>): Expression {
-        return this.make(Expression, ...args);
-    }
-
     makeFunctionCallOptions(
         ...args: Specific<ConstructorParameters<typeof FunctionCallOptions>>
     ): FunctionCallOptions {
@@ -953,10 +949,6 @@ export class ASTNodeFactory {
         return this.make(RevertStatement, ...args);
     }
 
-    makeStatement(...args: Specific<ConstructorParameters<typeof Statement>>): Statement {
-        return this.make(Statement, ...args);
-    }
-
     makeThrow(...args: Specific<ConstructorParameters<typeof Throw>>): Throw {
         return this.make(Throw, ...args);
     }
@@ -1005,18 +997,10 @@ export class ASTNodeFactory {
         return this.make(Mapping, ...args);
     }
 
-    makeTypeName(...args: Specific<ConstructorParameters<typeof TypeName>>): TypeName {
-        return this.make(TypeName, ...args);
-    }
-
     makeUserDefinedTypeName(
         ...args: Specific<ConstructorParameters<typeof UserDefinedTypeName>>
     ): UserDefinedTypeName {
         return this.make(UserDefinedTypeName, ...args);
-    }
-
-    makeNode(...args: Specific<ConstructorParameters<typeof ASTNode>>): ASTNode {
-        return this.make(ASTNode, ...args);
     }
 
     makeIdentifierFor(

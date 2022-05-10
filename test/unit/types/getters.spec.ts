@@ -388,7 +388,7 @@ describe("getterFunType()", () => {
                     const { data } = await compileSol(
                         sample,
                         "auto",
-                        [],
+                        undefined,
                         undefined,
                         undefined,
                         kind as CompilerKind

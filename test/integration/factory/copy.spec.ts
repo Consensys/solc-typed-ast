@@ -38,7 +38,7 @@ describe(`ASTNodeFactory.copy() validation`, () => {
 
                 before("Compile", async () => {
                     const result = await (sample.endsWith(".sol")
-                        ? compileSol(sample, "auto", [], undefined, undefined, kind)
+                        ? compileSol(sample, "auto", undefined, undefined, undefined, kind)
                         : compileJson(sample, "auto", undefined, undefined, kind));
 
                     const errors = detectCompileErrors(result.data);

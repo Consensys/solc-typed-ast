@@ -104,7 +104,7 @@ describe("Round-trip tests for typestring parser/printer", () => {
                 const result = await compileSol(
                     sample,
                     "auto",
-                    [],
+                    undefined,
                     undefined,
                     undefined,
                     compilerKind as CompilerKind
