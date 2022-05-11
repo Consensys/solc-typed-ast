@@ -264,7 +264,7 @@ export async function compileSol(
     for (const fileName of fileNames) {
         const resolvedFileName = fsResolver.resolve(fileName);
 
-        assert(resolvedFileName !== undefined, `Unable to find "${resolvedFileName}"`);
+        assert(resolvedFileName !== undefined, `Unable to find "${fileName}"`);
 
         const sourceCode = await fse.readFile(resolvedFileName, "utf-8");
 
