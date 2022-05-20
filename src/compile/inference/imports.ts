@@ -95,12 +95,13 @@ function computeSourceUnitName(
 async function resolveSourceUnitName(
     sourceUnitName: string,
     resolvers: ImportResolver[]
-): Promise<string | undefined> {
+): Promise<[string, string] | undefined> {
     for (const resolver of resolvers) {
         const resolvedPath = resolver.resolve(sourceUnitName);
 
         if (resolvedPath !== undefined) {
-            return fse.readFile(resolvedPath, "utf-8");
+            const contents = await fse.readFile(resolvedPath, "utf-8");
+            return [contents, resolvedPath];
         }
     }
 
@@ -111,10 +112,12 @@ async function resolveSourceUnitName(
  * Given a partial map `files` from **source unit names** to file contents, a list of
  * `remappings` and a list of `ImportResolver`s - `resolvers`, find all
  * files that are imported from the starting set `files` but are
- * **missing** in `files` and add them into the files map.
+ * **missing** in `files` and add them into the files map. Also for each imported file
+ * add a mapping from its source unit name to the actual file name in `fileNames`.
  */
 export async function findAllFiles(
     files: Map<string, string>,
+    fileNames: Map<string, string>,
     remappings: Remapping[],
     resolvers: ImportResolver[],
     visited = new Set<string>()
@@ -140,13 +143,16 @@ export async function findAllFiles(
 
         // Missing contents - try and fill them in from the resolvers
         if (content === undefined) {
-            content = await resolveSourceUnitName(sourceUnitName, resolvers);
+            const res = await resolveSourceUnitName(sourceUnitName, resolvers);
 
-            if (content === undefined) {
+            if (res === undefined) {
                 throw new CompileInferenceError(`Couldn't find ${sourceUnitName}`);
             }
 
+            content = res[0];
+
             files.set(sourceUnitName, content);
+            fileNames.set(sourceUnitName, res[1]);
         }
 
         let flds: AnyFileLevelNode[];

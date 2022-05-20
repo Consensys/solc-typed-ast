@@ -52,7 +52,7 @@ describe("findAllFiles() find all needed imports", () => {
             const contents = fse.readFileSync(fileName).toString();
             const files = new Map<string, string>([[fileName, contents]]);
 
-            await findAllFiles(files, [], [new FileSystemResolver()]);
+            await findAllFiles(files, new Map(), [], [new FileSystemResolver()]);
 
             expect(new Set(files.keys())).toEqual(new Set(expectedAllFiles));
         });
@@ -71,7 +71,9 @@ contract Foo {
             ]
         ]);
 
-        await expect(findAllFiles(files, [], [])).rejects.toThrow(/Failed parsing imports/);
+        await expect(findAllFiles(files, new Map(), [], [])).rejects.toThrow(
+            /Failed parsing imports/
+        );
     });
 
     it("Missing file error", async () => {
@@ -85,6 +87,6 @@ contract Foo {
             ]
         ]);
 
-        await expect(findAllFiles(files, [], [])).rejects.toThrow(/Couldn't find a.sol/);
+        await expect(findAllFiles(files, new Map(), [], [])).rejects.toThrow(/Couldn't find a.sol/);
     });
 });
