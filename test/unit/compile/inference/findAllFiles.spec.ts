@@ -1,8 +1,7 @@
 import expect from "expect";
 import fse from "fs-extra";
 import { join } from "path";
-import { FileSystemResolver } from "../../../../src";
-import { findAllFiles } from "../../../../src/compile/inference";
+import { FileSystemResolver, findAllFiles } from "../../../../src";
 
 const SAMPLES_DIR = join("test", "samples", "solidity");
 
