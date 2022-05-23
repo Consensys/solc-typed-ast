@@ -26,9 +26,33 @@ export interface MemoryStorage {
 }
 
 export interface CompileResult {
+    /**
+     * Raw compiler JSON output
+     */
     data: any;
+
+    /**
+     * Compiler version used
+     */
     compilerVersion?: string;
+
+    /**
+     * Map from file-names (either passed in by caller, or source unit names of imported files)
+     * to the contents of the respective files.
+     */
     files: Map<string, string>;
+
+    /**
+     * Map from file-names appearing in the `files` map, to the
+     * actual resolved paths on disk (if any).
+     *
+     * For `compileJSONData()` this map is empty (since nothing was resolved on disk).
+     */
+    resolvedFileNames: Map<string, string>;
+
+    /**
+     * Map from file-names to the remapping inferred to resolve that given file-name
+     */
     inferredRemappings: Map<string, Remapping>;
 }
 
@@ -48,7 +72,7 @@ export class CompileFailedError extends Error {
         this.failures = entries;
 
         const formattedErrorStr = entries.map(
-            (entry) => `==== ${entry.compilerVersion} ===:\n ${entry.errors.join("\n")}\n`
+            (entry) => `==== ${entry.compilerVersion} ====:\n ${entry.errors.join("\n")}\n`
         );
 
         this.message = `Compiler Errors: ${formattedErrorStr}`;
@@ -187,8 +211,9 @@ export async function compileSourceString(
 
     const parsedRemapping = parsePathRemapping(remapping);
     const files = new Map([[fileName, sourceCode]]);
+    const resolvedFileNames = new Map([[fileName, fileName]]);
 
-    await findAllFiles(files, parsedRemapping, resolvers);
+    await findAllFiles(files, resolvedFileNames, parsedRemapping, resolvers);
 
     const compilerVersionStrategy = getCompilerVersionStrategy([...files.values()], version);
     const failures: CompileFailure[] = [];
@@ -210,6 +235,7 @@ export async function compileSourceString(
                 data,
                 compilerVersion,
                 files,
+                resolvedFileNames,
                 inferredRemappings
             };
         }
@@ -257,6 +283,7 @@ export async function compileSol(
     const parsedRemapping = parsePathRemapping(remapping);
 
     const files = new Map<string, string>();
+    const resolvedFileNames = new Map<string, string>();
     const visited = new Set<string>();
 
     const isDynamicBasePath = pathOptions.basePath === undefined;
@@ -277,7 +304,18 @@ export async function compileSol(
 
         files.set(resolvedFileName, sourceCode);
 
-        await findAllFiles(files, parsedRemapping, resolvers, visited);
+        /**
+         * Add self-mapping as we need every key in `files`
+         * to also be defined in `resolvedFileNames`
+         */
+        resolvedFileNames.set(resolvedFileName, resolvedFileName);
+
+        /**
+         * Set the resolved path for every file passed in by the caller as well
+         */
+        resolvedFileNames.set(fileName, resolvedFileName);
+
+        await findAllFiles(files, resolvedFileNames, parsedRemapping, resolvers, visited);
     }
 
     const compilerVersionStrategy = getCompilerVersionStrategy([...files.values()], version);
@@ -300,6 +338,7 @@ export async function compileSol(
                 data,
                 compilerVersion,
                 files,
+                resolvedFileNames,
                 inferredRemappings
             };
         }
@@ -336,7 +375,13 @@ export async function compileJsonData(
 
         fillFilesFromSources(files, sources);
 
-        return { data, compilerVersion, files, inferredRemappings: new Map() };
+        return {
+            data,
+            compilerVersion,
+            files,
+            resolvedFileNames: new Map(),
+            inferredRemappings: new Map()
+        };
     }
 
     if (consistentlyContainsOneOf(sources, "source")) {
@@ -360,7 +405,13 @@ export async function compileJsonData(
             const errors = detectCompileErrors(compileData);
 
             if (errors.length === 0) {
-                return { data: compileData, compilerVersion, files, inferredRemappings: new Map() };
+                return {
+                    data: compileData,
+                    compilerVersion,
+                    files,
+                    resolvedFileNames: new Map(),
+                    inferredRemappings: new Map()
+                };
             }
 
             failures.push({ compilerVersion, errors });
