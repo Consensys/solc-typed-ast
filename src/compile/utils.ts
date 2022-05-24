@@ -46,7 +46,8 @@ export interface CompileResult {
      * Map from file-names appearing in the `files` map, to the
      * actual resolved paths on disk (if any).
      *
-     * For `compileJSONData()` this map is empty (since nothing was resolved on disk).
+     * For `compileJSONData()` this maps each unit absolutePath to itself as no resolution is done.
+     *
      */
     resolvedFileNames: Map<string, string>;
 
@@ -364,6 +365,7 @@ export async function compileJsonData(
     }
 
     const sources: { [fileName: string]: any } = data.sources;
+    const resolvedFileNames = new Map<string, string>(Object.keys(sources).map((x) => [x, x]));
 
     if (consistentlyContainsOneOf(sources, "ast", "legacyAST", "AST")) {
         const compilerVersion = undefined;
@@ -379,7 +381,7 @@ export async function compileJsonData(
             data,
             compilerVersion,
             files,
-            resolvedFileNames: new Map(),
+            resolvedFileNames,
             inferredRemappings: new Map()
         };
     }
@@ -409,7 +411,7 @@ export async function compileJsonData(
                     data: compileData,
                     compilerVersion,
                     files,
-                    resolvedFileNames: new Map(),
+                    resolvedFileNames,
                     inferredRemappings: new Map()
                 };
             }
