@@ -1,0 +1,76 @@
+SourceUnit #75 -> test/samples/solidity/selectors.sol
+|   PragmaDirective #1
+|   ContractDefinition #74 -> contract Selectors
+|   |   VariableDeclaration #3 -> address public x [getter: x(), selector: 0c55699c]
+|   |   |   ElementaryTypeName #2
+|   |   EventDefinition #9 -> SomeEvent(address,uint256) [selector: dde371250dcd21c331edbb965b9163f4898566e8c60e28868533281edf66ab03]
+|   |   |   ParameterList #8
+|   |   |   |   VariableDeclaration #5 -> address addr
+|   |   |   |   |   ElementaryTypeName #4
+|   |   |   |   VariableDeclaration #7 -> uint256 v
+|   |   |   |   |   ElementaryTypeName #6
+|   |   ErrorDefinition #15 -> SomeError(address,uint256) [selector: 399802c9]
+|   |   |   ParameterList #14
+|   |   |   |   VariableDeclaration #11 -> address addr
+|   |   |   |   |   ElementaryTypeName #10
+|   |   |   |   VariableDeclaration #13 -> uint256 v
+|   |   |   |   |   ElementaryTypeName #12
+|   |   FunctionDefinition #73 -> checkSelectors() [selector: 19e6976e]
+|   |   |   ParameterList #16
+|   |   |   ParameterList #25
+|   |   |   |   VariableDeclaration #18 -> bytes4 v
+|   |   |   |   |   ElementaryTypeName #17
+|   |   |   |   VariableDeclaration #20 -> bytes4 fn
+|   |   |   |   |   ElementaryTypeName #19
+|   |   |   |   VariableDeclaration #22 -> bytes32 ev
+|   |   |   |   |   ElementaryTypeName #21
+|   |   |   |   VariableDeclaration #24 -> bytes4 er
+|   |   |   |   |   ElementaryTypeName #23
+|   |   |   Block #72
+|   |   |   |   ExpressionStatement #31
+|   |   |   |   |   Assignment #30
+|   |   |   |   |   |   Identifier #26
+|   |   |   |   |   |   MemberAccess #29
+|   |   |   |   |   |   |   MemberAccess #28
+|   |   |   |   |   |   |   |   Identifier #27
+|   |   |   |   ExpressionStatement #37
+|   |   |   |   |   Assignment #36
+|   |   |   |   |   |   Identifier #32
+|   |   |   |   |   |   MemberAccess #35
+|   |   |   |   |   |   |   MemberAccess #34
+|   |   |   |   |   |   |   |   Identifier #33
+|   |   |   |   ExpressionStatement #42
+|   |   |   |   |   Assignment #41
+|   |   |   |   |   |   Identifier #38
+|   |   |   |   |   |   MemberAccess #40
+|   |   |   |   |   |   |   Identifier #39
+|   |   |   |   ExpressionStatement #47
+|   |   |   |   |   Assignment #46
+|   |   |   |   |   |   Identifier #43
+|   |   |   |   |   |   MemberAccess #45
+|   |   |   |   |   |   |   Identifier #44
+|   |   |   |   ExpressionStatement #53
+|   |   |   |   |   FunctionCall #52
+|   |   |   |   |   |   Identifier #48
+|   |   |   |   |   |   BinaryOperation #51
+|   |   |   |   |   |   |   Identifier #49
+|   |   |   |   |   |   |   Literal #50
+|   |   |   |   ExpressionStatement #59
+|   |   |   |   |   FunctionCall #58
+|   |   |   |   |   |   Identifier #54
+|   |   |   |   |   |   BinaryOperation #57
+|   |   |   |   |   |   |   Identifier #55
+|   |   |   |   |   |   |   Literal #56
+|   |   |   |   ExpressionStatement #65
+|   |   |   |   |   FunctionCall #64
+|   |   |   |   |   |   Identifier #60
+|   |   |   |   |   |   BinaryOperation #63
+|   |   |   |   |   |   |   Identifier #61
+|   |   |   |   |   |   |   Literal #62
+|   |   |   |   ExpressionStatement #71
+|   |   |   |   |   FunctionCall #70
+|   |   |   |   |   |   Identifier #66
+|   |   |   |   |   |   BinaryOperation #69
+|   |   |   |   |   |   |   Identifier #67
+|   |   |   |   |   |   |   Literal #68
+

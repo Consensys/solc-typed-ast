@@ -30,34 +30,34 @@ const encounters = new Map<string, number>([
     ["ImportDirective", 1],
     ["EnumDefinition", 2],
     ["EnumValue", 6],
-    ["ContractDefinition", 16],
-    ["FunctionDefinition", 31],
-    ["ParameterList", 79],
-    ["VariableDeclaration", 63],
-    ["ElementaryTypeName", 49],
-    ["Block", 47],
+    ["ContractDefinition", 17],
+    ["FunctionDefinition", 32],
+    ["ParameterList", 83],
+    ["VariableDeclaration", 69],
+    ["ElementaryTypeName", 55],
+    ["Block", 48],
     ["VariableDeclarationStatement", 16],
-    ["Literal", 35],
+    ["Literal", 37],
     ["UncheckedBlock", 4],
-    ["ExpressionStatement", 16],
+    ["ExpressionStatement", 20],
     ["UnaryOperation", 5],
-    ["Identifier", 81],
+    ["Identifier", 89],
     ["Return", 14],
     ["InheritanceSpecifier", 1],
     ["IdentifierPath", 33],
     ["UsingForDirective", 3],
     ["UserDefinedTypeName", 24],
     ["ModifierInvocation", 2],
-    ["FunctionCall", 39],
-    ["MemberAccess", 36],
+    ["FunctionCall", 41],
+    ["MemberAccess", 38],
     ["OverrideSpecifier", 1],
     ["ElementaryTypeNameExpression", 4],
     ["NewExpression", 2],
     ["TryStatement", 2],
     ["TryCatchClause", 8],
     ["IfStatement", 3],
-    ["BinaryOperation", 20],
-    ["EventDefinition", 1],
+    ["BinaryOperation", 22],
+    ["EventDefinition", 2],
     ["ModifierDefinition", 1],
     ["PlaceholderStatement", 1],
     ["TupleExpression", 9],
@@ -68,12 +68,12 @@ const encounters = new Map<string, number>([
     ["Break", 1],
     ["ForStatement", 1],
     ["InlineAssembly", 6],
-    ["ErrorDefinition", 3],
+    ["ErrorDefinition", 4],
     ["StructuredDocumentation", 3],
     ["RevertStatement", 3],
     ["UserDefinedValueTypeDefinition", 5],
     ["FunctionTypeName", 4],
-    ["Assignment", 1]
+    ["Assignment", 3]
 ]);
 
 for (const compilerKind of PossibleCompilerKinds) {
@@ -116,11 +116,11 @@ for (const compilerKind of PossibleCompilerKinds) {
             // console.log(sourceUnit.print());
             // console.log(sourceUnit.getChildren().length);
 
-            expect(sourceUnit.id).toEqual(695);
-            expect(sourceUnit.src).toEqual("0:8189:0");
+            expect(sourceUnit.id).toEqual(738);
+            expect(sourceUnit.src).toEqual("0:8593:0");
             expect(sourceUnit.absolutePath).toEqual(mainSample);
-            expect(sourceUnit.children.length).toEqual(29);
-            expect(sourceUnit.getChildren().length).toEqual(688);
+            expect(sourceUnit.children.length).toEqual(30);
+            expect(sourceUnit.getChildren().length).toEqual(731);
         });
 
         it(`Validate parsed output (${astKind})`, () => {

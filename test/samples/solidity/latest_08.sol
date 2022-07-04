@@ -335,3 +335,16 @@ contract Features_0813 {
         assembly {}
     }
 }
+
+contract Features_0815 {
+    event SomeEvent(address indexed addr, uint indexed v);
+    error SomeError(address addr, uint v);
+
+    function checkSelectors() pure public returns (bytes32 ev, bytes4 er) {
+        ev = SomeEvent.selector;
+        er = SomeError.selector;
+
+        assert(ev == 0xdde371250dcd21c331edbb965b9163f4898566e8c60e28868533281edf66ab03);
+        assert(er == 0x399802c9);
+    }
+}

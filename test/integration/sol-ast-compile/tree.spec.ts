@@ -37,7 +37,8 @@ const cases: Array<[string[], PathOptions, string]> = [
             includePath: ["test/samples/solidity/multifile/node_modules"]
         },
         "test/samples/solidity/multifile/A_B_C.tree.txt"
-    ]
+    ],
+    [["test/samples/solidity/selectors.sol"], {}, "test/samples/solidity/selectors.tree.txt"]
 ];
 
 for (const [samples, pathOptions, snapshot] of cases) {
