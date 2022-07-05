@@ -353,12 +353,9 @@ function error(message: string): never {
             } else if (node instanceof ErrorDefinition || node instanceof EventDefinition) {
                 if (encoderVersion) {
                     const signature = node.canonicalSignature(encoderVersion);
+                    const selector = node.canonicalSignatureHash(encoderVersion);
 
-                    if (signature) {
-                        const selector = node.canonicalSignatureHash(encoderVersion);
-
-                        message += ` -> ${signature} [selector: ${selector}]`;
-                    }
+                    message += ` -> ${signature} [selector: ${selector}]`;
                 }
             } else if (node instanceof VariableDeclaration) {
                 if (node.stateVariable) {
