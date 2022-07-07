@@ -1,4 +1,4 @@
-const AbiCoder = require("web3-eth-abi");
+import coder from "web3-eth-abi";
 
 export type SourceLocation = { offset: number; length: number; sourceIndex: number };
 
@@ -68,10 +68,16 @@ export function split(
     return result;
 }
 
-export function encodeSignature(signature: string, hexPrefix = false): string {
-    const selector = AbiCoder.encodeFunctionSignature(signature);
+export function encodeFuncSignature(signature: string, hexPrefix = false): string {
+    const selector = coder.encodeFunctionSignature(signature);
 
-    return hexPrefix ? selector : selector.substr(2);
+    return hexPrefix ? selector : selector.slice(2);
+}
+
+export function encodeEventSignature(signature: string, hexPrefix = false): string {
+    const selector = coder.encodeEventSignature(signature);
+
+    return hexPrefix ? selector : selector.slice(2);
 }
 
 export function* sequence(start = 0, step = 1): Generator<number, number, number> {

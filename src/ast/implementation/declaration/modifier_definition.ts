@@ -1,6 +1,6 @@
 import { ABIEncoderVersion } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
-import { encodeSignature } from "../../utils";
+import { encodeFuncSignature } from "../../utils";
 import { OverrideSpecifier } from "../meta/override_specifier";
 import { ParameterList } from "../meta/parameter_list";
 import { StructuredDocumentation } from "../meta/structured_documentation";
@@ -114,6 +114,6 @@ export class ModifierDefinition extends ASTNode {
      * applied to the canonical representation of the modifier signature.
      */
     canonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
-        return encodeSignature(this.canonicalSignature(encoderVersion));
+        return encodeFuncSignature(this.canonicalSignature(encoderVersion));
     }
 }

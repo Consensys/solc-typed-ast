@@ -60,7 +60,7 @@ describe("Source map snapshot tests", () => {
                         compilerVersion
                     );
 
-                    const parts = [];
+                    const parts: string[] = [];
 
                     for (const unit of units) {
                         const sourceMap = new Map<ASTNode, [number, number]>();

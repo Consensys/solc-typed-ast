@@ -50,7 +50,7 @@ SourceUnit #203 -> test/samples/solidity/interface_id.sol
 |   |   |   ParameterList #49
 |   |   |   |   VariableDeclaration #48 -> bool
 |   |   |   |   |   ElementaryTypeName #47
-|   |   EventDefinition #58
+|   |   EventDefinition #58 -> Transfer(address,address,uint256) [selector: ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef]
 |   |   |   ParameterList #57
 |   |   |   |   VariableDeclaration #52 -> address from
 |   |   |   |   |   ElementaryTypeName #51
@@ -58,7 +58,7 @@ SourceUnit #203 -> test/samples/solidity/interface_id.sol
 |   |   |   |   |   ElementaryTypeName #53
 |   |   |   |   VariableDeclaration #56 -> uint256 value
 |   |   |   |   |   ElementaryTypeName #55
-|   |   EventDefinition #66
+|   |   EventDefinition #66 -> Approval(address,address,uint256) [selector: 8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925]
 |   |   |   ParameterList #65
 |   |   |   |   VariableDeclaration #60 -> address owner
 |   |   |   |   |   ElementaryTypeName #59

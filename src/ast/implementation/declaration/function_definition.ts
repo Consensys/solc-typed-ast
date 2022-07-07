@@ -7,7 +7,7 @@ import {
     FunctionStateMutability,
     FunctionVisibility
 } from "../../constants";
-import { encodeSignature } from "../../utils";
+import { encodeFuncSignature } from "../../utils";
 import { ModifierInvocation } from "../meta/modifier_invocation";
 import { OverrideSpecifier } from "../meta/override_specifier";
 import { ParameterList } from "../meta/parameter_list";
@@ -209,6 +209,6 @@ export class FunctionDefinition extends ASTNode {
     canonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
         const signature = this.canonicalSignature(encoderVersion);
 
-        return signature ? encodeSignature(signature) : "";
+        return signature ? encodeFuncSignature(signature) : "";
     }
 }

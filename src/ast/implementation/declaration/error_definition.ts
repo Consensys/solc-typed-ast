@@ -1,6 +1,6 @@
 import { ABIEncoderVersion } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
-import { encodeSignature } from "../../utils";
+import { encodeFuncSignature } from "../../utils";
 import { SourceUnit } from "../meta";
 import { ParameterList } from "../meta/parameter_list";
 import { StructuredDocumentation } from "../meta/structured_documentation";
@@ -78,6 +78,6 @@ export class ErrorDefinition extends ASTNode {
      * applied to the canonical representation of the error signature.
      */
     canonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
-        return encodeSignature(this.canonicalSignature(encoderVersion));
+        return encodeFuncSignature(this.canonicalSignature(encoderVersion));
     }
 }

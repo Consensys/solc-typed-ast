@@ -19,7 +19,7 @@ import {
     Mutability,
     StateVariableVisibility
 } from "../../constants";
-import { encodeSignature } from "../../utils";
+import { encodeFuncSignature } from "../../utils";
 import { Expression } from "../expression/expression";
 import { OverrideSpecifier } from "../meta/override_specifier";
 import { StructuredDocumentation } from "../meta/structured_documentation";
@@ -268,6 +268,6 @@ export class VariableDeclaration extends ASTNode {
      * corresponding to this state variable.
      */
     getterCanonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
-        return encodeSignature(this.getterCanonicalSignature(encoderVersion));
+        return encodeFuncSignature(this.getterCanonicalSignature(encoderVersion));
     }
 }

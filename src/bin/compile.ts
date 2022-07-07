@@ -19,6 +19,8 @@ import {
     compileSourceString,
     ContractDefinition,
     DefaultASTWriterMapping,
+    ErrorDefinition,
+    EventDefinition,
     FunctionDefinition,
     FunctionVisibility,
     getABIEncoderVersion,
@@ -329,7 +331,7 @@ function error(message: string): never {
 
                 const interfaceId = encoderVersion ? node.interfaceId(encoderVersion) : undefined;
 
-                if (interfaceId !== undefined) {
+                if (interfaceId) {
                     message += ` [id: ${interfaceId}]`;
                 }
             } else if (node instanceof FunctionDefinition) {
@@ -348,18 +350,23 @@ function error(message: string): never {
                 } else {
                     message += ` -> ${node.kind}`;
                 }
+            } else if (node instanceof ErrorDefinition || node instanceof EventDefinition) {
+                if (encoderVersion) {
+                    const signature = node.canonicalSignature(encoderVersion);
+                    const selector = node.canonicalSignatureHash(encoderVersion);
+
+                    message += ` -> ${signature} [selector: ${selector}]`;
+                }
             } else if (node instanceof VariableDeclaration) {
                 if (node.stateVariable) {
                     message += ` -> ${node.typeString} ${node.visibility} ${node.name}`;
 
-                    if (node.visibility === StateVariableVisibility.Public) {
-                        const signature = encoderVersion
-                            ? node.getterCanonicalSignature(encoderVersion)
-                            : undefined;
-
-                        const selector = encoderVersion
-                            ? node.getterCanonicalSignatureHash(encoderVersion)
-                            : undefined;
+                    if (
+                        node.visibility === StateVariableVisibility.Public &&
+                        encoderVersion !== undefined
+                    ) {
+                        const signature = node.getterCanonicalSignature(encoderVersion);
+                        const selector = node.getterCanonicalSignatureHash(encoderVersion);
 
                         message += ` [getter: ${signature}, selector: ${selector}]`;
                     }
