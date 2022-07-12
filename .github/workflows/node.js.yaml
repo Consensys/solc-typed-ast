@@ -16,7 +16,7 @@ jobs:
                 # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
         env:
-            SOL_AST_COMPILER_CACHE: ~/.compiler_cache
+            SOL_AST_COMPILER_CACHE: ./.compiler_cache
 
         steps:
             - uses: actions/checkout@v3
