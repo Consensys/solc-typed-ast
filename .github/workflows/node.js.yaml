@@ -1,4 +1,4 @@
-name: Node.js CI
+name: NodeJS CI
 
 on:
     push:
@@ -20,30 +20,37 @@ jobs:
 
         steps:
             - uses: actions/checkout@v3
-            - name: Use Node.js ${{ matrix.node-version }}
+            - name: Use NodeJS ${{ matrix.node-version }}
               uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
 
-            # pre-download compilers from historical builds archive
             # see https://github.com/ethereum/solc-bin
             # see https://binaries.soliditylang.org/
-            - run: ./docker/download.sh 'linux-amd64' $SOL_AST_COMPILER_CACHE
-            - run: ./docker/download.sh 'wasm' $SOL_AST_COMPILER_CACHE
+            - name: Pre-download compilers from historical builds archive
+              run: |
+                  ./docker/download.sh 'linux-amd64' $SOL_AST_COMPILER_CACHE
+                  ls -l $SOL_AST_COMPILER_CACHE/linux-amd64/
+                  ./docker/download.sh 'wasm' $SOL_AST_COMPILER_CACHE
+                  ls -l $SOL_AST_COMPILER_CACHE/wasm/
 
-            # remove list and one rarely used compiler to still test downloading on-demand
-            - run: rm $SOL_AST_COMPILER_CACHE/linux-amd64/list.json
-            - run: rm $SOL_AST_COMPILER_CACHE/linux-amd64/solc-linux-amd64-v0.5.17+commit.d19bba13
-            - run: rm $SOL_AST_COMPILER_CACHE/wasm/list.json
-            - run: rm $SOL_AST_COMPILER_CACHE/wasm/soljson-v0.5.17+commit.d19bba13.js
+            - name: Remove list and one rarely used compiler to still test downloading on-demand
+              run: |
+                  rm $SOL_AST_COMPILER_CACHE/linux-amd64/list.json
+                  rm $SOL_AST_COMPILER_CACHE/linux-amd64/solc-linux-amd64-v0.5.17+commit.d19bba13
+                  rm $SOL_AST_COMPILER_CACHE/wasm/list.json
+                  rm $SOL_AST_COMPILER_CACHE/wasm/soljson-v0.5.17+commit.d19bba13.js
 
-            # perform testing
-            - run: npm install --unsafe-perm
-            - run: npm link --unsafe-perm
-            - run: npm run lint
-            - run: npm test
-            - run: npm run coverage
+            - name: Install, lint, test and generate coverage report
+              run: |
+                  npm install --unsafe-perm
+                  npm link --unsafe-perm
+                  sol-ast-compile --version
+                  sol-ast-compile --locate-compiler-cache
+                  npm run lint
+                  npm test
+                  npm run coverage
 
             - name: Upload coverage to CodeCov
               uses: codecov/codecov-action@v3
