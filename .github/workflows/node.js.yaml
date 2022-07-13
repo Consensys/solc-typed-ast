@@ -15,8 +15,8 @@ jobs:
                 node-version: [16.x]
                 # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
-        # env:
-        #     SOL_AST_COMPILER_CACHE: ./.compiler_cache
+        env:
+            SOL_AST_COMPILER_CACHE: $(pwd)/.compiler_cache
 
         steps:
             - uses: actions/checkout@v3
@@ -28,22 +28,22 @@ jobs:
 
             # see https://github.com/ethereum/solc-bin
             # see https://binaries.soliditylang.org/
-            # - name: Pre-download compilers from historical builds archive
-            #   run: |
-            #       ./docker/download.sh 'linux-amd64' $SOL_AST_COMPILER_CACHE
-            #       ./docker/download.sh 'wasm' $SOL_AST_COMPILER_CACHE
+            - name: Pre-download compilers from historical builds archive
+              run: |
+                  ./docker/download.sh 'linux-amd64' $SOL_AST_COMPILER_CACHE
+                  ./docker/download.sh 'wasm' $SOL_AST_COMPILER_CACHE
 
             # - name: Remove list and one rarely used compiler to still test downloading on-demand
-            #   run: |
-            #       rm -v $SOL_AST_COMPILER_CACHE/linux-amd64/list.json
-            #       rm -v $SOL_AST_COMPILER_CACHE/linux-amd64/solc-linux-amd64-v0.5.17+commit.d19bba13
-            #       rm -v $SOL_AST_COMPILER_CACHE/wasm/list.json
-            #       rm -v $SOL_AST_COMPILER_CACHE/wasm/soljson-v0.5.17+commit.d19bba13.js
+              run: |
+                  rm -v $SOL_AST_COMPILER_CACHE/linux-amd64/list.json
+                  rm -v $SOL_AST_COMPILER_CACHE/linux-amd64/solc-linux-amd64-v0.5.17+commit.d19bba13
+                  rm -v $SOL_AST_COMPILER_CACHE/wasm/list.json
+                  rm -v $SOL_AST_COMPILER_CACHE/wasm/soljson-v0.5.17+commit.d19bba13.js
 
             - name: Install, lint, test and generate coverage report
               run: |
-                  npm install --unsafe-perm
-                  npm link --unsafe-perm
+                  npm install
+                  npm link
                   sol-ast-compile --version
                   sol-ast-compile --locate-compiler-cache
                   npm run lint
