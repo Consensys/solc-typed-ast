@@ -9,6 +9,18 @@ import { StructuredDocumentation } from "../implementation/meta/structured_docum
 import { Block } from "../implementation/statement/block";
 import { LegacyNodeProcessor } from "./node_processor";
 
+export function detectFunctionKind(attributes: any): FunctionKind {
+    if (attributes.kind) {
+        return attributes.kind;
+    }
+
+    if (attributes.isConstructor) {
+        return FunctionKind.Constructor;
+    }
+
+    return attributes.name === "" ? FunctionKind.Fallback : FunctionKind.Function;
+}
+
 export class LegacyFunctionDefinitionProcessor extends LegacyNodeProcessor<FunctionDefinition> {
     process(
         reader: ASTReader,
@@ -24,7 +36,7 @@ export class LegacyFunctionDefinitionProcessor extends LegacyNodeProcessor<Funct
         const visibility: FunctionVisibility = attributes.visibility;
         const virtual: boolean = "virtual" in attributes ? attributes.virtual : false;
         const name: string = attributes.name;
-        const kind = this.detectFunctionKind(attributes);
+        const kind = detectFunctionKind(attributes);
         const stateMutability = this.detectStateMutability(attributes);
 
         const [
@@ -63,18 +75,6 @@ export class LegacyFunctionDefinitionProcessor extends LegacyNodeProcessor<Funct
             undefined,
             raw
         ];
-    }
-
-    private detectFunctionKind(attributes: any): FunctionKind {
-        if (attributes.kind) {
-            return attributes.kind;
-        }
-
-        if (attributes.isConstructor) {
-            return FunctionKind.Constructor;
-        }
-
-        return attributes.name === "" ? FunctionKind.Fallback : FunctionKind.Function;
     }
 
     private detectStateMutability(attributes: any): FunctionStateMutability {
