@@ -237,8 +237,8 @@ Pulling  the latest image (or  set tag the required version)
 ```
 docker push blitz1306/solidity-compilers:latest
 ```
-Run the image and navigate to the test file for verification
-````
-docker run -it  -v $PWD/test.sol:/solc-typed-ast/test.sol blitz1306/solc-typed-ast:latest sol-ast-compile test.sol
 
+Run the image and navigate to the test file for verification
+```
+docker run -it  -v $PWD/test.sol:/solc-typed-ast/test.sol blitz1306/solc-typed-ast:latest sol-ast-compile test.sol
 ```
