@@ -22,6 +22,13 @@ const cases: Array<[string, Array<[CompilerKind, string]>]> = [
         ]
     ],
     [
+        "./test/samples/solidity/issue_132_fun_kind.sol",
+        [
+            [CompilerKind.WASM, "./test/samples/solidity/issue_132_fun_kind.nodes.wasm.txt"],
+            [CompilerKind.Native, "./test/samples/solidity/issue_132_fun_kind.nodes.native.txt"]
+        ]
+    ],
+    [
         "./test/samples/solidity/latest_08.sol",
         [
             [CompilerKind.WASM, "./test/samples/solidity/latest_08.nodes.wasm.txt"],

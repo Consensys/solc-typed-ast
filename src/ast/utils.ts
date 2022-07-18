@@ -1,4 +1,5 @@
 import coder from "web3-eth-abi";
+import { FunctionKind } from "./constants";
 
 export type SourceLocation = { offset: number; length: number; sourceIndex: number };
 
@@ -94,4 +95,16 @@ export function parseSourceLocation(range: string): SourceLocation {
     const sourceIndex = parseInt(parts[2], 10);
 
     return { offset, length, sourceIndex };
+}
+
+export function detectFunctionKind(attributes: any): FunctionKind {
+    if (attributes.kind) {
+        return attributes.kind;
+    }
+
+    if (attributes.isConstructor) {
+        return FunctionKind.Constructor;
+    }
+
+    return attributes.name === "" ? FunctionKind.Fallback : FunctionKind.Function;
 }

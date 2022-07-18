@@ -6,7 +6,7 @@ import { OverrideSpecifier } from "../implementation/meta/override_specifier";
 import { ParameterList } from "../implementation/meta/parameter_list";
 import { StructuredDocumentation } from "../implementation/meta/structured_documentation";
 import { Block } from "../implementation/statement/block";
-import { detectFunctionKind } from "../legacy";
+import { detectFunctionKind } from "../utils";
 import { ModernNodeProcessor } from "./node_processor";
 
 export class ModernFunctionDefinitionProcessor extends ModernNodeProcessor<FunctionDefinition> {

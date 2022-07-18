@@ -1,0 +1,577 @@
+SourceUnit #56
+    id: 56
+    src: "0:0:0"
+    sourceEntryKey: "./test/samples/solidity/issue_132_fun_kind.sol"
+    sourceListIndex: 0
+    absolutePath: "./test/samples/solidity/issue_132_fun_kind.sol"
+    exportedSymbols: Map(1) { "FBNoArgs" -> 55 }
+    context: ASTContext #1000
+    <getter> vPragmaDirectives: Array(1) [ PragmaDirective #29 ]
+    <getter> vImportDirectives: Array(0)
+    <getter> vContracts: Array(1) [ ContractDefinition #55 ]
+    <getter> vEnums: Array(0)
+    <getter> vErrors: Array(0)
+    <getter> vStructs: Array(0)
+    <getter> vFunctions: Array(0)
+    <getter> vVariables: Array(0)
+    <getter> vUserDefinedValueTypes: Array(0)
+    <getter> vUsingForDirectives: Array(0)
+    <getter> vExportedSymbols: Map(1) { "FBNoArgs" -> ContractDefinition #55 }
+    <getter> children: Array(2) [ PragmaDirective #29, ContractDefinition #55 ]
+    <getter> type: "SourceUnit"
+    <getter> firstChild: PragmaDirective #29
+    <getter> lastChild: ContractDefinition #55
+    <getter> previousSibling: undefined
+    <getter> nextSibling: undefined
+    <getter> root: SourceUnit #56
+    <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+    PragmaDirective #29
+        id: 29
+        src: "0:0:0"
+        literals: Array(3) [ "solidity", "0.4", ".24" ]
+        context: ASTContext #1000
+        parent: SourceUnit #56
+        <getter> vIdentifier: "solidity"
+        <getter> vValue: "0.4.24"
+        <getter> type: "PragmaDirective"
+        <getter> children: Array(0)
+        <getter> firstChild: undefined
+        <getter> lastChild: undefined
+        <getter> previousSibling: undefined
+        <getter> nextSibling: ContractDefinition #55
+        <getter> root: SourceUnit #56
+        <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+    ContractDefinition #55
+        id: 55
+        src: "0:0:0"
+        name: "FBNoArgs"
+        scope: 56
+        kind: "contract"
+        abstract: false
+        fullyImplemented: true
+        linearizedBaseContracts: Array(1) [ 55 ]
+        usedErrors: Array(0)
+        docString: undefined
+        nameLocation: undefined
+        context: ASTContext #1000
+        parent: SourceUnit #56
+        <getter> documentation: undefined
+        <getter> danglingDocumentation: undefined
+        <getter> vScope: SourceUnit #56
+        <getter> vLinearizedBaseContracts: Array(1) [ ContractDefinition #55 ]
+        <getter> vUsedErrors: Array(0)
+        <getter> vInheritanceSpecifiers: Array(0)
+        <getter> vStateVariables: Array(1) [ VariableDeclaration #32 ]
+        <getter> vModifiers: Array(0)
+        <getter> vEvents: Array(0)
+        <getter> vErrors: Array(0)
+        <getter> vFunctions: Array(2) [ FunctionDefinition #40, FunctionDefinition #54 ]
+        <getter> vUsingForDirectives: Array(0)
+        <getter> vStructs: Array(0)
+        <getter> vEnums: Array(0)
+        <getter> vUserDefinedValueTypes: Array(0)
+        <getter> vConstructor: undefined
+        <getter> children: Array(3) [ VariableDeclaration #32, FunctionDefinition #40, FunctionDefinition #54 ]
+        <getter> type: "ContractDefinition"
+        <getter> firstChild: VariableDeclaration #32
+        <getter> lastChild: FunctionDefinition #54
+        <getter> previousSibling: PragmaDirective #29
+        <getter> nextSibling: undefined
+        <getter> root: SourceUnit #56
+        <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+        VariableDeclaration #32
+            id: 32
+            src: "0:0:0"
+            constant: false
+            indexed: false
+            name: "lastCall"
+            scope: 55
+            stateVariable: true
+            storageLocation: "default"
+            visibility: "public"
+            mutability: "mutable"
+            typeString: "int8"
+            documentation: undefined
+            nameLocation: undefined
+            vType: ElementaryTypeName #30
+            vOverrideSpecifier: undefined
+            vValue: Literal #31
+            context: ASTContext #1000
+            parent: ContractDefinition #55
+            <getter> children: Array(2) [ ElementaryTypeName #30, Literal #31 ]
+            <getter> vScope: ContractDefinition #55
+            <getter> type: "VariableDeclaration"
+            <getter> firstChild: ElementaryTypeName #30
+            <getter> lastChild: Literal #31
+            <getter> previousSibling: undefined
+            <getter> nextSibling: FunctionDefinition #40
+            <getter> root: SourceUnit #56
+            <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+            ElementaryTypeName #30
+                id: 30
+                src: "0:0:0"
+                typeString: "int8"
+                name: "int8"
+                stateMutability: "nonpayable"
+                context: ASTContext #1000
+                parent: VariableDeclaration #32
+                <getter> type: "ElementaryTypeName"
+                <getter> children: Array(0)
+                <getter> firstChild: undefined
+                <getter> lastChild: undefined
+                <getter> previousSibling: undefined
+                <getter> nextSibling: Literal #31
+                <getter> root: SourceUnit #56
+                <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+            Literal #31
+                id: 31
+                src: "0:0:0"
+                typeString: "int_const 0"
+                kind: "number"
+                hexValue: "30"
+                value: "0"
+                subdenomination: undefined
+                context: ASTContext #1000
+                parent: VariableDeclaration #32
+                <getter> type: "Literal"
+                <getter> children: Array(0)
+                <getter> firstChild: undefined
+                <getter> lastChild: undefined
+                <getter> previousSibling: ElementaryTypeName #30
+                <getter> nextSibling: undefined
+                <getter> root: SourceUnit #56
+                <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+        FunctionDefinition #40
+            id: 40
+            src: "0:0:0"
+            implemented: true
+            virtual: false
+            scope: 55
+            kind: "fallback"
+            name: ""
+            visibility: "external"
+            stateMutability: "payable"
+            isConstructor: false
+            documentation: undefined
+            nameLocation: undefined
+            vParameters: ParameterList #33
+            vReturnParameters: ParameterList #34
+            vModifiers: Array(0)
+            vOverrideSpecifier: undefined
+            vBody: Block #39
+            context: ASTContext #1000
+            parent: ContractDefinition #55
+            <getter> children: Array(3) [ ParameterList #33, ParameterList #34, Block #39 ]
+            <getter> vScope: ContractDefinition #55
+            <getter> type: "FunctionDefinition"
+            <getter> firstChild: ParameterList #33
+            <getter> lastChild: Block #39
+            <getter> previousSibling: VariableDeclaration #32
+            <getter> nextSibling: FunctionDefinition #54
+            <getter> root: SourceUnit #56
+            <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+            ParameterList #33
+                id: 33
+                src: "0:0:0"
+                context: ASTContext #1000
+                parent: FunctionDefinition #40
+                <getter> vParameters: Array(0)
+                <getter> children: Array(0)
+                <getter> type: "ParameterList"
+                <getter> firstChild: undefined
+                <getter> lastChild: undefined
+                <getter> previousSibling: undefined
+                <getter> nextSibling: ParameterList #34
+                <getter> root: SourceUnit #56
+                <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+            ParameterList #34
+                id: 34
+                src: "0:0:0"
+                context: ASTContext #1000
+                parent: FunctionDefinition #40
+                <getter> vParameters: Array(0)
+                <getter> children: Array(0)
+                <getter> type: "ParameterList"
+                <getter> firstChild: undefined
+                <getter> lastChild: undefined
+                <getter> previousSibling: ParameterList #33
+                <getter> nextSibling: Block #39
+                <getter> root: SourceUnit #56
+                <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+            Block #39
+                id: 39
+                src: "0:0:0"
+                docString: undefined
+                context: ASTContext #1000
+                parent: FunctionDefinition #40
+                <getter> vStatements: Array(1) [ ExpressionStatement #38 ]
+                <getter> documentation: undefined
+                <getter> danglingDocumentation: undefined
+                <getter> children: Array(1) [ ExpressionStatement #38 ]
+                <getter> type: "Block"
+                <getter> firstChild: ExpressionStatement #38
+                <getter> lastChild: ExpressionStatement #38
+                <getter> previousSibling: ParameterList #34
+                <getter> nextSibling: undefined
+                <getter> root: SourceUnit #56
+                <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                ExpressionStatement #38
+                    id: 38
+                    src: "0:0:0"
+                    documentation: undefined
+                    vExpression: Assignment #37
+                    context: ASTContext #1000
+                    parent: Block #39
+                    <getter> children: Array(1) [ Assignment #37 ]
+                    <getter> type: "ExpressionStatement"
+                    <getter> firstChild: Assignment #37
+                    <getter> lastChild: Assignment #37
+                    <getter> previousSibling: undefined
+                    <getter> nextSibling: undefined
+                    <getter> root: SourceUnit #56
+                    <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                    Assignment #37
+                        id: 37
+                        src: "0:0:0"
+                        typeString: "int8"
+                        operator: "="
+                        vLeftHandSide: Identifier #35
+                        vRightHandSide: Literal #36
+                        context: ASTContext #1000
+                        parent: ExpressionStatement #38
+                        <getter> children: Array(2) [ Identifier #35, Literal #36 ]
+                        <getter> type: "Assignment"
+                        <getter> firstChild: Identifier #35
+                        <getter> lastChild: Literal #36
+                        <getter> previousSibling: undefined
+                        <getter> nextSibling: undefined
+                        <getter> root: SourceUnit #56
+                        <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                        Identifier #35
+                            id: 35
+                            src: "0:0:0"
+                            typeString: "int8"
+                            name: "lastCall"
+                            referencedDeclaration: 32
+                            context: ASTContext #1000
+                            parent: Assignment #37
+                            <getter> vReferencedDeclaration: VariableDeclaration #32
+                            <getter> vIdentifierType: "userDefined"
+                            <getter> type: "Identifier"
+                            <getter> children: Array(0)
+                            <getter> firstChild: undefined
+                            <getter> lastChild: undefined
+                            <getter> previousSibling: undefined
+                            <getter> nextSibling: Literal #36
+                            <getter> root: SourceUnit #56
+                            <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                        Literal #36
+                            id: 36
+                            src: "0:0:0"
+                            typeString: "int_const 1"
+                            kind: "number"
+                            hexValue: "31"
+                            value: "1"
+                            subdenomination: undefined
+                            context: ASTContext #1000
+                            parent: Assignment #37
+                            <getter> type: "Literal"
+                            <getter> children: Array(0)
+                            <getter> firstChild: undefined
+                            <getter> lastChild: undefined
+                            <getter> previousSibling: Identifier #35
+                            <getter> nextSibling: undefined
+                            <getter> root: SourceUnit #56
+                            <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+        FunctionDefinition #54
+            id: 54
+            src: "0:0:0"
+            implemented: true
+            virtual: false
+            scope: 55
+            kind: "function"
+            name: "id"
+            visibility: "public"
+            stateMutability: "nonpayable"
+            isConstructor: false
+            documentation: undefined
+            nameLocation: undefined
+            vParameters: ParameterList #43
+            vReturnParameters: ParameterList #46
+            vModifiers: Array(0)
+            vOverrideSpecifier: undefined
+            vBody: Block #53
+            context: ASTContext #1000
+            parent: ContractDefinition #55
+            <getter> children: Array(3) [ ParameterList #43, ParameterList #46, Block #53 ]
+            <getter> vScope: ContractDefinition #55
+            <getter> type: "FunctionDefinition"
+            <getter> firstChild: ParameterList #43
+            <getter> lastChild: Block #53
+            <getter> previousSibling: FunctionDefinition #40
+            <getter> nextSibling: undefined
+            <getter> root: SourceUnit #56
+            <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+            ParameterList #43
+                id: 43
+                src: "0:0:0"
+                context: ASTContext #1000
+                parent: FunctionDefinition #54
+                <getter> vParameters: Array(1) [ VariableDeclaration #42 ]
+                <getter> children: Array(1) [ VariableDeclaration #42 ]
+                <getter> type: "ParameterList"
+                <getter> firstChild: VariableDeclaration #42
+                <getter> lastChild: VariableDeclaration #42
+                <getter> previousSibling: undefined
+                <getter> nextSibling: ParameterList #46
+                <getter> root: SourceUnit #56
+                <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                VariableDeclaration #42
+                    id: 42
+                    src: "0:0:0"
+                    constant: false
+                    indexed: false
+                    name: "x"
+                    scope: 54
+                    stateVariable: false
+                    storageLocation: "default"
+                    visibility: "internal"
+                    mutability: "mutable"
+                    typeString: "uint256"
+                    documentation: undefined
+                    nameLocation: undefined
+                    vType: ElementaryTypeName #41
+                    vOverrideSpecifier: undefined
+                    vValue: undefined
+                    context: ASTContext #1000
+                    parent: ParameterList #43
+                    <getter> children: Array(1) [ ElementaryTypeName #41 ]
+                    <getter> vScope: FunctionDefinition #54
+                    <getter> type: "VariableDeclaration"
+                    <getter> firstChild: ElementaryTypeName #41
+                    <getter> lastChild: ElementaryTypeName #41
+                    <getter> previousSibling: undefined
+                    <getter> nextSibling: undefined
+                    <getter> root: SourceUnit #56
+                    <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                    ElementaryTypeName #41
+                        id: 41
+                        src: "0:0:0"
+                        typeString: "uint256"
+                        name: "uint"
+                        stateMutability: "nonpayable"
+                        context: ASTContext #1000
+                        parent: VariableDeclaration #42
+                        <getter> type: "ElementaryTypeName"
+                        <getter> children: Array(0)
+                        <getter> firstChild: undefined
+                        <getter> lastChild: undefined
+                        <getter> previousSibling: undefined
+                        <getter> nextSibling: undefined
+                        <getter> root: SourceUnit #56
+                        <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+            ParameterList #46
+                id: 46
+                src: "0:0:0"
+                context: ASTContext #1000
+                parent: FunctionDefinition #54
+                <getter> vParameters: Array(1) [ VariableDeclaration #45 ]
+                <getter> children: Array(1) [ VariableDeclaration #45 ]
+                <getter> type: "ParameterList"
+                <getter> firstChild: VariableDeclaration #45
+                <getter> lastChild: VariableDeclaration #45
+                <getter> previousSibling: ParameterList #43
+                <getter> nextSibling: Block #53
+                <getter> root: SourceUnit #56
+                <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                VariableDeclaration #45
+                    id: 45
+                    src: "0:0:0"
+                    constant: false
+                    indexed: false
+                    name: ""
+                    scope: 54
+                    stateVariable: false
+                    storageLocation: "default"
+                    visibility: "internal"
+                    mutability: "mutable"
+                    typeString: "uint256"
+                    documentation: undefined
+                    nameLocation: undefined
+                    vType: ElementaryTypeName #44
+                    vOverrideSpecifier: undefined
+                    vValue: undefined
+                    context: ASTContext #1000
+                    parent: ParameterList #46
+                    <getter> children: Array(1) [ ElementaryTypeName #44 ]
+                    <getter> vScope: FunctionDefinition #54
+                    <getter> type: "VariableDeclaration"
+                    <getter> firstChild: ElementaryTypeName #44
+                    <getter> lastChild: ElementaryTypeName #44
+                    <getter> previousSibling: undefined
+                    <getter> nextSibling: undefined
+                    <getter> root: SourceUnit #56
+                    <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                    ElementaryTypeName #44
+                        id: 44
+                        src: "0:0:0"
+                        typeString: "uint256"
+                        name: "uint"
+                        stateMutability: "nonpayable"
+                        context: ASTContext #1000
+                        parent: VariableDeclaration #45
+                        <getter> type: "ElementaryTypeName"
+                        <getter> children: Array(0)
+                        <getter> firstChild: undefined
+                        <getter> lastChild: undefined
+                        <getter> previousSibling: undefined
+                        <getter> nextSibling: undefined
+                        <getter> root: SourceUnit #56
+                        <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+            Block #53
+                id: 53
+                src: "0:0:0"
+                docString: undefined
+                context: ASTContext #1000
+                parent: FunctionDefinition #54
+                <getter> vStatements: Array(2) [ ExpressionStatement #50, Return #52 ]
+                <getter> documentation: undefined
+                <getter> danglingDocumentation: undefined
+                <getter> children: Array(2) [ ExpressionStatement #50, Return #52 ]
+                <getter> type: "Block"
+                <getter> firstChild: ExpressionStatement #50
+                <getter> lastChild: Return #52
+                <getter> previousSibling: ParameterList #46
+                <getter> nextSibling: undefined
+                <getter> root: SourceUnit #56
+                <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                ExpressionStatement #50
+                    id: 50
+                    src: "0:0:0"
+                    documentation: undefined
+                    vExpression: Assignment #49
+                    context: ASTContext #1000
+                    parent: Block #53
+                    <getter> children: Array(1) [ Assignment #49 ]
+                    <getter> type: "ExpressionStatement"
+                    <getter> firstChild: Assignment #49
+                    <getter> lastChild: Assignment #49
+                    <getter> previousSibling: undefined
+                    <getter> nextSibling: Return #52
+                    <getter> root: SourceUnit #56
+                    <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                    Assignment #49
+                        id: 49
+                        src: "0:0:0"
+                        typeString: "int8"
+                        operator: "="
+                        vLeftHandSide: Identifier #47
+                        vRightHandSide: Literal #48
+                        context: ASTContext #1000
+                        parent: ExpressionStatement #50
+                        <getter> children: Array(2) [ Identifier #47, Literal #48 ]
+                        <getter> type: "Assignment"
+                        <getter> firstChild: Identifier #47
+                        <getter> lastChild: Literal #48
+                        <getter> previousSibling: undefined
+                        <getter> nextSibling: undefined
+                        <getter> root: SourceUnit #56
+                        <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                        Identifier #47
+                            id: 47
+                            src: "0:0:0"
+                            typeString: "int8"
+                            name: "lastCall"
+                            referencedDeclaration: 32
+                            context: ASTContext #1000
+                            parent: Assignment #49
+                            <getter> vReferencedDeclaration: VariableDeclaration #32
+                            <getter> vIdentifierType: "userDefined"
+                            <getter> type: "Identifier"
+                            <getter> children: Array(0)
+                            <getter> firstChild: undefined
+                            <getter> lastChild: undefined
+                            <getter> previousSibling: undefined
+                            <getter> nextSibling: Literal #48
+                            <getter> root: SourceUnit #56
+                            <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                        Literal #48
+                            id: 48
+                            src: "0:0:0"
+                            typeString: "int_const 2"
+                            kind: "number"
+                            hexValue: "32"
+                            value: "2"
+                            subdenomination: undefined
+                            context: ASTContext #1000
+                            parent: Assignment #49
+                            <getter> type: "Literal"
+                            <getter> children: Array(0)
+                            <getter> firstChild: undefined
+                            <getter> lastChild: undefined
+                            <getter> previousSibling: Identifier #47
+                            <getter> nextSibling: undefined
+                            <getter> root: SourceUnit #56
+                            <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                Return #52
+                    id: 52
+                    src: "0:0:0"
+                    documentation: undefined
+                    functionReturnParameters: 18
+                    vExpression: Identifier #51
+                    context: ASTContext #1000
+                    parent: Block #53
+                    <getter> children: Array(1) [ Identifier #51 ]
+                    <getter> vFunctionReturnParameters: ParameterList #18
+                    <getter> type: "Return"
+                    <getter> firstChild: Identifier #51
+                    <getter> lastChild: Identifier #51
+                    <getter> previousSibling: ExpressionStatement #50
+                    <getter> nextSibling: undefined
+                    <getter> root: SourceUnit #56
+                    <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }
+
+                    Identifier #51
+                        id: 51
+                        src: "0:0:0"
+                        typeString: "uint256"
+                        name: "x"
+                        referencedDeclaration: 42
+                        context: ASTContext #1000
+                        parent: Return #52
+                        <getter> vReferencedDeclaration: VariableDeclaration #42
+                        <getter> vIdentifierType: "userDefined"
+                        <getter> type: "Identifier"
+                        <getter> children: Array(0)
+                        <getter> firstChild: undefined
+                        <getter> lastChild: undefined
+                        <getter> previousSibling: undefined
+                        <getter> nextSibling: undefined
+                        <getter> root: SourceUnit #56
+                        <getter> sourceInfo: Object { offset: 0, length: 0, sourceIndex: 0 }

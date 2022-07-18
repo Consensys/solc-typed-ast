@@ -1,25 +1,14 @@
 import { ASTNode } from "../ast_node";
 import { ASTReader, ASTReaderConfiguration } from "../ast_reader";
-import { FunctionKind, FunctionStateMutability, FunctionVisibility } from "../constants";
+import { FunctionStateMutability, FunctionVisibility } from "../constants";
 import { FunctionDefinition } from "../implementation/declaration/function_definition";
 import { ModifierInvocation } from "../implementation/meta/modifier_invocation";
 import { OverrideSpecifier } from "../implementation/meta/override_specifier";
 import { ParameterList } from "../implementation/meta/parameter_list";
 import { StructuredDocumentation } from "../implementation/meta/structured_documentation";
 import { Block } from "../implementation/statement/block";
+import { detectFunctionKind } from "../utils";
 import { LegacyNodeProcessor } from "./node_processor";
-
-export function detectFunctionKind(attributes: any): FunctionKind {
-    if (attributes.kind) {
-        return attributes.kind;
-    }
-
-    if (attributes.isConstructor) {
-        return FunctionKind.Constructor;
-    }
-
-    return attributes.name === "" ? FunctionKind.Fallback : FunctionKind.Function;
-}
 
 export class LegacyFunctionDefinitionProcessor extends LegacyNodeProcessor<FunctionDefinition> {
     process(
