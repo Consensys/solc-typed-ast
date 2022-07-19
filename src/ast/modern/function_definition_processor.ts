@@ -6,6 +6,7 @@ import { OverrideSpecifier } from "../implementation/meta/override_specifier";
 import { ParameterList } from "../implementation/meta/parameter_list";
 import { StructuredDocumentation } from "../implementation/meta/structured_documentation";
 import { Block } from "../implementation/statement/block";
+import { detectFunctionKind } from "../utils";
 import { ModernNodeProcessor } from "./node_processor";
 
 export class ModernFunctionDefinitionProcessor extends ModernNodeProcessor<FunctionDefinition> {
@@ -17,7 +18,7 @@ export class ModernFunctionDefinitionProcessor extends ModernNodeProcessor<Funct
         const [id, src] = super.process(reader, config, raw);
 
         const scope: number = raw.scope;
-        const kind: FunctionKind = raw.kind;
+        const kind: FunctionKind = detectFunctionKind(raw);
         const isConstructor: boolean = raw.isConstructor || raw.kind === FunctionKind.Constructor;
         const visibility: FunctionVisibility = raw.visibility;
         const virtual: boolean = "virtual" in raw ? raw.virtual : false;
