@@ -129,7 +129,7 @@ for (const sourceUnit of sourceUnits) {
 }
 ```
 
-#### Using as a CLI tool
+### Using as a CLI tool
 
 Package bundles a `sol-ast-compile` CLI tool to provide help with development process. It is able to compile the Solidity source and output short AST structure with following:
 
@@ -139,7 +139,7 @@ sol-ast-compile sample.sol --tree
 
 Use `--help` to see all available features.
 
-#### Dealing with used compilers
+### Dealing with used compilers
 
 Package supports switching between native binary Solc compilers and its WASM versions. The CLI option `--compiler-kind` and `kind` argument of `compile*()` functions family may be used for that purpose. Compilers **are downloaded on-demand** to the directory `.compiler_cache` at the package installation directory (by default). The compiler cache location may be customized by setting `SOL_AST_COMPILER_CACHE` environment variable to a custom path. For example:
 
