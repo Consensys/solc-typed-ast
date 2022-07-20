@@ -34,9 +34,25 @@ Also it can be installed as the dependency:
 npm install --save solc-typed-ast
 ```
 
+### The Docker image
+
+Package could be used as a standalone CLI utility via the Docker image. Pull the `latest` or tagged version image via following command:
+
+```bash
+docker push consensys/solidity-compilers:latest
+```
+
+Then run the image on sample file (`test.sol` in the example below):
+
+```bash
+docker run -it -v $PWD/test.sol:/solc-typed-ast/test.sol consensys/solc-typed-ast:latest sol-ast-compile test.sol
+```
+
 ## Usage
 
-### Easy compiling
+### Using as the dependency
+
+#### Easy compiling
 
 The package introduces easy and universal compiler invocation. Starting with **Solidity 0.4.13**, source compilation could be done universally:
 
@@ -68,35 +84,7 @@ console.log(result);
 
 The second argument with the `"auto"` value specifies a compiler selection strategy. If `"auto"` is specified and source code contains valid `pragma solidity` directive, then compiler version will be automatically picked from it. If compile process will not succedd, the execution will fall back to _"compiler guessing"_: trying to compile source with a few different versions of the new and old Solidity compilers. The other option would be to specify a concrete supported compiler version string, like `"0.7.0"` for example. There is also a support for various compiler selection strategies, including used-defined custom ones (`CompilerVersionSelectionStrategy` interface implementations).
 
-### Used compilers
-
-Package supports switching between native binary Solc compilers and its WASM versions. The CLI option `--compiler-kind` and `kind` argument of `compile*()` functions family may be used for that purpose. Compilers **are downloaded on-demand** to the directory `.compiler_cache` at the package installation directory (by default). The compiler cache location may be customized by setting `SOL_AST_COMPILER_CACHE` environment variable to a custom path. For example:
-
-```bash
-SOL_AST_COMPILER_CACHE=~/.compiler_cache sol-ast-compile sample.sol --compiler-kind native --tree
-```
-
-or
-
-```bash
-export SOL_AST_COMPILER_CACHE=~/.compiler_cache
-
-sol-ast-compile sample.sol --compiler-kind native --tree
-```
-
-#### Invalidation of downloaded compler cache
-
-If there is a need to invalidate the downloaded compiler cache, then follow next steps:
-
-1. Locate `.compiler_cache` directory:
-
-```bash
-sol-ast-compile --locate-compiler-cache
-```
-
-2. Manually remove `list.json` files to invalidate list of available compilers, remove certain compilers, or remove entire directory. Missing pieces will be downloaded again.
-
-### Typed universal AST
+#### Typed universal AST
 
 After the source is compiled and original compiler has provided the raw AST, the `ASTReader` could be used to read the typed universal AST:
 
@@ -116,7 +104,7 @@ The typed universal AST has following benefits:
 -   It has TypeScript types and proper AST node classes hierarchy.
 -   It has built-in tree traversal routines, like `walk()`, `getChildrenBySelector()`, `getParents()`, `getClosestParentBySelector()` and so on.
 
-### Converting an AST back to source
+#### Converting an AST back to source
 
 One of the goals of each AST is to provide a way for programmatic modification. To do that, you could modify properties of the typed universal AST nodes. Then use the `ASTWriter` to write modified AST back to source code:
 
@@ -141,7 +129,7 @@ for (const sourceUnit of sourceUnits) {
 }
 ```
 
-### CLI tool
+#### Using as a CLI tool
 
 Package bundles a `sol-ast-compile` CLI tool to provide help with development process. It is able to compile the Solidity source and output short AST structure with following:
 
@@ -151,6 +139,32 @@ sol-ast-compile sample.sol --tree
 
 Use `--help` to see all available features.
 
+#### Dealing with used compilers
+
+Package supports switching between native binary Solc compilers and its WASM versions. The CLI option `--compiler-kind` and `kind` argument of `compile*()` functions family may be used for that purpose. Compilers **are downloaded on-demand** to the directory `.compiler_cache` at the package installation directory (by default). The compiler cache location may be customized by setting `SOL_AST_COMPILER_CACHE` environment variable to a custom path. For example:
+
+```bash
+SOL_AST_COMPILER_CACHE=~/.compiler_cache sol-ast-compile sample.sol --compiler-kind native --tree
+```
+
+or
+
+```bash
+export SOL_AST_COMPILER_CACHE=~/.compiler_cache
+
+sol-ast-compile sample.sol --compiler-kind native --tree
+```
+
+If there is a need to **invalidate** the downloaded compiler cache, then follow next steps:
+
+1. Locate `.compiler_cache` directory:
+
+```bash
+sol-ast-compile --locate-compiler-cache
+```
+
+2. Manually remove `list.json` files to invalidate list of available compilers, remove certain compilers, or remove entire directory. Missing pieces will be downloaded again.
+
 ## Project overview
 
 The project have following directory structure:
@@ -159,6 +173,7 @@ The project have following directory structure:
 ├── .compiler_cache             # Cache of downloaded compilers (by default, if not configured by SOL_AST_COMPILER_CACHE).
 ├── coverage                    # Test coverage report, produced by "npm test" command.
 ├── dist                        # Generated JavaScript sources for package distribution (produced by "npm run build" and published by "npm publish" commands).
+├── docker                      # Docker image building instructions and scripts.
 ├── docs                        # Project documentation and API reference, produced by "npm run docs:render" or "npm run docs:refresh" commands.
 ├── src                         # Original TypeScript sources.
 │   ├── ast                     # AST-related definitions and logic:
@@ -179,7 +194,8 @@ The project have following directory structure:
 └── test                        # Tests:
     ├── integration             #   - Integration test suites.
     ├── samples                 #   - Solidity and compiler ourput JSON samples for the tests.
-    └── unit                    #   - Unit test suites.
+    ├── unit                    #   - Unit test suites.
+    └── utils                   #   - Shared utility functions for the test suites.
 ```
 
 A key points for better understanding:
@@ -229,16 +245,3 @@ It is also published here: https://consensys.github.io/solc-typed-ast/
 ### The list of AST node types
 
 The list of known AST node types can be found [here](https://github.com/ConsenSys/solc-typed-ast/blob/master/NODE_LIST.md).
-
-
-## How run docker images
-
-Pulling  the latest image (or  set tag the required version)
-```
-docker push blitz1306/solidity-compilers:latest
-```
-
-Run the image and navigate to the test file for verification
-```
-docker run -it  -v $PWD/test.sol:/solc-typed-ast/test.sol blitz1306/solc-typed-ast:latest sol-ast-compile test.sol
-```

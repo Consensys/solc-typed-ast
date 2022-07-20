@@ -21,7 +21,7 @@ ARCH="${1}"
 CACHE_DIR="${2}"
 TARGET_DIR="$CACHE_DIR/$ARCH"
 
-echo "Pre-downloading compilers to $TARGET_DIR"
+echo "Pre-downloading $ARCH compilers to $TARGET_DIR"
 
 mkdir -p $TARGET_DIR
 

@@ -1,35 +1,34 @@
-name: 'build and push base image'
+name: Build and publish the Docker image
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+    push:
+        tags:
+            - "v*.*.*"
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-            # list of Docker images to use as base name for tags.
-            # For the docker image, the tag from which the pipeline was launched and the latest version will be added.
-          images: |
-            blitz1306/solc-typed-ast    # While the test dockerhub will be used
-          tags: |
-            type=schedule
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{raw}}
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          file: /docker/Dockerfile
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Login to container registry
+              uses: docker/login-action@v2
+              with:
+                  username: ${{ secrets.DOCKERHUB_USERNAME }}
+                  password: ${{ secrets.DOCKERHUB_TOKEN }}
+            - name: Docker meta
+              id: meta
+              uses: docker/metadata-action@v4
+              with:
+                  # The list of Docker images to use as a base name for tags.
+                  # Image would be tagged with "latest" and "version tag".
+                  images: consensys/solc-typed-ast
+                  tags: |
+                      type=schedule
+                      type=ref,event=branch
+                      type=ref,event=pr
+                      type=semver,pattern={{raw}}
+            - name: Build and push
+              uses: docker/build-push-action@v3
+              with:
+                  push: true
+                  tags: ${{ steps.meta.outputs.tags }}
+                  file: /docker/Dockerfile
