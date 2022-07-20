@@ -39,7 +39,7 @@ npm install --save solc-typed-ast
 Package could be used as a standalone CLI utility via the Docker image. Pull the `latest` or tagged version image via following command:
 
 ```bash
-docker push consensys/solidity-compilers:latest
+docker pull consensys/solidity-compilers:latest
 ```
 
 Then run the image on sample file (`test.sol` in the example below):
