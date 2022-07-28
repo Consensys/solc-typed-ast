@@ -44,6 +44,10 @@ export function isStructEqualityComparable(a: any): a is StructEqualityComparabl
  * for that object correctly.
  */
 export function eq(a: any, b: any, visited?: Map<any, any>): boolean {
+    if (a === b) {
+        return true;
+    }
+
     if (visited === undefined) {
         visited = new Map<any, any>();
     }
