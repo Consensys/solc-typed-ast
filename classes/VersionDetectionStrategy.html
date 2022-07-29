@@ -20,7 +20,9 @@
 <section class="tsd-panel">
 <h4>Implements</h4>
 <ul class="tsd-hierarchy">
-<li><a href="../interfaces/CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a></li></ul></section>
+<li><a href="../interfaces/CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a></li></ul></section><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/compiler_selection.ts#L72">src/compile/compiler_selection.ts:72</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -45,8 +47,7 @@
 <section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class"><a id="constructor" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-<li class="tsd-signature" id="constructor.new_VersionDetectionStrategy">new <wbr/>Version<wbr/>Detection<wbr/>Strategy<span class="tsd-signature-symbol">(</span>sources<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, fallback<span class="tsd-signature-symbol">: </span><a href="../interfaces/CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a>, descending<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="VersionDetectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Class">VersionDetectionStrategy</a></li></ul>
-<ul class="tsd-descriptions">
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_VersionDetectionStrategy">new <wbr/>Version<wbr/>Detection<wbr/>Strategy<span class="tsd-signature-symbol">(</span>sources<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span>, fallback<span class="tsd-signature-symbol">: </span><a href="../interfaces/CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a>, descending<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="VersionDetectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Class">VersionDetectionStrategy</a><a href="#constructor.new_VersionDetectionStrategy" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -57,7 +58,9 @@
 <h5>fallback: <a href="../interfaces/CompilerVersionSelectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Interface">CompilerVersionSelectionStrategy</a></h5></li>
 <li>
 <h5>descending: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = true</span></h5></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="VersionDetectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Class">VersionDetectionStrategy</a></h4></li></ul></section></section>
+<h4 class="tsd-returns-title">Returns <a href="VersionDetectionStrategy.html" class="tsd-signature-type" data-tsd-kind="Class">VersionDetectionStrategy</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/compiler_selection.ts#L77">src/compile/compiler_selection.ts:77</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="descending" class="tsd-anchor"></a>
@@ -80,11 +83,12 @@
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="select" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>select</span><a href="#select" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature" id="select.select-1">select<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></li></ul>
-<ul class="tsd-descriptions">
+<li class="tsd-signature tsd-anchor-link" id="select.select-1">select<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><a href="#select.select-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
-<p>Implementation of <a href="../interfaces/CompilerVersionSelectionStrategy.html">CompilerVersionSelectionStrategy</a>.<a href="../interfaces/CompilerVersionSelectionStrategy.html#select">select</a></p></aside></li></ul></section></section></div>
+<p>Implementation of <a href="../interfaces/CompilerVersionSelectionStrategy.html">CompilerVersionSelectionStrategy</a>.<a href="../interfaces/CompilerVersionSelectionStrategy.html#select">select</a></p>
+<ul>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/compile/compiler_selection.ts#L83">src/compile/compiler_selection.ts:83</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
