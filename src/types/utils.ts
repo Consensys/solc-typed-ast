@@ -1,23 +1,30 @@
+import Decimal from "decimal.js";
 import { lt, satisfies } from "semver";
 import {
     ArrayTypeName,
+    BinaryOperation,
+    Conditional,
     ContractDefinition,
     DataLocation,
     ElementaryTypeName,
     EnumDefinition,
+    Expression,
     FunctionTypeName,
     Literal,
     LiteralKind,
     Mapping,
+    ParameterList,
     PragmaDirective,
     SourceUnit,
     StructDefinition,
     TypeName,
+    UnaryOperation,
     UserDefinedTypeName,
     UserDefinedValueTypeDefinition,
-    VariableDeclaration
+    VariableDeclaration,
+    VariableDeclarationStatement
 } from "../ast";
-import { assert } from "../misc";
+import { assert, pp } from "../misc";
 import { ABIEncoderVersion, ABIEncoderVersions } from "./abi";
 import {
     AddressType,
@@ -36,6 +43,16 @@ import {
     UserDefinedType,
     UserDefinition
 } from "./ast";
+
+export const operatorGroups = {
+    Arithmetic: ["+", "-", "*", "/", "%", "**"],
+    Bitwise: ["<<", ">>", "&", "|", "^"],
+    Comparison: ["<", ">", "<=", ">="],
+    Equality: ["==", "!="],
+    Logical: ["&&", "||"]
+};
+
+export class SolTypeError extends Error {}
 
 export type VersionDependentType = [TypeNode, string];
 
@@ -85,8 +102,12 @@ export function specializeType(type: TypeNode, loc: DataLocation): TypeNode {
             type
         );
 
-        if (def instanceof StructDefinition) {
+        if (def instanceof ContractDefinition) {
             // Contracts are always concretized as storage poitners
+            return new PointerType(type, DataLocation.Storage);
+        }
+
+        if (def instanceof StructDefinition) {
             return new PointerType(type, loc);
         }
 
@@ -275,7 +296,28 @@ export function typeNameToSpecializedTypeNode(astT: TypeName, loc: DataLocation)
 export function variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNode {
     assert(decl.vType !== undefined, "Expected {0} to have type", decl);
 
-    return typeNameToSpecializedTypeNode(decl.vType, decl.storageLocation);
+    let loc: DataLocation;
+
+    if (decl.stateVariable) {
+        loc = DataLocation.Storage;
+    } else if (decl.storageLocation !== DataLocation.Default) {
+        loc = decl.storageLocation;
+    } else if (
+        decl.parent instanceof ParameterList ||
+        decl.parent instanceof VariableDeclarationStatement
+    ) {
+        // In 0.4.x param/return locations may be omitted. We assume memory by default.
+        loc = DataLocation.Memory;
+    } else if (decl.parent instanceof StructDefinition) {
+        loc = DataLocation.Default;
+    } else if (decl.parent instanceof SourceUnit) {
+        // Global vars don't have a location (no ref types yet)
+        loc = DataLocation.Default;
+    } else {
+        throw new Error(`NYI variable declaration ${pp(decl)}`);
+    }
+
+    return typeNameToSpecializedTypeNode(decl.vType, loc);
 }
 
 export function enumToIntType(decl: EnumDefinition): IntType {
@@ -348,4 +390,301 @@ export function getABIEncoderVersion(
     }
 
     return lt(compilerVersion, "0.8.0") ? ABIEncoderVersion.V1 : ABIEncoderVersion.V2;
+}
+
+export function isConstant(expr: Expression): boolean {
+    if (expr instanceof Literal) {
+        return true;
+    }
+
+    if (expr instanceof UnaryOperation && isConstant(expr.vSubExpression)) {
+        return true;
+    }
+
+    if (
+        expr instanceof BinaryOperation &&
+        isConstant(expr.vLeftExpression) &&
+        isConstant(expr.vRightExpression)
+    ) {
+        return true;
+    }
+
+    /// TODO: We can be more precise here. Conditionals are also constant if
+    /// 1) vCondition is constant, and only the selected branch is constant
+    /// 2) vCondition is not constant, but both branches are constant and equal (not likely in practice)
+    if (
+        expr instanceof Conditional &&
+        isConstant(expr.vCondition) &&
+        isConstant(expr.vTrueExpression) &&
+        isConstant(expr.vFalseExpression)
+    ) {
+        return true;
+    }
+
+    /// TODO: After eval add case for constant indexing
+    return false;
+}
+
+export type Value = Decimal | boolean | string;
+
+export class EvalError extends Error {
+    expr: Expression;
+
+    constructor(e: Expression, msg: string) {
+        super(msg);
+        this.expr = e;
+    }
+}
+
+export class NonConstantExpressionError extends EvalError {
+    constructor(e: Expression) {
+        super(e, `Found non-constant expression ${pp(e)} during constant evaluation`);
+    }
+}
+
+function evalLiteral(expr: Literal): Value {
+    if (expr.kind === LiteralKind.Bool) {
+        return expr.value === "true";
+    }
+
+    if (expr.kind === LiteralKind.String || expr.kind === LiteralKind.UnicodeString) {
+        return expr.value;
+    }
+
+    if (expr.kind === LiteralKind.HexString) {
+        return expr.hexValue;
+    }
+
+    return new Decimal(expr.value);
+}
+
+/// Given a `0b` prefixed (optionally fractional) binary string,
+/// return its bitwise negation
+function bitwiseNotStr(binStr: string): string {
+    const res: string[] = [];
+    for (let i = 2; i < binStr.length; i++) {
+        res.push(binStr[i] === "." ? "." : binStr[i] === "0" ? "1" : "0");
+    }
+
+    return `0b` + res.join("");
+}
+
+function evalUnary(expr: UnaryOperation): Value {
+    const subVal = evalConstantExpr(expr.vSubExpression);
+
+    if (expr.operator === "!") {
+        if (!(typeof subVal === "boolean")) {
+            throw new EvalError(
+                expr.vSubExpression,
+                `Expected a boolean in ${pp(expr.vSubExpression)} not ${subVal}`
+            );
+        }
+
+        return !subVal;
+    }
+
+    if (expr.operator === "~") {
+        if (subVal instanceof Decimal) {
+            if (!subVal.isInteger()) {
+                throw new EvalError(
+                    expr.vSubExpression,
+                    `Cannot perform bitwise not on non-int literal ${subVal.toString()}`
+                );
+            }
+
+            return new Decimal(bitwiseNotStr(subVal.toBinary()));
+        }
+
+        throw new EvalError(
+            expr.vSubExpression,
+            `Expected a number in ${pp(expr.vSubExpression)} not ${subVal}`
+        );
+    }
+
+    if (expr.operator === "-") {
+        if (subVal instanceof Decimal) {
+            return subVal.negated();
+        }
+
+        throw new EvalError(
+            expr.vSubExpression,
+            `Expected a number in ${pp(expr.vSubExpression)} not ${subVal}`
+        );
+    }
+
+    throw new Error(`NYI unary operator ${expr.operator}`);
+}
+
+function evalBinaryLogic(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
+    const op = expr.operator;
+
+    if (!(typeof lVal === "boolean" && typeof lVal === "boolean")) {
+        throw new EvalError(expr, `${op} expects booleans not ${lVal} and ${rVal}`);
+    }
+
+    if (op === "&&") {
+        return lVal && rVal;
+    }
+
+    if (op === "||") {
+        return lVal || rVal;
+    }
+
+    throw new Error(`Unknown logic op ${op}`);
+}
+
+function evalBinaryEquality(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
+    let equal: boolean;
+
+    if (typeof lVal === "string" || typeof rVal === "string") {
+        throw new EvalError(expr, `Comparison not allowed for strings ${lVal} and ${rVal}`);
+    }
+
+    if (lVal instanceof Decimal && rVal instanceof Decimal) {
+        equal = lVal.equals(rVal);
+    } else {
+        equal = lVal === rVal;
+    }
+
+    if (expr.operator === "==") {
+        return equal;
+    }
+
+    if (expr.operator === "!=") {
+        return !equal;
+    }
+
+    throw new Error(`Unknown equality op ${expr.operator}`);
+}
+
+function evalBinaryComparison(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
+    const op = expr.operator;
+
+    if (!(lVal instanceof Decimal && rVal instanceof Decimal)) {
+        throw new EvalError(expr, `Comparison not allowed for ${lVal} and ${rVal}`);
+    }
+
+    if (op === "<") {
+        return lVal.lessThan(rVal);
+    }
+
+    if (op === "<=") {
+        return lVal.lessThanOrEqualTo(rVal);
+    }
+
+    if (op === ">") {
+        return lVal.greaterThan(rVal);
+    }
+
+    if (op === ">=") {
+        return lVal.greaterThanOrEqualTo(rVal);
+    }
+
+    throw new Error(`Unknown comparison op ${expr.operator}`);
+}
+
+function evalBinaryArithmetic(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
+    const op = expr.operator;
+
+    if (!(lVal instanceof Decimal && rVal instanceof Decimal)) {
+        throw new EvalError(expr, `Comparison not allowed for ${lVal} and ${rVal}`);
+    }
+
+    if (op === "+") {
+        return lVal.plus(rVal);
+    }
+
+    if (op === "-") {
+        return lVal.minus(rVal);
+    }
+
+    if (op === "*") {
+        return lVal.times(rVal);
+    }
+
+    if (op === "/") {
+        return lVal.div(rVal);
+    }
+
+    if (op === "%") {
+        return lVal.modulo(rVal);
+    }
+
+    if (op === "**") {
+        return lVal.pow(rVal);
+    }
+
+    throw new Error(`Unknown arithmetic op ${expr.operator}`);
+}
+
+function evalBinaryBitwise(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
+    throw new Error(`NYI Bitwise op ${expr.operator} on ${lVal} ${rVal}`);
+}
+
+/// Given a constant `BinaryOperation` expression `expr` evaluate it.
+function evalBinary(expr: BinaryOperation): Value {
+    const lVal = evalConstantExpr(expr.vLeftExpression);
+    const rVal = evalConstantExpr(expr.vRightExpression);
+
+    if (operatorGroups.Logical.includes(expr.operator)) {
+        return evalBinaryLogic(expr, lVal, rVal);
+    }
+
+    if (operatorGroups.Equality.includes(expr.operator)) {
+        return evalBinaryEquality(expr, lVal, rVal);
+    }
+
+    if (operatorGroups.Comparison.includes(expr.operator)) {
+        return evalBinaryComparison(expr, lVal, rVal);
+    }
+
+    if (operatorGroups.Arithmetic.includes(expr.operator)) {
+        return evalBinaryArithmetic(expr, lVal, rVal);
+    }
+
+    if (operatorGroups.Bitwise.includes(expr.operator)) {
+        return evalBinaryBitwise(expr, lVal, rVal);
+    }
+
+    throw new Error(`Unknown binary op ${expr.operator}`);
+}
+
+/**
+ * Given a constant expression `expr` evaluate it to a concrete `Value`. If `expr`
+ * is not constant throw `NonConstantExpressionError`.
+ *
+ * TODO: The order of some operations changed in some version. So perhaps to be fully
+ * precise here we will need a compiler version too?
+ */
+export function evalConstantExpr(expr: Expression): Value {
+    if (expr instanceof Literal) {
+        return evalLiteral(expr);
+    }
+
+    if (expr instanceof UnaryOperation && isConstant(expr.vSubExpression)) {
+        return evalUnary(expr);
+    }
+
+    if (
+        expr instanceof BinaryOperation &&
+        isConstant(expr.vLeftExpression) &&
+        isConstant(expr.vRightExpression)
+    ) {
+        return evalBinary(expr);
+    }
+
+    /// TODO: We can be more precise here. Conditionals are also constant if
+    /// 1) vCondition is constant, and only the selected branch is constant
+    /// 2) vCondition is not constant, but both branches are constant and equal (not likely in practice)
+    if (
+        expr instanceof Conditional &&
+        isConstant(expr.vCondition) &&
+        isConstant(expr.vTrueExpression) &&
+        isConstant(expr.vFalseExpression)
+    ) {
+        return true;
+    }
+
+    /// TODO: After eval add case for constant indexing
+    return false;
 }

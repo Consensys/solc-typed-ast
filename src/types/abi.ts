@@ -1,4 +1,3 @@
-import { AddressType, enumToIntType, PointerType, TypeNode, UserDefinedType } from ".";
 import {
     ContractDefinition,
     DataLocation,
@@ -16,12 +15,17 @@ import {
     IntType,
     MappingType,
     StringType,
-    TupleType
+    TupleType,
+    PointerType,
+    TypeNode,
+    UserDefinedType,
+    AddressType
 } from "./ast";
 import {
     getUserDefinedTypeFQName,
     typeNameToTypeNode,
-    variableDeclarationToTypeNode
+    variableDeclarationToTypeNode,
+    enumToIntType
 } from "./utils";
 
 export enum ABIEncoderVersion {

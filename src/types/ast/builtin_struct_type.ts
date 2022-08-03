@@ -1,6 +1,6 @@
-import { Range } from "../../misc";
-import { VersionDependentType } from "../utils";
+import { getTypeForCompilerVersion, VersionDependentType } from "../utils";
 import { BuiltinType } from "./builtin_type";
+import { TypeNode } from "./type";
 
 /**
  * A utility type for referencing builtin structs.
@@ -8,15 +8,34 @@ import { BuiltinType } from "./builtin_type";
  */
 export class BuiltinStructType extends BuiltinType {
     readonly members: Map<string, VersionDependentType>;
+    // This is a hack to expose the internal typeString for some builtin types
+    // that are polymorphic (e.g. type_Int, type_Contract). Thus we set those
+    // after substitution in infer.ts
+    public _typeString: string;
 
-    constructor(name: string, members: Map<string, VersionDependentType>, src?: Range) {
-        super(name, src);
+    constructor(name: string, members: Map<string, VersionDependentType>) {
+        super(name);
 
         this.members = members;
+        this._typeString = name;
     }
 
     pp(): string {
-        return `builtin_struct ${this.name}`;
+        return `${this.name}`;
+    }
+
+    typeString(): string {
+        return this._typeString;
+    }
+
+    getFieldForVersion(fieldName: string, version: string): TypeNode | undefined {
+        const versionDepField = this.members.get(fieldName);
+
+        if (!versionDepField) {
+            return undefined;
+        }
+
+        return getTypeForCompilerVersion(versionDepField, version);
     }
 
     getFields(): any[] {

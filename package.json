@@ -36,13 +36,15 @@
         "semver": "^7.3.7",
         "solc": "^0.8.15",
         "src-location": "^1.1.0",
-        "web3-eth-abi": "^1.7.4"
+        "web3-eth-abi": "^1.7.4",
+        "decimal.js": "^10.3.1"
     },
     "devDependencies": {
         "@types/fs-extra": "^9.0.13",
         "@types/mocha": "^9.1.1",
         "@types/node": "^16.11.43",
         "@types/semver": "^7.3.10",
+        "@types/decimal.js": "^7.4.0",
         "@typescript-eslint/eslint-plugin": "^5.30.4",
         "@typescript-eslint/parser": "^5.30.4",
         "eslint": "^8.19.0",

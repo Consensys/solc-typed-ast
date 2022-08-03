@@ -1,17 +1,16 @@
 import { FunctionStateMutability, FunctionVisibility } from "../../ast";
 import { Range } from "../../misc";
 import { Node } from "../../misc/node";
+import { FunctionLikeType } from "./function_like_type";
 import { TypeNode } from "./type";
 
-export class FunctionType extends TypeNode {
+export class FunctionType extends FunctionLikeType {
     /**
      * The type for external functions includes the name,
      * as its used for computing the canonical signature.
      */
-    public readonly name: string | undefined;
-    public readonly parameters: TypeNode[];
     public readonly returns: TypeNode[];
-    public readonly visibility: FunctionVisibility;
+    public visibility: FunctionVisibility;
     public readonly mutability: FunctionStateMutability;
 
     constructor(
@@ -22,10 +21,8 @@ export class FunctionType extends TypeNode {
         mutability: FunctionStateMutability,
         src?: Range
     ) {
-        super(src);
+        super(name, parameters, src);
 
-        this.name = name;
-        this.parameters = parameters;
         this.returns = returns;
         this.visibility = visibility;
         this.mutability = mutability;
@@ -44,12 +41,28 @@ export class FunctionType extends TypeNode {
 
         retStr = retStr !== "" ? ` returns (${retStr})` : retStr;
 
-        const visStr = this.visibility !== FunctionVisibility.Internal ? ` ` + this.visibility : "";
+        const visStr =
+            this.visibility !== FunctionVisibility.Internal &&
+            this.visibility !== FunctionVisibility.Default
+                ? ` ` + this.visibility
+                : "";
         const mutStr = this.mutability !== "nonpayable" ? " " + this.mutability : "";
 
         return `function ${
             this.name !== undefined ? this.name : ""
         }(${argStr})${mutStr}${visStr}${retStr}`;
+    }
+
+    typeString(): string {
+        const mapper = (node: TypeNode) => node.pp();
+
+        const argStr = this.parameters.map(mapper).join(",");
+
+        let retStr = this.returns.map(mapper).join(",");
+
+        retStr = retStr !== "" ? ` returns (${retStr})` : retStr;
+
+        return `function (${argStr})${retStr}`;
     }
 
     getFields(): any[] {

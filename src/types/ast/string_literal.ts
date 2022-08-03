@@ -1,15 +1,21 @@
 import { Range } from "../../misc";
 import { TypeNode } from "./type";
 
+type StringLiteralKind = "string" | "unicodeString" | "hexString";
+
 export class StringLiteralType extends TypeNode {
     public readonly literal: string;
-    public readonly isHex: boolean;
+    public readonly kind: StringLiteralKind;
 
-    constructor(literal: string, isHex: boolean, src?: Range) {
+    constructor(literal: string, kind: StringLiteralKind, src?: Range) {
         super(src);
 
         this.literal = literal;
-        this.isHex = isHex;
+        this.kind = kind;
+    }
+
+    get isHex(): boolean {
+        return this.kind === "hexString";
     }
 
     pp(): string {
@@ -17,6 +23,6 @@ export class StringLiteralType extends TypeNode {
     }
 
     getFields(): any[] {
-        return [this.literal, this.isHex];
+        return [this.literal, this.kind];
     }
 }

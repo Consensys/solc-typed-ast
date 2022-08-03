@@ -45,6 +45,7 @@ export class UserDefinedType extends TypeNode {
     }
 
     getFields(): any[] {
-        return [this.name];
+        // Its possible to have the same user defined type imported with 2 different names
+        return [this.definition.id];
     }
 }

@@ -1,20 +1,39 @@
+import Decimal from "decimal.js";
 import { Range } from "../../misc";
 import { TypeNode } from "./type";
 
 export class IntLiteralType extends TypeNode {
-    public readonly literal?: bigint;
+    /// TODO(dimo): After removing the typestring parser make this required
+    /// TODO(dimo): Made a mistake - should revert this to bigint and then
+    /// use the rational_literal type to model non-whole numbers.
+    /// TODO(dimo): Perhaps use a differnt library other than Decimal that keeps explicit track of
+    /// bigint numerator/denominators?
+    /// TODO(dimo): Does Solidity allow literal operations that result in infinite fractional numbers? E.g. 2/3 ?
+    public readonly literal?: Decimal;
 
-    constructor(literal?: bigint, src?: Range) {
+    constructor(literal?: bigint | Decimal, src?: Range) {
         super(src);
 
-        this.literal = literal;
+        this.literal =
+            literal === undefined || literal instanceof Decimal
+                ? literal
+                : new Decimal(literal.toString());
+    }
+
+    negated(): IntLiteralType {
+        return new IntLiteralType(this.literal ? this.literal.negated() : this.literal);
     }
 
     pp(): string {
-        return `int_const${this.literal !== undefined ? ` ${this.literal.toString()}` : ""}`;
+        if (this.literal && !this.literal.isInt()) {
+            const fraction = this.literal.toFraction();
+            return `rational_const ${fraction[0]} / ${fraction[1]}`;
+        } else {
+            return `int_const${this.literal !== undefined ? ` ${this.literal.toFixed()}` : ""}`;
+        }
     }
 
     getFields(): any[] {
-        return [this.literal];
+        return [this.literal ? this.literal.toFixed() : undefined];
     }
 }

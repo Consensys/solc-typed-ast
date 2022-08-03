@@ -118,18 +118,18 @@ Keyword =
 
 StringLiteral =
     "'" chars: SingleStringChar* "'" {
-        return [chars.join(""), false];
+        return [chars.join(""), "string"];
     }
     / '"' chars: DoubleStringChar* '"' {
-        return [chars.join(""), false];
+        return [chars.join(""), "string"];
     }
 
 HexLiteral =
     HEX '"' val: HexDigit* '"' {
-        return [val.join(""), true];
+        return [val.join(""), "hexString"];
     }
     / HEX "'" val: HexDigit* "'" {
-        return [val.join(""), true];
+        return [val.join(""), "hexString"];
     }
 
 AnyChar =
@@ -344,7 +344,7 @@ TypeList =
     head: Type tail: (__ "," __ Type)* {
         return tail.reduce(
             (lst, cur) => {
-                lst.push(cur[3]);
+                lst.push(wrapContract(cur[3]));
 
                 return lst;
             },
@@ -445,6 +445,8 @@ ArrayPtrType =
     )* {
     return tail.reduce(
             (acc, cur) => {
+                acc = wrapContract(acc);
+                
                 if (cur.length > 3) {
                     const size = cur[4];
 

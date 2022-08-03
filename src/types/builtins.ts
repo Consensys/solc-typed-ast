@@ -2,13 +2,19 @@ import { DataLocation, FunctionStateMutability, FunctionVisibility } from "../as
 import {
     AddressType,
     BoolType,
+    BuiltinFunctionType,
     BuiltinStructType,
     BytesType,
     FixedBytesType,
     FunctionType,
     IntType,
-    PointerType
+    PointerType,
+    TRest,
+    TVar,
+    TypeNameType,
+    TypeNode
 } from "./ast";
+import { types } from "./reserved";
 import { VersionDependentType } from "./utils";
 
 /**
@@ -245,8 +251,211 @@ export const BuiltinAddressMembers = new Map<string, VersionDependentType>([
 ]);
 
 /**
- * @todo Support type() members: min, max, interfaceId, name, runtimeCode, creationCode
- * @see https://github.com/ethereum/solidity/releases/tag/v0.6.8
- * @see https://github.com/ethereum/solidity/releases/tag/v0.6.7
- * @see https://github.com/ethereum/solidity/releases/tag/v0.5.3
+ * Type of the type(T) function when T is an int type
  */
+export const type_Int = new BuiltinFunctionType(
+    "type",
+    [new TypeNameType(new TVar("T"))],
+    [
+        new BuiltinStructType(
+            "type_Int",
+            new Map([
+                ["min", [new TVar("T"), ">=0.6.8"]],
+                ["max", [new TVar("T"), ">=0.6.8"]]
+            ])
+        )
+    ]
+);
+
+/**
+ * Type of the type(T) function when T is a contract
+ */
+export const type_Contract = new BuiltinFunctionType(
+    "type",
+    [new TypeNameType(new TVar("T"))],
+    [
+        new BuiltinStructType(
+            "type_Contract",
+            new Map([
+                ["name", [types.stringMemory, ">=0.5.5"]],
+                ["creationCode", [types.bytesMemory, ">=0.5.3"]],
+                ["runtimeCode", [types.bytesMemory, ">=0.5.3"]]
+            ])
+        )
+    ]
+);
+
+/**
+ * Type of the type(T) function when T is an interface
+ */
+export const type_Interface = new BuiltinFunctionType(
+    "type",
+    [new TypeNameType(new TVar("T"))],
+    [
+        new BuiltinStructType(
+            "type_Interface",
+            new Map([
+                ["name", [types.stringMemory, ">=0.5.5"]],
+                ["creationCode", [types.bytesMemory, ">=0.5.3"]],
+                ["runtimeCode", [types.bytesMemory, ">=0.5.3"]],
+                ["interfaceId", [types.bytes4, ">=0.6.7"]]
+            ])
+        )
+    ]
+);
+
+export const abi = new BuiltinStructType(
+    "abi",
+    new Map([
+        /// NOTE: abi.decode is handled as a special case in infer.ts as its not easy to express
+        /// as a simple polymorphic function
+        [
+            "encode",
+            [new BuiltinFunctionType("encode", [new TRest("T")], [types.bytesMemory]), ">=0.4.22"]
+        ],
+        [
+            "encodePacked",
+            [
+                new BuiltinFunctionType("encodePacked", [new TRest("T")], [types.bytesMemory]),
+                ">=0.4.22"
+            ]
+        ],
+        [
+            "encodeWithSelector",
+            [
+                new BuiltinFunctionType(
+                    "encodeWithSelector",
+                    [types.bytes4, new TRest("T")],
+                    [types.bytesMemory]
+                ),
+                ">=0.4.22"
+            ]
+        ],
+        [
+            "encodeWithSignature",
+            [
+                new BuiltinFunctionType(
+                    "encodeWithSignature",
+                    [types.stringMemory, new TRest("T")],
+                    [types.bytesMemory]
+                ),
+                ">=0.4.22"
+            ]
+        ],
+        [
+            "encodeCall",
+            [
+                new BuiltinFunctionType(
+                    "encodeCall",
+                    [new TVar("TFunPtr"), new TRest("T")],
+                    [types.bytesMemory]
+                ),
+                ">=0.8.11"
+            ]
+        ]
+    ])
+);
+
+export const msg = new BuiltinStructType(
+    "msg",
+    new Map([
+        ["data", [types.bytesCalldata, ">=0.4.13"]],
+        ["sender", [types.address, ">=0.4.13"]],
+        ["sig", [types.bytes4, ">=0.4.13"]],
+        ["value", [types.uint, ">=0.4.13"]],
+        ["gas", [types.uint, "<0.5.0"]]
+    ])
+);
+
+export const block = new BuiltinStructType(
+    "block",
+    new Map([
+        ["chainid", [types.uint, ">=0.8.0"]],
+        ["coinbase", [types.addressPayable, ">=0.4.13"]],
+        ["basefee", [types.uint, ">=0.8.7"]],
+        ["difficulty", [types.uint, ">=0.4.13"]],
+        ["gaslimit", [types.uint, ">=0.4.13"]],
+        ["number", [types.uint, ">=0.4.13"]],
+        ["timestamp", [types.uint, ">=0.4.13"]]
+    ])
+);
+
+type BuiltinStructTypeField = [string, [TypeNode, string]];
+const addressCoreFields: BuiltinStructTypeField[] = [
+    ["balance", [types.uint, ">=0.4.13"]],
+    ["code", [types.bytesMemory, ">=0.8.0"]],
+    ["codehash", [types.bytes32, ">=0.8.0"]]
+];
+
+const addressCall04Fields: BuiltinStructTypeField[] = [
+    ["call", [new BuiltinFunctionType("call", [types.bytesMemory], [types.bool]), ">=0.4.13"]],
+    [
+        "delegatecall",
+        [new BuiltinFunctionType("delegatecall", [types.bytesMemory], [types.bool]), ">=0.4.13"]
+    ],
+    [
+        "callcode",
+        [new BuiltinFunctionType("callcode", [types.bytesMemory], [types.bool]), ">=0.4.13"]
+    ]
+];
+
+const addressCall05Fields: BuiltinStructTypeField[] = [
+    [
+        "call",
+        [
+            new BuiltinFunctionType("call", [types.bytesMemory], [types.bool, types.bytesMemory]),
+            ">=0.5.0"
+        ]
+    ],
+    [
+        "delegatecall",
+        [
+            new BuiltinFunctionType(
+                "delegatecall",
+                [types.bytesMemory],
+                [types.bool, types.bytesMemory]
+            ),
+            ">=0.5.0"
+        ]
+    ],
+    [
+        "staticcall",
+        [
+            new BuiltinFunctionType(
+                "staticcall",
+                [types.bytesMemory],
+                [types.bool, types.bytesMemory]
+            ),
+            ">=0.5.0"
+        ]
+    ]
+];
+
+const addressPayableFields: BuiltinStructTypeField[] = [
+    ["transfer", [new BuiltinFunctionType("transfer", [types.uint], []), ">=0.4.13"]],
+    ["send", [new BuiltinFunctionType("send", [types.uint], [types.bool]), ">=0.4.13"]]
+];
+
+export const address04Builtins = new BuiltinStructType(
+    "address",
+    new Map([...addressCoreFields, ...addressCall04Fields, ...addressPayableFields])
+);
+
+export const address05Builtins = new BuiltinStructType(
+    "address",
+    new Map([...addressCoreFields, ...addressCall05Fields, ...addressPayableFields])
+);
+
+export const address06Builtins = new BuiltinStructType(
+    "address",
+    new Map([...addressCoreFields, ...addressCall05Fields, ...addressPayableFields])
+);
+
+export const address06PayableBuiltins = new BuiltinStructType(
+    "address",
+    new Map([...addressCoreFields, ...addressCall05Fields, ...addressPayableFields])
+);
+
+export const gasLeftBuiltin = new BuiltinFunctionType("gasleft", [], [types.uint]);
+
+export const blockhashBuiltin = new BuiltinFunctionType("blockhash", [types.uint], [types.bytes32]);

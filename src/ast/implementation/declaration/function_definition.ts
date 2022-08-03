@@ -1,4 +1,4 @@
-import { variableDeclarationToTypeNode } from "../../../types";
+import { variableDeclarationToTypeNode } from "../../../types/utils";
 import { ABIEncoderVersion, abiTypeToLibraryCanonicalName } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
 import {
