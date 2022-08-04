@@ -15,4 +15,3 @@ export * from "./dispatch";
 export * from "./definitions";
 export * from "./utils";
 export * from "./xpath";
-export * from "./sanity";
