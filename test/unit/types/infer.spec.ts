@@ -1,5 +1,6 @@
 import expect from "expect";
 import {
+    Assignment,
     ASTKind,
     ASTReader,
     BinaryOperation,
@@ -25,7 +26,8 @@ import {
     NewExpression,
     pp,
     StructDefinition,
-    UnaryOperation
+    UnaryOperation,
+    VariableDeclaration
 } from "../../../src";
 import {
     BuiltinFunctionType,
@@ -33,6 +35,7 @@ import {
     BuiltinType,
     ErrorType,
     EventType,
+    FunctionLikeSetType,
     FunctionType,
     ImportRefType,
     InferType,
@@ -43,10 +46,13 @@ import {
     PointerType,
     RationalLiteralType,
     StringLiteralType,
+    SyntaxError,
+    TupleType,
     TypeNameType,
     TypeNode,
     UserDefinedType
 } from "../../../src/types";
+import { SuperType } from "../../../src/types/ast/super";
 
 const samples: Array<[string, string, ASTKind]> = [
     [
@@ -113,7 +119,61 @@ const samples: Array<[string, string, ASTKind]> = [
         "./test/samples/solidity/types/types.sol",
         CompilerVersions06[CompilerVersions06.length - 1],
         ASTKind.Modern
-    ]
+    ],
+    /// Added with grep
+    ["test/samples/solidity/struct_docs_05.sol", "0.5.17", ASTKind.Modern],
+    ["test/samples/solidity/node.sol", "0.8.0", ASTKind.Modern],
+    ["test/samples/solidity/declarations/interface_060.sol", "^0.6.0", ASTKind.Modern],
+    ["test/samples/solidity/resolving/boo.sol", "^0.8.0", ASTKind.Modern],
+    ["test/samples/solidity/resolving/struct_assignments.sol", "^0.6.0", ASTKind.Modern],
+    ["test/samples/solidity/resolving/foo.sol", "pragma solidity ^0.8.0", ASTKind.Modern],
+    ["test/samples/solidity/resolving/id_paths.sol", "pragma solidity ^0.8.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/do_while_0413.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/statements/expression_050.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/while_0413.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/statements/placeholder_0413.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/statements/emit_0421.sol", "^0.4.21", ASTKind.Modern],
+    ["test/samples/solidity/statements/variable_declaration_0413.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/statements/throw_0413.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/statements/while_050.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/emit_050.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/inline_assembly_050.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/if_050.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/expression_0413.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/statements/block_050.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/for_050.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/return_050.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/placeholder_050.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/inline_assembly_060.sol", "^0.6.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/for_0413.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/statements/inline_assembly_0413.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/statements/return_0413.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/statements/block_0413.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/statements/do_while_050.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/variable_declaration_050.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/statements/if_0413.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/getters_08.sol", "^0.8.0", ASTKind.Modern],
+    ["test/samples/solidity/dispatch_05.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/looks_same_075.sol", "0.7.5", ASTKind.Modern],
+    ["test/samples/solidity/compile_06.sol", "^0.6.0", ASTKind.Modern],
+    ["test/samples/solidity/getters_07_abiv1.sol", "^0.7.0", ASTKind.Modern],
+    ["test/samples/solidity/struct_docs_04.sol", "0.4.24", ASTKind.Modern],
+    ["test/samples/solidity/signatures.sol", "0.8.7", ASTKind.Modern],
+    ["test/samples/solidity/getters_07.sol", "^0.7.0", ASTKind.Modern],
+    ["test/samples/solidity/source_map.sol", "^0.6.0", ASTKind.Modern],
+    ["test/samples/solidity/latest_imports_08.sol", "^0.8.0", ASTKind.Modern],
+    ["test/samples/solidity/issue_132_fun_kind.sol", "0.4.24", ASTKind.Modern],
+    ["test/samples/solidity/selectors.sol", ">=0.8.15", ASTKind.Modern],
+    ["test/samples/solidity/meta/complex_imports/c.sol", "^0.7.4", ASTKind.Modern],
+    ["test/samples/solidity/meta/pragma.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/writer_edge_cases.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/reports/B.sol", "^0.4.24", ASTKind.Modern],
+    ["test/samples/solidity/reports/A.sol", "^0.4.24", ASTKind.Modern],
+    ["test/samples/solidity/looks_same_075.sourced.sm.sol", "0.7.5", ASTKind.Modern],
+    ["test/samples/solidity/expressions/conditional_050.sol", "^0.5.0", ASTKind.Modern],
+    ["test/samples/solidity/expressions/conditional_0413.sol", "^0.4.13", ASTKind.Modern],
+    ["test/samples/solidity/super.sol", "0.8.5", ASTKind.Modern],
+    ["test/samples/solidity/constant_expressions.sol", "0.8.5", ASTKind.Modern]
 ];
 
 /**
@@ -347,18 +407,65 @@ function compareTypeNodes(inferredT: TypeNode, fromString: TypeNode, expr: Expre
         return true;
     }
 
+    /// For tuple assignments we infer a full tuple type, but the typestring is just an empty tuple
+    if (
+        expr instanceof Assignment &&
+        inferredT instanceof TupleType &&
+        fromString instanceof TupleType &&
+        fromString.elements.length === 0
+    ) {
+        return true;
+    }
+
+    /// From getters we return pointers to contracts, typestrings are just contracts
+    if (
+        expr instanceof MemberAccess &&
+        expr.vReferencedDeclaration instanceof VariableDeclaration &&
+        expr.vReferencedDeclaration.stateVariable &&
+        inferredT instanceof FunctionType &&
+        fromString instanceof FunctionType &&
+        eq(inferredT.parameters, fromString.parameters) &&
+        inferredT.returns[0] instanceof PointerType &&
+        inferredT.returns[0].to instanceof UserDefinedType &&
+        inferredT.returns[0].to.definition instanceof ContractDefinition &&
+        eq(inferredT.returns[0].to, fromString.returns[0])
+    ) {
+        return true;
+    }
+
+    /// For literal strings with invalid utf-8 sequences we infer a hex string with precise literal.
+    /// typeString contains error message.
+    if (
+        inferredT instanceof StringLiteralType &&
+        inferredT.kind === "hexString" &&
+        fromString instanceof StringLiteralType &&
+        fromString.literal.includes("contains invalid UTF-8 sequence at position")
+    ) {
+        return true;
+    }
+
+    /// For the `super` keyword we have a special type that makes it easier to typecheck
+    /// Member accesses `super.fn` in the case of multiple inheritance
+    if (
+        inferredT instanceof SuperType &&
+        ((fromString instanceof UserDefinedType &&
+            fromString.definition instanceof ContractDefinition) ||
+            (fromString instanceof TypeNameType &&
+                fromString.type instanceof UserDefinedType &&
+                fromString.type.definition instanceof ContractDefinition))
+    ) {
+        return true;
+    }
+
+    // For overloaded function identifiers we infer a function set, while the typestring is a concrete resolved function
+    if (inferredT instanceof FunctionLikeSetType && fromString instanceof FunctionType) {
+        return true;
+    }
+
     /// Otherwise the types must match up exactly
     const res = eq(inferredT, fromString);
 
     if (!res) {
-        if (inferredT instanceof IntLiteralType) {
-            console.error(`Inferred literal: ${inferredT.literal}`);
-        }
-
-        if (fromString instanceof IntLiteralType) {
-            console.error(`Inferred literal: ${fromString.literal}`);
-        }
-
         console.error(
             `Diff: Inferred: "${inferredT.pp()}" typeString: "${fromString.pp()}" for node ${pp(
                 expr
@@ -370,7 +477,7 @@ function compareTypeNodes(inferredT: TypeNode, fromString: TypeNode, expr: Expre
 }
 
 describe("Type inference for expressions", () => {
-    for (const [sample, compilerVersion, astKind] of samples) {
+    for (const [sample, , astKind] of samples) {
         for (const compilerKind of [CompilerKind.Native]) {
             it(`[${compilerKind}] ${sample}`, async () => {
                 const result = await compileSol(
@@ -382,7 +489,7 @@ describe("Type inference for expressions", () => {
                     compilerKind as CompilerKind
                 );
 
-                expect(result.compilerVersion).toEqual(compilerVersion);
+                //expect(result.compilerVersion).toEqual(compilerVersion);
                 const errors = detectCompileErrors(result.data);
 
                 expect(errors).toHaveLength(0);
@@ -392,7 +499,7 @@ describe("Type inference for expressions", () => {
                 const reader = new ASTReader();
                 const sourceUnits = reader.read(data, astKind);
 
-                const infer = new InferType(compilerVersion);
+                const infer = new InferType(result.compilerVersion as string);
 
                 for (const unit of sourceUnits) {
                     for (const node of unit.getChildrenBySelector(
@@ -417,10 +524,20 @@ describe("Type inference for expressions", () => {
                             continue;
                         }
 
-                        const expectedType = parse(expr.typeString, {
-                            ctx: expr,
-                            version: compilerVersion
-                        });
+                        let expectedType: TypeNode;
+                        try {
+                            expectedType = parse(expr.typeString, {
+                                ctx: expr,
+                                version: result.compilerVersion
+                            });
+                        } catch (e) {
+                            if (e instanceof SyntaxError) {
+                                // Failed parsing. Skip
+                                continue;
+                            }
+
+                            throw e;
+                        }
 
                         expect(compareTypeNodes(inferredType, expectedType, expr)).toBeTruthy();
                     }

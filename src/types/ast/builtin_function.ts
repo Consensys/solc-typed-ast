@@ -27,10 +27,4 @@ export class BuiltinFunctionType extends FunctionLikeType {
 
         return `builtin_function ${this.name !== undefined ? this.name : ""}(${argStr})${retStr}`;
     }
-
-    typeString(): string {
-        const argStr = this.parameters.map((paramT) => paramT.pp()).join(",");
-
-        return `function (${argStr}) pure`;
-    }
 }

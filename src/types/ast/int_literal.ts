@@ -1,5 +1,7 @@
 import Decimal from "decimal.js";
 import { Range } from "../../misc";
+import { smallestFittingType } from "../utils";
+import { IntType } from "./int_type";
 import { TypeNode } from "./type";
 
 export class IntLiteralType extends TypeNode {
@@ -35,5 +37,16 @@ export class IntLiteralType extends TypeNode {
 
     getFields(): any[] {
         return [this.literal ? this.literal.toFixed() : undefined];
+    }
+
+    /**
+     * Find the smallest int type that fits this literal. Return undefined if no such type exists.
+     */
+    smallestFittingType(): IntType | undefined {
+        if (this.literal === undefined) {
+            return undefined;
+        }
+
+        return smallestFittingType(this.literal);
     }
 }

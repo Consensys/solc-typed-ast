@@ -8,24 +8,15 @@ import { TypeNode } from "./type";
  */
 export class BuiltinStructType extends BuiltinType {
     readonly members: Map<string, VersionDependentType>;
-    // This is a hack to expose the internal typeString for some builtin types
-    // that are polymorphic (e.g. type_Int, type_Contract). Thus we set those
-    // after substitution in infer.ts
-    public _typeString: string;
 
     constructor(name: string, members: Map<string, VersionDependentType>) {
         super(name);
 
         this.members = members;
-        this._typeString = name;
     }
 
     pp(): string {
         return `${this.name}`;
-    }
-
-    typeString(): string {
-        return this._typeString;
     }
 
     getFieldForVersion(fieldName: string, version: string): TypeNode | undefined {

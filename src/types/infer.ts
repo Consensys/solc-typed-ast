@@ -13,6 +13,7 @@ import {
     ErrorDefinition,
     EventDefinition,
     Expression,
+    ExternalReferenceType,
     FunctionCall,
     FunctionCallKind,
     FunctionCallOptions,
@@ -31,12 +32,14 @@ import {
     ModifierDefinition,
     NewExpression,
     resolveAny,
+    StateVariableVisibility,
     StructDefinition,
     TupleExpression,
     TypeName,
     UnaryOperation,
     UserDefinedValueTypeDefinition,
-    VariableDeclaration
+    VariableDeclaration,
+    VariableDeclarationStatement
 } from "../ast";
 import { assert, eq, pp } from "../misc";
 import {
@@ -48,7 +51,7 @@ import {
     ErrorType,
     EventType,
     FixedBytesType,
-    FunctionSetType,
+    FunctionLikeSetType,
     FunctionType,
     ImportRefType,
     IntLiteralType,
@@ -56,6 +59,7 @@ import {
     MappingType,
     ModifierType,
     PointerType,
+    StringLiteralKind,
     StringLiteralType,
     StringType,
     TupleType,
@@ -64,18 +68,16 @@ import {
     UserDefinedType
 } from "./ast";
 import {
-    abi,
     type_Int,
     type_Interface,
     type_Contract,
-    msg,
     address04Builtins,
     address06PayableBuiltins,
     address06Builtins,
     address05Builtins,
-    gasLeftBuiltin,
-    blockhashBuiltin,
-    block
+    msg05,
+    msg06,
+    globalBuiltins
 } from "./builtins";
 import {
     applySubstitution,
@@ -86,6 +88,7 @@ import {
 import { types } from "./reserved";
 import { parse } from "./typeStrings";
 import {
+    castable,
     evalConstantExpr,
     getTypeForCompilerVersion,
     operatorGroups,
@@ -95,6 +98,7 @@ import {
     variableDeclarationToTypeNode
 } from "./utils";
 import { Decimal } from "decimal.js";
+import { SuperType } from "./ast/super";
 
 export const unaryImpureOperators = ["++", "--"];
 
@@ -125,20 +129,12 @@ export const builtinTypes: { [key: string]: (arg: ASTNode) => TypeNode } = {
 
         return new BuiltinFunctionType("require", argTs, []);
     },
-    assert: () => new BuiltinFunctionType("assert", [types.bool], []),
     this: (node) => {
         const contract = node.getClosestParentByType(ContractDefinition);
         assert(contract !== undefined, `this (${pp(node)}) used outside of a contract.`);
 
         return new PointerType(new UserDefinedType(contract.name, contract), DataLocation.Storage);
-    },
-    /// TODO: Maybe move these in a global BuiltinStructType object?
-    abi: () => abi,
-    msg: () => msg,
-    block: () => block,
-    gasleft: () => gasLeftBuiltin,
-    blockhash: () => blockhashBuiltin,
-    now: () => types.uint
+    }
 };
 
 const castableLocations: DataLocation[] = [DataLocation.Memory, DataLocation.Storage];
@@ -163,6 +159,18 @@ function funDefToType(def: FunctionDefinition): FunctionType {
     );
 }
 
+function eventDefToType(def: EventDefinition): EventType {
+    const paramTypes = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
+
+    return new EventType(def.name, paramTypes);
+}
+
+function errDefToType(def: ErrorDefinition): ErrorType {
+    const paramTypes = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
+
+    return new ErrorType(def.name, paramTypes);
+}
+
 export class InferType {
     constructor(public readonly version: string) {}
 
@@ -171,9 +179,33 @@ export class InferType {
      */
     typeOfAssignment(node: Assignment): TypeNode {
         if (node.vLeftHandSide instanceof TupleExpression) {
-            // TODO: There is an interesting edge case here where some of the lhs expressions are omitted.
-            // For those do we get the type from the RHS components?
-            throw new Error("NYI Tuple Assignments");
+            const rhsT = this.typeOf(node.vRightHandSide);
+
+            assert(
+                rhsT instanceof TupleType,
+                `Unexpected non-tuple in rhs of tuple assignment {0}`,
+                node
+            );
+
+            assert(
+                rhsT.elements.length === node.vLeftHandSide.vOriginalComponents.length,
+                `Unexpected mismatch between number of lhs tuple elements (${node.vLeftHandSide.vOriginalComponents.length}) and rhs tuple elements (${rhsT.elements.length}) in {0}`,
+                node
+            );
+
+            const resTs: TypeNode[] = [];
+
+            for (let i = 0; i < node.vLeftHandSide.vOriginalComponents.length; i++) {
+                const lhsComp = node.vLeftHandSide.vOriginalComponents[i];
+
+                if (lhsComp === null) {
+                    resTs.push(rhsT.elements[i]);
+                } else {
+                    resTs.push(this.typeOf(lhsComp));
+                }
+            }
+
+            return new TupleType(resTs);
         }
 
         return this.typeOf(node.vLeftHandSide);
@@ -460,6 +492,34 @@ export class InferType {
         return specializeType(typ, loc);
     }
 
+    private matchArguments(
+        funs: FunctionDefinition[],
+        args: Expression[]
+    ): FunctionDefinition | undefined {
+        const argTs: TypeNode[] = args.map((arg) => this.typeOf(arg));
+
+        for (const funDef of funs) {
+            const funT = funDefToType(funDef);
+
+            if (funT.parameters.length !== argTs.length) {
+                continue;
+            }
+
+            let argsMatch = true;
+            for (let i = 0; i < funT.parameters.length; i++) {
+                if (!castable(argTs[i], funT.parameters[i])) {
+                    argsMatch = false;
+                    break;
+                }
+            }
+
+            if (argsMatch) {
+                return funDef;
+            }
+        }
+
+        return undefined;
+    }
     /**
      * Infer the type of the function call `node`.
      */
@@ -476,24 +536,10 @@ export class InferType {
             return this.typeOfNewCall(node);
         }
 
-        const def = node.vReferencedDeclaration;
-
-        // Event emissions and error constructors in throw look like function calls
-        // but don't return a value. So just return the empty type ()
-        if (def instanceof EventDefinition || def instanceof ErrorDefinition) {
-            return types.noType;
-        }
-
+        const calleeT = this.typeOf(node.vCallee);
         let rets: TypeNode[];
 
-        if (def instanceof FunctionDefinition) {
-            rets = def.vReturnParameters.vParameters.map(variableDeclarationToTypeNode);
-        } else if (def instanceof VariableDeclaration) {
-            rets = [def.getterArgsAndReturn()[1]];
-        } else {
-            // Builtin
-            const calleeT = this.typeOf(node.vCallee);
-
+        if (node.vFunctionCallType === ExternalReferenceType.Builtin) {
             if (!(calleeT instanceof BuiltinFunctionType || calleeT instanceof FunctionType)) {
                 throw new SolTypeError(
                     `Unexpected builtin ${pp(node.vCallee)} in function call ${pp(node)}`
@@ -505,6 +551,31 @@ export class InferType {
             buildSubstitutions(calleeT.parameters, argTs, m);
 
             rets = applySubstitutions(calleeT.returns, m);
+        } else {
+            if (calleeT instanceof FunctionType) {
+                rets = calleeT.returns;
+            } else if (calleeT instanceof EventType || calleeT instanceof ErrorType) {
+                rets = [];
+            } else if (calleeT instanceof FunctionLikeSetType) {
+                if (calleeT.defs[0] instanceof EventDefinition) {
+                    rets = [];
+                } else {
+                    // Match based on args. Needs castable.
+                    const def = this.matchArguments(calleeT.defs, node.vArguments);
+
+                    if (def === undefined) {
+                        throw new SolTypeError(
+                            `Couldn't resolve function ${node.vFunctionName} in ${pp(node)}`
+                        );
+                    }
+
+                    rets = funDefToType(def).returns;
+                }
+            } else {
+                throw new SolTypeError(
+                    `Unexpected type ${calleeT.pp()} in function call ${pp(node)}`
+                );
+            }
         }
 
         // No returns - return the empty type ()
@@ -600,30 +671,22 @@ export class InferType {
         }
 
         const innerT = typeOfArg.type;
-        let resT: BuiltinFunctionType | undefined;
 
         if (
             innerT instanceof IntType ||
             (innerT instanceof UserDefinedType && innerT.definition instanceof EnumDefinition)
         ) {
-            resT = applySubstitution(type_Int, new Map([["T", innerT]])) as BuiltinFunctionType;
-            (resT.returns[0] as BuiltinStructType)._typeString = `type(${innerT.pp()})`;
+            return applySubstitution(type_Int, new Map([["T", innerT]])) as BuiltinFunctionType;
         }
 
         if (innerT instanceof UserDefinedType && innerT.definition instanceof ContractDefinition) {
             const resTemplateT =
                 innerT.definition.kind === ContractKind.Interface ? type_Interface : type_Contract;
 
-            resT = applySubstitution(resTemplateT, new Map([["T", innerT]])) as BuiltinFunctionType;
-
-            (resT.returns[0] as BuiltinStructType)._typeString = `type(${innerT.pp()})`;
+            return applySubstitution(resTemplateT, new Map([["T", innerT]])) as BuiltinFunctionType;
         }
 
-        if (resT === undefined) {
-            throw new SolTypeError(`Unexpected type ${innerT.pp()} in type() node ${pp(node)}`);
-        }
-
-        return resT;
+        throw new SolTypeError(`Unexpected type ${innerT.pp()} in type() node ${pp(node)}`);
     }
 
     /**
@@ -632,6 +695,22 @@ export class InferType {
     typeOfBuiltin(node: Identifier): TypeNode {
         if (node.name === "type") {
             return this.typeOfBuiltinType(node);
+        }
+
+        if (node.name === "msg") {
+            return lt(this.version, "0.6.0") ? msg05 : msg06;
+        }
+
+        if (node.name === "super") {
+            const contract = node.getClosestParentByType(ContractDefinition);
+            assert(contract !== undefined, `Use of super outside of contract in {0}`, node);
+            return new SuperType(contract);
+        }
+
+        const globalBuiltin = globalBuiltins.getFieldForVersion(node.name, this.version);
+
+        if (globalBuiltin) {
+            return globalBuiltin;
         }
 
         if (!(node.name in builtinTypes)) {
@@ -648,10 +727,99 @@ export class InferType {
         const def = node.vReferencedDeclaration;
 
         if (def === undefined) {
+            // Imported symbols also have undefined vReferencedDeclaration and
+            // look like builtins. Disambiguate them here.
+            if (
+                node.parent instanceof ImportDirective &&
+                // Sanity check that vSymbolAliases were built correctly
+                node.parent.symbolAliases.length === node.parent.vSymbolAliases.length
+            ) {
+                const imp = node.parent;
+                for (let i = 0; i < imp.symbolAliases.length; i++) {
+                    const alias = imp.symbolAliases[i];
+
+                    if (!(alias.foreign instanceof Identifier && alias.foreign.id === node.id)) {
+                        continue;
+                    }
+
+                    const originalSym = imp.vSymbolAliases[i][0];
+
+                    if (
+                        originalSym instanceof ContractDefinition ||
+                        originalSym instanceof StructDefinition ||
+                        originalSym instanceof EnumDefinition ||
+                        originalSym instanceof UserDefinedValueTypeDefinition
+                    ) {
+                        return new TypeNameType(new UserDefinedType(originalSym.name, originalSym));
+                    }
+
+                    if (originalSym instanceof ImportDirective) {
+                        return new ImportRefType(originalSym);
+                    }
+
+                    if (originalSym instanceof ErrorDefinition) {
+                        return errDefToType(originalSym);
+                    }
+
+                    if (originalSym instanceof FunctionDefinition) {
+                        return funDefToType(originalSym);
+                    }
+
+                    return variableDeclarationToTypeNode(originalSym);
+                }
+            }
+
+            // If not an imported identifier must be a builtin
             return this.typeOfBuiltin(node);
         }
 
         if (def instanceof VariableDeclaration) {
+            if (!def.vType && def.parent instanceof VariableDeclarationStatement) {
+                /// In 0.4.x the TypeName on variable declarations may be omitted. Attempt to infer it from the RHS (if any)
+                const varDeclStmt = def.parent;
+                assert(
+                    varDeclStmt.vInitialValue !== undefined,
+                    `Initializer required when no type specified in {0}`,
+                    varDeclStmt
+                );
+
+                const rhsT = this.typeOf(varDeclStmt.vInitialValue);
+                let defInitT: TypeNode;
+
+                if (varDeclStmt.assignments.length > 0) {
+                    const tupleIdx = varDeclStmt.assignments.indexOf(def.id);
+
+                    assert(
+                        tupleIdx !== undefined,
+                        `Var decl {0} not found in assignments of {1}`,
+                        def,
+                        varDeclStmt
+                    );
+                    assert(
+                        rhsT instanceof TupleType && rhsT.elements.length > tupleIdx,
+                        `Rhs not a tuple of right size in {0}`,
+                        varDeclStmt
+                    );
+
+                    defInitT = rhsT.elements[tupleIdx];
+                } else {
+                    defInitT = rhsT;
+                }
+
+                if (defInitT instanceof IntLiteralType) {
+                    const concreteT = defInitT.smallestFittingType();
+                    assert(
+                        concreteT !== undefined,
+                        `RHS int literal type {0} doesn't fit in an int type`,
+                        defInitT
+                    );
+
+                    defInitT = concreteT;
+                }
+
+                return defInitT;
+            }
+
             return variableDeclarationToTypeNode(def);
         }
 
@@ -691,10 +859,7 @@ export class InferType {
         }
 
         if (def instanceof ErrorDefinition) {
-            return new ErrorType(
-                def.name,
-                def.vParameters.vParameters.map(variableDeclarationToTypeNode)
-            );
+            return errDefToType(def);
         }
 
         if (def instanceof UserDefinedValueTypeDefinition) {
@@ -718,8 +883,12 @@ export class InferType {
         }
 
         if (node.kind === "string" || node.kind === "unicodeString" || node.kind === "hexString") {
-            const val = node.kind === "hexString" ? node.hexValue : node.value;
-            return new StringLiteralType(val, node.kind);
+            const [val, kind]: [string, StringLiteralKind] =
+                node.kind === "hexString" || node.value === null
+                    ? [node.hexValue, "hexString"]
+                    : [node.value, node.kind];
+
+            return new StringLiteralType(val, kind);
         }
 
         return types.bool;
@@ -752,7 +921,7 @@ export class InferType {
             /// Fields on contract vars. Should always be a function
             if (toT instanceof UserDefinedType && toT.definition instanceof ContractDefinition) {
                 const contract = toT.definition;
-                const res = this.typeOfResolved(node.memberName, contract);
+                const res = this.typeOfResolved(node.memberName, contract, true);
 
                 if (res === undefined) {
                     throw new SolTypeError(
@@ -760,12 +929,6 @@ export class InferType {
                             node
                         )}`
                     );
-                }
-
-                if (res instanceof FunctionType) {
-                    /// All references <contract var>.funName are treated as external functions
-                    /// even if `funName` is declared public
-                    res.visibility = FunctionVisibility.External;
                 }
 
                 return res;
@@ -793,7 +956,7 @@ export class InferType {
                 }
 
                 if (def instanceof ContractDefinition) {
-                    const res = this.typeOfResolved(node.memberName, def);
+                    const res = this.typeOfResolved(node.memberName, def, false);
                     if (res) {
                         return res;
                     }
@@ -869,7 +1032,7 @@ export class InferType {
         }
 
         if (
-            baseT instanceof FunctionSetType ||
+            baseT instanceof FunctionLikeSetType ||
             baseT instanceof FunctionType ||
             baseT instanceof EventType ||
             baseT instanceof ErrorType
@@ -902,7 +1065,7 @@ export class InferType {
         }
 
         if (baseT instanceof ImportRefType) {
-            const res = this.typeOfResolved(node.memberName, baseT.importStmt.vSourceUnit);
+            const res = this.typeOfResolved(node.memberName, baseT.importStmt.vSourceUnit, false);
 
             if (res) {
                 return res;
@@ -922,6 +1085,16 @@ export class InferType {
 
             if (node.memberName === "unwrap") {
                 return new BuiltinFunctionType("unwrap", [baseT.type], [innerT]);
+            }
+        }
+
+        if (baseT instanceof SuperType) {
+            for (const contract of baseT.contract.vLinearizedBaseContracts.slice(1)) {
+                const res = this.typeOfResolved(node.memberName, contract, false);
+
+                if (res && (res instanceof FunctionType || res instanceof FunctionLikeSetType)) {
+                    return res;
+                }
             }
         }
 
@@ -1080,8 +1253,15 @@ export class InferType {
     /**
      * Given a `name` and a ASTNode `ctx`, resolve that `name` in `ctx` and compute
      * a type for the one (or more) definitions that resolve to `name`.
+     *
+     * There are 2 cases for contracts (determined by the `externalOnly` argument).:
+     * 1. MemberAccess on contract pointer (e.g. this.foo). Only external public
+     *    functions and public getters returned
+     * 2. MemberAccess on a contract type name (e.g. ContractName.foo). All
+     *    functions, state variables, and type defs in that contract are now
+     *    visible.
      */
-    typeOfResolved(name: string, ctx: ASTNode): TypeNode | undefined {
+    typeOfResolved(name: string, ctx: ASTNode, externalOnly: boolean): TypeNode | undefined {
         const defs: AnyResolvable[] = [...resolveAny(name, ctx, this.version, true)];
 
         if (defs.length === 0) {
@@ -1089,62 +1269,95 @@ export class InferType {
         }
 
         const funs = defs.filter(
-            (def) => def instanceof FunctionDefinition
+            (def) =>
+                def instanceof FunctionDefinition &&
+                (!externalOnly || // Only external/public functions visible on lookups on contract pointers
+                    def.visibility === FunctionVisibility.External ||
+                    def.visibility === FunctionVisibility.Public)
         ) as FunctionDefinition[];
 
         const getters = defs.filter(
-            (def) => def instanceof VariableDeclaration
+            (def) =>
+                def instanceof VariableDeclaration &&
+                (!externalOnly || def.visibility === StateVariableVisibility.Public) // Only public vars are visible on lookups on contract pointers.
         ) as VariableDeclaration[];
 
         const typeDefs = defs.filter(
             (def) =>
-                def instanceof StructDefinition ||
-                def instanceof EnumDefinition ||
-                def instanceof ContractDefinition
+                !externalOnly && // Type Defs are not visible on lookups on contract pointers.
+                (def instanceof StructDefinition ||
+                    def instanceof EnumDefinition ||
+                    def instanceof ContractDefinition)
         ) as Array<StructDefinition | EnumDefinition | ContractDefinition>;
 
-        const errorDefs = defs.filter((def) => def instanceof ErrorDefinition) as ErrorDefinition[];
+        const eventDefs = defs.filter(
+            (def) => !externalOnly && def instanceof EventDefinition
+        ) as EventDefinition[];
+
+        const errorDefs = defs.filter(
+            (def) => !externalOnly && def instanceof ErrorDefinition
+        ) as ErrorDefinition[];
 
         if (funs.length > 0) {
             assert(
-                getters.length === 0 && typeDefs.length === 0 && errorDefs.length === 0,
-                `Unexpected overloading between functions and getters/typedefs for {0}`,
-                name
+                funs.length === defs.length,
+                `Unexpected both functions and others matching {0} in {1}`,
+                name,
+                ctx
             );
 
             if (funs.length === 1) {
-                return funDefToType(funs[0]);
+                const res = funDefToType(funs[0]);
+                res.visibility === FunctionVisibility.External;
+                return res;
             }
 
-            return new FunctionSetType(funs);
+            return new FunctionLikeSetType(funs);
         }
 
         if (getters.length > 0) {
             assert(
-                funs.length === 0 && typeDefs.length === 0 && errorDefs.length === 0,
-                `Unexpected overloading between getters and funs/type defs for {0}`,
-                name
+                getters.length === defs.length,
+                `Unexpected both getters and others matching {0} in {1}`,
+                name,
+                ctx
             );
             assert(getters.length === 1, `Unexpected overloading between getters for {0}`, name);
 
-            return getters[0].getterFunType();
+            return externalOnly
+                ? getters[0].getterFunType()
+                : variableDeclarationToTypeNode(getters[0]);
         }
 
         if (errorDefs.length > 0) {
             assert(
-                funs.length === 0 && typeDefs.length === 0 && getters.length === 0,
-                `Unexpected overloading between errors and funs/type defs for {0}`,
-                name
+                errorDefs.length === defs.length,
+                `Unexpected both getters and others matching {0} in {1}`,
+                name,
+                ctx
             );
-
             assert(
                 errorDefs.length === 1,
                 `Unexpected overloading between errorDefs for {0}`,
                 name
             );
 
-            const argTs = errorDefs[0].vParameters.vParameters.map(variableDeclarationToTypeNode);
-            return new ErrorType(errorDefs[0].name, argTs);
+            return errDefToType(errorDefs[0]);
+        }
+
+        if (eventDefs.length > 0) {
+            assert(
+                eventDefs.length === defs.length,
+                `Unexpected both events and others matching {0} in {1}`,
+                name,
+                ctx
+            );
+
+            if (eventDefs.length === 1) {
+                return eventDefToType(eventDefs[0]);
+            }
+
+            return new FunctionLikeSetType(eventDefs);
         }
 
         assert(typeDefs.length == 1, `Unexpected number of type defs {0}`, name);

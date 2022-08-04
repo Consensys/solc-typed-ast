@@ -24,7 +24,7 @@ import {
     VariableDeclaration,
     VariableDeclarationStatement
 } from "../ast";
-import { assert, pp } from "../misc";
+import { assert, eq, pp } from "../misc";
 import { ABIEncoderVersion, ABIEncoderVersions } from "./abi";
 import {
     AddressType,
@@ -33,10 +33,12 @@ import {
     BytesType,
     FixedBytesType,
     FunctionType,
+    IntLiteralType,
     IntType,
     MappingType,
     PackedArrayType,
     PointerType,
+    StringLiteralType,
     StringType,
     TupleType,
     TypeNode,
@@ -673,18 +675,53 @@ export function evalConstantExpr(expr: Expression): Value {
         return evalBinary(expr);
     }
 
-    /// TODO: We can be more precise here. Conditionals are also constant if
-    /// 1) vCondition is constant, and only the selected branch is constant
-    /// 2) vCondition is not constant, but both branches are constant and equal (not likely in practice)
+    /// Note that from the point of view of the type system constant conditionals and
+    /// indexing in constant array literals are not considered constant expressions.
+    /// So for now we don't support them, but we may change that in the future.
+    throw new Error(`${pp(expr)} is not a constant expression.`);
+}
+
+export function castable(fromT: TypeNode, toT: TypeNode): boolean {
+    if (eq(fromT, toT)) {
+        return true;
+    }
+
     if (
-        expr instanceof Conditional &&
-        isConstant(expr.vCondition) &&
-        isConstant(expr.vTrueExpression) &&
-        isConstant(expr.vFalseExpression)
+        fromT instanceof PointerType &&
+        toT instanceof PointerType &&
+        eq(fromT.to, toT.to) &&
+        toT.location !== DataLocation.CallData
     ) {
         return true;
     }
 
-    /// TODO: After eval add case for constant indexing
+    if (
+        fromT instanceof PointerType &&
+        fromT.to instanceof StringType &&
+        toT instanceof StringLiteralType
+    ) {
+        return true;
+    }
+
+    if (
+        fromT instanceof IntLiteralType &&
+        toT instanceof IntType &&
+        fromT.literal !== undefined &&
+        toT.fits(fromT.literal)
+    ) {
+        return true;
+    }
+
     return false;
+}
+
+export function smallestFittingType(literal: Decimal): IntType | undefined {
+    const signed = literal.lessThan(0);
+    let nBytes = literal.abs().logarithm(2).div(8).ceil().toNumber();
+    nBytes = nBytes === 0 ? 1 : nBytes; // Special case for when literal is 1
+
+    if (nBytes > 32) {
+        return undefined;
+    }
+    return new IntType(nBytes * 8, signed);
 }

@@ -53,18 +53,6 @@ export class FunctionType extends FunctionLikeType {
         }(${argStr})${mutStr}${visStr}${retStr}`;
     }
 
-    typeString(): string {
-        const mapper = (node: TypeNode) => node.pp();
-
-        const argStr = this.parameters.map(mapper).join(",");
-
-        let retStr = this.returns.map(mapper).join(",");
-
-        retStr = retStr !== "" ? ` returns (${retStr})` : retStr;
-
-        return `function (${argStr})${retStr}`;
-    }
-
     getFields(): any[] {
         return [this.parameters, this.returns, this.visibility, this.mutability];
     }

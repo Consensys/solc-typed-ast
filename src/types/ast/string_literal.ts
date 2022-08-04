@@ -1,7 +1,7 @@
 import { Range } from "../../misc";
 import { TypeNode } from "./type";
 
-type StringLiteralKind = "string" | "unicodeString" | "hexString";
+export type StringLiteralKind = "string" | "unicodeString" | "hexString";
 
 export class StringLiteralType extends TypeNode {
     public readonly literal: string;
