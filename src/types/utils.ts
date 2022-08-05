@@ -8,11 +8,15 @@ import {
     DataLocation,
     ElementaryTypeName,
     EnumDefinition,
+    ErrorDefinition,
+    EventDefinition,
     Expression,
+    FunctionDefinition,
     FunctionTypeName,
     Literal,
     LiteralKind,
     Mapping,
+    ModifierDefinition,
     ParameterList,
     PragmaDirective,
     SourceUnit,
@@ -172,6 +176,21 @@ export function getUserDefinedTypeFQName(def: UserDefinition): string {
     return def.vScope instanceof ContractDefinition ? `${def.vScope.name}.${def.name}` : def.name;
 }
 
+export type NamedDef =
+    | ContractDefinition
+    | StructDefinition
+    | EnumDefinition
+    | FunctionDefinition
+    | ErrorDefinition
+    | EventDefinition
+    | VariableDeclaration
+    | ModifierDefinition
+    | UserDefinedValueTypeDefinition;
+
+export function getFQDefName(def: NamedDef): string {
+    return def.vScope instanceof ContractDefinition ? `${def.vScope.name}.${def.name}` : def.name;
+}
+
 /**
  * Convert a given ast `TypeName` into a `TypeNode`. This produces "general
  * type patterns" without any specific storage information.
@@ -291,6 +310,27 @@ export function typeNameToSpecializedTypeNode(astT: TypeName, loc: DataLocation)
     return specializeType(typeNameToTypeNode(astT), loc);
 }
 
+export function inferVariableDeclLocation(decl: VariableDeclaration): DataLocation {
+    if (decl.stateVariable) {
+        return DataLocation.Storage;
+    } else if (decl.storageLocation !== DataLocation.Default) {
+        return decl.storageLocation;
+    } else if (
+        decl.parent instanceof ParameterList ||
+        decl.parent instanceof VariableDeclarationStatement
+    ) {
+        // In 0.4.x param/return locations may be omitted. We assume memory by default.
+        return DataLocation.Memory;
+    } else if (decl.parent instanceof StructDefinition) {
+        return DataLocation.Default;
+    } else if (decl.parent instanceof SourceUnit) {
+        // Global vars don't have a location (no ref types yet)
+        return DataLocation.Default;
+    } else {
+        throw new Error(`NYI variable declaration ${pp(decl)}`);
+    }
+}
+
 /**
  * Given a `VariableDeclaration` node `decl` compute the `TypeNode` that corresponds to the variable.
  * This takes into account the storage location of the `decl`.
@@ -298,27 +338,7 @@ export function typeNameToSpecializedTypeNode(astT: TypeName, loc: DataLocation)
 export function variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNode {
     assert(decl.vType !== undefined, "Expected {0} to have type", decl);
 
-    let loc: DataLocation;
-
-    if (decl.stateVariable) {
-        loc = DataLocation.Storage;
-    } else if (decl.storageLocation !== DataLocation.Default) {
-        loc = decl.storageLocation;
-    } else if (
-        decl.parent instanceof ParameterList ||
-        decl.parent instanceof VariableDeclarationStatement
-    ) {
-        // In 0.4.x param/return locations may be omitted. We assume memory by default.
-        loc = DataLocation.Memory;
-    } else if (decl.parent instanceof StructDefinition) {
-        loc = DataLocation.Default;
-    } else if (decl.parent instanceof SourceUnit) {
-        // Global vars don't have a location (no ref types yet)
-        loc = DataLocation.Default;
-    } else {
-        throw new Error(`NYI variable declaration ${pp(decl)}`);
-    }
-
+    const loc: DataLocation = inferVariableDeclLocation(decl);
     return typeNameToSpecializedTypeNode(decl.vType, loc);
 }
 

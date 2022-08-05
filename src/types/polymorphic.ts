@@ -102,18 +102,27 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
             throw new SolTypePatternMismatchError(a, b);
         }
 
-        for (const [aName, aType] of a.members) {
-            const bType = b.members.get(aName);
+        for (const [aName, aVerDepTypes] of a.members) {
+            const bVerDepTypes = b.members.get(aName);
 
-            if (bType === undefined) {
+            if (bVerDepTypes === undefined) {
                 throw new SolTypePatternMismatchError(a, b);
             }
 
-            if (aType[1] !== bType[1]) {
+            if (aVerDepTypes.length !== bVerDepTypes.length) {
                 throw new SolTypePatternMismatchError(a, b);
             }
 
-            buildSubstituion(aType[0], bType[0], m);
+            for (let i = 0; i < aVerDepTypes.length; i++) {
+                const [aType, aVer] = aVerDepTypes[i];
+                const [bType, bVer] = bVerDepTypes[i];
+
+                if (aVer !== bVer) {
+                    throw new SolTypePatternMismatchError(a, b);
+                }
+
+                buildSubstituion(aType, bType, m);
+            }
         }
         return;
     }
@@ -234,7 +243,10 @@ export function applySubstitution(a: TypeNode, m: TypeSubstituion): TypeNode {
         return new BuiltinStructType(
             a.name,
             new Map(
-                oldMembers.map(([name, [type, ver]]) => [name, [applySubstitution(type, m), ver]])
+                oldMembers.map(([name, verDepTypes]) => [
+                    name,
+                    verDepTypes.map(([type, ver]) => [applySubstitution(type, m), ver])
+                ])
             )
         );
     }

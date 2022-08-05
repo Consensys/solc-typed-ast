@@ -17,10 +17,6 @@ export class IntType extends TypeNode {
         return `${this.signed ? "" : "u"}int${this.nBits}`;
     }
 
-    getFields(): any[] {
-        return [this.nBits, this.signed];
-    }
-
     max(): bigint {
         return BigInt(2) ** BigInt(this.signed ? this.nBits : this.nBits - 1) - BigInt(1);
     }

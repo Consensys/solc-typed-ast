@@ -13,8 +13,4 @@ export class TypeNameType extends TypeNode {
     pp(): string {
         return `type(${this.type.pp()})`;
     }
-
-    getFields(): any[] {
-        return [this.type];
-    }
 }

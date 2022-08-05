@@ -11,10 +11,6 @@ export class TVar extends TypeNode {
     pp(): string {
         return `<TVar ${this.name}>`;
     }
-
-    getFields(): any {
-        return [this.name];
-    }
 }
 
 /**
@@ -28,9 +24,5 @@ export class TRest extends TypeNode {
 
     pp(): string {
         return `<TRest ${this.name}>`;
-    }
-
-    getFields(): any {
-        return [this.name];
     }
 }

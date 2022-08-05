@@ -52,8 +52,4 @@ export class FunctionType extends FunctionLikeType {
             this.name !== undefined ? this.name : ""
         }(${argStr})${mutStr}${visStr}${retStr}`;
     }
-
-    getFields(): any[] {
-        return [this.parameters, this.returns, this.visibility, this.mutability];
-    }
 }

@@ -12,10 +12,6 @@ export class BuiltinFunctionType extends FunctionLikeType {
         this.returns = returns;
     }
 
-    getFields(): any[] {
-        return [this.name, ...this.parameters];
-    }
-
     pp(): string {
         const mapper = (node: TypeNode) => node.pp();
 

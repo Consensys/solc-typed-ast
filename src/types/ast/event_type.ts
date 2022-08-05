@@ -10,11 +10,7 @@ export class EventType extends FunctionLikeType {
         super(name, parameters);
     }
 
-    getFields(): any[] {
-        return [this.name, ...this.parameters];
-    }
-
     pp(): string {
-        return `function (${this.parameters.map((t) => t.pp()).join(",")})`;
+        return `event ${this.name}(${this.parameters.map((t) => t.pp()).join(",")})`;
     }
 }

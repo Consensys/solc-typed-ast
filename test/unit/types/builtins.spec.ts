@@ -1,8 +1,8 @@
 import expect from "expect";
 import {
     abi,
-    address04Builtins,
     address06Builtins,
+    addressBuiltins,
     AddressType,
     BoolType,
     BuiltinFunctionType,
@@ -12,14 +12,12 @@ import {
     DataLocation,
     eq,
     FixedBytesType,
-    FunctionStateMutability,
-    FunctionType,
-    FunctionVisibility,
     globalBuiltins,
     IntType,
     LatestCompilerVersion,
     PointerType,
-    TypeNode
+    TypeNode,
+    types
 } from "../../../src";
 
 const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> = [
@@ -40,7 +38,7 @@ const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> 
         globalBuiltins,
         "block.blockhash",
         ["0.4.13", "0.4.26"],
-        new BuiltinFunctionType(undefined, [new IntType(256, false)], [new FixedBytesType(32)])
+        new BuiltinFunctionType("blockhash", [new IntType(256, false)], [new FixedBytesType(32)])
     ],
     [globalBuiltins, "block.chainid", ["0.4.13", "0.7.6"], undefined],
     [globalBuiltins, "block.chainid", ["0.8.0", LatestCompilerVersion], new IntType(256, false)],
@@ -52,7 +50,8 @@ const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> 
         ["0.4.13", LatestCompilerVersion],
         new PointerType(new BytesType(), DataLocation.CallData)
     ],
-    [globalBuiltins, "msg.sender", ["0.4.13", LatestCompilerVersion], new AddressType(true)],
+    [globalBuiltins, "msg.sender", ["0.4.13", "0.5.17"], new AddressType(false)],
+    [globalBuiltins, "msg.sender", ["0.6.0", LatestCompilerVersion], new AddressType(true)],
     [globalBuiltins, "msg.sig", ["0.4.13", LatestCompilerVersion], new FixedBytesType(4)],
     [globalBuiltins, "msg.value", ["0.4.13", LatestCompilerVersion], new IntType(256, false)],
     [globalBuiltins, "msg.gas", ["0.5.0", LatestCompilerVersion], undefined],
@@ -64,131 +63,94 @@ const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> 
         globalBuiltins,
         "blockhash",
         ["0.4.22", LatestCompilerVersion],
-        new FunctionType(
-            undefined,
-            [new IntType(256, false)],
-            [new FixedBytesType(32)],
-            FunctionVisibility.Default,
-            FunctionStateMutability.View
-        )
+        new BuiltinFunctionType("blockhash", [new IntType(256, false)], [new FixedBytesType(32)])
     ],
     [globalBuiltins, "gasleft", ["0.4.13", "0.4.20"], undefined],
     [
         globalBuiltins,
         "gasleft",
         ["0.4.21", LatestCompilerVersion],
-        new FunctionType(
-            undefined,
-            [],
-            [new IntType(256, false)],
-            FunctionVisibility.Default,
-            FunctionStateMutability.View
-        )
+        new BuiltinFunctionType("gasleft", [], [new IntType(256, false)])
     ],
     [globalBuiltins, "now", ["0.7.0", LatestCompilerVersion], undefined],
-    [
-        globalBuiltins,
-        "now",
-        ["0.4.13", "0.6.12"],
-        new FunctionType(
-            undefined,
-            [],
-            [new IntType(256, false)],
-            FunctionVisibility.Default,
-            FunctionStateMutability.View
-        )
-    ],
+    [globalBuiltins, "now", ["0.4.13", "0.6.12"], types.uint],
     [
         globalBuiltins,
         "addmod",
         ["0.4.13", LatestCompilerVersion],
-        new FunctionType(
-            undefined,
+        new BuiltinFunctionType(
+            "addmod",
             [new IntType(256, false), new IntType(256, false), new IntType(256, false)],
-            [new IntType(256, false)],
-            FunctionVisibility.Default,
-            FunctionStateMutability.Pure
+            [new IntType(256, false)]
         )
     ],
     [
         globalBuiltins,
         "mulmod",
         ["0.4.13", LatestCompilerVersion],
-        new FunctionType(
-            undefined,
+        new BuiltinFunctionType(
+            "mulmod",
             [new IntType(256, false), new IntType(256, false), new IntType(256, false)],
-            [new IntType(256, false)],
-            FunctionVisibility.Default,
-            FunctionStateMutability.Pure
+            [new IntType(256, false)]
         )
     ],
     [
         globalBuiltins,
         "keccak256",
         ["0.4.13", LatestCompilerVersion],
-        new FunctionType(
-            undefined,
+        new BuiltinFunctionType(
+            "keccak256",
             [new PointerType(new BytesType(), DataLocation.Memory)],
-            [new FixedBytesType(32)],
-            FunctionVisibility.Default,
-            FunctionStateMutability.Pure
+            [new FixedBytesType(32)]
         )
     ],
     [
         globalBuiltins,
         "sha256",
         ["0.4.13", LatestCompilerVersion],
-        new FunctionType(
-            undefined,
+        new BuiltinFunctionType(
+            "sha256",
             [new PointerType(new BytesType(), DataLocation.Memory)],
-            [new FixedBytesType(32)],
-            FunctionVisibility.Default,
-            FunctionStateMutability.Pure
+            [new FixedBytesType(32)]
         )
     ],
     [
         globalBuiltins,
         "ripemd160",
         ["0.4.13", LatestCompilerVersion],
-        new FunctionType(
-            undefined,
+        new BuiltinFunctionType(
+            "ripemd160",
             [new PointerType(new BytesType(), DataLocation.Memory)],
-            [new FixedBytesType(20)],
-            FunctionVisibility.Default,
-            FunctionStateMutability.Pure
+            [new FixedBytesType(20)]
         )
     ],
     [
         globalBuiltins,
         "ecrecover",
         ["0.4.13", LatestCompilerVersion],
-        new FunctionType(
-            undefined,
+        new BuiltinFunctionType(
+            "ecrecover",
             [
                 new FixedBytesType(32),
                 new IntType(8, false),
                 new FixedBytesType(32),
                 new FixedBytesType(32)
             ],
-            [new AddressType(false)],
-            FunctionVisibility.Default,
-            FunctionStateMutability.Pure
+            [new AddressType(false)]
         )
     ],
-    [address04Builtins, "balance", ["0.4.13", LatestCompilerVersion], new IntType(256, false)],
+    [addressBuiltins, "balance", ["0.4.13", LatestCompilerVersion], new IntType(256, false)],
     [
-        address04Builtins,
+        addressBuiltins,
         "staticcall",
-        ["0.4.13", LatestCompilerVersion],
-        new FunctionType(
-            undefined,
+        ["0.5.0", LatestCompilerVersion],
+        new BuiltinFunctionType(
+            "staticcall",
             [new PointerType(new BytesType(), DataLocation.Memory)],
-            [new BoolType(), new PointerType(new BytesType(), DataLocation.Memory)],
-            FunctionVisibility.Default,
-            FunctionStateMutability.View
+            [new BoolType(), new PointerType(new BytesType(), DataLocation.Memory)]
         )
     ],
-    [address04Builtins, "code", ["0.4.13", "0.7.6"], undefined],
+    [addressBuiltins, "code", ["0.4.13", "0.7.6"], undefined],
     [
         address06Builtins,
         "code",

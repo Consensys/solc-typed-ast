@@ -10,11 +10,7 @@ export class ErrorType extends FunctionLikeType {
         super(name, parameters);
     }
 
-    getFields(): any[] {
-        return [this.name, ...this.parameters];
-    }
-
     pp(): string {
-        return `error (${this.parameters.map((t) => t.pp()).join(",")})`;
+        return `error ${this.name}(${this.parameters.map((t) => t.pp()).join(",")})`;
     }
 }

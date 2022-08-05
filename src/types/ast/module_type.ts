@@ -15,8 +15,4 @@ export class ModuleType extends TypeNode {
     pp(): string {
         return `module "${this.path}"`;
     }
-
-    getFields(): any[] {
-        return [this.path];
-    }
 }

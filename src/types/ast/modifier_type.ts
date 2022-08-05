@@ -10,11 +10,7 @@ export class ModifierType extends FunctionLikeType {
         super(name, parameters);
     }
 
-    getFields(): any[] {
-        return [this.name, ...this.parameters];
-    }
-
     pp(): string {
-        return `modifier (${this.parameters.map((t) => t.pp()).join(",")})`;
+        return `modifier ${this.name}(${this.parameters.map((t) => t.pp()).join(",")})`;
     }
 }

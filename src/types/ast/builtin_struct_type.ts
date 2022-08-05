@@ -7,9 +7,9 @@ import { TypeNode } from "./type";
  * It is not directly referenced in typeString parser grammar.
  */
 export class BuiltinStructType extends BuiltinType {
-    readonly members: Map<string, VersionDependentType>;
+    readonly members: Map<string, VersionDependentType[]>;
 
-    constructor(name: string, members: Map<string, VersionDependentType>) {
+    constructor(name: string, members: Map<string, VersionDependentType[]>) {
         super(name);
 
         this.members = members;
@@ -20,16 +20,20 @@ export class BuiltinStructType extends BuiltinType {
     }
 
     getFieldForVersion(fieldName: string, version: string): TypeNode | undefined {
-        const versionDepField = this.members.get(fieldName);
+        const versionDepFields = this.members.get(fieldName);
 
-        if (!versionDepField) {
+        if (!versionDepFields) {
             return undefined;
         }
 
-        return getTypeForCompilerVersion(versionDepField, version);
-    }
+        for (const versionDepField of versionDepFields) {
+            const typ = getTypeForCompilerVersion(versionDepField, version);
 
-    getFields(): any[] {
-        return [this.name];
+            if (typ) {
+                return typ;
+            }
+        }
+
+        return undefined;
     }
 }

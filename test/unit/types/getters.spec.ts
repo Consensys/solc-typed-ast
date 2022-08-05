@@ -103,7 +103,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     const def = getDef(unit, "AccessorReturns.E", EnumDefinition);
 
                     return new FunctionType(
-                        "c",
+                        "d",
                         [],
                         [new UserDefinedType("AccessorReturns.E", def), new FixedBytesType(1)],
                         FunctionVisibility.External,
@@ -150,7 +150,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     return new FunctionType(
                         "g",
                         [new IntType(256, false)],
-                        [new UserDefinedType(def.name, def)],
+                        [new PointerType(new UserDefinedType(def.name, def), DataLocation.Storage)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
                     );
@@ -342,7 +342,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     const def = getDef(unit, "AccessorReturns.E", EnumDefinition);
 
                     return new FunctionType(
-                        "c",
+                        "d",
                         [],
                         [new UserDefinedType("AccessorReturns.E", def), new FixedBytesType(1)],
                         FunctionVisibility.External,
@@ -368,7 +368,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     return new FunctionType(
                         "f",
                         [new IntType(256, false)],
-                        [new UserDefinedType(def.name, def)],
+                        [new PointerType(new UserDefinedType(def.name, def), DataLocation.Storage)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
                     );

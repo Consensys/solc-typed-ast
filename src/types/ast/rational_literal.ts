@@ -20,8 +20,4 @@ export class RationalLiteralType extends TypeNode {
 
         return `rational_const ${numerator.toString()} / ${denominator.toString()}`;
     }
-
-    getFields(): any[] {
-        return [this.literal];
-    }
 }

@@ -71,12 +71,9 @@ import {
     type_Int,
     type_Interface,
     type_Contract,
-    address04Builtins,
     address06PayableBuiltins,
     address06Builtins,
-    address05Builtins,
-    msg05,
-    msg06,
+    addressBuiltins,
     globalBuiltins
 } from "./builtins";
 import {
@@ -90,7 +87,7 @@ import { parse } from "./typeStrings";
 import {
     castable,
     evalConstantExpr,
-    getTypeForCompilerVersion,
+    getFQDefName,
     operatorGroups,
     SolTypeError,
     specializeType,
@@ -697,10 +694,6 @@ export class InferType {
             return this.typeOfBuiltinType(node);
         }
 
-        if (node.name === "msg") {
-            return lt(this.version, "0.6.0") ? msg05 : msg06;
-        }
-
         if (node.name === "super") {
             const contract = node.getClosestParentByType(ContractDefinition);
             assert(contract !== undefined, `Use of super outside of contract in {0}`, node);
@@ -750,7 +743,9 @@ export class InferType {
                         originalSym instanceof EnumDefinition ||
                         originalSym instanceof UserDefinedValueTypeDefinition
                     ) {
-                        return new TypeNameType(new UserDefinedType(originalSym.name, originalSym));
+                        return new TypeNameType(
+                            new UserDefinedType(getFQDefName(originalSym), originalSym)
+                        );
                     }
 
                     if (originalSym instanceof ImportDirective) {
@@ -863,7 +858,7 @@ export class InferType {
         }
 
         if (def instanceof UserDefinedValueTypeDefinition) {
-            return new TypeNameType(new UserDefinedType(def.name, def));
+            return new TypeNameType(new UserDefinedType(getFQDefName(def), def));
         }
 
         throw new Error(
@@ -1020,14 +1015,10 @@ export class InferType {
                 );
             }
 
-            const field = baseT.members.get(node.memberName);
+            const type = baseT.getFieldForVersion(node.memberName, this.version);
 
-            if (field !== undefined) {
-                const type = getTypeForCompilerVersion(field, this.version);
-
-                if (type) {
-                    return type;
-                }
+            if (type) {
+                return type;
             }
         }
 
@@ -1049,10 +1040,8 @@ export class InferType {
         if (baseT instanceof AddressType) {
             let builtinStruct: BuiltinStructType;
 
-            if (lt(this.version, "0.5.0")) {
-                builtinStruct = address04Builtins;
-            } else if (lt(this.version, "0.6.0")) {
-                builtinStruct = address05Builtins;
+            if (lt(this.version, "0.6.0")) {
+                builtinStruct = addressBuiltins;
             } else {
                 builtinStruct = baseT.payable ? address06PayableBuiltins : address06Builtins;
             }

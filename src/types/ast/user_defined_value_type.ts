@@ -15,8 +15,4 @@ export class UserDefinedValueType extends TypeNode {
     pp(): string {
         return `udvt ${this.name} <${this.innerType.pp()}>`;
     }
-
-    getFields(): any[] {
-        return [this.name, this.innerType];
-    }
 }
