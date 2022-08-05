@@ -88,7 +88,7 @@ import {
     castable,
     evalConstantExpr,
     getFQDefName,
-    operatorGroups,
+    binaryOperatorGroups,
     SolTypeError,
     specializeType,
     typeNameToTypeNode,
@@ -135,10 +135,6 @@ export const builtinTypes: { [key: string]: (arg: ASTNode) => TypeNode } = {
 };
 
 const castableLocations: DataLocation[] = [DataLocation.Memory, DataLocation.Storage];
-
-function max(a: number, b: number): number {
-    return a < b ? b : a;
-}
 
 function funDefToType(def: FunctionDefinition): FunctionType {
     const paramTypes = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
@@ -229,7 +225,7 @@ export class InferType {
             const maxBytes = a.literal.abs().logarithm(2).div(8).ceil().toNumber();
             const minBytes = b.literal.abs().logarithm(2).div(8).ceil().toNumber();
 
-            const nBytes = max(maxBytes, minBytes);
+            const nBytes = Math.max(maxBytes, minBytes);
 
             return new IntType(nBytes * 8, signed);
         }
@@ -266,7 +262,7 @@ export class InferType {
 
         // Otherwise find a common type to which they cast
         if (a.signed === b.signed) {
-            return new IntType(max(a.nBits, b.nBits), a.signed);
+            return new IntType(Math.max(a.nBits, b.nBits), a.signed);
         }
 
         const unsigned = a.signed ? b : a;
@@ -315,9 +311,9 @@ export class InferType {
      */
     typeOfBinaryOperation(node: BinaryOperation): TypeNode {
         if (
-            operatorGroups.Comparison.includes(node.operator) ||
-            operatorGroups.Equality.includes(node.operator) ||
-            operatorGroups.Logical.includes(node.operator)
+            binaryOperatorGroups.Comparison.includes(node.operator) ||
+            binaryOperatorGroups.Equality.includes(node.operator) ||
+            binaryOperatorGroups.Logical.includes(node.operator)
         ) {
             return types.bool;
         }
@@ -337,7 +333,7 @@ export class InferType {
             return a;
         }
 
-        if (operatorGroups.Arithmetic.includes(node.operator)) {
+        if (binaryOperatorGroups.Arithmetic.includes(node.operator)) {
             assert(
                 a instanceof IntType || a instanceof IntLiteralType,
                 `Unexpected type of {0}.`,
@@ -354,7 +350,7 @@ export class InferType {
 
         // For bitshifts just take the type of the lhs
         // For all other bitwise operators the lhs and rhs must be the same, so we can just take the LHS
-        if (operatorGroups.Bitwise.includes(node.operator)) {
+        if (binaryOperatorGroups.Bitwise.includes(node.operator)) {
             return a;
         }
 
@@ -871,6 +867,11 @@ export class InferType {
             let val = new Decimal(node.value);
 
             if (node.subdenomination !== undefined) {
+                assert(
+                    node.subdenomination in subdenominationMultipliers,
+                    `Unknown subdenomination ${node.subdenomination}`
+                );
+
                 val = val.times(subdenominationMultipliers[node.subdenomination]);
             }
 
@@ -936,6 +937,10 @@ export class InferType {
 
                 if (node.memberName === "push") {
                     return new BuiltinFunctionType(undefined, [toT.elementT], []);
+                }
+
+                if (node.memberName === "pop") {
+                    return new BuiltinFunctionType(undefined, [], []);
                 }
             }
         }

@@ -50,7 +50,7 @@ import {
     UserDefinition
 } from "./ast";
 
-export const operatorGroups = {
+export const binaryOperatorGroups = {
     Arithmetic: ["+", "-", "*", "/", "%", "**"],
     Bitwise: ["<<", ">>", "&", "|", "^"],
     Comparison: ["<", ">", "<=", ">="],
@@ -313,22 +313,30 @@ export function typeNameToSpecializedTypeNode(astT: TypeName, loc: DataLocation)
 export function inferVariableDeclLocation(decl: VariableDeclaration): DataLocation {
     if (decl.stateVariable) {
         return DataLocation.Storage;
-    } else if (decl.storageLocation !== DataLocation.Default) {
+    }
+
+    if (decl.storageLocation !== DataLocation.Default) {
         return decl.storageLocation;
-    } else if (
+    }
+
+    if (
         decl.parent instanceof ParameterList ||
         decl.parent instanceof VariableDeclarationStatement
     ) {
         // In 0.4.x param/return locations may be omitted. We assume memory by default.
         return DataLocation.Memory;
-    } else if (decl.parent instanceof StructDefinition) {
+    }
+
+    if (decl.parent instanceof StructDefinition) {
         return DataLocation.Default;
-    } else if (decl.parent instanceof SourceUnit) {
+    }
+
+    if (decl.parent instanceof SourceUnit) {
         // Global vars don't have a location (no ref types yet)
         return DataLocation.Default;
-    } else {
-        throw new Error(`NYI variable declaration ${pp(decl)}`);
     }
+
+    throw new Error(`NYI variable declaration ${pp(decl)}`);
 }
 
 /**
@@ -648,23 +656,23 @@ function evalBinary(expr: BinaryOperation): Value {
     const lVal = evalConstantExpr(expr.vLeftExpression);
     const rVal = evalConstantExpr(expr.vRightExpression);
 
-    if (operatorGroups.Logical.includes(expr.operator)) {
+    if (binaryOperatorGroups.Logical.includes(expr.operator)) {
         return evalBinaryLogic(expr, lVal, rVal);
     }
 
-    if (operatorGroups.Equality.includes(expr.operator)) {
+    if (binaryOperatorGroups.Equality.includes(expr.operator)) {
         return evalBinaryEquality(expr, lVal, rVal);
     }
 
-    if (operatorGroups.Comparison.includes(expr.operator)) {
+    if (binaryOperatorGroups.Comparison.includes(expr.operator)) {
         return evalBinaryComparison(expr, lVal, rVal);
     }
 
-    if (operatorGroups.Arithmetic.includes(expr.operator)) {
+    if (binaryOperatorGroups.Arithmetic.includes(expr.operator)) {
         return evalBinaryArithmetic(expr, lVal, rVal);
     }
 
-    if (operatorGroups.Bitwise.includes(expr.operator)) {
+    if (binaryOperatorGroups.Bitwise.includes(expr.operator)) {
         return evalBinaryBitwise(expr, lVal, rVal);
     }
 

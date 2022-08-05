@@ -1,5 +1,6 @@
 import { FunctionLikeType } from "./function_like_type";
 import { TypeNode } from "./type";
+import { Range } from "../../misc";
 
 /**
  * The type of a builtin function
@@ -7,8 +8,13 @@ import { TypeNode } from "./type";
 export class BuiltinFunctionType extends FunctionLikeType {
     returns: TypeNode[];
 
-    constructor(name: string | undefined, parameters: TypeNode[], returns: TypeNode[]) {
-        super(name, parameters);
+    constructor(
+        name: string | undefined,
+        parameters: TypeNode[],
+        returns: TypeNode[],
+        src?: Range
+    ) {
+        super(name, parameters, src);
         this.returns = returns;
     }
 

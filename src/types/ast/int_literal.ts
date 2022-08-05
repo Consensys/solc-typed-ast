@@ -30,9 +30,9 @@ export class IntLiteralType extends TypeNode {
         if (this.literal && !this.literal.isInt()) {
             const fraction = this.literal.toFraction();
             return `rational_const ${fraction[0]} / ${fraction[1]}`;
-        } else {
-            return `int_const${this.literal !== undefined ? ` ${this.literal.toFixed()}` : ""}`;
         }
+
+        return `int_const${this.literal !== undefined ? ` ${this.literal.toFixed()}` : ""}`;
     }
 
     /**
