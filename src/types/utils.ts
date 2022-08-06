@@ -2,15 +2,12 @@ import Decimal from "decimal.js";
 import { lt, satisfies } from "semver";
 import {
     ArrayTypeName,
-    BinaryOperation,
-    Conditional,
     ContractDefinition,
     DataLocation,
     ElementaryTypeName,
     EnumDefinition,
     ErrorDefinition,
     EventDefinition,
-    Expression,
     FunctionDefinition,
     FunctionTypeName,
     Literal,
@@ -22,7 +19,6 @@ import {
     SourceUnit,
     StructDefinition,
     TypeName,
-    UnaryOperation,
     UserDefinedTypeName,
     UserDefinedValueTypeDefinition,
     VariableDeclaration,
@@ -42,6 +38,7 @@ import {
     MappingType,
     PackedArrayType,
     PointerType,
+    Rational,
     StringLiteralType,
     StringType,
     TupleType,
@@ -422,293 +419,9 @@ export function getABIEncoderVersion(
     return lt(compilerVersion, "0.8.0") ? ABIEncoderVersion.V1 : ABIEncoderVersion.V2;
 }
 
-export function isConstant(expr: Expression): boolean {
-    if (expr instanceof Literal) {
-        return true;
-    }
-
-    if (expr instanceof UnaryOperation && isConstant(expr.vSubExpression)) {
-        return true;
-    }
-
-    if (
-        expr instanceof BinaryOperation &&
-        isConstant(expr.vLeftExpression) &&
-        isConstant(expr.vRightExpression)
-    ) {
-        return true;
-    }
-
-    /// TODO: We can be more precise here. Conditionals are also constant if
-    /// 1) vCondition is constant, and only the selected branch is constant
-    /// 2) vCondition is not constant, but both branches are constant and equal (not likely in practice)
-    if (
-        expr instanceof Conditional &&
-        isConstant(expr.vCondition) &&
-        isConstant(expr.vTrueExpression) &&
-        isConstant(expr.vFalseExpression)
-    ) {
-        return true;
-    }
-
-    /// TODO: After eval add case for constant indexing
-    return false;
-}
-
-export type Value = Decimal | boolean | string;
-
-export class EvalError extends Error {
-    expr: Expression;
-
-    constructor(e: Expression, msg: string) {
-        super(msg);
-        this.expr = e;
-    }
-}
-
-export class NonConstantExpressionError extends EvalError {
-    constructor(e: Expression) {
-        super(e, `Found non-constant expression ${pp(e)} during constant evaluation`);
-    }
-}
-
-function evalLiteral(expr: Literal): Value {
-    if (expr.kind === LiteralKind.Bool) {
-        return expr.value === "true";
-    }
-
-    if (expr.kind === LiteralKind.String || expr.kind === LiteralKind.UnicodeString) {
-        return expr.value;
-    }
-
-    if (expr.kind === LiteralKind.HexString) {
-        return expr.hexValue;
-    }
-
-    return new Decimal(expr.value);
-}
-
-/// Given a `0b` prefixed (optionally fractional) binary string,
-/// return its bitwise negation
-function bitwiseNotStr(binStr: string): string {
-    const res: string[] = [];
-    for (let i = 2; i < binStr.length; i++) {
-        res.push(binStr[i] === "." ? "." : binStr[i] === "0" ? "1" : "0");
-    }
-
-    return `0b` + res.join("");
-}
-
-function evalUnary(expr: UnaryOperation): Value {
-    const subVal = evalConstantExpr(expr.vSubExpression);
-
-    if (expr.operator === "!") {
-        if (!(typeof subVal === "boolean")) {
-            throw new EvalError(
-                expr.vSubExpression,
-                `Expected a boolean in ${pp(expr.vSubExpression)} not ${subVal}`
-            );
-        }
-
-        return !subVal;
-    }
-
-    if (expr.operator === "~") {
-        if (subVal instanceof Decimal) {
-            if (!subVal.isInteger()) {
-                throw new EvalError(
-                    expr.vSubExpression,
-                    `Cannot perform bitwise not on non-int literal ${subVal.toString()}`
-                );
-            }
-
-            return new Decimal(bitwiseNotStr(subVal.toBinary()));
-        }
-
-        throw new EvalError(
-            expr.vSubExpression,
-            `Expected a number in ${pp(expr.vSubExpression)} not ${subVal}`
-        );
-    }
-
-    if (expr.operator === "-") {
-        if (subVal instanceof Decimal) {
-            return subVal.negated();
-        }
-
-        throw new EvalError(
-            expr.vSubExpression,
-            `Expected a number in ${pp(expr.vSubExpression)} not ${subVal}`
-        );
-    }
-
-    throw new Error(`NYI unary operator ${expr.operator}`);
-}
-
-function evalBinaryLogic(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
-    const op = expr.operator;
-
-    if (!(typeof lVal === "boolean" && typeof lVal === "boolean")) {
-        throw new EvalError(expr, `${op} expects booleans not ${lVal} and ${rVal}`);
-    }
-
-    if (op === "&&") {
-        return lVal && rVal;
-    }
-
-    if (op === "||") {
-        return lVal || rVal;
-    }
-
-    throw new Error(`Unknown logic op ${op}`);
-}
-
-function evalBinaryEquality(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
-    let equal: boolean;
-
-    if (typeof lVal === "string" || typeof rVal === "string") {
-        throw new EvalError(expr, `Comparison not allowed for strings ${lVal} and ${rVal}`);
-    }
-
-    if (lVal instanceof Decimal && rVal instanceof Decimal) {
-        equal = lVal.equals(rVal);
-    } else {
-        equal = lVal === rVal;
-    }
-
-    if (expr.operator === "==") {
-        return equal;
-    }
-
-    if (expr.operator === "!=") {
-        return !equal;
-    }
-
-    throw new Error(`Unknown equality op ${expr.operator}`);
-}
-
-function evalBinaryComparison(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
-    const op = expr.operator;
-
-    if (!(lVal instanceof Decimal && rVal instanceof Decimal)) {
-        throw new EvalError(expr, `Comparison not allowed for ${lVal} and ${rVal}`);
-    }
-
-    if (op === "<") {
-        return lVal.lessThan(rVal);
-    }
-
-    if (op === "<=") {
-        return lVal.lessThanOrEqualTo(rVal);
-    }
-
-    if (op === ">") {
-        return lVal.greaterThan(rVal);
-    }
-
-    if (op === ">=") {
-        return lVal.greaterThanOrEqualTo(rVal);
-    }
-
-    throw new Error(`Unknown comparison op ${expr.operator}`);
-}
-
-function evalBinaryArithmetic(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
-    const op = expr.operator;
-
-    if (!(lVal instanceof Decimal && rVal instanceof Decimal)) {
-        throw new EvalError(expr, `Comparison not allowed for ${lVal} and ${rVal}`);
-    }
-
-    if (op === "+") {
-        return lVal.plus(rVal);
-    }
-
-    if (op === "-") {
-        return lVal.minus(rVal);
-    }
-
-    if (op === "*") {
-        return lVal.times(rVal);
-    }
-
-    if (op === "/") {
-        return lVal.div(rVal);
-    }
-
-    if (op === "%") {
-        return lVal.modulo(rVal);
-    }
-
-    if (op === "**") {
-        return lVal.pow(rVal);
-    }
-
-    throw new Error(`Unknown arithmetic op ${expr.operator}`);
-}
-
-function evalBinaryBitwise(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
-    throw new Error(`NYI Bitwise op ${expr.operator} on ${lVal} ${rVal}`);
-}
-
-/// Given a constant `BinaryOperation` expression `expr` evaluate it.
-function evalBinary(expr: BinaryOperation): Value {
-    const lVal = evalConstantExpr(expr.vLeftExpression);
-    const rVal = evalConstantExpr(expr.vRightExpression);
-
-    if (binaryOperatorGroups.Logical.includes(expr.operator)) {
-        return evalBinaryLogic(expr, lVal, rVal);
-    }
-
-    if (binaryOperatorGroups.Equality.includes(expr.operator)) {
-        return evalBinaryEquality(expr, lVal, rVal);
-    }
-
-    if (binaryOperatorGroups.Comparison.includes(expr.operator)) {
-        return evalBinaryComparison(expr, lVal, rVal);
-    }
-
-    if (binaryOperatorGroups.Arithmetic.includes(expr.operator)) {
-        return evalBinaryArithmetic(expr, lVal, rVal);
-    }
-
-    if (binaryOperatorGroups.Bitwise.includes(expr.operator)) {
-        return evalBinaryBitwise(expr, lVal, rVal);
-    }
-
-    throw new Error(`Unknown binary op ${expr.operator}`);
-}
-
 /**
- * Given a constant expression `expr` evaluate it to a concrete `Value`. If `expr`
- * is not constant throw `NonConstantExpressionError`.
- *
- * TODO: The order of some operations changed in some version. So perhaps to be fully
- * precise here we will need a compiler version too?
+ * Return true IFF `fromT` can be implicitly casted to `toT`
  */
-export function evalConstantExpr(expr: Expression): Value {
-    if (expr instanceof Literal) {
-        return evalLiteral(expr);
-    }
-
-    if (expr instanceof UnaryOperation && isConstant(expr.vSubExpression)) {
-        return evalUnary(expr);
-    }
-
-    if (
-        expr instanceof BinaryOperation &&
-        isConstant(expr.vLeftExpression) &&
-        isConstant(expr.vRightExpression)
-    ) {
-        return evalBinary(expr);
-    }
-
-    /// Note that from the point of view of the type system constant conditionals and
-    /// indexing in constant array literals are not considered constant expressions.
-    /// So for now we don't support them, but we may change that in the future.
-    throw new Error(`${pp(expr)} is not a constant expression.`);
-}
-
 export function castable(fromT: TypeNode, toT: TypeNode): boolean {
     if (eq(fromT, toT)) {
         return true;
@@ -743,7 +456,16 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
     return false;
 }
 
-export function smallestFittingType(literal: Decimal): IntType | undefined {
+/**
+ * Find the smallest concrete int type that can hold `literal`.
+ */
+export function smallestFittingType(literal: Decimal | bigint): IntType | undefined {
+    if (typeof literal === "bigint") {
+        literal = new Decimal(literal.toString());
+    }
+
+    /// TODO: Need a test for this logic that checks the boundary conditions
+    /// when the literals include the MIN/MAX for both signed and unsigned types
     const signed = literal.lessThan(0);
     let nBytes = literal.abs().logarithm(2).div(8).ceil().toNumber();
     nBytes = nBytes === 0 ? 1 : nBytes; // Special case for when literal is 1
@@ -752,4 +474,19 @@ export function smallestFittingType(literal: Decimal): IntType | undefined {
         return undefined;
     }
     return new IntType(nBytes * 8, signed);
+}
+
+export function decimalToRational(d: Decimal): Rational {
+    if (!d.isFinite()) {
+        throw new Error(`Unexpected infinite rational ${d.toString()} in decimalToRational`);
+    }
+
+    const valStr = d.toFixed();
+    const dotPos = valStr.indexOf(".");
+    assert(dotPos !== -1, `Missing decimal point in {0}`, valStr);
+
+    return {
+        numerator: BigInt(valStr.replace(".", "")),
+        denominator: BigInt(10) ** BigInt(valStr.length - dotPos - 1)
+    };
 }

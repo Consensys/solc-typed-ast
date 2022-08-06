@@ -1,4 +1,3 @@
-import Decimal from "decimal.js";
 import { Range } from "../../misc";
 import { TypeNode } from "./type";
 
@@ -25,11 +24,7 @@ export class IntType extends TypeNode {
         return this.signed ? BigInt(0) : -(BigInt(2) ** BigInt(this.nBits - 1));
     }
 
-    fits(literal: Decimal): boolean {
-        return (
-            literal.isInt() &&
-            literal.greaterThanOrEqualTo(new Decimal(this.min().toString())) &&
-            literal.lessThanOrEqualTo(new Decimal(this.max().toString()))
-        );
+    fits(literal: bigint): boolean {
+        return literal <= this.max() && literal >= this.min();
     }
 }

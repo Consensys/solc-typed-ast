@@ -59,6 +59,7 @@ import {
     MappingType,
     ModifierType,
     PointerType,
+    RationalLiteralType,
     StringLiteralKind,
     StringLiteralType,
     StringType,
@@ -86,16 +87,18 @@ import { types } from "./reserved";
 import { parse } from "./typeStrings";
 import {
     castable,
-    evalConstantExpr,
     getFQDefName,
     binaryOperatorGroups,
     SolTypeError,
     specializeType,
     typeNameToTypeNode,
-    variableDeclarationToTypeNode
+    variableDeclarationToTypeNode,
+    decimalToRational
 } from "./utils";
 import { Decimal } from "decimal.js";
 import { SuperType } from "./ast/super";
+import { evalConstantExpr } from "./eval_const";
+import { NumericLiteralType } from "./ast/numeric_literal";
 
 export const unaryImpureOperators = ["++", "--"];
 
@@ -218,16 +221,20 @@ export class InferType {
                 `Unexpected missing literals`
             );
 
-            /// TODO: Need a test for this logic that checks the boundary conditions
-            /// when the literals include the MIN/MAX for both signed and unsigned types
-            const signed = a.literal.lessThan(0) || b.literal.lessThan(0);
+            const aSmallestType = a.smallestFittingType();
+            const bSmallestType = b.smallestFittingType();
 
-            const maxBytes = a.literal.abs().logarithm(2).div(8).ceil().toNumber();
-            const minBytes = b.literal.abs().logarithm(2).div(8).ceil().toNumber();
+            assert(
+                aSmallestType !== undefined && bSmallestType !== undefined,
+                `Couldn't find concrete types for {0} and {1}`,
+                a,
+                b
+            );
 
-            const nBytes = Math.max(maxBytes, minBytes);
+            const signed = aSmallestType?.signed || bSmallestType?.signed;
+            const nBits = Math.max(aSmallestType.nBits, bSmallestType.nBits);
 
-            return new IntType(nBytes * 8, signed);
+            return new IntType(nBits, signed);
         }
 
         // If one of them is an int literal, and the other is not, we have 2 cases
@@ -240,16 +247,16 @@ export class InferType {
             ];
 
             assert(literalT.literal !== undefined, `TODO: Remove when we remove typestring parser`);
-            const decMin = new Decimal(concreteT.min().toString());
-            const decMax = new Decimal(concreteT.max().toString());
+            const decMin = concreteT.min();
+            const decMax = concreteT.max();
 
             /// Literal less than the minimum for the concrete type
-            if (decMin.greaterThan(literalT.literal)) {
+            if (decMin > literalT.literal) {
                 return this.inferCommonIntType(
                     new IntLiteralType(literalT.literal),
                     new IntLiteralType(decMax)
                 );
-            } else if (decMax.lessThan(literalT.literal)) {
+            } else if (decMax < literalT.literal) {
                 return this.inferCommonIntType(
                     new IntLiteralType(decMin),
                     new IntLiteralType(literalT.literal)
@@ -321,11 +328,17 @@ export class InferType {
         const a = this.typeOf(node.vLeftExpression);
         const b = this.typeOf(node.vRightExpression);
 
-        if (a instanceof IntLiteralType && b instanceof IntLiteralType) {
+        if (a instanceof NumericLiteralType && b instanceof NumericLiteralType) {
             const res = evalConstantExpr(node);
-            assert(res instanceof Decimal, `Unexpected result of evaluating {0}`, node);
 
-            return new IntLiteralType(res);
+            assert(
+                res instanceof Decimal || typeof res === "bigint",
+                `Unexpected result of const binary op`
+            );
+
+            return typeof res === "bigint"
+                ? new IntLiteralType(res)
+                : new RationalLiteralType(decimalToRational(res));
         }
 
         // After 0.6.0 the type of ** is just the type of the lhs
@@ -875,7 +888,11 @@ export class InferType {
                 val = val.times(subdenominationMultipliers[node.subdenomination]);
             }
 
-            return new IntLiteralType(val);
+            if (val.isInteger()) {
+                return new IntLiteralType(BigInt(val.toFixed()));
+            }
+
+            return new RationalLiteralType(decimalToRational(val));
         }
 
         if (node.kind === "string" || node.kind === "unicodeString" || node.kind === "hexString") {
@@ -1156,11 +1173,17 @@ export class InferType {
             return innerT;
         }
 
-        if (innerT instanceof IntLiteralType) {
+        if (innerT instanceof NumericLiteralType) {
             const res = evalConstantExpr(node);
-            assert(res instanceof Decimal, `Unexpected result of evaluating {0}`, node);
 
-            return new IntLiteralType(res);
+            assert(
+                res instanceof Decimal || typeof res === "bigint",
+                `Unexpected result of const binary op`
+            );
+
+            return typeof res === "bigint"
+                ? new IntLiteralType(res)
+                : new RationalLiteralType(decimalToRational(res));
         }
 
         if (node.operator === "-" || node.operator === "~") {

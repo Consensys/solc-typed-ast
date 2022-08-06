@@ -462,6 +462,20 @@ function compareTypeNodes(inferredT: TypeNode, fromString: TypeNode, expr: Expre
         return true;
     }
 
+    // We currently use a hacky approach to deal with rational literals that may end up with non-reduced fractions.
+    // For now ignore these issues.
+    // TODO: Remove this if after re-writing the eval_consts.ts file to something sane.
+    if (
+        inferredT instanceof RationalLiteralType &&
+        fromString instanceof RationalLiteralType &&
+        inferredT.literal.denominator % fromString.literal.denominator === BigInt(0) &&
+        fromString.literal.numerator *
+            (inferredT.literal.denominator / fromString.literal.denominator) ===
+            inferredT.literal.numerator
+    ) {
+        return true;
+    }
+
     /// Otherwise the types must match up exactly
     const res = eq(inferredT, fromString);
 

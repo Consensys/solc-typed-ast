@@ -1,12 +1,12 @@
 import { Range } from "../../misc";
-import { TypeNode } from "./type";
+import { NumericLiteralType } from "./numeric_literal";
 
-interface Rational {
+export interface Rational {
     numerator: bigint;
     denominator: bigint;
 }
 
-export class RationalLiteralType extends TypeNode {
+export class RationalLiteralType extends NumericLiteralType {
     readonly literal: Rational;
 
     constructor(literal: Rational, src?: Range) {
