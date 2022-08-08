@@ -849,17 +849,13 @@ export class InferType {
         }
 
         if (def instanceof EventDefinition) {
-            const argTs = def.vParameters.vParameters.map((paramDef) =>
-                variableDeclarationToTypeNode(paramDef)
-            );
+            const argTs = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
 
             return new EventType(def.name, argTs);
         }
 
         if (def instanceof ModifierDefinition) {
-            const argTs = def.vParameters.vParameters.map((paramDef) =>
-                variableDeclarationToTypeNode(paramDef)
-            );
+            const argTs = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
 
             return new ModifierType(def.name, argTs);
         }
