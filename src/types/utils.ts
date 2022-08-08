@@ -169,22 +169,15 @@ export function generalizeType(type: TypeNode): [TypeNode, DataLocation | undefi
     return [type, undefined];
 }
 
-export function getUserDefinedTypeFQName(def: UserDefinition): string {
-    return def.vScope instanceof ContractDefinition ? `${def.vScope.name}.${def.name}` : def.name;
-}
-
-export type NamedDef =
-    | ContractDefinition
-    | StructDefinition
-    | EnumDefinition
+export type NamedDefinition =
+    | UserDefinition
     | FunctionDefinition
     | ErrorDefinition
     | EventDefinition
     | VariableDeclaration
-    | ModifierDefinition
-    | UserDefinedValueTypeDefinition;
+    | ModifierDefinition;
 
-export function getFQDefName(def: NamedDef): string {
+export function getFQDefName(def: NamedDefinition): string {
     return def.vScope instanceof ContractDefinition ? `${def.vScope.name}.${def.name}` : def.name;
 }
 
@@ -272,7 +265,7 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
             def instanceof ContractDefinition ||
             def instanceof UserDefinedValueTypeDefinition
         ) {
-            return new UserDefinedType(getUserDefinedTypeFQName(def), def);
+            return new UserDefinedType(getFQDefName(def), def);
         }
 
         throw new Error(`NYI typechecking of user-defined type ${def.print()}`);
@@ -343,7 +336,8 @@ export function inferVariableDeclLocation(decl: VariableDeclaration): DataLocati
 export function variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNode {
     assert(decl.vType !== undefined, "Expected {0} to have type", decl);
 
-    const loc: DataLocation = inferVariableDeclLocation(decl);
+    const loc = inferVariableDeclLocation(decl);
+
     return typeNameToSpecializedTypeNode(decl.vType, loc);
 }
 
@@ -468,11 +462,13 @@ export function smallestFittingType(literal: Decimal | bigint): IntType | undefi
     /// when the literals include the MIN/MAX for both signed and unsigned types
     const signed = literal.lessThan(0);
     let nBytes = literal.abs().logarithm(2).div(8).ceil().toNumber();
+
     nBytes = nBytes === 0 ? 1 : nBytes; // Special case for when literal is 1
 
     if (nBytes > 32) {
         return undefined;
     }
+
     return new IntType(nBytes * 8, signed);
 }
 
@@ -483,6 +479,7 @@ export function decimalToRational(d: Decimal): Rational {
 
     const valStr = d.toFixed();
     const dotPos = valStr.indexOf(".");
+
     assert(dotPos !== -1, `Missing decimal point in {0}`, valStr);
 
     return {

@@ -73,7 +73,7 @@ const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> 
         new BuiltinFunctionType("gasleft", [], [new IntType(256, false)])
     ],
     [globalBuiltins, "now", ["0.7.0", LatestCompilerVersion], undefined],
-    [globalBuiltins, "now", ["0.4.13", "0.6.12"], types.uint],
+    [globalBuiltins, "now", ["0.4.13", "0.6.12"], types.uint256],
     [
         globalBuiltins,
         "addmod",

@@ -22,7 +22,7 @@ import {
     AddressType
 } from "./ast";
 import {
-    getUserDefinedTypeFQName,
+    getFQDefName,
     typeNameToTypeNode,
     variableDeclarationToTypeNode,
     enumToIntType
@@ -174,13 +174,22 @@ export function abiTypeToLibraryCanonicalName(t: TypeNode): string {
     // Locations are skipped in signature canonical names in libraries _UNLESS_ they are storage.
     // Go figure...
     if (t instanceof PointerType) {
-        const toName = abiTypeToLibraryCanonicalName(t.to);
+        const to = t.to;
+        const toName = abiTypeToLibraryCanonicalName(to);
 
-        return t.location === DataLocation.Storage ? `${toName} storage` : toName;
+        // Skip "storage" hint for contract types, as they are internally considered as storage.
+        if (
+            (to instanceof UserDefinedType && to.definition instanceof ContractDefinition) ||
+            t.location !== DataLocation.Storage
+        ) {
+            return toName;
+        }
+
+        return `${toName} storage`;
     }
 
     if (t instanceof UserDefinedType) {
-        return getUserDefinedTypeFQName(t.definition);
+        return getFQDefName(t.definition);
     }
 
     if (t instanceof MappingType) {

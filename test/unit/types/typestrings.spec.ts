@@ -209,6 +209,7 @@ describe("Round-trip tests for typestring parser/printer", () => {
                                     normalizeTypeString(typeNode.pp())
                                 )
                             ).toBeTruthy();
+
                             // Check that specialize and generalize are inverses
                             const [generalizedType, loc] = generalizeType(compType2);
 

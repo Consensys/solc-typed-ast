@@ -137,25 +137,25 @@ export const msg = new BuiltinStructType(
             ]
         ],
         ["sig", [[types.bytes4, ">=0.4.13"]]],
-        ["value", [[types.uint, ">=0.4.13"]]],
-        ["gas", [[types.uint, "<0.5.0"]]]
+        ["value", [[types.uint256, ">=0.4.13"]]],
+        ["gas", [[types.uint256, "<0.5.0"]]]
     ])
 );
 
 export const block = new BuiltinStructType(
     "block",
     new Map([
-        ["chainid", [[types.uint, ">=0.8.0"]]],
+        ["chainid", [[types.uint256, ">=0.8.0"]]],
         ["coinbase", [[types.addressPayable, ">=0.4.13"]]],
-        ["basefee", [[types.uint, ">=0.8.7"]]],
-        ["difficulty", [[types.uint, ">=0.4.13"]]],
-        ["gaslimit", [[types.uint, ">=0.4.13"]]],
-        ["number", [[types.uint, ">=0.4.13"]]],
+        ["basefee", [[types.uint256, ">=0.8.7"]]],
+        ["difficulty", [[types.uint256, ">=0.4.13"]]],
+        ["gaslimit", [[types.uint256, ">=0.4.13"]]],
+        ["number", [[types.uint256, ">=0.4.13"]]],
         [
             "blockhash",
-            [[new BuiltinFunctionType("blockhash", [types.uint], [types.bytes32]), "<0.5.0"]]
+            [[new BuiltinFunctionType("blockhash", [types.uint256], [types.bytes32]), "<0.5.0"]]
         ],
-        ["timestamp", [[types.uint, ">=0.4.13"]]]
+        ["timestamp", [[types.uint256, ">=0.4.13"]]]
     ])
 );
 
@@ -170,7 +170,7 @@ export const tx = new BuiltinStructType(
 type BuiltinStructTypeField = [string, [[TypeNode, string]]];
 
 const addressFields: BuiltinStructTypeField[] = [
-    ["balance", [[types.uint, ">=0.4.13"]]],
+    ["balance", [[types.uint256, ">=0.4.13"]]],
     ["code", [[types.bytesMemory, ">=0.8.0"]]],
     ["codehash", [[types.bytes32, ">=0.8.0"]]],
     ["call", [[new BuiltinFunctionType("call", [types.bytesMemory], [types.bool]), "<0.5.0"]]],
@@ -224,8 +224,8 @@ const addressFields: BuiltinStructTypeField[] = [
 ];
 
 const addressPayableFields: BuiltinStructTypeField[] = [
-    ["transfer", [[new BuiltinFunctionType("transfer", [types.uint], []), ">=0.4.13"]]],
-    ["send", [[new BuiltinFunctionType("send", [types.uint], [types.bool]), ">=0.4.13"]]]
+    ["transfer", [[new BuiltinFunctionType("transfer", [types.uint256], []), ">=0.4.13"]]],
+    ["send", [[new BuiltinFunctionType("send", [types.uint256], [types.bool]), ">=0.4.13"]]]
 ];
 
 export const addressBuiltins = new BuiltinStructType(
@@ -250,21 +250,21 @@ export const globalBuiltins = new BuiltinStructType(
         ["block", [[block, ">=0.4.13"]]],
         ["tx", [[tx, ">=0.4.13"]]],
         ["msg", [[msg, ">=0.4.13"]]],
-        ["gasleft", [[new BuiltinFunctionType("gasleft", [], [types.uint]), ">=0.4.21"]]],
+        ["gasleft", [[new BuiltinFunctionType("gasleft", [], [types.uint256]), ">=0.4.21"]]],
         [
             "blockhash",
-            [[new BuiltinFunctionType("blockhash", [types.uint], [types.bytes32]), ">=0.4.22"]]
+            [[new BuiltinFunctionType("blockhash", [types.uint256], [types.bytes32]), ">=0.4.22"]]
         ],
         ["assert", [[new BuiltinFunctionType("assert", [types.bool], []), ">=0.4.13"]]],
-        ["now", [[types.uint, "<0.7.0"]]],
+        ["now", [[types.uint256, "<0.7.0"]]],
         [
             "addmod",
             [
                 [
                     new BuiltinFunctionType(
                         "addmod",
-                        [types.uint, types.uint, types.uint],
-                        [types.uint]
+                        [types.uint256, types.uint256, types.uint256],
+                        [types.uint256]
                     ),
                     ">=0.4.13"
                 ]
@@ -276,8 +276,8 @@ export const globalBuiltins = new BuiltinStructType(
                 [
                     new BuiltinFunctionType(
                         "mulmod",
-                        [types.uint, types.uint, types.uint],
-                        [types.uint]
+                        [types.uint256, types.uint256, types.uint256],
+                        [types.uint256]
                     ),
                     ">=0.4.13"
                 ]

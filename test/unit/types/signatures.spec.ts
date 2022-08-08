@@ -154,11 +154,9 @@ describe("Check canonical signatures are generated correctly", () => {
                         } else if (def instanceof FunctionDefinition) {
                             funT = new FunctionType(
                                 def.name,
-                                def.vParameters.vParameters.map((param) =>
-                                    variableDeclarationToTypeNode(param)
-                                ),
-                                def.vReturnParameters.vParameters.map((param) =>
-                                    variableDeclarationToTypeNode(param)
+                                def.vParameters.vParameters.map(variableDeclarationToTypeNode),
+                                def.vReturnParameters.vParameters.map(
+                                    variableDeclarationToTypeNode
                                 ),
                                 def.visibility,
                                 def.stateMutability
@@ -166,9 +164,7 @@ describe("Check canonical signatures are generated correctly", () => {
                         } else if (def instanceof EventDefinition) {
                             funT = new FunctionType(
                                 def.name,
-                                def.vParameters.vParameters.map((param) =>
-                                    variableDeclarationToTypeNode(param)
-                                ),
+                                def.vParameters.vParameters.map(variableDeclarationToTypeNode),
                                 [],
                                 FunctionVisibility.Default,
                                 FunctionStateMutability.View
@@ -176,9 +172,7 @@ describe("Check canonical signatures are generated correctly", () => {
                         } else if (def instanceof ErrorDefinition) {
                             funT = new FunctionType(
                                 def.name,
-                                def.vParameters.vParameters.map((param) =>
-                                    variableDeclarationToTypeNode(param)
-                                ),
+                                def.vParameters.vParameters.map(variableDeclarationToTypeNode),
                                 [],
                                 FunctionVisibility.Default,
                                 FunctionStateMutability.View

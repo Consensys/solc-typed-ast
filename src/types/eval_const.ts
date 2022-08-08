@@ -263,11 +263,11 @@ function evalBinary(expr: BinaryOperation): Value {
 }
 
 /**
- * Given a constant expression `expr` evaluate it to a concrete `Value`. If `expr`
- * is not constant throw `NonConstantExpressionError`.
+ * Given a constant expression `expr` evaluate it to a concrete `Value`.
+ * If `expr` is not constant throw `NonConstantExpressionError`.
  *
- * TODO: The order of some operations changed in some version. So perhaps to be fully
- * precise here we will need a compiler version too?
+ * TODO: The order of some operations changed in some version.
+ * So perhaps to be fully precise here we will need a compiler version too?
  */
 export function evalConstantExpr(expr: Expression): Value {
     if (expr instanceof Literal) {

@@ -58,6 +58,7 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
         } else {
             m.set(a.name, b);
         }
+
         return;
     }
 
@@ -124,6 +125,7 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
                 buildSubstituion(aType, bType, m);
             }
         }
+
         return;
     }
 
@@ -184,6 +186,7 @@ export function buildSubstitutions(as: TypeNode[], bs: TypeNode[], m: TypeSubsti
 export function applySubstitution(a: TypeNode, m: TypeSubstituion): TypeNode {
     if (a instanceof TVar) {
         const mapped = m.get(a.name);
+
         assert(
             !(mapped instanceof Array),
             `Unexpected mapping from tvar ${a.name} to list of types ${pp(mapped)}`
@@ -240,6 +243,7 @@ export function applySubstitution(a: TypeNode, m: TypeSubstituion): TypeNode {
 
     if (a instanceof BuiltinStructType) {
         const oldMembers = [...a.members.entries()];
+
         return new BuiltinStructType(
             a.name,
             new Map(

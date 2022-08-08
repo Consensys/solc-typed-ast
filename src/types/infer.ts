@@ -87,13 +87,13 @@ import { types } from "./reserved";
 import { parse } from "./typeStrings";
 import {
     castable,
-    getFQDefName,
     binaryOperatorGroups,
     SolTypeError,
     specializeType,
     typeNameToTypeNode,
     variableDeclarationToTypeNode,
-    decimalToRational
+    decimalToRational,
+    getFQDefName
 } from "./utils";
 import { Decimal } from "decimal.js";
 import { SuperType } from "./ast/super";
@@ -123,12 +123,14 @@ export const builtinTypes: { [key: string]: (arg: ASTNode) => TypeNode } = {
 
         return new BuiltinFunctionType("revert", argTs, []);
     },
+
     require: (arg: ASTNode) => {
         const hasMsg = arg.parent instanceof FunctionCall && arg.parent.vArguments.length === 2;
         const argTs = hasMsg ? [types.bool, types.stringMemory] : [types.bool];
 
         return new BuiltinFunctionType("require", argTs, []);
     },
+
     this: (node) => {
         const contract = node.getClosestParentByType(ContractDefinition);
         assert(contract !== undefined, `this (${pp(node)}) used outside of a contract.`);
@@ -183,22 +185,20 @@ export class InferType {
                 node
             );
 
+            const comps = node.vLeftHandSide.vOriginalComponents;
+
             assert(
-                rhsT.elements.length === node.vLeftHandSide.vOriginalComponents.length,
-                `Unexpected mismatch between number of lhs tuple elements (${node.vLeftHandSide.vOriginalComponents.length}) and rhs tuple elements (${rhsT.elements.length}) in {0}`,
+                rhsT.elements.length === comps.length,
+                `Unexpected mismatch between number of lhs tuple elements (${comps.length}) and rhs tuple elements (${rhsT.elements.length}) in {0}`,
                 node
             );
 
             const resTs: TypeNode[] = [];
 
-            for (let i = 0; i < node.vLeftHandSide.vOriginalComponents.length; i++) {
-                const lhsComp = node.vLeftHandSide.vOriginalComponents[i];
+            for (let i = 0; i < comps.length; i++) {
+                const lhsComp = comps[i];
 
-                if (lhsComp === null) {
-                    resTs.push(rhsT.elements[i]);
-                } else {
-                    resTs.push(this.typeOf(lhsComp));
-                }
+                resTs.push(lhsComp === null ? rhsT.elements[i] : this.typeOf(lhsComp));
             }
 
             return new TupleType(resTs);
@@ -246,7 +246,8 @@ export class InferType {
                 IntType
             ];
 
-            assert(literalT.literal !== undefined, `TODO: Remove when we remove typestring parser`);
+            assert(literalT.literal !== undefined, "TODO: Remove when we remove typestring parser");
+
             const decMin = concreteT.min();
             const decMax = concreteT.max();
 
@@ -256,15 +257,17 @@ export class InferType {
                     new IntLiteralType(literalT.literal),
                     new IntLiteralType(decMax)
                 );
-            } else if (decMax < literalT.literal) {
+            }
+
+            if (decMax < literalT.literal) {
                 return this.inferCommonIntType(
                     new IntLiteralType(decMin),
                     new IntLiteralType(literalT.literal)
                 );
-            } else {
-                /// Literal fits
-                return concreteT;
             }
+
+            /// Literal fits
+            return concreteT;
         }
 
         // Otherwise find a common type to which they cast
@@ -385,6 +388,7 @@ export class InferType {
      */
     typeOfStructConstructorCall(node: FunctionCall): TypeNode {
         const callee = node.vCallee;
+
         assert(
             callee instanceof Identifier ||
                 callee instanceof IdentifierPath ||
@@ -512,6 +516,7 @@ export class InferType {
             }
 
             let argsMatch = true;
+
             for (let i = 0; i < funT.parameters.length; i++) {
                 if (!castable(argTs[i], funT.parameters[i])) {
                     argsMatch = false;
@@ -543,6 +548,7 @@ export class InferType {
         }
 
         const calleeT = this.typeOf(node.vCallee);
+
         let rets: TypeNode[];
 
         if (node.vFunctionCallType === ExternalReferenceType.Builtin) {
@@ -554,6 +560,7 @@ export class InferType {
 
             const argTs = node.vArguments.map((arg) => this.typeOf(arg));
             const m: TypeSubstituion = new Map();
+
             buildSubstitutions(calleeT.parameters, argTs, m);
 
             rets = applySubstitutions(calleeT.returns, m);
@@ -621,7 +628,7 @@ export class InferType {
 
         /// Array index in an elementary type-name expression (e.g. new Contract[](4))
         if (baseT instanceof TypeNameType) {
-            const size: bigint | undefined =
+            const size =
                 node.vIndexExpression &&
                 node.vIndexExpression instanceof Literal &&
                 node.vIndexExpression.kind === LiteralKind.Number
@@ -705,7 +712,9 @@ export class InferType {
 
         if (node.name === "super") {
             const contract = node.getClosestParentByType(ContractDefinition);
+
             assert(contract !== undefined, `Use of super outside of contract in {0}`, node);
+
             return new SuperType(contract);
         }
 
@@ -715,9 +724,7 @@ export class InferType {
             return globalBuiltin;
         }
 
-        if (!(node.name in builtinTypes)) {
-            throw new Error(`NYI builtin ${node.name} for ${pp(node)}`);
-        }
+        assert(node.name in builtinTypes, `NYI builtin "{0}" for {1}`, node.name, node);
 
         return builtinTypes[node.name](node);
     }
@@ -737,6 +744,7 @@ export class InferType {
                 node.parent.symbolAliases.length === node.parent.vSymbolAliases.length
             ) {
                 const imp = node.parent;
+
                 for (let i = 0; i < imp.symbolAliases.length; i++) {
                     const alias = imp.symbolAliases[i];
 
@@ -781,6 +789,7 @@ export class InferType {
             if (!def.vType && def.parent instanceof VariableDeclarationStatement) {
                 /// In 0.4.x the TypeName on variable declarations may be omitted. Attempt to infer it from the RHS (if any)
                 const varDeclStmt = def.parent;
+
                 assert(
                     varDeclStmt.vInitialValue !== undefined,
                     `Initializer required when no type specified in {0}`,
@@ -788,6 +797,7 @@ export class InferType {
                 );
 
                 const rhsT = this.typeOf(varDeclStmt.vInitialValue);
+
                 let defInitT: TypeNode;
 
                 if (varDeclStmt.assignments.length > 0) {
@@ -812,6 +822,7 @@ export class InferType {
 
                 if (defInitT instanceof IntLiteralType) {
                     const concreteT = defInitT.smallestFittingType();
+
                     assert(
                         concreteT !== undefined,
                         `RHS int literal type {0} doesn't fit in an int type`,
@@ -832,10 +843,7 @@ export class InferType {
             def instanceof ContractDefinition ||
             def instanceof EnumDefinition
         ) {
-            const fqName =
-                def.vScope instanceof ContractDefinition
-                    ? `${def.vScope.name}.${def.name}`
-                    : def.name;
+            const fqName = getFQDefName(def);
 
             return new TypeNameType(new UserDefinedType(fqName, def));
         }
@@ -844,6 +852,7 @@ export class InferType {
             const argTs = def.vParameters.vParameters.map((paramDef) =>
                 variableDeclarationToTypeNode(paramDef)
             );
+
             return new EventType(def.name, argTs);
         }
 
@@ -851,6 +860,7 @@ export class InferType {
             const argTs = def.vParameters.vParameters.map((paramDef) =>
                 variableDeclarationToTypeNode(paramDef)
             );
+
             return new ModifierType(def.name, argTs);
         }
 
@@ -927,7 +937,8 @@ export class InferType {
                     );
                 }
 
-                assert(fields[0].vType !== undefined, ``);
+                assert(fields[0].vType !== undefined, `Field type is not set for {0}`, fields[0]);
+
                 return specializeType(typeNameToTypeNode(fields[0].vType), baseT.location);
             }
 
@@ -949,7 +960,7 @@ export class InferType {
 
             if (toT instanceof ArrayType) {
                 if (node.memberName === "length") {
-                    return types.uint;
+                    return types.uint256;
                 }
 
                 if (node.memberName === "push") {
@@ -974,6 +985,7 @@ export class InferType {
 
                 if (def instanceof ContractDefinition) {
                     const res = this.typeOfResolved(node.memberName, def, false);
+
                     if (res) {
                         return res;
                     }
@@ -997,6 +1009,7 @@ export class InferType {
                             );
                         }
                     }
+
                     return new BuiltinFunctionType("concat", argTs, [
                         new PointerType(baseT.type, DataLocation.Memory)
                     ]);
@@ -1133,12 +1146,15 @@ export class InferType {
             typ.definition.vConstructor
         ) {
             const constrType = funDefToType(typ.definition.vConstructor);
+
             constrType.returns.push(resT);
+
             return constrType;
         }
 
         /// Builtin constructor/array creation case
-        const argTs = typ instanceof ArrayType ? [types.uint] : [];
+        const argTs = typ instanceof ArrayType ? [types.uint256] : [];
+
         return new BuiltinFunctionType(undefined, argTs, [resT]);
     }
 
@@ -1147,6 +1163,7 @@ export class InferType {
 
         if (node.isInlineArray) {
             assert(node.vComponents.length > 0, `Can't have an array initialize`);
+
             const elT = componentTs.reduce((prev, cur) => this.inferCommonType(prev, cur));
 
             return new PointerType(
@@ -1325,7 +1342,11 @@ export class InferType {
 
             if (funs.length === 1) {
                 const res = funDefToType(funs[0]);
-                res.visibility === FunctionVisibility.External;
+
+                /**
+                 * @todo (Pavel) Consider checking if resolved function is externally accessible (external, public)
+                 */
+
                 return res;
             }
 
@@ -1339,6 +1360,7 @@ export class InferType {
                 name,
                 ctx
             );
+
             assert(getters.length === 1, `Unexpected overloading between getters for {0}`, name);
 
             return externalOnly
@@ -1353,6 +1375,7 @@ export class InferType {
                 name,
                 ctx
             );
+
             assert(
                 errorDefs.length === 1,
                 `Unexpected overloading between errorDefs for {0}`,
@@ -1380,8 +1403,8 @@ export class InferType {
         assert(typeDefs.length == 1, `Unexpected number of type defs {0}`, name);
 
         const def = typeDefs[0];
-        const fqName =
-            def.vScope instanceof ContractDefinition ? `${def.vScope.name}.${def.name}` : def.name;
-        return new TypeNameType(new UserDefinedType(fqName, typeDefs[0]));
+        const fqName = getFQDefName(def);
+
+        return new TypeNameType(new UserDefinedType(fqName, def));
     }
 }
