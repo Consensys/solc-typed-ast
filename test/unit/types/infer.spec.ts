@@ -12,7 +12,6 @@ import {
     CompilerVersions08,
     compileSol,
     ContractDefinition,
-    DataLocation,
     detectCompileErrors,
     eq,
     EventDefinition,
@@ -26,8 +25,7 @@ import {
     NewExpression,
     pp,
     StructDefinition,
-    UnaryOperation,
-    VariableDeclaration
+    UnaryOperation
 } from "../../../src";
 import {
     BuiltinFunctionType,
@@ -238,18 +236,6 @@ function compareTypeNodes(inferredT: TypeNode, fromString: TypeNode, expr: Expre
         return true;
     }
 
-    /// We treat `this` as a pointer ("contract C storage:"), but the typeString is not a pointer (just "contract C")
-    if (
-        inferredT instanceof PointerType &&
-        inferredT.location === DataLocation.Storage &&
-        inferredT.to instanceof UserDefinedType &&
-        expr instanceof Identifier &&
-        expr.name === "this" &&
-        eq(inferredT.to, fromString)
-    ) {
-        return true;
-    }
-
     /// For the builtin `type(T)` calls we infer a builtin struct. The
     /// typeString is just a TypeNameType (TODO: this check is imprecise)
     if (
@@ -289,35 +275,6 @@ function compareTypeNodes(inferredT: TypeNode, fromString: TypeNode, expr: Expre
         inferredT instanceof BuiltinStructType &&
         fromString instanceof BuiltinType &&
         inferredT.name === fromString.name
-    ) {
-        return true;
-    }
-
-    // For some expressions of type pointer contract the typestring is just a contract. Accept
-    // This mismatch.
-    if (
-        inferredT instanceof PointerType &&
-        inferredT.location === DataLocation.Storage &&
-        inferredT.to instanceof UserDefinedType &&
-        inferredT.to.definition instanceof ContractDefinition &&
-        eq(inferredT.to, fromString)
-    ) {
-        return true;
-    }
-
-    // We infer the type of NewExpression for contracts to be a builtin function from constructor args to a new storage pointer to contract.
-    // The typeString returns just a `contract Foo` without a pointer.
-    if (
-        expr instanceof NewExpression &&
-        (inferredT instanceof BuiltinFunctionType || inferredT instanceof FunctionType) &&
-        fromString instanceof FunctionType &&
-        eq(inferredT.parameters, fromString.parameters) &&
-        inferredT.returns.length === 1 &&
-        fromString.returns.length === 1 &&
-        inferredT.returns[0] instanceof PointerType &&
-        inferredT.returns[0].to instanceof UserDefinedType &&
-        inferredT.returns[0].to.definition instanceof ContractDefinition &&
-        eq(inferredT.returns[0].to, fromString.returns[0])
     ) {
         return true;
     }
@@ -366,7 +323,7 @@ function compareTypeNodes(inferredT: TypeNode, fromString: TypeNode, expr: Expre
         return true;
     }
 
-    /// For imports we use the slightly ritcher ImportRefType while
+    /// For imports we use the slightly richer ImportRefType while
     /// the string parser returns the simpler ModuleType. ModuleType should
     /// be considered deprecated
     if (
@@ -388,7 +345,7 @@ function compareTypeNodes(inferredT: TypeNode, fromString: TypeNode, expr: Expre
         return true;
     }
 
-    /// We have a custom ErrorType for errors. Typestring treat them as pure functions
+    /// We have a custom ErrorType for errors. typeString treat them as pure functions
     if (
         inferredT instanceof ErrorType &&
         fromString instanceof FunctionType &&
@@ -413,22 +370,6 @@ function compareTypeNodes(inferredT: TypeNode, fromString: TypeNode, expr: Expre
         inferredT instanceof TupleType &&
         fromString instanceof TupleType &&
         fromString.elements.length === 0
-    ) {
-        return true;
-    }
-
-    /// From getters we return pointers to contracts, typestrings are just contracts
-    if (
-        expr instanceof MemberAccess &&
-        expr.vReferencedDeclaration instanceof VariableDeclaration &&
-        expr.vReferencedDeclaration.stateVariable &&
-        inferredT instanceof FunctionType &&
-        fromString instanceof FunctionType &&
-        eq(inferredT.parameters, fromString.parameters) &&
-        inferredT.returns[0] instanceof PointerType &&
-        inferredT.returns[0].to instanceof UserDefinedType &&
-        inferredT.returns[0].to.definition instanceof ContractDefinition &&
-        eq(inferredT.returns[0].to, fromString.returns[0])
     ) {
         return true;
     }

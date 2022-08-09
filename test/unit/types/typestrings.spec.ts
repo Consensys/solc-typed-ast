@@ -105,7 +105,6 @@ function normalizeTypeString(typeStr: string): string {
         .replace(/ ref/g, "")
         .replace(/ pointer/g, "")
         .replace(/ slice/g, "")
-        .replace(/ storage/g, "")
         .trim();
 }
 
