@@ -174,18 +174,9 @@ export function abiTypeToLibraryCanonicalName(t: TypeNode): string {
     // Locations are skipped in signature canonical names in libraries _UNLESS_ they are storage.
     // Go figure...
     if (t instanceof PointerType) {
-        const to = t.to;
-        const toName = abiTypeToLibraryCanonicalName(to);
+        const toName = abiTypeToLibraryCanonicalName(t.to);
 
-        // Skip "storage" hint for contract types, as they are internally considered as storage.
-        if (
-            (to instanceof UserDefinedType && to.definition instanceof ContractDefinition) ||
-            t.location !== DataLocation.Storage
-        ) {
-            return toName;
-        }
-
-        return `${toName} storage`;
+        return t.location === DataLocation.Storage ? `${toName} storage` : toName;
     }
 
     if (t instanceof UserDefinedType) {

@@ -458,6 +458,7 @@ export class InferType {
      */
     typeOfTypeConversion(node: FunctionCall): TypeNode {
         const callee = node.vCallee;
+
         assert(
             callee instanceof ElementaryTypeNameExpression ||
                 callee instanceof IdentifierPath ||
@@ -879,6 +880,10 @@ export class InferType {
 
     typeOfLiteral(node: Literal): TypeNode {
         if (node.kind === "number") {
+            if (node.typeString === "address") {
+                return new AddressType(false);
+            }
+
             let val = new Decimal(node.value);
 
             if (node.subdenomination !== undefined) {
@@ -1030,7 +1035,19 @@ export class InferType {
                         componentT
                     );
 
-                    retTs.push(componentT.type);
+                    if (componentT.type instanceof AddressType && !componentT.type.payable) {
+                        /**
+                         * Promote address to address payable
+                         */
+                        retTs.push(new AddressType(true));
+                    } else if (componentT.type instanceof StringType) {
+                        /**
+                         * Promote string literals to string memory pointers
+                         */
+                        retTs.push(new PointerType(new StringType(), DataLocation.Memory));
+                    } else {
+                        retTs.push(componentT.type);
+                    }
                 }
 
                 return new BuiltinFunctionType(
