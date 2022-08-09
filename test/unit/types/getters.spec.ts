@@ -150,7 +150,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     return new FunctionType(
                         "g",
                         [new IntType(256, false)],
-                        [new PointerType(new UserDefinedType(def.name, def), DataLocation.Storage)],
+                        [new UserDefinedType(def.name, def)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
                     );
@@ -365,7 +365,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     return new FunctionType(
                         "f",
                         [new IntType(256, false)],
-                        [new PointerType(new UserDefinedType(def.name, def), DataLocation.Storage)],
+                        [new UserDefinedType(def.name, def)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
                     );

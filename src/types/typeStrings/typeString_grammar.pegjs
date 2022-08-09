@@ -344,7 +344,7 @@ TypeList =
     head: Type tail: (__ "," __ Type)* {
         return tail.reduce(
             (lst, cur) => {
-                lst.push(wrapContract(cur[3]));
+                lst.push(cur[3]);
 
                 return lst;
             },
@@ -445,7 +445,7 @@ ArrayPtrType =
     )* {
     return tail.reduce(
             (acc, cur) => {
-                acc = wrapContract(acc);
+                acc = acc;
                 
                 if (cur.length > 3) {
                     const size = cur[4];

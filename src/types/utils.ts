@@ -105,11 +105,6 @@ export function specializeType(type: TypeNode, loc: DataLocation): TypeNode {
             type
         );
 
-        if (def instanceof ContractDefinition) {
-            // Contracts are always concretized as storage poitners
-            return new PointerType(type, DataLocation.Storage);
-        }
-
         if (def instanceof StructDefinition) {
             return new PointerType(type, loc);
         }

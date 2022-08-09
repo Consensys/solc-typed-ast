@@ -135,7 +135,7 @@ export const builtinTypes: { [key: string]: (arg: ASTNode) => TypeNode } = {
         const contract = node.getClosestParentByType(ContractDefinition);
         assert(contract !== undefined, `this (${pp(node)}) used outside of a contract.`);
 
-        return new PointerType(new UserDefinedType(contract.name, contract), DataLocation.Storage);
+        return new UserDefinedType(contract.name, contract);
     }
 };
 
@@ -435,12 +435,8 @@ export class InferType {
 
             const argT = this.typeOf(node.vArguments[0]);
 
-            if (
-                argT instanceof PointerType &&
-                argT.to instanceof UserDefinedType &&
-                argT.to.definition instanceof ContractDefinition
-            ) {
-                const contract = argT.to.definition;
+            if (argT instanceof UserDefinedType && argT.definition instanceof ContractDefinition) {
+                const contract = argT.definition;
                 const fallbacks = contract.vFunctions.filter(
                     (funDef) =>
                         (funDef.kind === FunctionKind.Fallback ||
@@ -916,6 +912,20 @@ export class InferType {
     typeOfMemberAccess(node: MemberAccess): TypeNode {
         const baseT = this.typeOf(node.vExpression);
 
+        /// Fields on contract vars. Should always be a function
+        if (baseT instanceof UserDefinedType && baseT.definition instanceof ContractDefinition) {
+            const contract = baseT.definition;
+            const res = this.typeOfResolved(node.memberName, contract, true);
+
+            if (res === undefined) {
+                throw new SolTypeError(
+                    `No field ${node.memberName} found on contract ${contract.name} in ${pp(node)}`
+                );
+            }
+
+            return res;
+        }
+
         if (baseT instanceof PointerType) {
             const toT = baseT.to;
 
@@ -936,22 +946,6 @@ export class InferType {
                 assert(fields[0].vType !== undefined, `Field type is not set for {0}`, fields[0]);
 
                 return specializeType(typeNameToTypeNode(fields[0].vType), baseT.location);
-            }
-
-            /// Fields on contract vars. Should always be a function
-            if (toT instanceof UserDefinedType && toT.definition instanceof ContractDefinition) {
-                const contract = toT.definition;
-                const res = this.typeOfResolved(node.memberName, contract, true);
-
-                if (res === undefined) {
-                    throw new SolTypeError(
-                        `No field ${node.memberName} found on contract ${contract.name} in ${pp(
-                            node
-                        )}`
-                    );
-                }
-
-                return res;
             }
 
             if (toT instanceof ArrayType) {
