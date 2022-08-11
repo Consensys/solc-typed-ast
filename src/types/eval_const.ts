@@ -1,6 +1,7 @@
 import Decimal from "decimal.js";
 import {
     BinaryOperation,
+    Conditional,
     Expression,
     Literal,
     LiteralKind,
@@ -9,6 +10,24 @@ import {
 } from "../ast";
 import { pp } from "../misc";
 import { binaryOperatorGroups } from "./utils";
+
+export type Value = Decimal | boolean | string | bigint;
+
+export class EvalError extends Error {
+    expr: Expression;
+
+    constructor(e: Expression, msg: string) {
+        super(msg);
+
+        this.expr = e;
+    }
+}
+
+export class NonConstantExpressionError extends EvalError {
+    constructor(e: Expression) {
+        super(e, `Found non-constant expression ${pp(e)} during constant evaluation`);
+    }
+}
 
 export function isConstant(expr: Expression): boolean {
     if (expr instanceof Literal) {
@@ -37,26 +56,20 @@ export function isConstant(expr: Expression): boolean {
         return true;
     }
 
+    /// TODO: We can be more precise here. Conditionals are also constant if
+    /// 1) vCondition is constant, and only the selected branch is constant
+    /// 2) vCondition is not constant, but both branches are constant and equal (not likely in practice)
+    if (
+        expr instanceof Conditional &&
+        isConstant(expr.vCondition) &&
+        isConstant(expr.vTrueExpression) &&
+        isConstant(expr.vFalseExpression)
+    ) {
+        return true;
+    }
+
     /// TODO: After eval add case for constant indexing
     return false;
-}
-
-export type Value = Decimal | boolean | string | bigint;
-
-export class EvalError extends Error {
-    expr: Expression;
-
-    constructor(e: Expression, msg: string) {
-        super(msg);
-
-        this.expr = e;
-    }
-}
-
-export class NonConstantExpressionError extends EvalError {
-    constructor(e: Expression) {
-        super(e, `Found non-constant expression ${pp(e)} during constant evaluation`);
-    }
 }
 
 function evalLiteral(expr: Literal): Value {
@@ -64,14 +77,18 @@ function evalLiteral(expr: Literal): Value {
         return expr.value === "true";
     }
 
+    if (expr.kind === LiteralKind.String || expr.kind === LiteralKind.UnicodeString) {
+        return expr.value;
+    }
+
+    if (expr.kind === LiteralKind.HexString) {
+        return expr.hexValue;
+    }
+
     if (expr.kind === LiteralKind.Number) {
         const dec = new Decimal(expr.value);
 
-        if (dec.isInteger()) {
-            return BigInt(dec.toFixed());
-        }
-
-        return dec;
+        return dec.isInteger() ? BigInt(dec.toFixed()) : dec;
     }
 
     throw new EvalError(expr, `Unsupported literal kind "${expr.kind}"`);
@@ -256,7 +273,6 @@ function evalBinaryBitwise(expr: BinaryOperation, lVal: Value, rVal: Value): Val
     throw new EvalError(expr, `Unknown bitwise op ${expr.operator}`);
 }
 
-/// Given a constant `BinaryOperation` expression `expr` evaluate it.
 function evalBinary(expr: BinaryOperation): Value {
     const lVal = evalConstantExpr(expr.vLeftExpression);
     const rVal = evalConstantExpr(expr.vRightExpression);
@@ -284,15 +300,20 @@ function evalBinary(expr: BinaryOperation): Value {
     throw new EvalError(expr, `Unknown binary op ${expr.operator}`);
 }
 
-/// Given a constant `TupleExpression` expression `expr` evaluate it.
 function evalTuple(expr: TupleExpression): Value {
-    const component = expr.vOriginalComponents[0];
+    /**
+     * Note that non-single tuples are restricted by the isConstant() check.
+     * So we can rely that only valid tuple expressions are here
+     */
+    const component = expr.vOriginalComponents[0] as Expression;
 
-    if (component) {
-        return evalConstantExpr(component);
-    }
+    return evalConstantExpr(component);
+}
 
-    throw new EvalError(expr, `Unexpected tuple value ${pp(expr)}`);
+function evalConditional(expr: Conditional): Value {
+    return evalConstantExpr(expr.vCondition)
+        ? evalConstantExpr(expr.vTrueExpression)
+        : evalConstantExpr(expr.vFalseExpression);
 }
 
 /**
@@ -304,7 +325,7 @@ function evalTuple(expr: TupleExpression): Value {
  */
 export function evalConstantExpr(expr: Expression): Value {
     if (!isConstant(expr)) {
-        throw new EvalError(expr, `${pp(expr)} is not a constant expression`);
+        throw new NonConstantExpressionError(expr);
     }
 
     if (expr instanceof Literal) {
@@ -321,6 +342,10 @@ export function evalConstantExpr(expr: Expression): Value {
 
     if (expr instanceof TupleExpression) {
         return evalTuple(expr);
+    }
+
+    if (expr instanceof Conditional) {
+        return evalConditional(expr);
     }
 
     /// Note that from the point of view of the type system constant conditionals and
