@@ -158,6 +158,7 @@ contract Features084 {
             let a := "test"
             let x := hex"112233445566778899aabbccddeeff6677889900"
             let y := hex"1234abcd"
+            let z := hex"c3"
             sstore(0, x)
             sstore(1, y)
             pop("\"3")
