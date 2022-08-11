@@ -21,6 +21,7 @@ import {
     MemberAccess,
     ModifierInvocation,
     NewExpression,
+    PossibleCompilerKinds,
     pp,
     PrettyFormatter,
     StructDefinition,
@@ -122,7 +123,8 @@ const samples: Array<[string, ASTKind]> = [
     ["test/samples/solidity/expressions/conditional_0413.sol", ASTKind.Modern],
     ["test/samples/solidity/super.sol", ASTKind.Modern],
     ["test/samples/solidity/constant_expressions.sol", ASTKind.Modern],
-    ["test/samples/solidity/decoding_test.sol", ASTKind.Modern]
+    ["test/samples/solidity/decoding_test.sol", ASTKind.Modern],
+    ["test/samples/solidity/ops.sol", ASTKind.Modern]
 ];
 
 function toSoliditySource(expr: Expression, compilerVersion: string) {
@@ -395,7 +397,7 @@ function compareTypeNodes(
 
 describe("Type inference for expressions", () => {
     for (const [sample, astKind] of samples) {
-        for (const compilerKind of [CompilerKind.Native]) {
+        for (const compilerKind of PossibleCompilerKinds) {
             it(`[${compilerKind}] ${sample}`, async () => {
                 const result = await compileSol(
                     sample,
@@ -440,6 +442,11 @@ describe("Type inference for expressions", () => {
 
                         // Skip call options - we don't compute types for them
                         if (expr instanceof FunctionCallOptions) {
+                            continue;
+                        }
+
+                        // Skip nodes with broken typeStrings in legacy compilers
+                        if (expr.typeString === null) {
                             continue;
                         }
 

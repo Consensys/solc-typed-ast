@@ -1,11 +1,11 @@
 import Decimal from "decimal.js";
 import {
+    BinaryOperation,
     Expression,
     Literal,
-    UnaryOperation,
-    BinaryOperation,
-    Conditional,
-    LiteralKind
+    LiteralKind,
+    TupleExpression,
+    UnaryOperation
 } from "../ast";
 import { pp } from "../misc";
 import { binaryOperatorGroups } from "./utils";
@@ -27,14 +27,12 @@ export function isConstant(expr: Expression): boolean {
         return true;
     }
 
-    /// TODO: We can be more precise here. Conditionals are also constant if
-    /// 1) vCondition is constant, and only the selected branch is constant
-    /// 2) vCondition is not constant, but both branches are constant and equal (not likely in practice)
     if (
-        expr instanceof Conditional &&
-        isConstant(expr.vCondition) &&
-        isConstant(expr.vTrueExpression) &&
-        isConstant(expr.vFalseExpression)
+        expr instanceof TupleExpression &&
+        !expr.isInlineArray &&
+        expr.vOriginalComponents.length === 1 &&
+        expr.vOriginalComponents[0] &&
+        isConstant(expr.vOriginalComponents[0])
     ) {
         return true;
     }
@@ -50,6 +48,7 @@ export class EvalError extends Error {
 
     constructor(e: Expression, msg: string) {
         super(msg);
+
         this.expr = e;
     }
 }
@@ -65,21 +64,17 @@ function evalLiteral(expr: Literal): Value {
         return expr.value === "true";
     }
 
-    if (expr.kind === LiteralKind.String || expr.kind === LiteralKind.UnicodeString) {
-        return expr.value;
+    if (expr.kind === LiteralKind.Number) {
+        const dec = new Decimal(expr.value);
+
+        if (dec.isInteger()) {
+            return BigInt(dec.toFixed());
+        }
+
+        return dec;
     }
 
-    if (expr.kind === LiteralKind.HexString) {
-        return expr.hexValue;
-    }
-
-    const dec = new Decimal(expr.value);
-
-    if (dec.isInteger()) {
-        return BigInt(dec.toFixed());
-    }
-
-    return dec;
+    throw new EvalError(expr, `Unsupported literal kind "${expr.kind}"`);
 }
 
 function evalUnary(expr: UnaryOperation): Value {
@@ -122,7 +117,7 @@ function evalUnary(expr: UnaryOperation): Value {
         );
     }
 
-    throw new Error(`NYI unary operator ${expr.operator}`);
+    throw new EvalError(expr, `NYI unary operator ${expr.operator}`);
 }
 
 function evalBinaryLogic(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
@@ -176,7 +171,7 @@ function evalBinaryEquality(expr: BinaryOperation, lVal: Value, rVal: Value): Va
         return !equal;
     }
 
-    throw new Error(`Unknown equality op ${expr.operator}`);
+    throw new EvalError(expr, `Unknown equality op ${expr.operator}`);
 }
 
 function evalBinaryComparison(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
@@ -201,7 +196,7 @@ function evalBinaryComparison(expr: BinaryOperation, lVal: Value, rVal: Value): 
         return lDec.greaterThanOrEqualTo(rDec);
     }
 
-    throw new Error(`Unknown comparison op ${expr.operator}`);
+    throw new EvalError(expr, `Unknown comparison op ${expr.operator}`);
 }
 
 function evalBinaryArithmetic(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
@@ -209,6 +204,7 @@ function evalBinaryArithmetic(expr: BinaryOperation, lVal: Value, rVal: Value): 
 
     const lDec = promoteToDec(lVal);
     const rDec = promoteToDec(rVal);
+
     let res: Decimal;
 
     if (op === "+") {
@@ -224,14 +220,40 @@ function evalBinaryArithmetic(expr: BinaryOperation, lVal: Value, rVal: Value): 
     } else if (op === "**") {
         res = lDec.pow(rDec);
     } else {
-        throw new Error(`Unknown arithmetic op ${expr.operator}`);
+        throw new EvalError(expr, `Unknown arithmetic op ${expr.operator}`);
     }
 
     return demoteFromDec(res);
 }
 
 function evalBinaryBitwise(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
-    throw new Error(`NYI Bitwise op ${expr.operator} on ${lVal} ${rVal}`);
+    const op = expr.operator;
+
+    if (!(typeof lVal === "bigint" && typeof rVal === "bigint")) {
+        throw new EvalError(expr, `${op} expects integers not ${lVal} and ${rVal}`);
+    }
+
+    if (op === "<<") {
+        return lVal << rVal;
+    }
+
+    if (op === ">>") {
+        return lVal >> rVal;
+    }
+
+    if (op === "|") {
+        return lVal | rVal;
+    }
+
+    if (op === "&") {
+        return lVal & rVal;
+    }
+
+    if (op === "^") {
+        return lVal ^ rVal;
+    }
+
+    throw new EvalError(expr, `Unknown bitwise op ${expr.operator}`);
 }
 
 /// Given a constant `BinaryOperation` expression `expr` evaluate it.
@@ -259,7 +281,18 @@ function evalBinary(expr: BinaryOperation): Value {
         return evalBinaryBitwise(expr, lVal, rVal);
     }
 
-    throw new Error(`Unknown binary op ${expr.operator}`);
+    throw new EvalError(expr, `Unknown binary op ${expr.operator}`);
+}
+
+/// Given a constant `TupleExpression` expression `expr` evaluate it.
+function evalTuple(expr: TupleExpression): Value {
+    const component = expr.vOriginalComponents[0];
+
+    if (component) {
+        return evalConstantExpr(component);
+    }
+
+    throw new EvalError(expr, `Unexpected tuple value ${pp(expr)}`);
 }
 
 /**
@@ -270,24 +303,28 @@ function evalBinary(expr: BinaryOperation): Value {
  * So perhaps to be fully precise here we will need a compiler version too?
  */
 export function evalConstantExpr(expr: Expression): Value {
+    if (!isConstant(expr)) {
+        throw new EvalError(expr, `${pp(expr)} is not a constant expression`);
+    }
+
     if (expr instanceof Literal) {
         return evalLiteral(expr);
     }
 
-    if (expr instanceof UnaryOperation && isConstant(expr.vSubExpression)) {
+    if (expr instanceof UnaryOperation) {
         return evalUnary(expr);
     }
 
-    if (
-        expr instanceof BinaryOperation &&
-        isConstant(expr.vLeftExpression) &&
-        isConstant(expr.vRightExpression)
-    ) {
+    if (expr instanceof BinaryOperation) {
         return evalBinary(expr);
+    }
+
+    if (expr instanceof TupleExpression) {
+        return evalTuple(expr);
     }
 
     /// Note that from the point of view of the type system constant conditionals and
     /// indexing in constant array literals are not considered constant expressions.
     /// So for now we don't support them, but we may change that in the future.
-    throw new Error(`${pp(expr)} is not a constant expression.`);
+    throw new EvalError(expr, `Unable to evaluate constant expression ${pp(expr)}`);
 }

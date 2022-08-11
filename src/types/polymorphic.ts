@@ -1,33 +1,24 @@
-/**
- * To support type elipses in certain builtin constructs (abi.decode* family and
- * type(...)) we introduce a simple notion of polymorphism with 2 types of type
- * var - a normal type-var (used for example to type `type(T) => { min: T, max:
- * T} where T is numeric) and a type 'elispsis' var, that corresponds to the
- * remaining types in a tuple or argument list.
- */
 import { assert, eq, pp } from "../misc";
 import {
     ArrayType,
+    BuiltinFunctionType,
     BuiltinStructType,
+    ErrorType,
+    EventType,
     FunctionType,
+    IntLiteralType,
+    IntType,
     MappingType,
     PointerType,
-    TupleType,
-    TypeNameType,
-    TypeNode,
-    TRest,
-    TVar,
-    IntLiteralType,
     StringLiteralType,
-    IntType,
-    BuiltinFunctionType,
-    EventType,
-    ErrorType
+    TRest,
+    TupleType,
+    TVar,
+    TypeNameType,
+    TypeNode
 } from "./ast";
 import { types } from "./reserved";
 import { SolTypeError } from "./utils";
-
-export type TypeSubstituion = Map<string, TypeNode | TypeNode[]>;
 
 export class SolTypePatternMismatchError extends SolTypeError {
     constructor(
@@ -37,6 +28,15 @@ export class SolTypePatternMismatchError extends SolTypeError {
         super(`Pattern mismatch: expected ${pp(expected)} got ${pp(actual)}`);
     }
 }
+
+/**
+ * To support type elipses in certain builtin constructs (abi.decode* family and
+ * type(...)) we introduce a simple notion of polymorphism with 2 types of type
+ * var - a normal type-var (used for example to type `type(T) => { min: T, max:
+ * T} where T is numeric) and a type 'elispsis' var, that corresponds to the
+ * remaining types in a tuple or argument list.
+ */
+export type TypeSubstituion = Map<string, TypeNode | TypeNode[]>;
 
 /**
  * Given two types `a` and `b` where `a` may contain type vars, but
