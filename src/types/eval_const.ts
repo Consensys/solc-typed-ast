@@ -155,12 +155,12 @@ function evalBinaryLogic(expr: BinaryOperation, lVal: Value, rVal: Value): Value
     throw new Error(`Unknown logic op ${op}`);
 }
 
-function promoteToDec(d: Value): Decimal {
-    if (!(typeof d === "bigint" || d instanceof Decimal)) {
-        throw new Error(`Expected number not ${d}`);
+function promoteToDec(v: Value): Decimal {
+    if (!(typeof v === "bigint" || v instanceof Decimal)) {
+        throw new Error(`Expected number not ${v}`);
     }
 
-    return d instanceof Decimal ? d : new Decimal(d.toString());
+    return v instanceof Decimal ? v : new Decimal(v.toString());
 }
 
 function demoteFromDec(d: Decimal): Decimal | bigint {
@@ -303,7 +303,7 @@ function evalBinary(expr: BinaryOperation): Value {
 function evalTuple(expr: TupleExpression): Value {
     /**
      * Note that non-single tuples are restricted by the isConstant() check.
-     * So we can rely that only valid tuple expressions are here
+     * So we can rely that only valid tuple expressions will reach this point.
      */
     const component = expr.vOriginalComponents[0] as Expression;
 
