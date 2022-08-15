@@ -1,3 +1,4 @@
+import { Decimal } from "decimal.js";
 import { gte, lt } from "semver";
 import {
     AnyResolvable,
@@ -68,15 +69,18 @@ import {
     TypeNode,
     UserDefinedType
 } from "./ast";
+import { NumericLiteralType } from "./ast/numeric_literal";
+import { SuperType } from "./ast/super";
 import {
-    type_Int,
-    type_Interface,
-    type_Contract,
-    address06PayableBuiltins,
     address06Builtins,
+    address06PayableBuiltins,
     addressBuiltins,
-    globalBuiltins
+    globalBuiltins,
+    typeContract,
+    typeInt,
+    typeInterface
 } from "./builtins";
+import { evalConstantExpr } from "./eval_const";
 import {
     applySubstitution,
     applySubstitutions,
@@ -86,19 +90,15 @@ import {
 import { types } from "./reserved";
 import { parse } from "./typeStrings";
 import {
-    castable,
     binaryOperatorGroups,
+    castable,
+    decimalToRational,
+    getFQDefName,
     SolTypeError,
     specializeType,
     typeNameToTypeNode,
-    variableDeclarationToTypeNode,
-    decimalToRational,
-    getFQDefName
+    variableDeclarationToTypeNode
 } from "./utils";
-import { Decimal } from "decimal.js";
-import { SuperType } from "./ast/super";
-import { evalConstantExpr } from "./eval_const";
-import { NumericLiteralType } from "./ast/numeric_literal";
 
 export const unaryImpureOperators = ["++", "--"];
 
@@ -460,10 +460,13 @@ export class InferType {
         const callee = node.vCallee;
 
         assert(
-            callee instanceof ElementaryTypeNameExpression ||
+            callee instanceof TupleExpression ||
+                callee instanceof ElementaryTypeNameExpression ||
+                callee instanceof Identifier ||
                 callee instanceof IdentifierPath ||
                 callee instanceof MemberAccess,
-            `Unexpected node in type convertion call ${callee.constructor.name}`
+            `Unexpected node in type convertion call ${callee.constructor.name}`,
+            callee
         );
 
         const calleeT = this.typeOf(callee);
@@ -686,12 +689,12 @@ export class InferType {
             innerT instanceof IntType ||
             (innerT instanceof UserDefinedType && innerT.definition instanceof EnumDefinition)
         ) {
-            return applySubstitution(type_Int, new Map([["T", innerT]])) as BuiltinFunctionType;
+            return applySubstitution(typeInt, new Map([["T", innerT]])) as BuiltinFunctionType;
         }
 
         if (innerT instanceof UserDefinedType && innerT.definition instanceof ContractDefinition) {
             const resTemplateT =
-                innerT.definition.kind === ContractKind.Interface ? type_Interface : type_Contract;
+                innerT.definition.kind === ContractKind.Interface ? typeInterface : typeContract;
 
             return applySubstitution(resTemplateT, new Map([["T", innerT]])) as BuiltinFunctionType;
         }
@@ -880,8 +883,8 @@ export class InferType {
 
     typeOfLiteral(node: Literal): TypeNode {
         if (node.kind === "number") {
-            if (node.typeString === "address") {
-                return new AddressType(false);
+            if (node.typeString.startsWith("address")) {
+                return new AddressType(node.typeString.endsWith("payable"));
             }
 
             let val = new Decimal(node.value);
@@ -959,7 +962,11 @@ export class InferType {
                 }
 
                 if (node.memberName === "push") {
-                    return new BuiltinFunctionType(undefined, [toT.elementT], []);
+                    return new BuiltinFunctionType(
+                        undefined,
+                        [toT.elementT],
+                        lt(this.version, "0.6.0") ? [types.uint256] : []
+                    );
                 }
 
                 if (node.memberName === "pop") {

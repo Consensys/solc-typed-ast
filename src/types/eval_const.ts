@@ -9,6 +9,7 @@ import {
     UnaryOperation
 } from "../ast";
 import { pp } from "../misc";
+import { subdenominationMultipliers } from "./infer";
 import { binaryOperatorGroups } from "./utils";
 
 export type Value = Decimal | boolean | string | bigint;
@@ -88,7 +89,20 @@ function evalLiteral(expr: Literal): Value {
     if (expr.kind === LiteralKind.Number) {
         const dec = new Decimal(expr.value);
 
-        return dec.isInteger() ? BigInt(dec.toFixed()) : dec;
+        let val = dec.isInteger() ? BigInt(dec.toFixed()) : dec;
+
+        if (expr.subdenomination !== undefined) {
+            if (subdenominationMultipliers[expr.subdenomination] === undefined) {
+                throw new EvalError(expr, `Unknown comparison op ${expr.subdenomination}`);
+            }
+
+            val =
+                val instanceof Decimal
+                    ? val.times(subdenominationMultipliers[expr.subdenomination])
+                    : val * BigInt(subdenominationMultipliers[expr.subdenomination].toFixed());
+        }
+
+        return val;
     }
 
     throw new EvalError(expr, `Unsupported literal kind "${expr.kind}"`);

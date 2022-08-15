@@ -14,12 +14,12 @@ import { VersionDependentType } from "./utils";
 /**
  * Type of the type(T) function when T is an int type
  */
-export const type_Int = new BuiltinFunctionType(
+export const typeInt = new BuiltinFunctionType(
     "type",
     [new TypeNameType(new TVar("T"))],
     [
         new BuiltinStructType(
-            "type_Int",
+            "typeInt",
             new Map([
                 ["min", [[new TVar("T"), ">=0.6.8"]]],
                 ["max", [[new TVar("T"), ">=0.6.8"]]]
@@ -31,12 +31,12 @@ export const type_Int = new BuiltinFunctionType(
 /**
  * Type of the type(T) function when T is a contract
  */
-export const type_Contract = new BuiltinFunctionType(
+export const typeContract = new BuiltinFunctionType(
     "type",
     [new TypeNameType(new TVar("T"))],
     [
         new BuiltinStructType(
-            "type_Contract",
+            "typeContract",
             new Map([
                 ["name", [[types.stringMemory, ">=0.5.5"]]],
                 ["creationCode", [[types.bytesMemory, ">=0.5.3"]]],
@@ -49,12 +49,12 @@ export const type_Contract = new BuiltinFunctionType(
 /**
  * Type of the type(T) function when T is an interface
  */
-export const type_Interface = new BuiltinFunctionType(
+export const typeInterface = new BuiltinFunctionType(
     "type",
     [new TypeNameType(new TVar("T"))],
     [
         new BuiltinStructType(
-            "type_Interface",
+            "typeInterface",
             new Map([
                 ["name", [[types.stringMemory, ">=0.5.5"]]],
                 ["creationCode", [[types.bytesMemory, ">=0.5.3"]]],
@@ -132,8 +132,8 @@ export const msg = new BuiltinStructType(
         [
             "sender",
             [
-                [types.addressPayable, ">=0.6.0"],
-                [types.address, ">=0.4.13"]
+                [types.address, "<0.6.0"],
+                [types.addressPayable, ">=0.6.0"]
             ]
         ],
         ["sig", [[types.bytes4, ">=0.4.13"]]],
@@ -146,7 +146,8 @@ export const block = new BuiltinStructType(
     "block",
     new Map([
         ["chainid", [[types.uint256, ">=0.8.0"]]],
-        ["coinbase", [[types.addressPayable, ">=0.4.13"]]],
+        ["coinbase", [[types.address, "<0.5.0"]]],
+        ["coinbase", [[types.addressPayable, ">=0.5.0"]]],
         ["basefee", [[types.uint256, ">=0.8.7"]]],
         ["difficulty", [[types.uint256, ">=0.4.13"]]],
         ["gaslimit", [[types.uint256, ">=0.4.13"]]],
@@ -163,7 +164,8 @@ export const tx = new BuiltinStructType(
     "tx",
     new Map<string, VersionDependentType[]>([
         ["gasprice", [[new IntType(256, false), ">=0.4.13"]]],
-        ["origin", [[new AddressType(true), ">=0.4.13"]]]
+        ["origin", [[types.address, "<0.5.0>"]]],
+        ["origin", [[types.addressPayable, ">=0.5.0"]]]
     ])
 );
 
@@ -283,11 +285,19 @@ export const globalBuiltins = new BuiltinStructType(
                 ]
             ]
         ],
-        /**
-         * @todo Add support for sha3() and suicide() before Solidity 0.5.0
-         * @see https://github.com/ethereum/solidity/releases/tag/v0.5.0
-         * @see https://docs.soliditylang.org/en/latest/050-breaking-changes.html
-         */
+        ["suicide", [[new BuiltinFunctionType("suicide", [types.address], []), "<0.5.0"]]],
+        [
+            "selfdestruct",
+            [[new BuiltinFunctionType("selfdestruct", [types.address], []), ">=0.4.13<0.5.0"]]
+        ],
+        [
+            "selfdestruct",
+            [[new BuiltinFunctionType("selfdestruct", [types.addressPayable], []), ">=0.5.0"]]
+        ],
+        [
+            "sha3",
+            [[new BuiltinFunctionType("sha3", [types.bytesMemory], [types.bytes32]), "<0.5.0"]]
+        ],
         [
             "keccak256",
             [

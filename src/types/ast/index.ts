@@ -27,4 +27,5 @@ export * from "./event_type";
 export * from "./modifier_type";
 export * from "./builtin_function";
 export * from "./error_type";
+export * from "./super";
 export * from "./user_defined_value_type";
