@@ -1,5 +1,6 @@
 // Need the ts-nocheck to suppress the noUnusedLocals errors in the generated parser
 // @ts-nocheck
+import { lt } from "semver";
 import {
     ASTNode,
     ASTNodeConstructor,
@@ -7,6 +8,7 @@ import {
     DataLocation,
     EnumDefinition,
     Expression,
+    FunctionDefinition,
     FunctionStateMutability,
     FunctionVisibility,
     resolveAny,
@@ -134,7 +136,14 @@ function makeUserDefinedType<T extends ASTNode>(
         throw new Error(`Multiple matches for ${constructor.name} ${name}`);
     }
 
-    const def = defs[0];
+    let def = defs[0];
+
+    /**
+     * Note that constructors below 0.5.0 may have same name as contract definition.
+     */
+    if (constructor === ContractDefinition && def.constructor === FunctionDefinition && def.name === name) {
+        def = def.vScope as ContractDefinition;
+    }
 
     if (!(def instanceof constructor)) {
         throw new Error(

@@ -132,7 +132,8 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
     if (
         (a instanceof IntLiteralType && b instanceof IntLiteralType) ||
         (a instanceof IntType && b instanceof IntLiteralType) ||
-        (eq(a, types.stringMemory) && b instanceof StringLiteralType)
+        (eq(a, types.stringMemory) && b instanceof StringLiteralType) ||
+        (eq(a, types.bytesMemory) && b instanceof StringLiteralType)
     ) {
         // Nothing to do
         return;
