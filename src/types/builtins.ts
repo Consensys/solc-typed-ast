@@ -146,8 +146,13 @@ export const block = new BuiltinStructType(
     "block",
     new Map([
         ["chainid", [[types.uint256, ">=0.8.0"]]],
-        ["coinbase", [[types.address, "<0.5.0"]]],
-        ["coinbase", [[types.addressPayable, ">=0.5.0"]]],
+        [
+            "coinbase",
+            [
+                [types.address, "<0.5.0"],
+                [types.addressPayable, ">=0.5.0"]
+            ]
+        ],
         ["basefee", [[types.uint256, ">=0.8.7"]]],
         ["difficulty", [[types.uint256, ">=0.4.13"]]],
         ["gaslimit", [[types.uint256, ">=0.4.13"]]],
@@ -164,8 +169,13 @@ export const tx = new BuiltinStructType(
     "tx",
     new Map<string, VersionDependentType[]>([
         ["gasprice", [[new IntType(256, false), ">=0.4.13"]]],
-        ["origin", [[types.address, "<0.5.0>"]]],
-        ["origin", [[types.addressPayable, ">=0.5.0"]]]
+        [
+            "origin",
+            [
+                [types.address, "<0.5.0"],
+                [types.addressPayable, ">=0.5.0"]
+            ]
+        ]
     ])
 );
 
@@ -288,11 +298,10 @@ export const globalBuiltins = new BuiltinStructType(
         ["suicide", [[new BuiltinFunctionType("suicide", [types.address], []), "<0.5.0"]]],
         [
             "selfdestruct",
-            [[new BuiltinFunctionType("selfdestruct", [types.address], []), ">=0.4.13<0.5.0"]]
-        ],
-        [
-            "selfdestruct",
-            [[new BuiltinFunctionType("selfdestruct", [types.addressPayable], []), ">=0.5.0"]]
+            [
+                [new BuiltinFunctionType("selfdestruct", [types.address], []), "<0.5.0"],
+                [new BuiltinFunctionType("selfdestruct", [types.addressPayable], []), ">=0.5.0"]
+            ]
         ],
         [
             "sha3",

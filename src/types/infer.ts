@@ -133,6 +133,7 @@ export const builtinTypes: { [key: string]: (arg: ASTNode) => TypeNode } = {
 
     this: (node) => {
         const contract = node.getClosestParentByType(ContractDefinition);
+
         assert(contract !== undefined, `this (${pp(node)}) used outside of a contract.`);
 
         return new UserDefinedType(contract.name, contract);
