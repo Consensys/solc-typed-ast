@@ -16,6 +16,7 @@ import {
     IntType,
     LatestCompilerVersion,
     PointerType,
+    TRest,
     TypeNode,
     types
 } from "../../../src";
@@ -124,7 +125,13 @@ const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> 
     [
         globalBuiltins,
         "keccak256",
-        ["0.4.13", LatestCompilerVersion],
+        ["0.4.13", "0.4.26"],
+        new BuiltinFunctionType("keccak256", [new TRest("T")], [new FixedBytesType(32)])
+    ],
+    [
+        globalBuiltins,
+        "keccak256",
+        ["0.5.0", LatestCompilerVersion],
         new BuiltinFunctionType(
             "keccak256",
             [new PointerType(new BytesType(), DataLocation.Memory)],

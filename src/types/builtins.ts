@@ -310,9 +310,10 @@ export const globalBuiltins = new BuiltinStructType(
         [
             "keccak256",
             [
+                [new BuiltinFunctionType("keccak256", [new TRest("T")], [types.bytes32]), "<0.5.0"],
                 [
                     new BuiltinFunctionType("keccak256", [types.bytesMemory], [types.bytes32]),
-                    ">=0.4.13"
+                    ">=0.5.0"
                 ]
             ]
         ],

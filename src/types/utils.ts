@@ -297,7 +297,7 @@ export function typeNameToSpecializedTypeNode(astT: TypeName, loc: DataLocation)
 
 export function inferVariableDeclLocation(decl: VariableDeclaration): DataLocation {
     if (decl.stateVariable) {
-        return DataLocation.Storage;
+        return decl.constant ? DataLocation.Memory : DataLocation.Storage;
     }
 
     if (decl.storageLocation !== DataLocation.Default) {

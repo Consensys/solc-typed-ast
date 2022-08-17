@@ -59,18 +59,19 @@ import {
     IntType,
     MappingType,
     ModifierType,
+    NumericLiteralType,
+    PackedArrayType,
     PointerType,
     RationalLiteralType,
     StringLiteralKind,
     StringLiteralType,
     StringType,
+    SuperType,
     TupleType,
     TypeNameType,
     TypeNode,
     UserDefinedType
 } from "./ast";
-import { NumericLiteralType } from "./ast/numeric_literal";
-import { SuperType } from "./ast/super";
 import {
     address06Builtins,
     address06PayableBuiltins,
@@ -356,6 +357,7 @@ export class InferType {
                 `Unexpected type of {0}.`,
                 a
             );
+
             assert(
                 b instanceof IntType || b instanceof IntLiteralType,
                 `Unexpected type of {0}.`,
@@ -521,6 +523,7 @@ export class InferType {
             for (let i = 0; i < funT.parameters.length; i++) {
                 if (!castable(argTs[i], funT.parameters[i])) {
                     argsMatch = false;
+
                     break;
                 }
             }
@@ -957,6 +960,12 @@ export class InferType {
                 return specializeType(typeNameToTypeNode(fields[0].vType), baseT.location);
             }
 
+            if (toT instanceof PackedArrayType) {
+                if (node.memberName === "length") {
+                    return types.uint256;
+                }
+            }
+
             if (toT instanceof ArrayType) {
                 if (node.memberName === "length") {
                     return types.uint256;
@@ -1168,7 +1177,8 @@ export class InferType {
         }
 
         /// Builtin constructor/array creation case
-        const argTs = typ instanceof ArrayType ? [types.uint256] : [];
+        const argTs =
+            typ instanceof ArrayType || typ instanceof PackedArrayType ? [types.uint256] : [];
 
         return new BuiltinFunctionType(undefined, argTs, [resT]);
     }
