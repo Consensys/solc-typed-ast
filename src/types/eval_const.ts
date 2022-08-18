@@ -12,6 +12,14 @@ import { pp } from "../misc";
 import { subdenominationMultipliers } from "./infer";
 import { binaryOperatorGroups } from "./utils";
 
+/**
+ * Tune up precision of decimal values to follow Solidity behavior.
+ * Be careful with precision - setting it to large values causes NodeJS to crash.
+ *
+ * @see https://mikemcl.github.io/decimal.js/#precision
+ */
+Decimal.set({ precision: 100 });
+
 export type Value = Decimal | boolean | string | bigint;
 
 export class EvalError extends Error {

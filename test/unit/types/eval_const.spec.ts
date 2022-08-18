@@ -502,6 +502,18 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             BigInt(256)
         ],
         [
+            "BinaryOperation (2 ** 256)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "**",
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "2"),
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "256")
+                ),
+            true,
+            BigInt("115792089237316195423570985008687907853269984665640564039457584007913129639936")
+        ],
+        [
             "BinaryOperation (2 << 5)",
             (factory: ASTNodeFactory) =>
                 factory.makeBinaryOperation(

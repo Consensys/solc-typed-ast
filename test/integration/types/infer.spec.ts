@@ -22,9 +22,9 @@ import {
     ModifierInvocation,
     NewExpression,
     PossibleCompilerKinds,
-    pp,
     PrettyFormatter,
     StructDefinition,
+    TupleExpression,
     UnaryOperation
 } from "../../../src";
 import {
@@ -140,12 +140,7 @@ function toSoliditySource(expr: Expression, compilerVersion: string) {
  * There are several known cases where we diverge from typeString, that are documented
  * in this function.
  */
-function compareTypeNodes(
-    inferredT: TypeNode,
-    fromString: TypeNode,
-    expr: Expression,
-    compilerVersion: string
-): boolean {
+function compareTypeNodes(inferredT: TypeNode, parsedT: TypeNode, expr: Expression): boolean {
     // For names of a struct S we will infer type(struct S) while the typestring will be type(struct S storage pointer)
     // Our approach seems fine for now, as the name of the struct itself is not really a pointer.
     if (
@@ -153,9 +148,9 @@ function compareTypeNodes(
         ((inferredT.type instanceof UserDefinedType &&
             inferredT.type.definition instanceof StructDefinition) ||
             inferredT.type instanceof PackedArrayType) &&
-        fromString instanceof TypeNameType &&
-        fromString.type instanceof PointerType &&
-        eq(inferredT.type, fromString.type.to)
+        parsedT instanceof TypeNameType &&
+        parsedT.type instanceof PointerType &&
+        eq(inferredT.type, parsedT.type.to)
     ) {
         return true;
     }
@@ -165,11 +160,11 @@ function compareTypeNodes(
     /// parameters of the function types match up.
     if (
         inferredT instanceof BuiltinFunctionType &&
-        fromString instanceof FunctionType &&
+        parsedT instanceof FunctionType &&
         (expr instanceof Identifier || expr instanceof MemberAccess) &&
         !expr.vReferencedDeclaration &&
-        (eq(inferredT.parameters, fromString.parameters) ||
-            (inferredT.name === "decode" && fromString.parameters.length === 0))
+        (eq(inferredT.parameters, parsedT.parameters) ||
+            (inferredT.name === "decode" && parsedT.parameters.length === 0))
     ) {
         return true;
     }
@@ -178,11 +173,11 @@ function compareTypeNodes(
     // For example for `abi.decode(...)` the typeString is `function () pure`...
     if (
         inferredT instanceof BuiltinFunctionType &&
-        fromString instanceof FunctionType &&
+        parsedT instanceof FunctionType &&
         (expr instanceof Identifier || expr instanceof MemberAccess) &&
         !expr.vReferencedDeclaration &&
         inferredT.name === "decode" &&
-        fromString.parameters.length === 0
+        parsedT.parameters.length === 0
     ) {
         return true;
     }
@@ -192,10 +187,10 @@ function compareTypeNodes(
     /// parameters of the function types match up
     if (
         inferredT instanceof EventType &&
-        fromString instanceof FunctionType &&
+        parsedT instanceof FunctionType &&
         (expr instanceof Identifier || expr instanceof MemberAccess) &&
         expr.vReferencedDeclaration instanceof EventDefinition &&
-        eq(inferredT.parameters, fromString.parameters)
+        eq(inferredT.parameters, parsedT.parameters)
     ) {
         return true;
     }
@@ -227,18 +222,19 @@ function compareTypeNodes(
     if (
         (expr instanceof Literal ||
             expr instanceof UnaryOperation ||
-            expr instanceof BinaryOperation) &&
+            expr instanceof BinaryOperation ||
+            expr instanceof TupleExpression) &&
         expr.typeString.includes("digits omitted") &&
         inferredT instanceof IntLiteralType
     ) {
         return true;
     }
 
-    /// For builtin struct identifiers abi,tx,block and msg we also differ from the typeString parser
+    /// For builtin struct identifiers abi, tx, block and msg we also differ from the typeString parser
     if (
         inferredT instanceof BuiltinStructType &&
-        fromString instanceof BuiltinType &&
-        inferredT.name === fromString.name
+        parsedT instanceof BuiltinType &&
+        inferredT.name === parsedT.name
     ) {
         return true;
     }
@@ -247,9 +243,9 @@ function compareTypeNodes(
     if (
         expr instanceof NewExpression &&
         inferredT instanceof BuiltinFunctionType &&
-        fromString instanceof FunctionType &&
-        eq(inferredT.parameters, fromString.parameters) &&
-        eq(inferredT.returns, fromString.returns)
+        parsedT instanceof FunctionType &&
+        eq(inferredT.parameters, parsedT.parameters) &&
+        eq(inferredT.returns, parsedT.returns)
     ) {
         return true;
     }
@@ -258,9 +254,9 @@ function compareTypeNodes(
     /// So just compare param/return types
     if (
         inferredT instanceof FunctionType &&
-        fromString instanceof FunctionType &&
-        eq(inferredT.parameters, fromString.parameters) &&
-        eq(inferredT.returns, fromString.returns)
+        parsedT instanceof FunctionType &&
+        eq(inferredT.parameters, parsedT.parameters) &&
+        eq(inferredT.returns, parsedT.returns)
     ) {
         return true;
     }
@@ -268,10 +264,10 @@ function compareTypeNodes(
     /// In some versions hex strings have kind 'string' in the AST, but 'hex' in the typeString parser
     if (
         inferredT instanceof StringLiteralType &&
-        fromString instanceof StringLiteralType &&
+        parsedT instanceof StringLiteralType &&
         inferredT.kind !== "hexString" &&
-        fromString.kind === "hexString" &&
-        Buffer.from(inferredT.literal).toString("hex") === fromString.literal
+        parsedT.kind === "hexString" &&
+        Buffer.from(inferredT.literal).toString("hex") === parsedT.literal
     ) {
         return true;
     }
@@ -292,8 +288,8 @@ function compareTypeNodes(
     /// be considered deprecated
     if (
         inferredT instanceof ImportRefType &&
-        fromString instanceof ModuleType &&
-        inferredT.importStmt.absolutePath === fromString.path
+        parsedT instanceof ModuleType &&
+        inferredT.importStmt.absolutePath === parsedT.path
     ) {
         return true;
     }
@@ -302,9 +298,9 @@ function compareTypeNodes(
     if (
         inferredT instanceof BuiltinFunctionType &&
         inferredT.name === "concat" &&
-        fromString instanceof FunctionType &&
-        eq(inferredT.returns, fromString.returns) &&
-        fromString.parameters.length === 0
+        parsedT instanceof FunctionType &&
+        eq(inferredT.returns, parsedT.returns) &&
+        parsedT.parameters.length === 0
     ) {
         return true;
     }
@@ -312,9 +308,9 @@ function compareTypeNodes(
     /// We have a custom ErrorType for errors. typeString treat them as pure functions
     if (
         inferredT instanceof ErrorType &&
-        fromString instanceof FunctionType &&
-        eq(inferredT.parameters, fromString.parameters) &&
-        fromString.returns.length === 0
+        parsedT instanceof FunctionType &&
+        eq(inferredT.parameters, parsedT.parameters) &&
+        parsedT.returns.length === 0
     ) {
         return true;
     }
@@ -322,8 +318,8 @@ function compareTypeNodes(
     /// TODO: Remove after fixing TODOs in IntLiteralType
     if (
         inferredT instanceof IntLiteralType &&
-        fromString instanceof RationalLiteralType &&
-        inferredT.pp() === fromString.pp()
+        parsedT instanceof RationalLiteralType &&
+        inferredT.pp() === parsedT.pp()
     ) {
         return true;
     }
@@ -332,8 +328,8 @@ function compareTypeNodes(
     if (
         expr instanceof Assignment &&
         inferredT instanceof TupleType &&
-        fromString instanceof TupleType &&
-        fromString.elements.length === 0
+        parsedT instanceof TupleType &&
+        parsedT.elements.length === 0
     ) {
         return true;
     }
@@ -343,8 +339,8 @@ function compareTypeNodes(
     if (
         inferredT instanceof StringLiteralType &&
         inferredT.kind === "hexString" &&
-        fromString instanceof StringLiteralType &&
-        fromString.literal.includes("contains invalid UTF-8 sequence at position")
+        parsedT instanceof StringLiteralType &&
+        parsedT.literal.includes("contains invalid UTF-8 sequence at position")
     ) {
         return true;
     }
@@ -353,17 +349,16 @@ function compareTypeNodes(
     /// Member accesses `super.fn` in the case of multiple inheritance
     if (
         inferredT instanceof SuperType &&
-        ((fromString instanceof UserDefinedType &&
-            fromString.definition instanceof ContractDefinition) ||
-            (fromString instanceof TypeNameType &&
-                fromString.type instanceof UserDefinedType &&
-                fromString.type.definition instanceof ContractDefinition))
+        ((parsedT instanceof UserDefinedType && parsedT.definition instanceof ContractDefinition) ||
+            (parsedT instanceof TypeNameType &&
+                parsedT.type instanceof UserDefinedType &&
+                parsedT.type.definition instanceof ContractDefinition))
     ) {
         return true;
     }
 
     // For overloaded function identifiers we infer a function set, while the typestring is a concrete resolved function
-    if (inferredT instanceof FunctionLikeSetType && fromString instanceof FunctionType) {
+    if (inferredT instanceof FunctionLikeSetType && parsedT instanceof FunctionType) {
         return true;
     }
 
@@ -372,27 +367,17 @@ function compareTypeNodes(
     // TODO: Remove this if after re-writing the eval_consts.ts file to something sane.
     if (
         inferredT instanceof RationalLiteralType &&
-        fromString instanceof RationalLiteralType &&
-        inferredT.literal.denominator % fromString.literal.denominator === BigInt(0) &&
-        fromString.literal.numerator *
-            (inferredT.literal.denominator / fromString.literal.denominator) ===
+        parsedT instanceof RationalLiteralType &&
+        inferredT.literal.denominator % parsedT.literal.denominator === BigInt(0) &&
+        parsedT.literal.numerator *
+            (inferredT.literal.denominator / parsedT.literal.denominator) ===
             inferredT.literal.numerator
     ) {
         return true;
     }
 
     /// Otherwise the types must match up exactly
-    const result = eq(inferredT, fromString);
-
-    if (!result) {
-        console.error(
-            `Mismatch inferred "${inferredT.pp()}" and typeString "${fromString.pp()}" for expression ${pp(
-                expr
-            )} -> ${toSoliditySource(expr, compilerVersion)}`
-        );
-    }
-
-    return result;
+    return eq(inferredT, parsedT);
 }
 
 describe("Type inference for expressions", () => {
@@ -435,6 +420,11 @@ describe("Type inference for expressions", () => {
                             continue;
                         }
 
+                        // Skip nodes with broken typeStrings in legacy compilers
+                        if (expr.typeString === null) {
+                            continue;
+                        }
+
                         // Skip modifier invocations
                         if (expr.parent instanceof ModifierInvocation) {
                             continue;
@@ -445,15 +435,10 @@ describe("Type inference for expressions", () => {
                             continue;
                         }
 
-                        // Skip nodes with broken typeStrings in legacy compilers
-                        if (expr.typeString === null) {
-                            continue;
-                        }
-
-                        let expectedType: TypeNode;
+                        let parsedType: TypeNode;
 
                         try {
-                            expectedType = parse(expr.typeString, {
+                            parsedType = parse(expr.typeString, {
                                 ctx: expr,
                                 version: compilerVersion
                             });
@@ -466,15 +451,15 @@ describe("Type inference for expressions", () => {
                             throw e;
                         }
 
-                        // console.log(
-                        //     toSoliditySource(expr, compilerVersion),
-                        //     inferredType,
-                        //     expectedType
-                        // );
-
-                        expect(
-                            compareTypeNodes(inferredType, expectedType, expr, compilerVersion)
-                        ).toBeTruthy();
+                        assert(
+                            compareTypeNodes(inferredType, parsedType, expr),
+                            `Mismatch inferred type "{0}" and parsed type "{1}" (typeString "{2}") for expression {3} -> {4}`,
+                            inferredType,
+                            parsedType,
+                            expr.typeString,
+                            expr,
+                            toSoliditySource(expr, compilerVersion)
+                        );
                     }
                 }
             });

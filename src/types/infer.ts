@@ -960,7 +960,7 @@ export class InferType {
                 return specializeType(typeNameToTypeNode(fields[0].vType), baseT.location);
             }
 
-            if (toT instanceof PackedArrayType) {
+            if (toT instanceof BytesType) {
                 if (node.memberName === "length") {
                     return types.uint256;
                 }
@@ -1093,6 +1093,12 @@ export class InferType {
 
             if (node.memberName === "address") {
                 return types.address;
+            }
+        }
+
+        if (baseT instanceof FixedBytesType) {
+            if (node.memberName === "length") {
+                return types.uint8;
             }
         }
 
