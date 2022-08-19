@@ -179,13 +179,12 @@ export const tx = new BuiltinStructType(
     ])
 );
 
-type BuiltinStructTypeField = [string, [[TypeNode, string]]];
+type BuiltinStructTypeField = [string, Array<[TypeNode, string]>];
 
 const addressFields: BuiltinStructTypeField[] = [
     ["balance", [[types.uint256, ">=0.4.13"]]],
     ["code", [[types.bytesMemory, ">=0.8.0"]]],
     ["codehash", [[types.bytes32, ">=0.8.0"]]],
-    ["call", [[new BuiltinFunctionType("call", [types.bytesMemory], [types.bool]), "<0.5.0"]]],
     [
         "delegatecall",
         [[new BuiltinFunctionType("delegatecall", [types.bytesMemory], [types.bool]), "<0.5.0"]]
@@ -197,6 +196,7 @@ const addressFields: BuiltinStructTypeField[] = [
     [
         "call",
         [
+            [new BuiltinFunctionType("call", [types.bytesMemory], [types.bool]), "<0.5.0"],
             [
                 new BuiltinFunctionType(
                     "call",

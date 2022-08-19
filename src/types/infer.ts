@@ -144,31 +144,32 @@ export const builtinTypes: { [key: string]: (arg: ASTNode) => TypeNode } = {
 const castableLocations: DataLocation[] = [DataLocation.Memory, DataLocation.Storage];
 
 function funDefToType(def: FunctionDefinition): FunctionType {
-    const paramTypes = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
-    const retTypes = def.vReturnParameters.vParameters.map(variableDeclarationToTypeNode);
-    const isPublic =
+    const argTs = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
+    const retTs = def.vReturnParameters.vParameters.map(variableDeclarationToTypeNode);
+
+    const isExternallyAccessible =
         def.visibility === FunctionVisibility.External ||
         def.visibility === FunctionVisibility.Public;
 
     return new FunctionType(
-        isPublic ? def.name : undefined,
-        paramTypes,
-        retTypes,
+        isExternallyAccessible ? def.name : undefined,
+        argTs,
+        retTs,
         def.visibility,
         def.stateMutability
     );
 }
 
 function eventDefToType(def: EventDefinition): EventType {
-    const paramTypes = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
+    const argTs = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
 
-    return new EventType(def.name, paramTypes);
+    return new EventType(def.name, argTs);
 }
 
 function errDefToType(def: ErrorDefinition): ErrorType {
-    const paramTypes = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
+    const argTs = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
 
-    return new ErrorType(def.name, paramTypes);
+    return new ErrorType(def.name, argTs);
 }
 
 export class InferType {
@@ -927,15 +928,23 @@ export class InferType {
         /// Fields on contract vars. Should always be a function
         if (baseT instanceof UserDefinedType && baseT.definition instanceof ContractDefinition) {
             const contract = baseT.definition;
-            const res = this.typeOfResolved(node.memberName, contract, true);
+            const field = this.typeOfResolved(node.memberName, contract, true);
 
-            if (res === undefined) {
-                throw new SolTypeError(
-                    `No field ${node.memberName} found on contract ${contract.name} in ${pp(node)}`
-                );
+            if (field) {
+                return field;
             }
 
-            return res;
+            if (lt(this.version, "0.5.0")) {
+                const builtin = addressBuiltins.getFieldForVersion(node.memberName, this.version);
+
+                if (builtin) {
+                    return builtin;
+                }
+            }
+
+            throw new SolTypeError(
+                `No field ${node.memberName} found on contract ${contract.name} in ${pp(node)}`
+            );
         }
 
         if (baseT instanceof PointerType) {
@@ -1096,6 +1105,16 @@ export class InferType {
             }
         }
 
+        if (
+            baseT instanceof FunctionLikeSetType ||
+            baseT instanceof FunctionType ||
+            baseT instanceof BuiltinFunctionType
+        ) {
+            if (node.memberName === "gas" || node.memberName === "value") {
+                return new BuiltinFunctionType(node.memberName, [types.uint256], [baseT]);
+            }
+        }
+
         if (baseT instanceof FixedBytesType) {
             if (node.memberName === "length") {
                 return types.uint8;
@@ -1152,6 +1171,10 @@ export class InferType {
             }
         }
 
+        if (node.vReferencedDeclaration instanceof FunctionDefinition) {
+            return funDefToType(node.vReferencedDeclaration);
+        }
+
         throw new SolTypeError(
             `Unknown field ${node.memberName} on ${pp(node)} of type ${pp(baseT)}`
         );
@@ -1203,7 +1226,7 @@ export class InferType {
             );
         }
 
-        return componentTs.length != 1 ? new TupleType(componentTs) : componentTs[0];
+        return componentTs.length !== 1 ? new TupleType(componentTs) : componentTs[0];
     }
 
     typeOfUnaryOperation(node: UnaryOperation): TypeNode {
