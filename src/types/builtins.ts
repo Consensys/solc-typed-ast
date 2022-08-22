@@ -132,8 +132,9 @@ export const msg = new BuiltinStructType(
         [
             "sender",
             [
-                [types.address, "<0.6.0"],
-                [types.addressPayable, ">=0.6.0"]
+                [types.address, "<0.5.0"],
+                [types.address, ">=0.8.0"],
+                [types.addressPayable, ">=0.5.0 <0.8.0"]
             ]
         ],
         ["sig", [[types.bytes4, ">=0.4.13"]]],
@@ -173,7 +174,8 @@ export const tx = new BuiltinStructType(
             "origin",
             [
                 [types.address, "<0.5.0"],
-                [types.addressPayable, ">=0.5.0"]
+                [types.address, ">=0.8.0"],
+                [types.addressPayable, ">=0.5.0 <0.8.0"]
             ]
         ]
     ])
@@ -187,19 +189,11 @@ const addressFields: BuiltinStructTypeField[] = [
     ["codehash", [[types.bytes32, ">=0.8.0"]]],
     [
         "delegatecall",
-        [[new BuiltinFunctionType("delegatecall", [types.bytesMemory], [types.bool]), "<0.5.0"]]
-    ],
-    [
-        "callcode",
-        [[new BuiltinFunctionType("callcode", [types.bytesMemory], [types.bool]), "<0.5.0"]]
-    ],
-    [
-        "call",
         [
-            [new BuiltinFunctionType("call", [types.bytesMemory], [types.bool]), "<0.5.0"],
+            [new BuiltinFunctionType("delegatecall", [new TRest("T")], [types.bool]), "<0.5.0"],
             [
                 new BuiltinFunctionType(
-                    "call",
+                    "delegatecall",
                     [types.bytesMemory],
                     [types.bool, types.bytesMemory]
                 ),
@@ -207,12 +201,14 @@ const addressFields: BuiltinStructTypeField[] = [
             ]
         ]
     ],
+    ["callcode", [[new BuiltinFunctionType("callcode", [new TRest("T")], [types.bool]), "<0.5.0"]]],
     [
-        "delegatecall",
+        "call",
         [
+            [new BuiltinFunctionType("call", [new TRest("T")], [types.bool]), "<0.5.0"],
             [
                 new BuiltinFunctionType(
-                    "delegatecall",
+                    "call",
                     [types.bytesMemory],
                     [types.bool, types.bytesMemory]
                 ),
@@ -303,10 +299,7 @@ export const globalBuiltins = new BuiltinStructType(
                 [new BuiltinFunctionType("selfdestruct", [types.addressPayable], []), ">=0.5.0"]
             ]
         ],
-        [
-            "sha3",
-            [[new BuiltinFunctionType("sha3", [types.bytesMemory], [types.bytes32]), "<0.5.0"]]
-        ],
+        ["sha3", [[new BuiltinFunctionType("sha3", [new TRest("T")], [types.bytes32]), "<0.5.0"]]],
         [
             "keccak256",
             [
@@ -319,14 +312,18 @@ export const globalBuiltins = new BuiltinStructType(
         ],
         [
             "sha256",
-            [[new BuiltinFunctionType("sha256", [types.bytesMemory], [types.bytes32]), ">=0.4.13"]]
+            [
+                [new BuiltinFunctionType("sha256", [new TRest("T")], [types.bytes32]), "<0.5.0"],
+                [new BuiltinFunctionType("sha256", [types.bytesMemory], [types.bytes32]), ">=0.5.0"]
+            ]
         ],
         [
             "ripemd160",
             [
+                [new BuiltinFunctionType("ripemd160", [new TRest("T")], [types.bytes20]), "<0.5.0"],
                 [
                     new BuiltinFunctionType("ripemd160", [types.bytesMemory], [types.bytes20]),
-                    ">=0.4.13"
+                    ">=0.5.0"
                 ]
             ]
         ],

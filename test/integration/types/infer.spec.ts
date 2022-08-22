@@ -124,7 +124,8 @@ const samples: Array<[string, ASTKind]> = [
     ["test/samples/solidity/super.sol", ASTKind.Modern],
     ["test/samples/solidity/constant_expressions.sol", ASTKind.Modern],
     ["test/samples/solidity/decoding_test.sol", ASTKind.Modern],
-    ["test/samples/solidity/ops.sol", ASTKind.Modern]
+    ["test/samples/solidity/ops.sol", ASTKind.Modern],
+    ["test/samples/solidity/builtins_0816.sol", ASTKind.Modern]
 ];
 
 function toSoliditySource(expr: Expression, compilerVersion: string) {
@@ -135,7 +136,7 @@ function toSoliditySource(expr: Expression, compilerVersion: string) {
 
 /**
  * This function compares an inferred type (`inferredT`) to the type parsed from
- * a typeString (`fromString`) for a given expression `expr`
+ * a typeString (`parsedT`) for a given expression `expr`
  *
  * There are several known cases where we diverge from typeString, that are documented
  * in this function.
@@ -155,7 +156,7 @@ function compareTypeNodes(inferredT: TypeNode, parsedT: TypeNode, expr: Expressi
         return true;
     }
 
-    /// For builtin functions we are more precise than typeStrings.  So for
+    /// For builtin functions we are more precise than typeStrings. So for
     /// those just check that the node is a builtin reference and that the
     /// parameters of the function types match up.
     if (
@@ -164,7 +165,18 @@ function compareTypeNodes(inferredT: TypeNode, parsedT: TypeNode, expr: Expressi
         (expr instanceof Identifier || expr instanceof MemberAccess) &&
         !expr.vReferencedDeclaration &&
         (eq(inferredT.parameters, parsedT.parameters) ||
-            (inferredT.name === "decode" && parsedT.parameters.length === 0))
+            (parsedT.parameters.length === 0 &&
+                (inferredT.name === "decode" ||
+                    inferredT.name === "call" ||
+                    inferredT.name === "callcode" ||
+                    inferredT.name === "delegatecall" ||
+                    inferredT.name === "keccak256" ||
+                    inferredT.name === "sha3" ||
+                    inferredT.name === "sha256" ||
+                    inferredT.name === "ripemd160")) ||
+            inferredT.name === "addmod" ||
+            inferredT.name === "mulmod" ||
+            inferredT.name === "ecrecover")
     ) {
         return true;
     }

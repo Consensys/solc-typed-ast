@@ -14,6 +14,7 @@ import {
     ErrorDefinition,
     EventDefinition,
     Expression,
+    ExpressionStatement,
     ExternalReferenceType,
     FunctionCall,
     FunctionCallKind,
@@ -805,17 +806,18 @@ export class InferType {
 
                 let defInitT: TypeNode;
 
-                if (varDeclStmt.assignments.length > 0) {
+                if (rhsT instanceof TupleType && varDeclStmt.assignments.length > 0) {
                     const tupleIdx = varDeclStmt.assignments.indexOf(def.id);
 
                     assert(
-                        tupleIdx !== undefined,
+                        tupleIdx > -1,
                         `Var decl {0} not found in assignments of {1}`,
                         def,
                         varDeclStmt
                     );
+
                     assert(
-                        rhsT instanceof TupleType && rhsT.elements.length > tupleIdx,
+                        rhsT.elements.length > tupleIdx,
                         `Rhs not a tuple of right size in {0}`,
                         varDeclStmt
                     );
@@ -956,17 +958,15 @@ export class InferType {
                     (fieldDef) => fieldDef.name === node.memberName
                 );
 
-                if (fields.length !== 1) {
-                    throw new SolTypeError(
-                        `No field ${node.memberName} found on struct ${toT.definition.name} in ${pp(
-                            node
-                        )}`
+                if (fields.length === 1) {
+                    assert(
+                        fields[0].vType !== undefined,
+                        `Field type is not set for {0}`,
+                        fields[0]
                     );
+
+                    return specializeType(typeNameToTypeNode(fields[0].vType), baseT.location);
                 }
-
-                assert(fields[0].vType !== undefined, `Field type is not set for {0}`, fields[0]);
-
-                return specializeType(typeNameToTypeNode(fields[0].vType), baseT.location);
             }
 
             if (toT instanceof BytesType) {
@@ -1042,6 +1042,10 @@ export class InferType {
             /// abi.decode is a special case as we need to unwrap the types
             /// inside the tuple as return types
             if (baseT.name === "abi" && node.memberName === "decode") {
+                if (node.parent instanceof ExpressionStatement) {
+                    return new BuiltinFunctionType("decode", [], []);
+                }
+
                 assert(
                     node.parent instanceof FunctionCall &&
                         node.parent.vArguments.length === 2 &&

@@ -52,15 +52,17 @@ const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> 
         ["0.4.13", LatestCompilerVersion],
         new PointerType(new BytesType(), DataLocation.CallData)
     ],
-    [globalBuiltins, "msg.sender", ["0.4.13", "0.5.17"], new AddressType(false)],
-    [globalBuiltins, "msg.sender", ["0.6.0", LatestCompilerVersion], new AddressType(true)],
+    [globalBuiltins, "msg.sender", ["0.4.13", "0.4.26"], new AddressType(false)],
+    [globalBuiltins, "msg.sender", ["0.5.0", "0.7.6"], new AddressType(true)],
+    [globalBuiltins, "msg.sender", ["0.8.0", LatestCompilerVersion], new AddressType(false)],
     [globalBuiltins, "msg.sig", ["0.4.13", LatestCompilerVersion], new FixedBytesType(4)],
     [globalBuiltins, "msg.value", ["0.4.13", LatestCompilerVersion], new IntType(256, false)],
     [globalBuiltins, "msg.gas", ["0.5.0", LatestCompilerVersion], undefined],
     [globalBuiltins, "msg.gas", ["0.4.13", "0.4.26"], new IntType(256, false)],
     [globalBuiltins, "tx.gasprice", ["0.4.13", LatestCompilerVersion], new IntType(256, false)],
     [globalBuiltins, "tx.origin", ["0.4.13", "0.4.26"], new AddressType(false)],
-    [globalBuiltins, "tx.origin", ["0.5.0", LatestCompilerVersion], new AddressType(true)],
+    [globalBuiltins, "tx.origin", ["0.5.0", "0.7.6"], new AddressType(true)],
+    [globalBuiltins, "tx.origin", ["0.8.0", LatestCompilerVersion], new AddressType(false)],
     [globalBuiltins, "blockhash", ["0.4.13", "0.4.21"], undefined],
     [
         globalBuiltins,
@@ -141,7 +143,13 @@ const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> 
     [
         globalBuiltins,
         "sha256",
-        ["0.4.13", LatestCompilerVersion],
+        ["0.4.13", "0.4.26"],
+        new BuiltinFunctionType("sha256", [new TRest("T")], [new FixedBytesType(32)])
+    ],
+    [
+        globalBuiltins,
+        "sha256",
+        ["0.5.0", LatestCompilerVersion],
         new BuiltinFunctionType(
             "sha256",
             [new PointerType(new BytesType(), DataLocation.Memory)],
@@ -151,7 +159,13 @@ const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> 
     [
         globalBuiltins,
         "ripemd160",
-        ["0.4.13", LatestCompilerVersion],
+        ["0.4.13", "0.4.26"],
+        new BuiltinFunctionType("ripemd160", [new TRest("T")], [new FixedBytesType(20)])
+    ],
+    [
+        globalBuiltins,
+        "ripemd160",
+        ["0.5.0", LatestCompilerVersion],
         new BuiltinFunctionType(
             "ripemd160",
             [new PointerType(new BytesType(), DataLocation.Memory)],
