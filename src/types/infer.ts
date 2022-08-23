@@ -136,7 +136,7 @@ export const builtinTypes: { [key: string]: (arg: ASTNode) => TypeNode } = {
     this: (node) => {
         const contract = node.getClosestParentByType(ContractDefinition);
 
-        assert(contract !== undefined, `this (${pp(node)}) used outside of a contract.`);
+        assert(contract !== undefined, "this ({0}) used outside of a contract", node);
 
         return new UserDefinedType(contract.name, contract);
     }
@@ -340,7 +340,7 @@ export class InferType {
 
             assert(
                 res instanceof Decimal || typeof res === "bigint",
-                `Unexpected result of const binary op`
+                "Unexpected result of const binary op"
             );
 
             return typeof res === "bigint"
@@ -356,13 +356,13 @@ export class InferType {
         if (binaryOperatorGroups.Arithmetic.includes(node.operator)) {
             assert(
                 a instanceof IntType || a instanceof IntLiteralType,
-                `Unexpected type of {0}.`,
+                "Unexpected type of {0}",
                 a
             );
 
             assert(
                 b instanceof IntType || b instanceof IntLiteralType,
-                `Unexpected type of {0}.`,
+                "Unexpected type of {0}",
                 b
             );
 
@@ -407,7 +407,8 @@ export class InferType {
             calleeT instanceof TypeNameType &&
                 calleeT.type instanceof UserDefinedType &&
                 calleeT.type.definition instanceof StructDefinition,
-            `Unexpected callee type ${pp(calleeT)}`
+            "Unexpected callee type {0}",
+            calleeT
         );
 
         return new PointerType(calleeT.type, DataLocation.Memory, "ref");
@@ -496,7 +497,7 @@ export class InferType {
     typeOfNewCall(node: FunctionCall): TypeNode {
         const newExpr = node.vCallee;
 
-        assert(newExpr instanceof NewExpression, `Unexpected vcall {0}`, newExpr);
+        assert(newExpr instanceof NewExpression, "Unexpected vcall {0}", newExpr);
 
         const typ = typeNameToTypeNode(newExpr.vTypeName);
         const loc =
@@ -678,7 +679,8 @@ export class InferType {
     typeOfBuiltinType(node: Identifier): TypeNode {
         assert(
             node.parent instanceof FunctionCall && node.parent.vArguments.length === 1,
-            `Unexpected use of builtin type ${pp(node)}`
+            "Unexpected use of builtin type {0}",
+            node
         );
 
         const typeOfArg = this.typeOf(node.parent.vArguments[0]);
@@ -719,7 +721,7 @@ export class InferType {
         if (node.name === "super") {
             const contract = node.getClosestParentByType(ContractDefinition);
 
-            assert(contract !== undefined, `Use of super outside of contract in {0}`, node);
+            assert(contract !== undefined, "Use of super outside of contract in {0}", node);
 
             return new SuperType(contract);
         }
@@ -730,7 +732,7 @@ export class InferType {
             return globalBuiltin;
         }
 
-        assert(node.name in builtinTypes, `NYI builtin "{0}" for {1}`, node.name, node);
+        assert(node.name in builtinTypes, 'NYI builtin "{0}" for {1}', node.name, node);
 
         return builtinTypes[node.name](node);
     }
@@ -798,7 +800,7 @@ export class InferType {
 
                 assert(
                     varDeclStmt.vInitialValue !== undefined,
-                    `Initializer required when no type specified in {0}`,
+                    "Initializer required when no type specified in {0}",
                     varDeclStmt
                 );
 
@@ -811,14 +813,14 @@ export class InferType {
 
                     assert(
                         tupleIdx > -1,
-                        `Var decl {0} not found in assignments of {1}`,
+                        "Var decl {0} not found in assignments of {1}",
                         def,
                         varDeclStmt
                     );
 
                     assert(
                         rhsT.elements.length > tupleIdx,
-                        `Rhs not a tuple of right size in {0}`,
+                        "Rhs not a tuple of right size in {0}",
                         varDeclStmt
                     );
 
@@ -832,7 +834,7 @@ export class InferType {
 
                     assert(
                         concreteT !== undefined,
-                        `RHS int literal type {0} doesn't fit in an int type`,
+                        "RHS int literal type {0} doesn't fit in an int type",
                         defInitT
                     );
 
@@ -961,7 +963,7 @@ export class InferType {
                 if (fields.length === 1) {
                     assert(
                         fields[0].vType !== undefined,
-                        `Field type is not set for {0}`,
+                        "Field type is not set for {0}",
                         fields[0]
                     );
 
@@ -1017,7 +1019,7 @@ export class InferType {
                 if (node.memberName === "concat") {
                     assert(
                         node.parent instanceof FunctionCall,
-                        `Unexpected concat builtin not in a function call {0}`,
+                        "Unexpected concat builtin not in a function call {0}",
                         node
                     );
 
@@ -1050,7 +1052,7 @@ export class InferType {
                     node.parent instanceof FunctionCall &&
                         node.parent.vArguments.length === 2 &&
                         node.parent.vArguments[1] instanceof TupleExpression,
-                    `Unexpected use of abi.decode outside a function call {0}`,
+                    "Unexpected use of abi.decode outside a function call {0}",
                     node.parent
                 );
 
@@ -1061,7 +1063,7 @@ export class InferType {
 
                     assert(
                         componentT instanceof TypeNameType,
-                        `Expected type in abi.decode not {0}`,
+                        "Expected type in abi.decode not {0}",
                         componentT
                     );
 
@@ -1185,7 +1187,7 @@ export class InferType {
     }
 
     typeOfNewExpression(newExpr: NewExpression): TypeNode {
-        assert(newExpr instanceof NewExpression, `Unexpected vcall {0}`, newExpr);
+        assert(newExpr instanceof NewExpression, "Unexpected vcall {0}", newExpr);
 
         const typ = typeNameToTypeNode(newExpr.vTypeName);
         const loc =
@@ -1220,7 +1222,7 @@ export class InferType {
         const componentTs = node.vComponents.map((cmp) => this.typeOf(cmp));
 
         if (node.isInlineArray) {
-            assert(node.vComponents.length > 0, `Can't have an array initialize`);
+            assert(node.vComponents.length > 0, "Can't have an array initialize");
 
             const elT = componentTs.reduce((prev, cur) => this.inferCommonType(prev, cur));
 
@@ -1253,7 +1255,7 @@ export class InferType {
 
             assert(
                 res instanceof Decimal || typeof res === "bigint",
-                `Unexpected result of const binary op`
+                "Unexpected result of const binary op"
             );
 
             return typeof res === "bigint"
@@ -1393,7 +1395,7 @@ export class InferType {
         if (funs.length > 0) {
             assert(
                 funs.length === defs.length,
-                `Unexpected both functions and others matching {0} in {1}`,
+                "Unexpected both functions and others matching {0} in {1}",
                 name,
                 ctx
             );
@@ -1414,12 +1416,12 @@ export class InferType {
         if (getters.length > 0) {
             assert(
                 getters.length === defs.length,
-                `Unexpected both getters and others matching {0} in {1}`,
+                "Unexpected both getters and others matching {0} in {1}",
                 name,
                 ctx
             );
 
-            assert(getters.length === 1, `Unexpected overloading between getters for {0}`, name);
+            assert(getters.length === 1, "Unexpected overloading between getters for {0}", name);
 
             return externalOnly
                 ? getters[0].getterFunType()
@@ -1429,14 +1431,14 @@ export class InferType {
         if (errorDefs.length > 0) {
             assert(
                 errorDefs.length === defs.length,
-                `Unexpected both getters and others matching {0} in {1}`,
+                "Unexpected both getters and others matching {0} in {1}",
                 name,
                 ctx
             );
 
             assert(
                 errorDefs.length === 1,
-                `Unexpected overloading between errorDefs for {0}`,
+                "Unexpected overloading between errorDefs for {0}",
                 name
             );
 
@@ -1446,7 +1448,7 @@ export class InferType {
         if (eventDefs.length > 0) {
             assert(
                 eventDefs.length === defs.length,
-                `Unexpected both events and others matching {0} in {1}`,
+                "Unexpected both events and others matching {0} in {1}",
                 name,
                 ctx
             );
@@ -1458,7 +1460,7 @@ export class InferType {
             return new FunctionLikeSetType(eventDefs);
         }
 
-        assert(typeDefs.length == 1, `Unexpected number of type defs {0}`, name);
+        assert(typeDefs.length == 1, "Unexpected number of type defs {0}", name);
 
         const def = typeDefs[0];
         const fqName = getFQDefName(def);

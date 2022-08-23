@@ -170,6 +170,7 @@ function compareTypeNodes(inferredT: TypeNode, parsedT: TypeNode, expr: Expressi
                     inferredT.name === "call" ||
                     inferredT.name === "callcode" ||
                     inferredT.name === "delegatecall" ||
+                    inferredT.name === "staticcall" ||
                     inferredT.name === "keccak256" ||
                     inferredT.name === "sha3" ||
                     inferredT.name === "sha256" ||
