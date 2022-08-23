@@ -892,8 +892,12 @@ export class InferType {
 
     typeOfLiteral(node: Literal): TypeNode {
         if (node.kind === "number") {
-            if (node.typeString.startsWith("address")) {
-                return new AddressType(node.typeString.endsWith("payable"));
+            if (node.typeString === "address") {
+                return new AddressType(false);
+            }
+
+            if (node.typeString === "address payable") {
+                return new AddressType(true);
             }
 
             let val = new Decimal(node.value);
@@ -945,10 +949,6 @@ export class InferType {
                     return builtin;
                 }
             }
-
-            throw new SolTypeError(
-                `No field ${node.memberName} found on contract ${contract.name} in ${pp(node)}`
-            );
         }
 
         if (baseT instanceof PointerType) {

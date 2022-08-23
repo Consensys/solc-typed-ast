@@ -456,7 +456,8 @@ export function smallestFittingType(literal: Decimal | bigint): IntType | undefi
     /// TODO: Need a test for this logic that checks the boundary conditions
     /// when the literals include the MIN/MAX for both signed and unsigned types
     const signed = literal.lessThan(0);
-    let nBytes = literal.abs().logarithm(2).div(8).ceil().toNumber();
+
+    let nBytes = literal.eq(0) ? 8 : literal.abs().logarithm(2).div(8).ceil().toNumber();
 
     nBytes = nBytes === 0 ? 1 : nBytes; // Special case for when literal is 1
 
