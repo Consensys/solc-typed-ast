@@ -3,10 +3,21 @@ pragma solidity >=0.8.16;
 interface I {}
 contract C {}
 
+library L {
+    function plus(uint a, uint b) external pure returns (uint) {
+        return a + b;
+    }
+}
+
 /**
  * https://docs.soliditylang.org/en/v0.8.16/units-and-global-variables.html
  */
 contract Test {
+    using L for uint;
+
+    uint[] i;
+    bytes b;
+
     function testBuiltins() public payable {
         address payable addr = payable(0x0);
 
@@ -76,5 +87,19 @@ contract Test {
         type(uint8).max;
         type(uint256).min;
         type(uint256).max;
+
+        // i.push(1);
+        // i.push() = 2;
+        // i.pop();
+        i.length;
+
+        // b.push(bytes1(0x01));
+        // b.push() = 0x02;
+        // b.pop();
+        b.length;
+
+        bytes32(0x0).length;
+
+        uint256(1).plus;
     }
 }

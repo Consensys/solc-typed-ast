@@ -971,27 +971,24 @@ export class InferType {
                 }
             }
 
-            if (toT instanceof BytesType) {
-                if (node.memberName === "length") {
-                    return types.uint256;
-                }
-            }
-
-            if (toT instanceof ArrayType) {
+            if (toT instanceof ArrayType || toT instanceof BytesType) {
                 if (node.memberName === "length") {
                     return types.uint256;
                 }
 
+                /**
+                 * https://github.com/ethereum/solidity/releases/tag/v0.6.0
+                 */
                 if (node.memberName === "push") {
                     return new BuiltinFunctionType(
                         undefined,
-                        [toT.elementT],
+                        [toT instanceof BytesType ? types.byte : toT.elementT],
                         lt(this.version, "0.6.0") ? [types.uint256] : []
                     );
                 }
 
                 if (node.memberName === "pop") {
-                    return new BuiltinFunctionType(undefined, [], []);
+                    return new BuiltinFunctionType(undefined, [baseT], []);
                 }
             }
         }
