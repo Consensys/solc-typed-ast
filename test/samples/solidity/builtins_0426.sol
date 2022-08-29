@@ -75,6 +75,8 @@ contract Test {
         c.callcode();
         c.delegatecall();
 
+        c.call.gas(3000).value(1)();
+
         selfdestruct;
         suicide;
 
