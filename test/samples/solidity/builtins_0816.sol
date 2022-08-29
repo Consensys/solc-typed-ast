@@ -48,7 +48,6 @@ contract Test {
         abi.encodePacked;
         abi.encodeWithSelector;
         abi.encodeWithSignature;
-        abi.encodeWithSelector;
 
         assert;
 
@@ -73,7 +72,8 @@ contract Test {
         addr.code;
         addr.codehash;
 
-        block.chainid;
+        bytes.concat;
+        string.concat;
 
         type(C).name;
         type(C).creationCode;
@@ -90,14 +90,14 @@ contract Test {
         type(uint256).min;
         type(uint256).max;
 
-        // i.push(1);
-        // i.push() = 2;
-        // i.pop();
+        i.push(1);
+        i.push() = 2;
+        i.pop();
         i.length;
 
-        // b.push(bytes1(0x01));
-        // b.push() = 0x02;
-        // b.pop();
+        b.push(bytes1(0x01));
+        b.push() = 0x02;
+        b.pop();
         b.length;
 
         bytes32(0x0).length;

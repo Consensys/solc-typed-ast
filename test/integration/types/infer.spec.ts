@@ -125,6 +125,8 @@ const samples: Array<[string, ASTKind]> = [
     ["test/samples/solidity/constant_expressions.sol", ASTKind.Modern],
     ["test/samples/solidity/decoding_test.sol", ASTKind.Modern],
     ["test/samples/solidity/ops.sol", ASTKind.Modern],
+    ["test/samples/solidity/builtins_0426.sol", ASTKind.Legacy],
+    ["test/samples/solidity/builtins_0426.sol", ASTKind.Modern],
     ["test/samples/solidity/builtins_0816.sol", ASTKind.Modern]
 ];
 
