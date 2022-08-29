@@ -8,7 +8,11 @@ contract Misc {
         2 + (true ? 200 : 100) + 3;
         (1);
 
+        true ? 1 : 0;
+
         true && false;
+
+        [2, 2, 2];
     }
 }
 

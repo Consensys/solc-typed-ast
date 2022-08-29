@@ -29,4 +29,3 @@ export * from "./type";
 export * from "./typename_type";
 export * from "./type_var";
 export * from "./user_defined_type";
-export * from "./user_defined_value_type";

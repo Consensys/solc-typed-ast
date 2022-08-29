@@ -457,9 +457,8 @@ export function smallestFittingType(literal: Decimal | bigint): IntType | undefi
     /// when the literals include the MIN/MAX for both signed and unsigned types
     const signed = literal.lessThan(0);
 
-    let nBytes = literal.eq(0) ? 8 : literal.abs().logarithm(2).div(8).ceil().toNumber();
-
-    nBytes = nBytes === 0 ? 1 : nBytes; // Special case for when literal is 1
+    const nBytes =
+        literal.eq(0) || literal.eq(1) ? 1 : literal.abs().logarithm(2).div(8).ceil().toNumber();
 
     if (nBytes > 32) {
         return undefined;

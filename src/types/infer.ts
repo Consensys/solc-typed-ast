@@ -1221,7 +1221,19 @@ export class InferType {
         if (node.isInlineArray) {
             assert(node.vComponents.length > 0, "Can't have an array initialize");
 
-            const elT = componentTs.reduce((prev, cur) => this.inferCommonType(prev, cur));
+            let elT = componentTs.reduce((prev, cur) => this.inferCommonType(prev, cur));
+
+            if (elT instanceof IntLiteralType) {
+                const concreteT = elT.smallestFittingType();
+
+                assert(
+                    concreteT !== undefined,
+                    "Unable to figure out concrete type for array of literals {0}",
+                    node
+                );
+
+                elT = concreteT;
+            }
 
             return new PointerType(
                 new ArrayType(elT, BigInt(node.components.length)),
@@ -1229,7 +1241,7 @@ export class InferType {
             );
         }
 
-        return componentTs.length !== 1 ? new TupleType(componentTs) : componentTs[0];
+        return componentTs.length === 1 ? componentTs[0] : new TupleType(componentTs);
     }
 
     typeOfUnaryOperation(node: UnaryOperation): TypeNode {

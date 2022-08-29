@@ -9,6 +9,8 @@ library L {
     }
 }
 
+type ValueType is uint256;
+
 /**
  * https://docs.soliditylang.org/en/v0.8.16/units-and-global-variables.html
  */
@@ -101,5 +103,8 @@ contract Test {
         bytes32(0x0).length;
 
         uint256(1).plus;
+
+        ValueType.wrap;
+        ValueType.unwrap;
     }
 }
