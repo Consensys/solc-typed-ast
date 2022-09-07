@@ -2,10 +2,13 @@ import Decimal from "decimal.js";
 import { expect } from "expect";
 import {
     ASTNodeFactory,
+    DataLocation,
     evalConstantExpr,
     Expression,
     isConstant,
     LiteralKind,
+    Mutability,
+    StateVariableVisibility,
     Value
 } from "../../../src";
 
@@ -725,6 +728,63 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                 ),
             true,
             BigInt(1000)
+        ],
+        [
+            "Identifier & VariableDeclaration (A + 1, const A = 2)",
+            (factory: ASTNodeFactory) => {
+                const v = factory.makeVariableDeclaration(
+                    true,
+                    false,
+                    "A",
+                    0,
+                    true,
+                    DataLocation.Default,
+                    StateVariableVisibility.Public,
+                    Mutability.Constant,
+                    "uint8",
+                    undefined,
+                    factory.makeElementaryTypeName("uint8", "uint8"),
+                    undefined,
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "2")
+                );
+
+                return factory.makeBinaryOperation(
+                    "uint8",
+                    "+",
+                    factory.makeIdentifierFor(v),
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "1")
+                );
+            },
+            true,
+            BigInt(3)
+        ],
+        [
+            "Identifier & VariableDeclaration (A + 1, mutable A)",
+            (factory: ASTNodeFactory) => {
+                const v = factory.makeVariableDeclaration(
+                    false,
+                    false,
+                    "A",
+                    0,
+                    true,
+                    DataLocation.Default,
+                    StateVariableVisibility.Public,
+                    Mutability.Mutable,
+                    "uint8",
+                    undefined,
+                    factory.makeElementaryTypeName("uint8", "uint8"),
+                    undefined
+                );
+
+                return factory.makeBinaryOperation(
+                    "uint8",
+                    "+",
+                    factory.makeIdentifierFor(v),
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "1")
+                );
+            },
+            false,
+            undefined
         ]
     ];
 
