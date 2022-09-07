@@ -18,7 +18,7 @@ import {
     TypeNode
 } from "./ast";
 import { types } from "./reserved";
-import { SolTypeError } from "./utils";
+import { SolTypeError } from "./misc";
 
 export class SolTypePatternMismatchError extends SolTypeError {
     constructor(

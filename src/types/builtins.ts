@@ -9,7 +9,8 @@ import {
     TypeNode
 } from "./ast";
 import { types } from "./reserved";
-import { VersionDependentType } from "./utils";
+
+export type VersionDependentType = [TypeNode, string];
 
 /**
  * Type of the type(T) function when T is an int type

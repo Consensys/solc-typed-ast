@@ -1,5 +1,6 @@
 import { Decimal } from "decimal.js";
 import { gte, lt } from "semver";
+import { SolTypeError } from "./misc";
 import {
     AnyResolvable,
     Assignment,
@@ -8,7 +9,6 @@ import {
     Conditional,
     ContractDefinition,
     ContractKind,
-    DataLocation,
     ElementaryTypeNameExpression,
     EnumDefinition,
     ErrorDefinition,
@@ -43,6 +43,7 @@ import {
     VariableDeclaration,
     VariableDeclarationStatement
 } from "../ast";
+import { DataLocation } from "../ast/constants";
 import { assert, eq, pp } from "../misc";
 import {
     AddressType,
@@ -92,17 +93,23 @@ import {
 import { types } from "./reserved";
 import { parse } from "./typeStrings";
 import {
-    binaryOperatorGroups,
     castable,
     decimalToRational,
     getFQDefName,
-    SolTypeError,
     specializeType,
     typeNameToTypeNode,
     variableDeclarationToTypeNode
 } from "./utils";
 
 export const unaryImpureOperators = ["++", "--"];
+
+export const binaryOperatorGroups = {
+    Arithmetic: ["+", "-", "*", "/", "%", "**"],
+    Bitwise: ["<<", ">>", "&", "|", "^"],
+    Comparison: ["<", ">", "<=", ">="],
+    Equality: ["==", "!="],
+    Logical: ["&&", "||"]
+};
 
 export const subdenominationMultipliers: { [key: string]: Decimal } = {
     seconds: new Decimal(1),

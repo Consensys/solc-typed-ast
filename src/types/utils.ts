@@ -10,8 +10,6 @@ import {
     EventDefinition,
     FunctionDefinition,
     FunctionTypeName,
-    Literal,
-    LiteralKind,
     Mapping,
     ModifierDefinition,
     ParameterList,
@@ -46,18 +44,8 @@ import {
     UserDefinedType,
     UserDefinition
 } from "./ast";
-
-export const binaryOperatorGroups = {
-    Arithmetic: ["+", "-", "*", "/", "%", "**"],
-    Bitwise: ["<<", ">>", "&", "|", "^"],
-    Comparison: ["<", ">", "<=", ">="],
-    Equality: ["==", "!="],
-    Logical: ["&&", "||"]
-};
-
-export class SolTypeError extends Error {}
-
-export type VersionDependentType = [TypeNode, string];
+import { VersionDependentType } from "./builtins";
+import { evalConstantExpr } from "./eval_const";
 
 export function getTypeForCompilerVersion(
     typing: VersionDependentType,
@@ -238,14 +226,12 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
 
         let size: bigint | undefined;
 
-        if (astT.vLength !== undefined) {
-            assert(
-                astT.vLength instanceof Literal && astT.vLength.kind == LiteralKind.Number,
-                "NYI non-literal array type sizes",
-                astT
-            );
+        if (astT.vLength) {
+            const result = evalConstantExpr(astT.vLength);
 
-            size = BigInt(astT.vLength.value);
+            assert(typeof result === "bigint", "Expected bigint for size of an array type", astT);
+
+            size = result;
         }
 
         return new ArrayType(elT, size);

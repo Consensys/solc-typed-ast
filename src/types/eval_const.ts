@@ -3,15 +3,15 @@ import {
     BinaryOperation,
     Conditional,
     Expression,
+    Identifier,
     Literal,
     LiteralKind,
     TupleExpression,
-    UnaryOperation
+    UnaryOperation,
+    VariableDeclaration
 } from "../ast";
 import { pp } from "../misc";
-import { subdenominationMultipliers } from "./infer";
-import { binaryOperatorGroups } from "./utils";
-
+import { binaryOperatorGroups, subdenominationMultipliers } from "./infer";
 /**
  * Tune up precision of decimal values to follow Solidity behavior.
  * Be careful with precision - setting it to large values causes NodeJS to crash.
@@ -75,6 +75,19 @@ export function isConstant(expr: Expression): boolean {
         isConstant(expr.vFalseExpression)
     ) {
         return true;
+    }
+
+    if (expr instanceof Identifier) {
+        const decl = expr.vReferencedDeclaration;
+
+        if (
+            decl instanceof VariableDeclaration &&
+            decl.constant &&
+            decl.vValue &&
+            isConstant(decl.vValue)
+        ) {
+            return true;
+        }
     }
 
     /// TODO: After eval add case for constant indexing
@@ -322,22 +335,6 @@ function evalBinary(expr: BinaryOperation): Value {
     throw new EvalError(expr, `Unknown binary op ${expr.operator}`);
 }
 
-function evalTuple(expr: TupleExpression): Value {
-    /**
-     * Note that non-single tuples are restricted by the isConstant() check.
-     * So we can rely that only valid tuple expressions will reach this point.
-     */
-    const component = expr.vOriginalComponents[0] as Expression;
-
-    return evalConstantExpr(component);
-}
-
-function evalConditional(expr: Conditional): Value {
-    return evalConstantExpr(expr.vCondition)
-        ? evalConstantExpr(expr.vTrueExpression)
-        : evalConstantExpr(expr.vFalseExpression);
-}
-
 /**
  * Given a constant expression `expr` evaluate it to a concrete `Value`.
  * If `expr` is not constant throw `NonConstantExpressionError`.
@@ -363,11 +360,21 @@ export function evalConstantExpr(expr: Expression): Value {
     }
 
     if (expr instanceof TupleExpression) {
-        return evalTuple(expr);
+        return evalConstantExpr(expr.vOriginalComponents[0] as Expression);
     }
 
     if (expr instanceof Conditional) {
-        return evalConditional(expr);
+        return evalConstantExpr(expr.vCondition)
+            ? evalConstantExpr(expr.vTrueExpression)
+            : evalConstantExpr(expr.vFalseExpression);
+    }
+
+    if (expr instanceof Identifier) {
+        const decl = expr.vReferencedDeclaration;
+
+        if (decl instanceof VariableDeclaration) {
+            return evalConstantExpr(decl.vValue as Expression);
+        }
     }
 
     /// Note that from the point of view of the type system constant conditionals and

@@ -1,4 +1,5 @@
-import { getTypeForCompilerVersion, VersionDependentType } from "../utils";
+import { VersionDependentType } from "../builtins";
+import { getTypeForCompilerVersion } from "../utils";
 import { BuiltinType } from "./builtin_type";
 import { TypeNode } from "./type";
 

@@ -1,4 +1,4 @@
-import { DataLocation } from "../ast";
+import { DataLocation } from "../ast/constants";
 import {
     BoolType,
     FixedBytesType,
