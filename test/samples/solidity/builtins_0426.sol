@@ -46,10 +46,10 @@ contract Test {
         tx.gasprice;
         tx.origin;
 
-        abi.encode();
-        abi.encodePacked();
-        abi.encodeWithSelector(0x00000000);
-        abi.encodeWithSignature("main()");
+        // abi.encode();
+        // abi.encodePacked();
+        // abi.encodeWithSelector(0x00000000);
+        // abi.encodeWithSignature("main()");
 
         assert;
 
@@ -64,26 +64,26 @@ contract Test {
         addr.balance;
         addr.transfer(0);
         addr.send(0);
-        addr.call();
-        addr.callcode();
-        addr.delegatecall();
+        // addr.call();
+        // addr.callcode();
+        // addr.delegatecall();
 
         c.balance;
         c.transfer(0);
         c.send(0);
-        c.call();
-        c.callcode();
-        c.delegatecall();
+        // c.call();
+        // c.callcode();
+        // c.delegatecall();
 
-        c.call.gas(3000).value(1)();
+        // c.call.gas(3000).value(1)();
 
         selfdestruct;
         suicide;
 
-        i.push(1);
+        // i.push(1);
         i.length;
 
-        b.push(bytes1(0x01));
+        // b.push(bytes1(0x01));
         b.length;
 
         bytes32(0x0).length;
