@@ -11,7 +11,6 @@ import {
     EnumDefinition,
     Expression,
     FunctionDefinition,
-    isSane,
     ModifierDefinition,
     PossibleCompilerKinds,
     replaceNode,
@@ -123,8 +122,6 @@ describe(`replaceNode() validation`, () => {
                             expect(() => replaceNode(child, childCopy)).not.toThrow();
                             expect(childCopy.parent == parent);
                         }
-
-                        expect(isSane(unit, context)).toBeTruthy();
                     }
                 });
             });

@@ -1,6 +1,6 @@
 {
     "name": "solc-typed-ast",
-    "version": "10.1.5",
+    "version": "10.1.6",
     "description": "A TypeScript library providing a normalized typed Solidity AST along with the utilities necessary to generate the AST (from Solc) and traverse/manipulate it.",
     "keywords": [],
     "files": [
@@ -34,29 +34,29 @@
         "fs-extra": "^10.1.0",
         "jsel": "^1.1.6",
         "semver": "^7.3.7",
-        "solc": "^0.8.15",
+        "solc": "^0.8.17",
         "src-location": "^1.1.0",
-        "web3-eth-abi": "^1.7.4"
+        "web3-eth-abi": "^1.7.5"
     },
     "devDependencies": {
         "@types/fs-extra": "^9.0.13",
         "@types/mocha": "^9.1.1",
-        "@types/node": "^16.11.46",
-        "@types/semver": "^7.3.10",
-        "@typescript-eslint/eslint-plugin": "^5.31.0",
-        "@typescript-eslint/parser": "^5.31.0",
-        "eslint": "^8.20.0",
+        "@types/node": "^16.11.58",
+        "@types/semver": "^7.3.12",
+        "@typescript-eslint/eslint-plugin": "^5.36.2",
+        "@typescript-eslint/parser": "^5.36.2",
+        "eslint": "^8.23.0",
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-prettier": "^4.2.1",
-        "expect": "^28.1.3",
+        "expect": "^29.0.2",
         "mocha": "^10.0.0",
         "nyc": "^15.1.0",
         "peggy": "^2.0.1",
         "prettier": "2.7.1",
         "ts-node": "^10.9.1",
         "ts-pegjs": "^2.1.0",
-        "typedoc": "^0.23.9",
-        "typescript": "^4.7.4"
+        "typedoc": "^0.23.14",
+        "typescript": "^4.8.3"
     },
     "homepage": "https://consensys.github.io/solc-typed-ast",
     "bugs": "https://github.com/ConsenSys/solc-typed-ast/issues",

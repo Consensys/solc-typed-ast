@@ -117,7 +117,7 @@ for (const compilerKind of PossibleCompilerKinds) {
             // console.log(sourceUnit.getChildren().length);
 
             expect(sourceUnit.id).toEqual(738);
-            expect(sourceUnit.src).toEqual("0:8593:0");
+            expect(sourceUnit.src).toEqual("0:8621:0");
             expect(sourceUnit.absolutePath).toEqual(mainSample);
             expect(sourceUnit.children.length).toEqual(30);
             expect(sourceUnit.getChildren().length).toEqual(731);
