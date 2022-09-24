@@ -33,7 +33,9 @@ import {
     MemberAccess,
     ModifierDefinition,
     NewExpression,
+    ParameterList,
     resolveAny,
+    SourceUnit,
     StateVariableVisibility,
     StructDefinition,
     TupleExpression,
@@ -84,7 +86,7 @@ import {
     typeInt,
     typeInterface
 } from "./builtins";
-import { evalConstantExpr, isConstant } from "./eval_const";
+import { evalConstantExpr } from "./eval_const";
 import {
     applySubstitution,
     applySubstitutions,
@@ -98,8 +100,8 @@ import {
     decimalToRational,
     getFQDefName,
     specializeType,
-    typeNameToTypeNode,
-    variableDeclarationToTypeNode
+    typeNameToSpecializedTypeNode,
+    typeNameToTypeNode
 } from "./utils";
 
 export const unaryImpureOperators = ["++", "--"];
@@ -168,33 +170,16 @@ function typesAreUnordered<T1 extends TypeNode, T2 extends TypeNode>(
 
 const castableLocations: DataLocation[] = [DataLocation.Memory, DataLocation.Storage];
 
-function funDefToType(def: FunctionDefinition): FunctionType {
-    const argTs = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
-    const retTs = def.vReturnParameters.vParameters.map(variableDeclarationToTypeNode);
+function getFallbackFun(contract: ContractDefinition): FunctionDefinition | undefined {
+    for (const base of contract.vLinearizedBaseContracts) {
+        for (const fun of base.vFunctions) {
+            if (fun.kind === FunctionKind.Fallback || fun.kind === FunctionKind.Receive) {
+                return fun;
+            }
+        }
+    }
 
-    const isExternallyAccessible =
-        def.visibility === FunctionVisibility.External ||
-        def.visibility === FunctionVisibility.Public;
-
-    return new FunctionType(
-        isExternallyAccessible ? def.name : undefined,
-        argTs,
-        retTs,
-        def.visibility,
-        def.stateMutability
-    );
-}
-
-function eventDefToType(def: EventDefinition): EventType {
-    const argTs = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
-
-    return new EventType(def.name, argTs);
-}
-
-function errDefToType(def: ErrorDefinition): ErrorType {
-    const argTs = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
-
-    return new ErrorType(def.name, argTs);
+    return undefined;
 }
 
 export class InferType {
@@ -469,22 +454,24 @@ export class InferType {
         }
 
         if (node.vArguments.length === 1) {
-            if (isConstant(node.vArguments[0]) && lt(this.version, "0.8.0")) {
+            const argT = this.typeOf(node.vArguments[0]);
+
+            if (
+                (argT instanceof IntType || argT instanceof IntLiteralType) &&
+                lt(this.version, "0.8.0")
+            ) {
                 return types.addressPayable;
             }
 
-            const argT = this.typeOf(node.vArguments[0]);
+            if (argT instanceof AddressType) {
+                return argT;
+            }
 
             if (argT instanceof UserDefinedType && argT.definition instanceof ContractDefinition) {
                 const contract = argT.definition;
-                const fallbacks = contract.vFunctions.filter(
-                    (funDef) =>
-                        (funDef.kind === FunctionKind.Fallback ||
-                            funDef.kind === FunctionKind.Receive) &&
-                        funDef.stateMutability === FunctionStateMutability.Payable
-                );
+                const fallback = getFallbackFun(contract);
 
-                if (fallbacks.length > 0) {
+                if (fallback && fallback.stateMutability === FunctionStateMutability.Payable) {
                     return types.addressPayable;
                 }
             }
@@ -551,7 +538,7 @@ export class InferType {
         const argTs: TypeNode[] = args.map((arg) => this.typeOf(arg));
 
         for (const funDef of funs) {
-            const funT = funDefToType(funDef);
+            const funT = this.funDefToType(funDef);
 
             if (funT.parameters.length !== argTs.length) {
                 continue;
@@ -625,7 +612,7 @@ export class InferType {
                         );
                     }
 
-                    rets = funDefToType(def).returns;
+                    rets = this.funDefToType(def).returns;
                 }
             } else {
                 throw new SolTypeError(
@@ -679,9 +666,7 @@ export class InferType {
                     : undefined;
 
             /// TODO (dimo): Is there a case when we don't want to specialize the type? Or want to specialize to storage?
-            return new TypeNameType(
-                specializeType(new ArrayType(baseT.type, size), DataLocation.Memory)
-            );
+            return new TypeNameType(new ArrayType(baseT.type, size));
         }
 
         throw new SolTypeError(`Cannot index into type ${pp(baseT)} in ${pp(node)}`);
@@ -773,6 +758,29 @@ export class InferType {
         return builtinTypes[node.name](node);
     }
 
+    private getRHSTypeForDecl(
+        decl: VariableDeclaration,
+        stmt: VariableDeclarationStatement
+    ): TypeNode | undefined {
+        if (stmt.vInitialValue === undefined) {
+            return undefined;
+        }
+
+        const rhsT = this.typeOf(stmt.vInitialValue);
+
+        if (rhsT instanceof TupleType && stmt.assignments.length > 0) {
+            const tupleIdx = stmt.assignments.indexOf(decl.id);
+
+            assert(tupleIdx > -1, "Var decl {0} not found in assignments of {1}", decl, stmt);
+
+            assert(rhsT.elements.length > tupleIdx, "Rhs not a tuple of right size in {0}", stmt);
+
+            return rhsT.elements[tupleIdx];
+        } else {
+            return rhsT;
+        }
+    }
+
     /**
      * Infer the type of the identifier `node`.
      */
@@ -814,14 +822,14 @@ export class InferType {
                     }
 
                     if (originalSym instanceof ErrorDefinition) {
-                        return errDefToType(originalSym);
+                        return this.errDefToType(originalSym);
                     }
 
                     if (originalSym instanceof FunctionDefinition) {
-                        return funDefToType(originalSym);
+                        return this.funDefToType(originalSym);
                     }
 
-                    return variableDeclarationToTypeNode(originalSym);
+                    return this.variableDeclarationToTypeNode(originalSym);
                 }
             }
 
@@ -833,37 +841,13 @@ export class InferType {
             if (!def.vType && def.parent instanceof VariableDeclarationStatement) {
                 /// In 0.4.x the TypeName on variable declarations may be omitted. Attempt to infer it from the RHS (if any)
                 const varDeclStmt = def.parent;
+                let defInitT = this.getRHSTypeForDecl(def, varDeclStmt);
 
                 assert(
-                    varDeclStmt.vInitialValue !== undefined,
+                    defInitT !== undefined,
                     "Initializer required when no type specified in {0}",
                     varDeclStmt
                 );
-
-                const rhsT = this.typeOf(varDeclStmt.vInitialValue);
-
-                let defInitT: TypeNode;
-
-                if (rhsT instanceof TupleType && varDeclStmt.assignments.length > 0) {
-                    const tupleIdx = varDeclStmt.assignments.indexOf(def.id);
-
-                    assert(
-                        tupleIdx > -1,
-                        "Var decl {0} not found in assignments of {1}",
-                        def,
-                        varDeclStmt
-                    );
-
-                    assert(
-                        rhsT.elements.length > tupleIdx,
-                        "Rhs not a tuple of right size in {0}",
-                        varDeclStmt
-                    );
-
-                    defInitT = rhsT.elements[tupleIdx];
-                } else {
-                    defInitT = rhsT;
-                }
 
                 if (defInitT instanceof IntLiteralType) {
                     const concreteT = defInitT.smallestFittingType();
@@ -880,7 +864,7 @@ export class InferType {
                 return defInitT;
             }
 
-            return variableDeclarationToTypeNode(def);
+            return this.variableDeclarationToTypeNode(def);
         }
 
         if (
@@ -894,19 +878,23 @@ export class InferType {
         }
 
         if (def instanceof EventDefinition) {
-            const argTs = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
+            const argTs = def.vParameters.vParameters.map((param) =>
+                this.variableDeclarationToTypeNode(param)
+            );
 
             return new EventType(def.name, argTs);
         }
 
         if (def instanceof ModifierDefinition) {
-            const argTs = def.vParameters.vParameters.map(variableDeclarationToTypeNode);
+            const argTs = def.vParameters.vParameters.map((param) =>
+                this.variableDeclarationToTypeNode(param)
+            );
 
             return new ModifierType(def.name, argTs);
         }
 
         if (def instanceof FunctionDefinition) {
-            return funDefToType(def);
+            return this.funDefToType(def);
         }
 
         if (def instanceof ImportDirective) {
@@ -914,7 +902,7 @@ export class InferType {
         }
 
         if (def instanceof ErrorDefinition) {
-            return errDefToType(def);
+            return this.errDefToType(def);
         }
 
         if (def instanceof UserDefinedValueTypeDefinition) {
@@ -1024,7 +1012,7 @@ export class InferType {
                 }
 
                 if (node.memberName === "pop") {
-                    return new BuiltinFunctionType(undefined, [baseT], []);
+                    return new BuiltinFunctionType(undefined, [], []);
                 }
             }
         }
@@ -1105,13 +1093,11 @@ export class InferType {
                          * Promote address to address payable
                          */
                         retTs.push(new AddressType(true));
-                    } else if (componentT.type instanceof StringType) {
-                        /**
-                         * Promote string literals to string memory pointers
-                         */
-                        retTs.push(new PointerType(new StringType(), DataLocation.Memory));
                     } else {
-                        retTs.push(componentT.type);
+                        /**
+                         * Specialize types to memory
+                         */
+                        retTs.push(specializeType(componentT.type, DataLocation.Memory));
                     }
                 }
 
@@ -1211,7 +1197,7 @@ export class InferType {
         }
 
         if (node.vReferencedDeclaration instanceof FunctionDefinition) {
-            return funDefToType(node.vReferencedDeclaration);
+            return this.funDefToType(node.vReferencedDeclaration);
         }
 
         throw new SolTypeError(
@@ -1237,7 +1223,7 @@ export class InferType {
             typ.definition instanceof ContractDefinition &&
             typ.definition.vConstructor
         ) {
-            const constrType = funDefToType(typ.definition.vConstructor);
+            const constrType = this.funDefToType(typ.definition.vConstructor);
 
             constrType.returns.push(resT);
 
@@ -1446,7 +1432,7 @@ export class InferType {
             );
 
             if (funs.length === 1) {
-                const res = funDefToType(funs[0]);
+                const res = this.funDefToType(funs[0]);
 
                 /**
                  * @todo (Pavel) Consider checking if resolved function is externally accessible (external, public)
@@ -1470,7 +1456,7 @@ export class InferType {
 
             return externalOnly
                 ? getters[0].getterFunType()
-                : variableDeclarationToTypeNode(getters[0]);
+                : this.variableDeclarationToTypeNode(getters[0]);
         }
 
         if (errorDefs.length > 0) {
@@ -1487,7 +1473,7 @@ export class InferType {
                 name
             );
 
-            return errDefToType(errorDefs[0]);
+            return this.errDefToType(errorDefs[0]);
         }
 
         if (eventDefs.length > 0) {
@@ -1499,7 +1485,7 @@ export class InferType {
             );
 
             if (eventDefs.length === 1) {
-                return eventDefToType(eventDefs[0]);
+                return this.eventDefToType(eventDefs[0]);
             }
 
             return new FunctionLikeSetType(eventDefs);
@@ -1511,5 +1497,100 @@ export class InferType {
         const fqName = getFQDefName(def);
 
         return new TypeNameType(new UserDefinedType(fqName, def));
+    }
+
+    /**
+     * Infer the data location for the given `VariableDeclaration`. For local vars with
+     * solidity <=0.4.26 we infer the location from the RHS.
+     */
+    private inferVariableDeclLocation(decl: VariableDeclaration): DataLocation {
+        if (decl.stateVariable) {
+            return decl.constant ? DataLocation.Memory : DataLocation.Storage;
+        }
+
+        if (decl.storageLocation !== DataLocation.Default) {
+            return decl.storageLocation;
+        }
+
+        if (decl.parent instanceof ParameterList) {
+            // In 0.4.x param/return locations may be omitted. We assume calldata
+            // for external and memory for the rest
+            const fun = decl.parent.parent as FunctionDefinition;
+
+            return fun.visibility === FunctionVisibility.External
+                ? DataLocation.CallData
+                : DataLocation.Memory;
+        }
+
+        if (decl.parent instanceof VariableDeclarationStatement) {
+            // In 0.4.x local var locations may be omitted. We assume memory.
+            const rhsT = this.getRHSTypeForDecl(decl, decl.parent);
+
+            if (rhsT && rhsT instanceof PointerType) {
+                return rhsT.location;
+            }
+
+            return DataLocation.Memory;
+        }
+
+        if (decl.parent instanceof StructDefinition) {
+            return DataLocation.Default;
+        }
+
+        if (decl.parent instanceof SourceUnit) {
+            // Global vars don't have a location (no ref types yet)
+            return DataLocation.Default;
+        }
+
+        throw new Error(`NYI variable declaration ${pp(decl)}`);
+    }
+
+    /**
+     * Given a `VariableDeclaration` node `decl` compute the `TypeNode` that corresponds to the variable.
+     * This takes into account the storage location of the `decl`.
+     */
+    variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNode {
+        assert(decl.vType !== undefined, "Expected {0} to have type", decl);
+
+        const loc = this.inferVariableDeclLocation(decl);
+
+        return typeNameToSpecializedTypeNode(decl.vType, loc);
+    }
+
+    funDefToType(def: FunctionDefinition): FunctionType {
+        const argTs = def.vParameters.vParameters.map((param) =>
+            this.variableDeclarationToTypeNode(param)
+        );
+        const retTs = def.vReturnParameters.vParameters.map((param) =>
+            this.variableDeclarationToTypeNode(param)
+        );
+
+        const isExternallyAccessible =
+            def.visibility === FunctionVisibility.External ||
+            def.visibility === FunctionVisibility.Public;
+
+        return new FunctionType(
+            isExternallyAccessible ? def.name : undefined,
+            argTs,
+            retTs,
+            def.visibility,
+            def.stateMutability
+        );
+    }
+
+    eventDefToType(def: EventDefinition): EventType {
+        const argTs = def.vParameters.vParameters.map((param) =>
+            this.variableDeclarationToTypeNode(param)
+        );
+
+        return new EventType(def.name, argTs);
+    }
+
+    errDefToType(def: ErrorDefinition): ErrorType {
+        const argTs = def.vParameters.vParameters.map((param) =>
+            this.variableDeclarationToTypeNode(param)
+        );
+
+        return new ErrorType(def.name, argTs);
     }
 }

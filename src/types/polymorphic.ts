@@ -6,19 +6,16 @@ import {
     ErrorType,
     EventType,
     FunctionType,
-    IntLiteralType,
-    IntType,
     MappingType,
     PointerType,
-    StringLiteralType,
     TRest,
     TupleType,
     TVar,
     TypeNameType,
     TypeNode
 } from "./ast";
-import { types } from "./reserved";
 import { SolTypeError } from "./misc";
+import { castable } from "./utils";
 
 export class SolTypePatternMismatchError extends SolTypeError {
     constructor(
@@ -129,19 +126,15 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
         return;
     }
 
-    if (
-        (a instanceof IntLiteralType && b instanceof IntLiteralType) ||
-        (a instanceof IntType && b instanceof IntLiteralType) ||
-        (eq(a, types.stringMemory) && b instanceof StringLiteralType) ||
-        (eq(a, types.bytesMemory) && b instanceof StringLiteralType)
-    ) {
-        // Nothing to do
+    if (eq(a, b)) {
         return;
     }
 
-    if (!eq(a, b)) {
-        throw new SolTypePatternMismatchError(a, b);
+    if (castable(b, a)) {
+        return;
     }
+
+    throw new SolTypePatternMismatchError(a, b);
 }
 
 /**
@@ -151,7 +144,8 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
  */
 export function buildSubstitutions(as: TypeNode[], bs: TypeNode[], m: TypeSubstituion): void {
     for (let i = 0; i < as.length; i++) {
-        if (i >= bs.length) {
+        // Note below we allow the last TRest to match to an empty list of types.
+        if (i >= bs.length && !(i === as.length - 1 && i >= bs.length && as[i] instanceof TRest)) {
             throw new SolTypePatternMismatchError(as, bs);
         }
 

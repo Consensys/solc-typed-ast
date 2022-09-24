@@ -10,6 +10,7 @@ import {
     EventDefinition,
     FunctionDefinition,
     FunctionTypeName,
+    FunctionVisibility,
     Mapping,
     ModifierDefinition,
     ParameterList,
@@ -40,6 +41,7 @@ import {
     StringLiteralType,
     StringType,
     TupleType,
+    TypeNameType,
     TypeNode,
     UserDefinedType,
     UserDefinition
@@ -146,8 +148,26 @@ export function generalizeType(type: TypeNode): [TypeNode, DataLocation | undefi
         return [new MappingType(genearlKeyT, generalValueT), DataLocation.Storage];
     }
 
-    // The only other types that contains sub-types are the FunctionType and TypeNameType. However those don't
-    // get specialized/generalized w.r.t. storage locations.
+    if (type instanceof FunctionType) {
+        return [
+            new FunctionType(
+                type.name,
+                type.parameters.map((paramT) => generalizeType(paramT)[0]),
+                type.returns.map((retT) => generalizeType(retT)[0]),
+                type.visibility,
+                type.mutability
+            ),
+            undefined
+        ];
+    }
+
+    if (type instanceof TypeNameType) {
+        return generalizeType(type.type);
+    }
+
+    if (type instanceof TupleType) {
+        return [new TupleType(type.elements.map((elT) => generalizeType(elT)[0])), undefined];
+    }
 
     return [type, undefined];
 }
@@ -290,11 +310,18 @@ export function inferVariableDeclLocation(decl: VariableDeclaration): DataLocati
         return decl.storageLocation;
     }
 
-    if (
-        decl.parent instanceof ParameterList ||
-        decl.parent instanceof VariableDeclarationStatement
-    ) {
-        // In 0.4.x param/return locations may be omitted. We assume memory by default.
+    if (decl.parent instanceof ParameterList) {
+        // In 0.4.x param/return locations may be omitted. We assume calldata
+        // for external and memory for the rest
+        const fun = decl.parent.parent as FunctionDefinition;
+
+        return fun.visibility === FunctionVisibility.External
+            ? DataLocation.CallData
+            : DataLocation.Memory;
+    }
+
+    if (decl.parent instanceof VariableDeclarationStatement) {
+        // In 0.4.x local var locations may be omitted. We assume memory.
         return DataLocation.Memory;
     }
 
@@ -412,9 +439,17 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
     }
 
     if (
-        fromT instanceof PointerType &&
-        fromT.to instanceof StringType &&
-        toT instanceof StringLiteralType
+        fromT instanceof StringLiteralType &&
+        toT instanceof PointerType &&
+        toT.to instanceof StringType
+    ) {
+        return true;
+    }
+
+    if (
+        fromT instanceof StringLiteralType &&
+        toT instanceof PointerType &&
+        toT.to instanceof BytesType
     ) {
         return true;
     }
@@ -425,6 +460,10 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
         fromT.literal !== undefined &&
         toT.fits(fromT.literal)
     ) {
+        return true;
+    }
+
+    if (fromT instanceof AddressType && toT instanceof AddressType && !toT.payable) {
         return true;
     }
 

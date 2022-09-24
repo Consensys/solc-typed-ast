@@ -1,4 +1,5 @@
 import expect from "expect";
+import { lt } from "semver";
 import {
     assert,
     Assignment,
@@ -6,6 +7,7 @@ import {
     ASTReader,
     ASTWriter,
     BinaryOperation,
+    CompileResult,
     CompilerKind,
     compileSol,
     ContractDefinition,
@@ -15,6 +17,7 @@ import {
     eq,
     EventDefinition,
     Expression,
+    ExternalReferenceType,
     FunctionCall,
     FunctionCallOptions,
     FunctionVisibility,
@@ -23,7 +26,6 @@ import {
     MemberAccess,
     ModifierInvocation,
     NewExpression,
-    PossibleCompilerKinds,
     PrettyFormatter,
     StructDefinition,
     TupleExpression,
@@ -37,6 +39,7 @@ import {
     EventType,
     FunctionLikeSetType,
     FunctionType,
+    generalizeType,
     ImportRefType,
     InferType,
     IntLiteralType,
@@ -53,86 +56,85 @@ import {
     UserDefinedType
 } from "../../../src/types";
 import { SuperType } from "../../../src/types/ast/super";
+import fse from "fs-extra";
+import { join } from "path";
 
-const samples: Array<[string, ASTKind]> = [
-    ["./test/samples/solidity/compile_04.sol", ASTKind.Legacy],
-    ["./test/samples/solidity/compile_05.sol", ASTKind.Modern],
-    ["./test/samples/solidity/latest_06.sol", ASTKind.Modern],
-    ["./test/samples/solidity/latest_07.sol", ASTKind.Modern],
-    ["./test/samples/solidity/latest_08.sol", ASTKind.Modern],
-    ["./test/samples/solidity/resolving/resolving_08.sol", ASTKind.Modern],
-    ["./test/samples/solidity/resolving/block_04.sol", ASTKind.Legacy],
-    ["./test/samples/solidity/resolving/block_05.sol", ASTKind.Modern],
-    [
-        "./test/samples/solidity/resolving/imports_and_source_unit_function_overloading.sol",
-        ASTKind.Modern
-    ],
-    ["./test/samples/solidity/resolving/inheritance_and_shadowing.sol", ASTKind.Modern],
-    ["./test/samples/solidity/resolving/shadowing_overloading_and_overriding.sol", ASTKind.Modern],
-    ["./test/samples/solidity/resolving/simple_shadowing.sol", ASTKind.Modern],
-    ["./test/samples/solidity/types/types.sol", ASTKind.Modern],
+export const samples: string[] = [
+    "./test/samples/solidity/compile_04.sol",
+    "./test/samples/solidity/compile_05.sol",
+    "./test/samples/solidity/latest_06.sol",
+    "./test/samples/solidity/latest_07.sol",
+    "./test/samples/solidity/latest_08.sol",
+    "./test/samples/solidity/resolving/resolving_08.sol",
+    "./test/samples/solidity/resolving/block_04.sol",
+    "./test/samples/solidity/resolving/block_05.sol",
+    "./test/samples/solidity/resolving/imports_and_source_unit_function_overloading.sol",
+    "./test/samples/solidity/resolving/inheritance_and_shadowing.sol",
+    "./test/samples/solidity/resolving/shadowing_overloading_and_overriding.sol",
+    "./test/samples/solidity/resolving/simple_shadowing.sol",
+    "./test/samples/solidity/types/types.sol",
     /// Added with grep
-    ["test/samples/solidity/struct_docs_05.sol", ASTKind.Modern],
-    ["test/samples/solidity/node.sol", ASTKind.Modern],
-    ["test/samples/solidity/declarations/interface_060.sol", ASTKind.Modern],
-    ["test/samples/solidity/resolving/boo.sol", ASTKind.Modern],
-    ["test/samples/solidity/resolving/struct_assignments.sol", ASTKind.Modern],
-    ["test/samples/solidity/resolving/foo.sol", ASTKind.Modern],
-    ["test/samples/solidity/resolving/id_paths.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/do_while_0413.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/expression_050.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/while_0413.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/placeholder_0413.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/emit_0421.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/variable_declaration_0413.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/throw_0413.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/while_050.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/emit_050.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/inline_assembly_050.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/if_050.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/expression_0413.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/block_050.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/for_050.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/return_050.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/placeholder_050.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/inline_assembly_060.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/for_0413.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/inline_assembly_0413.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/return_0413.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/block_0413.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/do_while_050.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/variable_declaration_050.sol", ASTKind.Modern],
-    ["test/samples/solidity/statements/if_0413.sol", ASTKind.Modern],
-    ["test/samples/solidity/getters_08.sol", ASTKind.Modern],
-    ["test/samples/solidity/dispatch_05.sol", ASTKind.Modern],
-    ["test/samples/solidity/looks_same_075.sol", ASTKind.Modern],
-    ["test/samples/solidity/compile_06.sol", ASTKind.Modern],
-    ["test/samples/solidity/getters_07_abiv1.sol", ASTKind.Modern],
-    ["test/samples/solidity/struct_docs_04.sol", ASTKind.Modern],
-    ["test/samples/solidity/signatures.sol", ASTKind.Modern],
-    ["test/samples/solidity/getters_07.sol", ASTKind.Modern],
-    ["test/samples/solidity/source_map.sol", ASTKind.Modern],
-    ["test/samples/solidity/latest_imports_08.sol", ASTKind.Modern],
-    ["test/samples/solidity/issue_132_fun_kind.sol", ASTKind.Modern],
-    ["test/samples/solidity/selectors.sol", ASTKind.Modern],
-    ["test/samples/solidity/meta/complex_imports/c.sol", ASTKind.Modern],
-    ["test/samples/solidity/meta/pragma.sol", ASTKind.Modern],
-    ["test/samples/solidity/writer_edge_cases.sol", ASTKind.Modern],
-    ["test/samples/solidity/reports/B.sol", ASTKind.Modern],
-    ["test/samples/solidity/reports/A.sol", ASTKind.Modern],
-    ["test/samples/solidity/looks_same_075.sourced.sm.sol", ASTKind.Modern],
-    ["test/samples/solidity/expressions/conditional_050.sol", ASTKind.Modern],
-    ["test/samples/solidity/expressions/conditional_0413.sol", ASTKind.Modern],
-    ["test/samples/solidity/super.sol", ASTKind.Modern],
-    ["test/samples/solidity/constant_expressions.sol", ASTKind.Modern],
-    ["test/samples/solidity/decoding_test.sol", ASTKind.Modern],
-    ["test/samples/solidity/ops.sol", ASTKind.Modern],
-    ["test/samples/solidity/builtins_0426.sol", ASTKind.Legacy],
-    ["test/samples/solidity/builtins_0426.sol", ASTKind.Modern],
-    ["test/samples/solidity/builtins_0816.sol", ASTKind.Modern],
-    ["test/samples/solidity/type_inference/sample00.sol", ASTKind.Modern],
-    ["test/samples/solidity/type_inference/sample01.sol", ASTKind.Modern],
-    ["test/samples/solidity/type_inference/sample02.sol", ASTKind.Modern]
+    "test/samples/solidity/struct_docs_05.sol",
+    "test/samples/solidity/node.sol",
+    "test/samples/solidity/declarations/interface_060.sol",
+    "test/samples/solidity/resolving/boo.sol",
+    "test/samples/solidity/resolving/struct_assignments.sol",
+    "test/samples/solidity/resolving/foo.sol",
+    "test/samples/solidity/resolving/id_paths.sol",
+    "test/samples/solidity/statements/do_while_0413.sol",
+    "test/samples/solidity/statements/expression_050.sol",
+    "test/samples/solidity/statements/while_0413.sol",
+    "test/samples/solidity/statements/placeholder_0413.sol",
+    "test/samples/solidity/statements/emit_0421.sol",
+    "test/samples/solidity/statements/variable_declaration_0413.sol",
+    "test/samples/solidity/statements/throw_0413.sol",
+    "test/samples/solidity/statements/while_050.sol",
+    "test/samples/solidity/statements/emit_050.sol",
+    "test/samples/solidity/statements/inline_assembly_050.sol",
+    "test/samples/solidity/statements/if_050.sol",
+    "test/samples/solidity/statements/expression_0413.sol",
+    "test/samples/solidity/statements/block_050.sol",
+    "test/samples/solidity/statements/for_050.sol",
+    "test/samples/solidity/statements/return_050.sol",
+    "test/samples/solidity/statements/placeholder_050.sol",
+    "test/samples/solidity/statements/inline_assembly_060.sol",
+    "test/samples/solidity/statements/for_0413.sol",
+    "test/samples/solidity/statements/inline_assembly_0413.sol",
+    "test/samples/solidity/statements/return_0413.sol",
+    "test/samples/solidity/statements/block_0413.sol",
+    "test/samples/solidity/statements/do_while_050.sol",
+    "test/samples/solidity/statements/variable_declaration_050.sol",
+    "test/samples/solidity/statements/if_0413.sol",
+    "test/samples/solidity/getters_08.sol",
+    "test/samples/solidity/dispatch_05.sol",
+    "test/samples/solidity/looks_same_075.sol",
+    "test/samples/solidity/compile_06.sol",
+    "test/samples/solidity/getters_07_abiv1.sol",
+    "test/samples/solidity/struct_docs_04.sol",
+    "test/samples/solidity/signatures.sol",
+    "test/samples/solidity/getters_07.sol",
+    "test/samples/solidity/source_map.sol",
+    "test/samples/solidity/latest_imports_08.sol",
+    "test/samples/solidity/issue_132_fun_kind.sol",
+    "test/samples/solidity/selectors.sol",
+    "test/samples/solidity/meta/complex_imports/c.sol",
+    "test/samples/solidity/meta/pragma.sol",
+    "test/samples/solidity/writer_edge_cases.sol",
+    "test/samples/solidity/reports/B.sol",
+    "test/samples/solidity/reports/A.sol",
+    "test/samples/solidity/looks_same_075.sourced.sm.sol",
+    "test/samples/solidity/expressions/conditional_050.sol",
+    "test/samples/solidity/expressions/conditional_0413.sol",
+    "test/samples/solidity/super.sol",
+    "test/samples/solidity/constant_expressions.sol",
+    "test/samples/solidity/decoding_test.sol",
+    "test/samples/solidity/ops.sol",
+    "test/samples/solidity/builtins_0426.sol",
+    "test/samples/solidity/builtins_0426.sol",
+    "test/samples/solidity/builtins_0816.sol",
+    "test/samples/solidity/type_inference/sample00.sol",
+    "test/samples/solidity/type_inference/sample01.sol",
+    "test/samples/solidity/type_inference/sample02.sol"
 ];
 
 function toSoliditySource(expr: Expression, compilerVersion: string) {
@@ -166,6 +168,18 @@ function externalParamsEq(inferredParams: TypeNode[], parsedParams: TypeNode[]):
     return true;
 }
 
+function exprIsABIDecodeArg(expr: Expression): boolean {
+    const call = expr.getClosestParentByType(FunctionCall);
+
+    if (call === undefined) {
+        return false;
+    }
+
+    return (
+        call.vFunctionName === "decode" && call.vFunctionCallType === ExternalReferenceType.Builtin
+    );
+}
+
 /**
  * This function compares an inferred type (`inferredT`) to the type parsed from
  * a typeString (`parsedT`) for a given expression `expr`
@@ -173,7 +187,12 @@ function externalParamsEq(inferredParams: TypeNode[], parsedParams: TypeNode[]):
  * There are several known cases where we diverge from typeString, that are documented
  * in this function.
  */
-function compareTypeNodes(inferredT: TypeNode, parsedT: TypeNode, expr: Expression): boolean {
+function compareTypeNodes(
+    inferredT: TypeNode,
+    parsedT: TypeNode,
+    expr: Expression,
+    version: string
+): boolean {
     // For names of a struct S we will infer type(struct S) while the typestring will be type(struct S storage pointer)
     // Our approach seems fine for now, as the name of the struct itself is not really a pointer.
     if (
@@ -194,7 +213,9 @@ function compareTypeNodes(inferredT: TypeNode, parsedT: TypeNode, expr: Expressi
     if (
         inferredT instanceof BuiltinFunctionType &&
         parsedT instanceof FunctionType &&
-        (expr instanceof Identifier || expr instanceof MemberAccess) &&
+        (expr instanceof Identifier ||
+            expr instanceof MemberAccess ||
+            (expr instanceof FunctionCall && ["value", "gas"].includes(expr.vFunctionName))) &&
         !expr.vReferencedDeclaration &&
         (eq(inferredT.parameters, parsedT.parameters) ||
             (parsedT.parameters.length === 0 &&
@@ -435,26 +456,112 @@ function compareTypeNodes(inferredT: TypeNode, parsedT: TypeNode, expr: Expressi
         return true;
     }
 
+    // For type tuples and type names in abi.decode() args the compiler emits storage pointer
+    // types.  E.g. for (uint, string) the typeString would be
+    // `tuple(type(uint256),type(string storage pointer))` for some reason.  We
+    // just emit "tuple(type(uint256),type(string))"
+    if (
+        inferredT instanceof TupleType &&
+        parsedT instanceof TupleType &&
+        inferredT.elements.length === parsedT.elements.length &&
+        exprIsABIDecodeArg(expr)
+    ) {
+        for (let i = 0; i < parsedT.elements.length; i++) {
+            if (
+                !compareTypeNodes(
+                    generalizeType(inferredT.elements[i])[0],
+                    generalizeType(parsedT.elements[i])[0],
+                    expr,
+                    version
+                )
+            ) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    if (
+        inferredT instanceof TypeNameType &&
+        parsedT instanceof TypeNameType &&
+        exprIsABIDecodeArg(expr)
+    ) {
+        return compareTypeNodes(
+            generalizeType(inferredT)[0],
+            generalizeType(parsedT)[0],
+            expr,
+            version
+        );
+    }
+
+    // We sometimes disagree with the inferred location of params for external
+    // functions on versions <=0.4.26. We always assume calldata, the typeString
+    // sometimes picks memory...
+    if (
+        inferredT instanceof FunctionType &&
+        parsedT instanceof FunctionType &&
+        inferredT.visibility === FunctionVisibility.External &&
+        parsedT.visibility === FunctionVisibility.External &&
+        inferredT.parameters.length === parsedT.parameters.length &&
+        inferredT.parameters.length === parsedT.parameters.length &&
+        lt(version, "0.5.0")
+    ) {
+        return compareTypeNodes(
+            generalizeType(inferredT)[0],
+            generalizeType(parsedT)[0],
+            expr,
+            version
+        );
+    }
     /// Otherwise the types must match up exactly
     return eq(inferredT, parsedT);
 }
 
+export const SOLC_TEST_SAMPLES_PATH = "SOLC_TEST_SAMPLES_PATH";
+
 describe("Type inference for expressions", () => {
-    for (const [sample, astKind] of samples) {
-        for (const compilerKind of PossibleCompilerKinds) {
+    const path = process.env[SOLC_TEST_SAMPLES_PATH];
+    const sampleList =
+        path !== undefined
+            ? fse
+                  .readdirSync(path)
+                  .filter((name) => name.endsWith(".sol"))
+                  .map((name) => join(path, name))
+            : samples;
+    /*
+              [
+                "/home/dimo/work/consensys/cac/ton-of-contracts/00150-00200/0xd674132064e6dfe1d3ca7017b3f908bd92ec5064_v0.4.24+commit.e67f0147.sol",
+              ];
+    */
+
+    for (const sample of sampleList) {
+        for (const compilerKind of [CompilerKind.Native]) {
             it(`[${compilerKind}] ${sample}`, async () => {
-                const result = await compileSol(
-                    sample,
-                    "auto",
-                    undefined,
-                    undefined,
-                    undefined,
-                    compilerKind as CompilerKind
-                );
+                let result: CompileResult;
+
+                try {
+                    result = await compileSol(
+                        sample,
+                        "auto",
+                        undefined,
+                        undefined,
+                        undefined,
+                        compilerKind as CompilerKind
+                    );
+                } catch {
+                    console.error(`Failed compiling ${sample}`);
+                    return;
+                }
 
                 const errors = detectCompileErrors(result.data);
 
                 expect(errors).toHaveLength(0);
+                expect(result.compilerVersion).toBeDefined();
+
+                const astKind = lt(result.compilerVersion as string, "0.5.0")
+                    ? ASTKind.Legacy
+                    : ASTKind.Modern;
 
                 const { data, compilerVersion } = result;
 
@@ -511,7 +618,7 @@ describe("Type inference for expressions", () => {
                         }
 
                         assert(
-                            compareTypeNodes(inferredType, parsedType, expr),
+                            compareTypeNodes(inferredType, parsedType, expr, compilerVersion),
                             `Mismatch inferred type "{0}" and parsed type "{1}" (typeString "{2}") for expression {3} -> {4}`,
                             inferredType,
                             parsedType,
