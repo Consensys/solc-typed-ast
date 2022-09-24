@@ -1514,10 +1514,10 @@ export class InferType {
 
         if (decl.parent instanceof ParameterList) {
             // In 0.4.x param/return locations may be omitted. We assume calldata
-            // for external and memory for the rest
+            // for external function parameters and memory for all other cases
             const fun = decl.parent.parent as FunctionDefinition;
 
-            return fun.visibility === FunctionVisibility.External
+            return fun.visibility === FunctionVisibility.External && decl.parent === fun.vParameters
                 ? DataLocation.CallData
                 : DataLocation.Memory;
         }
