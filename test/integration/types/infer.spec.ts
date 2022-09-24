@@ -9,6 +9,7 @@ import {
     CompilerKind,
     compileSol,
     ContractDefinition,
+    DataLocation,
     DefaultASTWriterMapping,
     detectCompileErrors,
     eq,
@@ -16,6 +17,7 @@ import {
     Expression,
     FunctionCall,
     FunctionCallOptions,
+    FunctionVisibility,
     Identifier,
     Literal,
     MemberAccess,
@@ -127,13 +129,41 @@ const samples: Array<[string, ASTKind]> = [
     ["test/samples/solidity/ops.sol", ASTKind.Modern],
     ["test/samples/solidity/builtins_0426.sol", ASTKind.Legacy],
     ["test/samples/solidity/builtins_0426.sol", ASTKind.Modern],
-    ["test/samples/solidity/builtins_0816.sol", ASTKind.Modern]
+    ["test/samples/solidity/builtins_0816.sol", ASTKind.Modern],
+    ["test/samples/solidity/type_inference/sample00.sol", ASTKind.Modern],
+    ["test/samples/solidity/type_inference/sample01.sol", ASTKind.Modern],
+    ["test/samples/solidity/type_inference/sample02.sol", ASTKind.Modern]
 ];
 
 function toSoliditySource(expr: Expression, compilerVersion: string) {
     const writer = new ASTWriter(DefaultASTWriterMapping, new PrettyFormatter(4), compilerVersion);
 
     return writer.write(expr);
+}
+
+function externalParamsEq(inferredParams: TypeNode[], parsedParams: TypeNode[]): boolean {
+    for (let i = 0; i < inferredParams.length; i++) {
+        const inferred = inferredParams[i];
+        const parsed = parsedParams[i];
+
+        if (inferred instanceof PointerType && parsed instanceof PointerType) {
+            if (!eq(inferred.to, parsed.to)) {
+                return false;
+            }
+
+            return (
+                inferred.location === parsed.location ||
+                (inferred.location === DataLocation.CallData &&
+                    parsed.location === DataLocation.Memory)
+            );
+        }
+
+        if (!eq(inferred, parsed)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 /**
@@ -271,6 +301,20 @@ function compareTypeNodes(inferredT: TypeNode, parsedT: TypeNode, expr: Expressi
         inferredT instanceof FunctionType &&
         parsedT instanceof FunctionType &&
         eq(inferredT.parameters, parsedT.parameters) &&
+        eq(inferredT.returns, parsedT.returns)
+    ) {
+        return true;
+    }
+
+    /// The typstring parser something mistakenly infers `bytes memory` for external calls even though the signature
+    /// is `bytes calldata (see test/samples/solidity/type_inference/sample00.sol the type of c.foo in `c.foo(123, hex"c0ffee");`).
+    /// I believe the correct behavior is to infer the declared calldata location. So ignore this case.
+    if (
+        inferredT instanceof FunctionType &&
+        parsedT instanceof FunctionType &&
+        inferredT.visibility === FunctionVisibility.External &&
+        parsedT.visibility === FunctionVisibility.External &&
+        externalParamsEq(inferredT.parameters, parsedT.parameters) &&
         eq(inferredT.returns, parsedT.returns)
     ) {
         return true;

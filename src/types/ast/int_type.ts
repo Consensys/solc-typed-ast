@@ -17,11 +17,11 @@ export class IntType extends TypeNode {
     }
 
     max(): bigint {
-        return BigInt(2) ** BigInt(this.signed ? this.nBits : this.nBits - 1) - BigInt(1);
+        return BigInt(2) ** BigInt(this.signed ? this.nBits - 1 : this.nBits) - BigInt(1);
     }
 
     min(): bigint {
-        return this.signed ? BigInt(0) : -(BigInt(2) ** BigInt(this.nBits - 1));
+        return this.signed ? -(BigInt(2) ** BigInt(this.nBits - 1)) : BigInt(0);
     }
 
     fits(literal: bigint): boolean {

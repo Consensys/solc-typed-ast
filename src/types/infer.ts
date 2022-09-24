@@ -72,6 +72,7 @@ import {
     TupleType,
     TypeNameType,
     TypeNode,
+    TypeNodeConstructor,
     UserDefinedType
 } from "./ast";
 import {
@@ -83,7 +84,7 @@ import {
     typeInt,
     typeInterface
 } from "./builtins";
-import { evalConstantExpr } from "./eval_const";
+import { evalConstantExpr, isConstant } from "./eval_const";
 import {
     applySubstitution,
     applySubstitutions,
@@ -148,6 +149,22 @@ export const builtinTypes: { [key: string]: (arg: ASTNode) => TypeNode } = {
         return new UserDefinedType(contract.name, contract);
     }
 };
+
+function typesAreUnordered<T1 extends TypeNode, T2 extends TypeNode>(
+    a: TypeNode,
+    b: TypeNode,
+    T1Const: TypeNodeConstructor<T1>,
+    T2Const: TypeNodeConstructor<T2>
+): [T1, T2] | [undefined, undefined] {
+    if (a instanceof T1Const && b instanceof T2Const) {
+        return [a, b];
+    }
+
+    if (b instanceof T1Const && a instanceof T2Const) {
+        return [b, a];
+    }
+    return [undefined, undefined];
+}
 
 const castableLocations: DataLocation[] = [DataLocation.Memory, DataLocation.Storage];
 
@@ -324,6 +341,16 @@ export class InferType {
             return new PointerType(a.to, DataLocation.Memory);
         }
 
+        const [stringLitT, stringT] = typesAreUnordered(a, b, StringLiteralType, PointerType);
+
+        if (stringT !== undefined && stringLitT !== undefined && stringT.to instanceof StringType) {
+            return this.inferCommonType(stringT, types.stringMemory);
+        }
+
+        if (a instanceof StringLiteralType && b instanceof StringLiteralType) {
+            return types.stringMemory;
+        }
+
         throw new SolTypeError(`Cannot infer commmon type for ${pp(a)} and ${pp(b)}`);
     }
 
@@ -357,7 +384,7 @@ export class InferType {
 
         // After 0.6.0 the type of ** is just the type of the lhs
         if (node.operator === "**" && gte(this.version, "0.6.0")) {
-            return a;
+            return a instanceof IntLiteralType ? types.uint256 : a;
         }
 
         if (binaryOperatorGroups.Arithmetic.includes(node.operator)) {
@@ -442,7 +469,7 @@ export class InferType {
         }
 
         if (node.vArguments.length === 1) {
-            if (node.vArguments[0] instanceof Literal && lt(this.version, "0.8.0")) {
+            if (isConstant(node.vArguments[0]) && lt(this.version, "0.8.0")) {
                 return types.addressPayable;
             }
 
@@ -488,8 +515,10 @@ export class InferType {
             throw new SolTypeError(`Unexpected base type in type cast ${pp(calleeT)}`);
         }
 
-        /// TODO(dimo): Test this! Is is possible for calleeT to be already specialized to Storage? Can this break things?
-        const resT = specializeType(calleeT.type, DataLocation.Memory);
+        const innerT = this.typeOf(node.vArguments[0]);
+        const loc = innerT instanceof PointerType ? innerT.location : DataLocation.Memory;
+
+        const resT = specializeType(calleeT.type, loc);
 
         if (resT instanceof AddressType) {
             return this.typeOfAddressCast(node, resT);
