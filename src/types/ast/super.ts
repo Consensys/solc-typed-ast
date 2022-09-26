@@ -1,6 +1,6 @@
 import { ContractDefinition } from "../../ast";
+import { Range } from "../../misc";
 import { TypeNode } from "./type";
-import { pp, Range } from "../../misc";
 
 /// The type of the `super` keyword. We want a special type since
 /// due to multiple inheritance `super.funName` may resolve to different
@@ -15,7 +15,7 @@ export class SuperType extends TypeNode {
     }
 
     pp(): string {
-        return `super(${pp(this.contract)})`;
+        return `super(${this.contract.name}#${this.contract.id})`;
     }
 
     getFields(): any[] {

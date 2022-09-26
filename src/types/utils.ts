@@ -301,6 +301,9 @@ export function typeNameToSpecializedTypeNode(astT: TypeName, loc: DataLocation)
     return specializeType(typeNameToTypeNode(astT), loc);
 }
 
+/**
+ * @deprecated
+ */
 export function inferVariableDeclLocation(decl: VariableDeclaration): DataLocation {
     if (decl.stateVariable) {
         return decl.constant ? DataLocation.Memory : DataLocation.Storage;
@@ -340,6 +343,8 @@ export function inferVariableDeclLocation(decl: VariableDeclaration): DataLocati
 /**
  * Given a `VariableDeclaration` node `decl` compute the `TypeNode` that corresponds to the variable.
  * This takes into account the storage location of the `decl`.
+ *
+ * @deprecated Use `InferType.variableDeclarationToTypeNode()` instead.
  */
 export function variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNode {
     assert(decl.vType !== undefined, "Expected {0} to have type", decl);

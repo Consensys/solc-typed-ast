@@ -518,10 +518,10 @@ function compareTypeNodes(
     return eq(inferredT, parsedT);
 }
 
-export const SOLC_TEST_SAMPLES_PATH = "SOLC_TEST_SAMPLES_PATH";
+export const ENV_CUSTOM_PATH = "SOLC_TEST_SAMPLES_PATH";
 
 describe("Type inference for expressions", () => {
-    const path = process.env[SOLC_TEST_SAMPLES_PATH];
+    const path = process.env[ENV_CUSTOM_PATH];
     const sampleList =
         path !== undefined
             ? fse
@@ -529,11 +529,6 @@ describe("Type inference for expressions", () => {
                   .filter((name) => name.endsWith(".sol"))
                   .map((name) => join(path, name))
             : samples;
-    /*
-              [
-                "/home/dimo/work/consensys/cac/ton-of-contracts/00150-00200/0xd674132064e6dfe1d3ca7017b3f908bd92ec5064_v0.4.24+commit.e67f0147.sol",
-              ];
-    */
 
     for (const sample of sampleList) {
         for (const compilerKind of [CompilerKind.Native]) {

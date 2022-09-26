@@ -776,9 +776,9 @@ export class InferType {
             assert(rhsT.elements.length > tupleIdx, "Rhs not a tuple of right size in {0}", stmt);
 
             return rhsT.elements[tupleIdx];
-        } else {
-            return rhsT;
         }
+
+        return rhsT;
     }
 
     /**
