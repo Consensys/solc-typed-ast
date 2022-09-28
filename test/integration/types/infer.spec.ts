@@ -32,6 +32,7 @@ import {
     UnaryOperation
 } from "../../../src";
 import {
+    ArrayType,
     BuiltinFunctionType,
     BuiltinStructType,
     BuiltinType,
@@ -143,24 +144,51 @@ function toSoliditySource(expr: Expression, compilerVersion: string) {
     return writer.write(expr);
 }
 
+function externalParamEq(a: TypeNode, b: TypeNode): boolean {
+    if (a instanceof PointerType && b instanceof PointerType) {
+        if (
+            !(
+                a.location === b.location ||
+                (a.location === DataLocation.CallData && b.location === DataLocation.Memory)
+            )
+        ) {
+            return false;
+        }
+
+        return externalParamEq(a.to, b.to);
+    }
+
+    if (a instanceof ArrayType && b instanceof ArrayType) {
+        if (a.size !== b.size) {
+            return false;
+        }
+
+        return externalParamEq(a.elementT, b.elementT);
+    }
+
+    if (a instanceof TupleType && b instanceof TupleType) {
+        if (a.elements.length !== b.elements.length) {
+            return false;
+        }
+
+        for (let i = 0; i < a.elements.length; i++) {
+            if (!externalParamEq(a.elements[i], b.elements[i])) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return eq(a, b);
+}
+
 function externalParamsEq(inferredParams: TypeNode[], parsedParams: TypeNode[]): boolean {
     for (let i = 0; i < inferredParams.length; i++) {
         const inferred = inferredParams[i];
         const parsed = parsedParams[i];
 
-        if (inferred instanceof PointerType && parsed instanceof PointerType) {
-            if (!eq(inferred.to, parsed.to)) {
-                return false;
-            }
-
-            return (
-                inferred.location === parsed.location ||
-                (inferred.location === DataLocation.CallData &&
-                    parsed.location === DataLocation.Memory)
-            );
-        }
-
-        if (!eq(inferred, parsed)) {
+        if (!externalParamEq(inferred, parsed)) {
             return false;
         }
     }
@@ -291,7 +319,7 @@ function compareTypeNodes(
             expr instanceof BinaryOperation ||
             expr instanceof TupleExpression) &&
         expr.typeString.includes("digits omitted") &&
-        inferredT instanceof IntLiteralType
+        (inferredT instanceof IntLiteralType || inferredT instanceof TupleType)
     ) {
         return true;
     }

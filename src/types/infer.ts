@@ -20,7 +20,6 @@ import {
     FunctionCallKind,
     FunctionCallOptions,
     FunctionDefinition,
-    FunctionKind,
     FunctionStateMutability,
     FunctionVisibility,
     Identifier,
@@ -98,6 +97,7 @@ import { parse } from "./typeStrings";
 import {
     castable,
     decimalToRational,
+    getFallbackFun,
     getFQDefName,
     specializeType,
     typeNameToSpecializedTypeNode,
@@ -169,18 +169,6 @@ function typesAreUnordered<T1 extends TypeNode, T2 extends TypeNode>(
 }
 
 const castableLocations: DataLocation[] = [DataLocation.Memory, DataLocation.Storage];
-
-function getFallbackFun(contract: ContractDefinition): FunctionDefinition | undefined {
-    for (const base of contract.vLinearizedBaseContracts) {
-        for (const fun of base.vFunctions) {
-            if (fun.kind === FunctionKind.Fallback || fun.kind === FunctionKind.Receive) {
-                return fun;
-            }
-        }
-    }
-
-    return undefined;
-}
 
 export class InferType {
     constructor(public readonly version: string) {}
@@ -303,6 +291,14 @@ export class InferType {
      * Given two types `a` and `b` infer the common type that they are both
      * implicitly casted to, when appearing in a binary op/conditional.
      * Its currently usually `a` or `b`
+     *
+     * TODO: We should be able to simplify inferCommonType by moving a bunch of this logic to
+     * `castable(fromT, toT)` and then just doing something like:
+     *
+     * if (castable(a, b)) { return b; }
+     * if (castable(b, a)) { return a; }
+     *
+     * For a bunch of cases.
      */
     inferCommonType(a: TypeNode, b: TypeNode): TypeNode {
         if (eq(a, b)) {
@@ -332,8 +328,41 @@ export class InferType {
             return this.inferCommonType(stringT, types.stringMemory);
         }
 
+        // For now assume the common type between 2 string literal types is string memory
+        // TODO: This is kind of awkward. Consider replacing StringLiteralType with string memory.
         if (a instanceof StringLiteralType && b instanceof StringLiteralType) {
             return types.stringMemory;
+        }
+
+        // The common type between address and address payable is address
+        if (a instanceof AddressType && b instanceof AddressType && a.payable !== b.payable) {
+            return types.address;
+        }
+
+        if (
+            a instanceof TupleType &&
+            b instanceof TupleType &&
+            a.elements.length === b.elements.length
+        ) {
+            const commonElTs: TypeNode[] = [];
+
+            for (let i = 0; i < a.elements.length; i++) {
+                commonElTs.push(this.inferCommonType(a.elements[i], b.elements[i]));
+            }
+
+            return new TupleType(commonElTs);
+        }
+
+        const [bytesT, literalT] = typesAreUnordered(a, b, FixedBytesType, IntLiteralType);
+
+        if (
+            bytesT !== undefined &&
+            literalT !== undefined &&
+            literalT.literal !== undefined &&
+            literalT.literal >= BigInt(0) &&
+            literalT.literal < BigInt(1) << BigInt(bytesT.size * 8)
+        ) {
+            return bytesT;
         }
 
         throw new SolTypeError(`Cannot infer commmon type for ${pp(a)} and ${pp(b)}`);
@@ -388,10 +417,15 @@ export class InferType {
             return this.inferCommonIntType(a, b);
         }
 
-        // For bitshifts just take the type of the lhs
-        // For all other bitwise operators the lhs and rhs must be the same, so we can just take the LHS
         if (binaryOperatorGroups.Bitwise.includes(node.operator)) {
-            return a;
+            // For bitshifts just take the type of the lhs
+            if ([">>", "<<"].includes(node.operator)) {
+                return a;
+            }
+
+            // For all other bitwise operators infer a common type. In earlier versions it wa allowed
+            // to have bitwise ops between differing sizes
+            return this.inferCommonType(a, b);
         }
 
         throw new Error(`NYI Binary op ${node.operator}`);

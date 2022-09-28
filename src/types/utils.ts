@@ -9,6 +9,8 @@ import {
     ErrorDefinition,
     EventDefinition,
     FunctionDefinition,
+    FunctionKind,
+    FunctionStateMutability,
     FunctionTypeName,
     FunctionVisibility,
     Mapping,
@@ -426,6 +428,18 @@ export function getABIEncoderVersion(
     return lt(compilerVersion, "0.8.0") ? ABIEncoderVersion.V1 : ABIEncoderVersion.V2;
 }
 
+export function getFallbackFun(contract: ContractDefinition): FunctionDefinition | undefined {
+    for (const base of contract.vLinearizedBaseContracts) {
+        for (const fun of base.vFunctions) {
+            if (fun.kind === FunctionKind.Fallback || fun.kind === FunctionKind.Receive) {
+                return fun;
+            }
+        }
+    }
+
+    return undefined;
+}
+
 /**
  * Return true IFF `fromT` can be implicitly casted to `toT`
  */
@@ -470,6 +484,25 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
 
     if (fromT instanceof AddressType && toT instanceof AddressType && !toT.payable) {
         return true;
+    }
+
+    if (
+        fromT instanceof UserDefinedType &&
+        fromT.definition instanceof ContractDefinition &&
+        toT instanceof AddressType &&
+        !toT.payable
+    ) {
+        return true;
+    }
+
+    if (
+        fromT instanceof UserDefinedType &&
+        fromT.definition instanceof ContractDefinition &&
+        toT instanceof AddressType &&
+        toT.payable
+    ) {
+        const fbFun = getFallbackFun(fromT.definition);
+        return fbFun !== undefined && fbFun.stateMutability === FunctionStateMutability.Payable;
     }
 
     return false;
