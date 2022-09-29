@@ -48,8 +48,10 @@ CALLDATA = "calldata"
 MAPPING = "mapping"
 FUNCTION = "function"
 RETURNS = "returns"
+PUBLIC = "public"
 EXTERNAL = "external"
 INTERNAL = "internal"
+PRIVATE = "private"
 PURE = "pure"
 VIEW = "view"
 NONPAYABLE = "nonpayable"
@@ -356,8 +358,10 @@ TypeList =
     }
 
 FunctionVisibility =
-    EXTERNAL
+    PRIVATE
     / INTERNAL
+    / EXTERNAL
+    / PUBLIC
 
 FunctionMutability =
     PURE
