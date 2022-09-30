@@ -153,7 +153,3 @@ function makeUserDefinedType<T extends ASTNode>(
 
     return new UserDefinedType(name, def);
 }
-
-function wrapContract(typ: TypeNode | null): TypeNode | null {
-    return typ instanceof UserDefinedType && typ.definition instanceof ContractDefinition ? new PointerType(typ, DataLocation.Storage, "pointer") : typ;
-}

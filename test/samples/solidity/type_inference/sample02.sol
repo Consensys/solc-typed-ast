@@ -17,3 +17,10 @@ contract Test0816 {
         string memory d = 1 > 2 ? "X" : "Y";
     }
 }
+
+contract Foo {
+    constructor (uint x, string memory s) {}
+    function foo(bytes memory arg) public {
+        Foo[] memory arrs = new Foo[](5);
+    }
+}

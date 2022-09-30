@@ -1,4 +1,4 @@
-import { TypeNode } from "./type";
+import { TypeNode } from "../type";
 
 /**
  * Type Var class. A place-holder for a single type.

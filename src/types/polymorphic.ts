@@ -69,6 +69,16 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
     }
 
     if (a instanceof FunctionType && b instanceof FunctionType) {
+        if (a.visibility !== b.visibility || a.mutability !== b.mutability) {
+            throw new SolTypePatternMismatchError(a, b);
+        }
+
+        buildSubstitutions(a.parameters, b.parameters, m);
+        buildSubstitutions(a.returns, b.returns, m);
+        return;
+    }
+
+    if (a instanceof BuiltinFunctionType && b instanceof BuiltinFunctionType) {
         buildSubstitutions(a.parameters, b.parameters, m);
         buildSubstitutions(a.returns, b.returns, m);
         return;
@@ -145,7 +155,7 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
 export function buildSubstitutions(as: TypeNode[], bs: TypeNode[], m: TypeSubstituion): void {
     for (let i = 0; i < as.length; i++) {
         // Note below we allow the last TRest to match to an empty list of types.
-        if (i >= bs.length && !(i === as.length - 1 && i >= bs.length && as[i] instanceof TRest)) {
+        if (i >= bs.length && !(i === as.length - 1 && as[i] instanceof TRest)) {
             throw new SolTypePatternMismatchError(as, bs);
         }
 
@@ -268,16 +278,12 @@ export function applySubstitutions(as: TypeNode[], m: TypeSubstituion): TypeNode
 
             const mapped = m.get(elT.name);
 
-            if (mapped) {
-                assert(
-                    mapped instanceof Array,
-                    `TRest ${elT.name} not mapped to array. Instead mapped to ${pp(mapped)}`
-                );
+            assert(
+                mapped instanceof Array,
+                `TRest ${elT.name} not mapped to array. Instead mapped to ${pp(mapped)}`
+            );
 
-                resTs.push(...mapped);
-            } else {
-                resTs.push(elT);
-            }
+            resTs.push(...mapped);
         } else {
             resTs.push(applySubstitution(elT, m));
         }

@@ -99,6 +99,7 @@ import {
     decimalToRational,
     getFallbackFun,
     getFQDefName,
+    smallestFittingType,
     specializeType,
     typeNameToSpecializedTypeNode,
     typeNameToTypeNode
@@ -128,6 +129,10 @@ export const subdenominationMultipliers: { [key: string]: Decimal } = {
     ether: new Decimal(10).toPower(18)
 };
 
+/**
+ * Some builtins have types that are not easy to express with our current hacky polymorphic support.
+ * For those we have the custom type constructors before, that introspect the AST to determine the type.
+ */
 export const builtinTypes: { [key: string]: (arg: ASTNode) => TypeNode } = {
     revert: (arg: ASTNode) => {
         const hasMsg = arg.parent instanceof FunctionCall && arg.parent.vArguments.length === 1;
@@ -178,6 +183,9 @@ export class InferType {
      */
     typeOfAssignment(node: Assignment): TypeNode {
         if (node.vLeftHandSide instanceof TupleExpression) {
+            // For tuple assignments some part of the LHS may be omitted. We still need to compute a type for them those
+            // due to nested assignments. E.g. in `(a, b) = (c, ) = ("foo", true))` we still need to compute a type for the
+            // second field in the inner tuple assignment, even though there is LHS there.
             const rhsT = this.typeOf(node.vRightHandSide);
 
             assert(
@@ -222,27 +230,17 @@ export class InferType {
                 `Unexpected missing literals`
             );
 
-            const aSmallestType = a.smallestFittingType();
-            const bSmallestType = b.smallestFittingType();
+            const res = smallestFittingType(a.literal, b.literal);
 
-            assert(
-                aSmallestType !== undefined && bSmallestType !== undefined,
-                `Couldn't find concrete types for {0} and {1}`,
-                a,
-                b
-            );
-
-            const signed = aSmallestType?.signed || bSmallestType?.signed;
-            const nBits = Math.max(aSmallestType.nBits, bSmallestType.nBits);
-
-            return new IntType(nBits, signed);
+            assert(res !== undefined, `Couldn't find concrete types for {0} and {1}`, a, b);
+            return res;
         }
 
         // If one of them is an int literal, and the other is not, we have 2 cases
         // 1) The literal fits in the int type - take the int type
         // 2) The literal doesn't fit in the int type - widen the int type.
         if (a instanceof IntLiteralType || b instanceof IntLiteralType) {
-            const [literalT, concreteT] = (a instanceof IntLiteralType ? [a, b] : [b, a]) as [
+            const [literalT, concreteT] = typesAreUnordered(a, b, IntLiteralType, IntType) as [
                 IntLiteralType,
                 IntType
             ];
@@ -487,27 +485,26 @@ export class InferType {
             return calleeT;
         }
 
-        if (node.vArguments.length === 1) {
-            const argT = this.typeOf(node.vArguments[0]);
+        assert(node.vArguments.length === 1, `Unexpected number of args to type cast {0}`, node);
+        const argT = this.typeOf(node.vArguments[0]);
 
-            if (
-                (argT instanceof IntType || argT instanceof IntLiteralType) &&
-                lt(this.version, "0.8.0")
-            ) {
+        if (
+            (argT instanceof IntType || argT instanceof IntLiteralType) &&
+            lt(this.version, "0.8.0")
+        ) {
+            return types.addressPayable;
+        }
+
+        if (argT instanceof AddressType) {
+            return argT;
+        }
+
+        if (argT instanceof UserDefinedType && argT.definition instanceof ContractDefinition) {
+            const contract = argT.definition;
+            const fallback = getFallbackFun(contract);
+
+            if (fallback && fallback.stateMutability === FunctionStateMutability.Payable) {
                 return types.addressPayable;
-            }
-
-            if (argT instanceof AddressType) {
-                return argT;
-            }
-
-            if (argT instanceof UserDefinedType && argT.definition instanceof ContractDefinition) {
-                const contract = argT.definition;
-                const fallback = getFallbackFun(contract);
-
-                if (fallback && fallback.stateMutability === FunctionStateMutability.Payable) {
-                    return types.addressPayable;
-                }
             }
         }
 
@@ -536,16 +533,14 @@ export class InferType {
             throw new SolTypeError(`Unexpected base type in type cast ${pp(calleeT)}`);
         }
 
+        if (calleeT.type instanceof AddressType) {
+            return this.typeOfAddressCast(node, calleeT.type);
+        }
+
         const innerT = this.typeOf(node.vArguments[0]);
         const loc = innerT instanceof PointerType ? innerT.location : DataLocation.Memory;
 
-        const resT = specializeType(calleeT.type, loc);
-
-        if (resT instanceof AddressType) {
-            return this.typeOfAddressCast(node, resT);
-        }
-
-        return resT;
+        return specializeType(calleeT.type, loc);
     }
 
     /**
@@ -572,11 +567,11 @@ export class InferType {
         const argTs: TypeNode[] = args.map((arg) => this.typeOf(arg));
 
         for (const funDef of funs) {
-            const funT = this.funDefToType(funDef);
-
-            if (funT.parameters.length !== argTs.length) {
+            if (funDef.vParameters.vParameters.length !== argTs.length) {
                 continue;
             }
+
+            const funT = this.funDefToType(funDef);
 
             let argsMatch = true;
 
@@ -699,7 +694,6 @@ export class InferType {
                     ? BigInt(node.vIndexExpression.value)
                     : undefined;
 
-            /// TODO (dimo): Is there a case when we don't want to specialize the type? Or want to specialize to storage?
             return new TypeNameType(new ArrayType(baseT.type, size));
         }
 
@@ -822,14 +816,17 @@ export class InferType {
         const def = node.vReferencedDeclaration;
 
         if (def === undefined) {
-            // Imported symbols also have undefined vReferencedDeclaration and
-            // look like builtins. Disambiguate them here.
-            if (
-                node.parent instanceof ImportDirective &&
-                // Sanity check that vSymbolAliases were built correctly
-                node.parent.symbolAliases.length === node.parent.vSymbolAliases.length
-            ) {
+            // Identifiers in import definitions (e.g. the `a` in `import a from
+            // "foo.sol"` also have undefined vReferencedDeclaration and look
+            // like builtins. Disambiguate them here.
+            if (node.parent instanceof ImportDirective) {
                 const imp = node.parent;
+                // Sanity check that vSymbolAliases were built correctly
+                assert(
+                    node.parent.symbolAliases.length === node.parent.vSymbolAliases.length,
+                    `Unexpected import directive with missing symbolic aliases {0}`,
+                    node.parent
+                );
 
                 for (let i = 0; i < imp.symbolAliases.length; i++) {
                     const alias = imp.symbolAliases[i];
@@ -985,6 +982,7 @@ export class InferType {
             return new StringLiteralType(val, kind);
         }
 
+        assert(node.kind === LiteralKind.Bool, `Unexpected literal kind {0}`, node.kind);
         return types.bool;
     }
 
@@ -1275,7 +1273,7 @@ export class InferType {
         const componentTs = node.vComponents.map((cmp) => this.typeOf(cmp));
 
         if (node.isInlineArray) {
-            assert(node.vComponents.length > 0, "Can't have an array initialize");
+            assert(node.vComponents.length > 0, "Can't have an empty array initialize");
 
             let elT = componentTs.reduce((prev, cur) => this.inferCommonType(prev, cur));
 

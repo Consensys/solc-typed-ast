@@ -25,7 +25,7 @@ import {
     VariableDeclaration,
     VariableDeclarationStatement
 } from "../ast";
-import { assert, eq, pp } from "../misc";
+import { assert, eq, forAll, pp } from "../misc";
 import { ABIEncoderVersion, ABIEncoderVersions } from "./abi";
 import {
     AddressType,
@@ -508,26 +508,42 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
     return false;
 }
 
-/**
- * Find the smallest concrete int type that can hold `literal`.
- */
-export function smallestFittingType(literal: Decimal | bigint): IntType | undefined {
-    if (typeof literal === "bigint") {
-        literal = new Decimal(literal.toString());
-    }
+const signedLimits: Array<[bigint, bigint]> = [];
+const unsignedLimits: Array<[bigint, bigint]> = [];
 
+for (let i = 1; i <= 32; i++) {
+    unsignedLimits.push([BigInt(0), BigInt(2) ** BigInt(i * 8) - BigInt(1)]);
+    signedLimits.push([
+        BigInt(-2) ** BigInt(i * 8 - 1),
+        BigInt(2) ** BigInt(i * 8 - 1) - BigInt(1)
+    ]);
+}
+
+/**
+ * Find the smallest concrete int type that can hold the passed in `literals`.
+ */
+export function smallestFittingType(...literals: bigint[]): IntType | undefined {
     /// TODO: Need a test for this logic that checks the boundary conditions
     /// when the literals include the MIN/MAX for both signed and unsigned types
-    const signed = literal.lessThan(0);
+    const unsigned = forAll(literals, (literal) => literal >= BigInt(0));
 
-    const nBytes =
-        literal.eq(0) || literal.eq(1) ? 1 : literal.abs().logarithm(2).div(8).ceil().toNumber();
+    const limits: Array<[bigint, bigint]> = unsigned ? unsignedLimits : signedLimits;
 
-    if (nBytes > 32) {
-        return undefined;
+    for (let i = 0; i < limits.length; i++) {
+        let fitsAll = true;
+        for (const literal of literals) {
+            if (!(limits[i][0] <= literal && literal <= limits[i][1])) {
+                fitsAll = false;
+                break;
+            }
+        }
+
+        if (fitsAll) {
+            return new IntType(8 * (i + 1), !unsigned);
+        }
     }
 
-    return new IntType(nBytes * 8, signed);
+    return undefined;
 }
 
 export function decimalToRational(d: Decimal): Rational {

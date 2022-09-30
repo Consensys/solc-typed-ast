@@ -92,8 +92,6 @@ export function isConstant(expr: Expression): boolean {
         }
     }
 
-    /// TODO: After eval add case for constant indexing
-
     if (
         expr instanceof FunctionCall &&
         expr.kind === FunctionCallKind.TypeConversion &&

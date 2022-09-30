@@ -1,3 +1,4 @@
+import { Range } from "../../misc";
 import { VersionDependentType } from "../builtins";
 import { getTypeForCompilerVersion } from "../utils";
 import { BuiltinType } from "./builtin_type";
@@ -10,8 +11,8 @@ import { TypeNode } from "./type";
 export class BuiltinStructType extends BuiltinType {
     readonly members: Map<string, VersionDependentType[]>;
 
-    constructor(name: string, members: Map<string, VersionDependentType[]>) {
-        super(name);
+    constructor(name: string, members: Map<string, VersionDependentType[]>, src?: Range) {
+        super(name, src);
 
         this.members = members;
     }

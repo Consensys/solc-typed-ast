@@ -97,9 +97,7 @@ const samples: Array<[string, string, ASTKind]> = [
     ]
 ];
 
-// Note that we weaken the typestring comparison to:
-// 1. Ignore pointer types
-// 2. Ignore storage pointer locations as we wrap contract in pointers during parsing
+// Note that we weaken the typestring comparison to ignore pointer types
 function normalizeTypeString(typeStr: string): string {
     return typeStr
         .replace(/ ref/g, "")

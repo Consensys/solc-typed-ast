@@ -2,8 +2,8 @@ import { FunctionLikeType } from "./function_like_type";
 import { TypeNode } from "./type";
 
 /**
- * The type of an event (e.g. an identifier referring to an event) is a special
- * case of a pure function with no returns
+ * The type of an identifier referring to a modifier inside of a
+ * `ModifierInvocation` node.
  */
 export class ModifierType extends FunctionLikeType {
     constructor(name: string, parameters: TypeNode[]) {

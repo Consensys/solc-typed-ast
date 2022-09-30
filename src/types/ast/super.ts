@@ -3,9 +3,8 @@ import { Range } from "../../misc";
 import { TypeNode } from "./type";
 
 /// The type of the `super` keyword. We want a special type since
-/// due to multiple inheritance `super.funName` may resolve to different
-/// contracts depending on `funName`. So we can't just resolve `super` to
-/// the type name of a specific contract.
+/// `super.funName` may resolve to different contracts depending on `funName`.
+/// So we can't just resolve `super` to the type name of a specific contract.
 export class SuperType extends TypeNode {
     contract: ContractDefinition;
 
