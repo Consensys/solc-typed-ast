@@ -457,52 +457,48 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
         return true;
     }
 
-    if (
-        fromT instanceof StringLiteralType &&
-        toT instanceof PointerType &&
-        toT.to instanceof StringType
-    ) {
-        return true;
+    if (fromT instanceof StringLiteralType) {
+        /**
+         * @todo Should we make an explicit check that string literal fits to bytes size?
+         * Note that string length is not teh same as count ob bytes in string due to multibyte chars.
+         */
+        if (toT instanceof FixedBytesType) {
+            return true;
+        }
+
+        if (toT instanceof PointerType && toT.to instanceof StringType) {
+            return true;
+        }
+
+        if (toT instanceof PointerType && toT.to instanceof BytesType) {
+            return true;
+        }
     }
 
-    if (
-        fromT instanceof StringLiteralType &&
-        toT instanceof PointerType &&
-        toT.to instanceof BytesType
-    ) {
-        return true;
-    }
+    if (fromT instanceof IntLiteralType) {
+        if (toT instanceof FixedBytesType) {
+            return true;
+        }
 
-    if (
-        fromT instanceof IntLiteralType &&
-        toT instanceof IntType &&
-        fromT.literal !== undefined &&
-        toT.fits(fromT.literal)
-    ) {
-        return true;
+        if (toT instanceof IntType && fromT.literal !== undefined && toT.fits(fromT.literal)) {
+            return true;
+        }
     }
 
     if (fromT instanceof AddressType && toT instanceof AddressType && !toT.payable) {
         return true;
     }
 
-    if (
-        fromT instanceof UserDefinedType &&
-        fromT.definition instanceof ContractDefinition &&
-        toT instanceof AddressType &&
-        !toT.payable
-    ) {
-        return true;
-    }
+    if (fromT instanceof UserDefinedType && fromT.definition instanceof ContractDefinition) {
+        if (toT instanceof AddressType && !toT.payable) {
+            return true;
+        }
 
-    if (
-        fromT instanceof UserDefinedType &&
-        fromT.definition instanceof ContractDefinition &&
-        toT instanceof AddressType &&
-        toT.payable
-    ) {
-        const fbFun = getFallbackFun(fromT.definition);
-        return fbFun !== undefined && fbFun.stateMutability === FunctionStateMutability.Payable;
+        if (toT instanceof AddressType && toT.payable) {
+            const fbFun = getFallbackFun(fromT.definition);
+
+            return fbFun !== undefined && fbFun.stateMutability === FunctionStateMutability.Payable;
+        }
     }
 
     return false;

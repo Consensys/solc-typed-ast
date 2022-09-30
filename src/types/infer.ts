@@ -332,6 +332,13 @@ export class InferType {
             return types.stringMemory;
         }
 
+        // The common type between string literal and fixed bytes is fixed bytes (if it fits)
+        const [sT, fbT] = typesAreUnordered(a, b, StringLiteralType, FixedBytesType);
+
+        if (sT !== undefined && fbT !== undefined) {
+            return fbT;
+        }
+
         // The common type between address and address payable is address
         if (a instanceof AddressType && b instanceof AddressType && a.payable !== b.payable) {
             return types.address;
