@@ -1,4 +1,4 @@
-import { getUserDefinedTypeFQName } from "../../..";
+import { getFQDefName } from "../../..";
 import { ASTNode } from "../../ast_node";
 import { SourceUnit } from "../meta/source_unit";
 import { ElementaryTypeName } from "../type/elementary_type_name";
@@ -45,7 +45,7 @@ export class UserDefinedValueTypeDefinition extends ASTNode {
      * Canonical name (or qualified name), e.g. `DefiningContract.SomeType`
      */
     get canonicalName(): string {
-        return getUserDefinedTypeFQName(this);
+        return getFQDefName(this);
     }
 
     /**

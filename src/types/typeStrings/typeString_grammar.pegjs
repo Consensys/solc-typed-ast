@@ -120,18 +120,18 @@ Keyword =
 
 StringLiteral =
     "'" chars: SingleStringChar* "'" {
-        return [chars.join(""), false];
+        return [chars.join(""), "string"];
     }
     / '"' chars: DoubleStringChar* '"' {
-        return [chars.join(""), false];
+        return [chars.join(""), "string"];
     }
 
 HexLiteral =
     HEX '"' val: HexDigit* '"' {
-        return [val.join(""), true];
+        return [val.join(""), "hexString"];
     }
     / HEX "'" val: HexDigit* "'" {
-        return [val.join(""), true];
+        return [val.join(""), "hexString"];
     }
 
 AnyChar =
@@ -449,6 +449,8 @@ ArrayPtrType =
     )* {
     return tail.reduce(
             (acc, cur) => {
+                acc = acc;
+                
                 if (cur.length > 3) {
                     const size = cur[4];
 

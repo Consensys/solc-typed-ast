@@ -1,15 +1,23 @@
 import { Range } from "../../misc";
 import { TypeNode } from "./type";
 
-export class StringLiteralType extends TypeNode {
-    public readonly literal: string;
-    public readonly isHex: boolean;
+export type StringLiteralKind = "string" | "unicodeString" | "hexString";
 
-    constructor(literal: string, isHex: boolean, src?: Range) {
+export class StringLiteralType extends TypeNode {
+    // TODO: Its awkward to include the expression value in the type.
+    // Should remove below fields. First check if consumers use these
+    public readonly literal: string;
+    public readonly kind: StringLiteralKind;
+
+    constructor(literal: string, kind: StringLiteralKind, src?: Range) {
         super(src);
 
         this.literal = literal;
-        this.isHex = isHex;
+        this.kind = kind;
+    }
+
+    get isHex(): boolean {
+        return this.kind === "hexString";
     }
 
     pp(): string {
@@ -17,6 +25,6 @@ export class StringLiteralType extends TypeNode {
     }
 
     getFields(): any[] {
-        return [this.literal, this.isHex];
+        return [this.literal, this.kind];
     }
 }

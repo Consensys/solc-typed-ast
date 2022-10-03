@@ -18,8 +18,4 @@ export class TupleType extends TypeNode {
     pp(): string {
         return `tuple(${this.elements.map((element) => element.pp()).join(",")})`;
     }
-
-    getFields(): any[] {
-        return [this.elements];
-    }
 }

@@ -15,7 +15,7 @@ import {
     FunctionStateMutability,
     FunctionType,
     FunctionVisibility,
-    getUserDefinedTypeFQName,
+    getFQDefName,
     IntType,
     PointerType,
     PossibleCompilerKinds,
@@ -103,7 +103,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     const def = getDef(unit, "AccessorReturns.E", EnumDefinition);
 
                     return new FunctionType(
-                        "c",
+                        "d",
                         [],
                         [new UserDefinedType("AccessorReturns.E", def), new FixedBytesType(1)],
                         FunctionVisibility.External,
@@ -133,7 +133,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                             new IntType(8, true),
                             new PointerType(new StringType(), DataLocation.Memory),
                             new PointerType(
-                                new UserDefinedType(getUserDefinedTypeFQName(def), def),
+                                new UserDefinedType(getFQDefName(def), def),
                                 DataLocation.Memory
                             )
                         ],
@@ -164,7 +164,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     return new FunctionType(
                         "u",
                         [],
-                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        [new UserDefinedType(getFQDefName(def), def)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
                     );
@@ -178,7 +178,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     return new FunctionType(
                         "i",
                         [],
-                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        [new UserDefinedType(getFQDefName(def), def)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
                     );
@@ -192,7 +192,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     return new FunctionType(
                         "addr",
                         [],
-                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        [new UserDefinedType(getFQDefName(def), def)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
                     );
@@ -206,7 +206,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     return new FunctionType(
                         "ap",
                         [],
-                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        [new UserDefinedType(getFQDefName(def), def)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
                     );
@@ -220,7 +220,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     return new FunctionType(
                         "ap",
                         [],
-                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        [new UserDefinedType(getFQDefName(def), def)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
                     );
@@ -234,7 +234,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     return new FunctionType(
                         "b1",
                         [],
-                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        [new UserDefinedType(getFQDefName(def), def)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
                     );
@@ -248,7 +248,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     return new FunctionType(
                         "b32",
                         [],
-                        [new UserDefinedType(getUserDefinedTypeFQName(def), def)],
+                        [new UserDefinedType(getFQDefName(def), def)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
                     );
@@ -262,11 +262,8 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
 
                     return new FunctionType(
                         "udtvMapping",
-                        [
-                            new UserDefinedType(getUserDefinedTypeFQName(defA), defA),
-                            new IntType(256, false)
-                        ],
-                        [new UserDefinedType(getUserDefinedTypeFQName(defU), defU)],
+                        [new UserDefinedType(getFQDefName(defA), defA), new IntType(256, false)],
+                        [new UserDefinedType(getFQDefName(defU), defU)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
                     );
@@ -287,7 +284,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                         [],
                         [
                             new PointerType(
-                                new UserDefinedType(getUserDefinedTypeFQName(def), def),
+                                new UserDefinedType(getFQDefName(def), def),
                                 DataLocation.Memory
                             ),
                             new IntType(256, false)
@@ -342,7 +339,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                     const def = getDef(unit, "AccessorReturns.E", EnumDefinition);
 
                     return new FunctionType(
-                        "c",
+                        "d",
                         [],
                         [new UserDefinedType("AccessorReturns.E", def), new FixedBytesType(1)],
                         FunctionVisibility.External,

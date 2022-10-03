@@ -1,24 +1,78 @@
 import expect from "expect";
 import {
     ASTContext,
-    ElementaryTypeName,
+    ASTNode,
+    ASTNodeFactory,
+    ContractKind,
+    ErrorType,
+    EventType,
+    FunctionKind,
+    FunctionLikeSetType,
+    FunctionStateMutability,
+    FunctionVisibility,
+    IntType,
     isPPAble,
+    ModifierType,
     pp,
     ppArr,
     ppIter,
     ppMap,
-    ppSet
+    ppSet,
+    StringType,
+    SuperType,
+    TypeNode
 } from "../../../src";
 
 const ctx = new ASTContext();
-const astNode = new ElementaryTypeName(777, "0:0:0", "uint8", "uint8");
+
+ctx.id = 555;
+
+const factory = new ASTNodeFactory(ctx);
+
+const elementaryTypeName = factory.makeElementaryTypeName("uint8", "uint8");
+const contractDef = factory.makeContractDefinition(
+    "SomeContract",
+    0,
+    ContractKind.Contract,
+    false,
+    true,
+    [],
+    []
+);
+
+const funA = factory.makeFunctionDefinition(
+    0,
+    FunctionKind.Function,
+    "funA",
+    false,
+    FunctionVisibility.Default,
+    FunctionStateMutability.View,
+    false,
+    factory.makeParameterList([]),
+    factory.makeParameterList([]),
+    []
+);
+
+const funB = factory.makeFunctionDefinition(
+    0,
+    FunctionKind.Function,
+    "funB",
+    false,
+    FunctionVisibility.Default,
+    FunctionStateMutability.View,
+    false,
+    factory.makeParameterList([]),
+    factory.makeParameterList([]),
+    []
+);
+
+const evA = factory.makeEventDefinition(false, "evA", factory.makeParameterList([]));
+const evB = factory.makeEventDefinition(false, "evB", factory.makeParameterList([]));
+
 const customPPAble = {
     name: "test",
     pp: () => "PPAble object"
 };
-
-ctx.id = 555;
-ctx.register(astNode);
 
 describe("Utility formatting routines", () => {
     describe("isPPAble()", () => {
@@ -45,7 +99,8 @@ describe("Utility formatting routines", () => {
             [null, "null"],
             [undefined, "<undefined>"],
             [customPPAble, customPPAble.pp()],
-            [astNode, "ElementaryTypeName #777"],
+            [elementaryTypeName, "ElementaryTypeName #1"],
+            [contractDef, "ContractDefinition #2"],
             [ctx, "ASTContext #555"],
             [["x", 1, true, null], "[x,1,true,null]"],
             [new Set(["a", 2, false, null]), "{a,2,false,null}"],
@@ -64,11 +119,30 @@ describe("Utility formatting routines", () => {
                     yield 30;
                 })(),
                 "[10,20,30]"
-            ]
+            ],
+            [
+                new EventType("SomeEvent", [new IntType(256, true), new StringType()]),
+                "event SomeEvent(int256,string)"
+            ],
+            [
+                new ErrorType("SomeError", [new IntType(256, true), new StringType()]),
+                "error SomeError(int256,string)"
+            ],
+            [
+                new ModifierType("SomeModifier", [new IntType(256, true), new StringType()]),
+                "modifier SomeModifier(int256,string)"
+            ],
+            [new SuperType(contractDef), "super(SomeContract#2)"],
+            [new FunctionLikeSetType([funA, funB]), "function_set { funA#5, funB#8 }"],
+            [new FunctionLikeSetType([evA, evB]), "event_set { evA#10, evB#12 }"]
         ];
 
         for (const [value, result] of cases) {
-            it(`${value} results ${result}`, () => {
+            it(`${
+                value instanceof TypeNode || value instanceof ASTNode
+                    ? value.constructor.name
+                    : value
+            } results ${result}`, () => {
                 expect(pp(value)).toEqual(result);
             });
         }
