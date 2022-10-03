@@ -18,10 +18,6 @@ export class PointerType extends TypeNode {
     }
 
     pp(): string {
-        return `${this.to.pp()} ${this.location}${this.kind !== undefined ? " " + this.kind : ""}`;
-    }
-
-    getFields(): any[] {
-        return [this.to, this.location];
+        return `${this.to.pp()} ${this.location}`;
     }
 }

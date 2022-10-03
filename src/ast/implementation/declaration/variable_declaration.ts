@@ -1,15 +1,17 @@
 import { assert } from "../../../misc/utils";
 import {
     FunctionType,
-    generalizeType,
     IntType,
     PointerType,
     TupleType,
-    typeNameToSpecializedTypeNode,
     TypeNode,
-    UserDefinedType,
+    UserDefinedType
+} from "../../../types/ast";
+import {
+    generalizeType,
+    typeNameToSpecializedTypeNode,
     variableDeclarationToTypeNode
-} from "../../../types";
+} from "../../../types/utils";
 import { ABIEncoderVersion, abiTypeToCanonicalName, toABIEncodedType } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
 import {

@@ -1,6 +1,9 @@
 import { Range } from "../../misc";
 import { TypeNode } from "./type";
 
+// NOTE: This class is only used by the TypeString parser and should be
+// considered deprecated.
+// @deprecated
 export class ModuleType extends TypeNode {
     readonly path: string;
 
@@ -12,9 +15,5 @@ export class ModuleType extends TypeNode {
 
     pp(): string {
         return `module "${this.path}"`;
-    }
-
-    getFields(): any[] {
-        return [this.path];
     }
 }

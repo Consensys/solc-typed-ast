@@ -252,6 +252,8 @@ function* lookupInContractDefinition(
                     // Its a safe to assume V2 as its backward-compatible and
                     // we only use it internally here
                     sigHash = child.getterCanonicalSignatureHash(ABIEncoderVersion.V2);
+                } else if (child instanceof EventDefinition) {
+                    sigHash = child.canonicalSignatureHash(ABIEncoderVersion.V2);
                 }
 
                 if (sigHash !== undefined) {

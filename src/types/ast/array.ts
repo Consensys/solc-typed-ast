@@ -15,8 +15,4 @@ export class ArrayType extends TypeNode {
     pp(): string {
         return `${this.elementT.pp()}[${this.size !== undefined ? this.size : ""}]`;
     }
-
-    getFields(): any[] {
-        return [this.elementT, this.size];
-    }
 }
