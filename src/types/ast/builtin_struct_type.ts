@@ -18,7 +18,7 @@ export class BuiltinStructType extends BuiltinType {
     }
 
     pp(): string {
-        return `${this.name}`;
+        return this.name;
     }
 
     getFieldForVersion(fieldName: string, version: string): TypeNode | undefined {

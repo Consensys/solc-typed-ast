@@ -159,6 +159,17 @@ function evalUnary(expr: UnaryOperation): Value {
 
         throw new EvalError(
             expr.vSubExpression,
+            `Expected an integer number in ${pp(expr.vSubExpression)} not ${subVal}`
+        );
+    }
+
+    if (expr.operator === "+") {
+        if (subVal instanceof Decimal || typeof subVal === "bigint") {
+            return subVal;
+        }
+
+        throw new EvalError(
+            expr.vSubExpression,
             `Expected a number in ${pp(expr.vSubExpression)} not ${subVal}`
         );
     }

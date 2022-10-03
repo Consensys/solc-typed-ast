@@ -1,6 +1,5 @@
 import { Decimal } from "decimal.js";
 import { gte, lt } from "semver";
-import { SolTypeError } from "./misc";
 import {
     AnyResolvable,
     Assignment,
@@ -86,6 +85,7 @@ import {
     typeInterface
 } from "./builtins";
 import { evalConstantExpr } from "./eval_const";
+import { SolTypeError } from "./misc";
 import {
     applySubstitution,
     applySubstitutions,
@@ -170,6 +170,7 @@ function typesAreUnordered<T1 extends TypeNode, T2 extends TypeNode>(
     if (b instanceof T1Const && a instanceof T2Const) {
         return [b, a];
     }
+
     return [undefined, undefined];
 }
 
@@ -190,7 +191,7 @@ export class InferType {
 
             assert(
                 rhsT instanceof TupleType,
-                `Unexpected non-tuple in rhs of tuple assignment {0}`,
+                "Unexpected non-tuple in rhs of tuple assignment {0}",
                 node
             );
 
@@ -227,12 +228,13 @@ export class InferType {
         if (a instanceof IntLiteralType && b instanceof IntLiteralType) {
             assert(
                 a.literal !== undefined && b.literal !== undefined,
-                `Unexpected missing literals`
+                "Unexpected missing literals"
             );
 
             const res = smallestFittingType(a.literal, b.literal);
 
-            assert(res !== undefined, `Couldn't find concrete types for {0} and {1}`, a, b);
+            assert(res !== undefined, "Couldn't find concrete types for {0} and {1}", a, b);
+
             return res;
         }
 
@@ -456,7 +458,8 @@ export class InferType {
             callee instanceof Identifier ||
                 callee instanceof IdentifierPath ||
                 callee instanceof MemberAccess,
-            `Unexpected node in Struct construction call ${callee.constructor.name}`
+            `Unexpected node in Struct construction call ${callee.constructor.name}`,
+            callee
         );
 
         const calleeT = this.typeOf(callee);
@@ -828,6 +831,7 @@ export class InferType {
             // like builtins. Disambiguate them here.
             if (node.parent instanceof ImportDirective) {
                 const imp = node.parent;
+
                 // Sanity check that vSymbolAliases were built correctly
                 assert(
                     node.parent.symbolAliases.length === node.parent.vSymbolAliases.length,
@@ -916,16 +920,16 @@ export class InferType {
         }
 
         if (def instanceof EventDefinition) {
-            const argTs = def.vParameters.vParameters.map((param) =>
-                this.variableDeclarationToTypeNode(param)
+            const argTs = def.vParameters.vParameters.map((arg) =>
+                this.variableDeclarationToTypeNode(arg)
             );
 
             return new EventType(def.name, argTs);
         }
 
         if (def instanceof ModifierDefinition) {
-            const argTs = def.vParameters.vParameters.map((param) =>
-                this.variableDeclarationToTypeNode(param)
+            const argTs = def.vParameters.vParameters.map((arg) =>
+                this.variableDeclarationToTypeNode(arg)
             );
 
             return new ModifierType(def.name, argTs);
@@ -967,7 +971,8 @@ export class InferType {
             if (node.subdenomination !== undefined) {
                 assert(
                     node.subdenomination in subdenominationMultipliers,
-                    `Unknown subdenomination ${node.subdenomination}`
+                    "Unknown subdenomination {0}",
+                    node.subdenomination
                 );
 
                 val = val.times(subdenominationMultipliers[node.subdenomination]);
@@ -989,7 +994,8 @@ export class InferType {
             return new StringLiteralType(val, kind);
         }
 
-        assert(node.kind === LiteralKind.Bool, `Unexpected literal kind {0}`, node.kind);
+        assert(node.kind === LiteralKind.Bool, "Unexpected literal kind {0}", node.kind);
+
         return types.bool;
     }
 
@@ -1325,7 +1331,7 @@ export class InferType {
 
             assert(
                 res instanceof Decimal || typeof res === "bigint",
-                "Unexpected result of const binary op"
+                "Unexpected result of const unary op"
             );
 
             return typeof res === "bigint"
@@ -1333,7 +1339,7 @@ export class InferType {
                 : new RationalLiteralType(decimalToRational(res));
         }
 
-        if (node.operator === "-" || node.operator === "~") {
+        if (node.operator === "-" || node.operator === "+" || node.operator === "~") {
             return innerT;
         }
 
@@ -1597,11 +1603,11 @@ export class InferType {
     }
 
     funDefToType(def: FunctionDefinition): FunctionType {
-        const argTs = def.vParameters.vParameters.map((param) =>
-            this.variableDeclarationToTypeNode(param)
+        const argTs = def.vParameters.vParameters.map((arg) =>
+            this.variableDeclarationToTypeNode(arg)
         );
-        const retTs = def.vReturnParameters.vParameters.map((param) =>
-            this.variableDeclarationToTypeNode(param)
+        const retTs = def.vReturnParameters.vParameters.map((arg) =>
+            this.variableDeclarationToTypeNode(arg)
         );
 
         const isExternallyAccessible =
@@ -1618,16 +1624,16 @@ export class InferType {
     }
 
     eventDefToType(def: EventDefinition): EventType {
-        const argTs = def.vParameters.vParameters.map((param) =>
-            this.variableDeclarationToTypeNode(param)
+        const argTs = def.vParameters.vParameters.map((arg) =>
+            this.variableDeclarationToTypeNode(arg)
         );
 
         return new EventType(def.name, argTs);
     }
 
     errDefToType(def: ErrorDefinition): ErrorType {
-        const argTs = def.vParameters.vParameters.map((param) =>
-            this.variableDeclarationToTypeNode(param)
+        const argTs = def.vParameters.vParameters.map((arg) =>
+            this.variableDeclarationToTypeNode(arg)
         );
 
         return new ErrorType(def.name, argTs);

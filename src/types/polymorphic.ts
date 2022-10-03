@@ -194,7 +194,9 @@ export function applySubstitution(a: TypeNode, m: TypeSubstituion): TypeNode {
 
         assert(
             !(mapped instanceof Array),
-            `Unexpected mapping from tvar ${a.name} to list of types ${pp(mapped)}`
+            "Unexpected mapping from tvar {0} to list of types {1}",
+            a.name,
+            mapped
         );
 
         return mapped ? mapped : a;
@@ -274,13 +276,15 @@ export function applySubstitutions(as: TypeNode[], m: TypeSubstituion): TypeNode
         const elT = as[i];
 
         if (elT instanceof TRest) {
-            assert(i === as.length - 1, `Unexpected TRest not in the last place in a type list`);
+            assert(i === as.length - 1, "Unexpected TRest not in the last place in a type list`");
 
             const mapped = m.get(elT.name);
 
             assert(
                 mapped instanceof Array,
-                `TRest ${elT.name} not mapped to array. Instead mapped to ${pp(mapped)}`
+                "TRest {0} not mapped to array. Instead mapped to {1}",
+                elT.name,
+                mapped
             );
 
             resTs.push(...mapped);

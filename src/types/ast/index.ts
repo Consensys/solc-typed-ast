@@ -27,5 +27,4 @@ export * from "./super";
 export * from "./tuple_type";
 export * from "./type";
 export * from "./typename_type";
-export * from "./internal/type_var";
 export * from "./user_defined_type";

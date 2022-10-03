@@ -16,12 +16,12 @@ export class IntType extends TypeNode {
         return `${this.signed ? "" : "u"}int${this.nBits}`;
     }
 
-    /// Maximum value representable by this int type.
+    /// Maximum value (inclusive) representable by this int type.
     max(): bigint {
         return BigInt(2) ** BigInt(this.signed ? this.nBits - 1 : this.nBits) - BigInt(1);
     }
 
-    /// Minimum value representable by this int type.
+    /// Minimum value (inclusive) representable by this int type.
     min(): bigint {
         return this.signed ? -(BigInt(2) ** BigInt(this.nBits - 1)) : BigInt(0);
     }

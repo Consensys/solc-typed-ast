@@ -166,6 +166,42 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             undefined
         ],
         [
+            "UnaryOperation (+1)",
+            (factory: ASTNodeFactory) =>
+                factory.makeUnaryOperation(
+                    "<missing>",
+                    true,
+                    "+",
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "1")
+                ),
+            true,
+            BigInt(1)
+        ],
+        [
+            "UnaryOperation (+0.5)",
+            (factory: ASTNodeFactory) =>
+                factory.makeUnaryOperation(
+                    "<missing>",
+                    true,
+                    "+",
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "0.5")
+                ),
+            true,
+            new Decimal(0.5)
+        ],
+        [
+            "UnaryOperation (+true)",
+            (factory: ASTNodeFactory) =>
+                factory.makeUnaryOperation(
+                    "<missing>",
+                    true,
+                    "+",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true")
+                ),
+            true,
+            undefined
+        ],
+        [
             "UnaryOperation (???true)",
             (factory: ASTNodeFactory) =>
                 factory.makeUnaryOperation(
