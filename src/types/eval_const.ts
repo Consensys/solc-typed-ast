@@ -117,13 +117,13 @@ function evalLiteral(expr: Literal): Value {
     }
 
     if (expr.kind === LiteralKind.Number) {
-        const dec = new Decimal(expr.value);
+        const dec = new Decimal(expr.value.replace(/_/g, ""));
 
         let val = dec.isInteger() ? BigInt(dec.toFixed()) : dec;
 
         if (expr.subdenomination !== undefined) {
             if (subdenominationMultipliers[expr.subdenomination] === undefined) {
-                throw new EvalError(expr, `Unknown comparison op ${expr.subdenomination}`);
+                throw new EvalError(expr, `Unknown denomination ${expr.subdenomination}`);
             }
 
             val =

@@ -70,6 +70,13 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             BigInt(256)
         ],
         [
+            "Literal (uint16, underscore separator)",
+            (factory: ASTNodeFactory) =>
+                factory.makeLiteral("<missing>", LiteralKind.Number, "", "0xff_ff"),
+            true,
+            BigInt(65535)
+        ],
+        [
             "UnaryOperation (!true)",
             (factory: ASTNodeFactory) =>
                 factory.makeUnaryOperation(
