@@ -46,7 +46,9 @@ function getFunctionAttributes(
 
     const visiblities = new Set<string>([
         FunctionVisibility.Internal,
-        FunctionVisibility.External
+        FunctionVisibility.External,
+        FunctionVisibility.Public,
+        FunctionVisibility.Private
     ]);
 
     const mutabilities = new Set<string>([
