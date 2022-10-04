@@ -1,4 +1,4 @@
-import { enumToIntType, getUserDefinedTypeFQName } from "../../..";
+import { enumToIntType, getFQDefName } from "../../..";
 import { ASTNodeWithChildren } from "../../ast_node";
 import { SourceUnit } from "../meta/source_unit";
 import { ContractDefinition } from "./contract_definition";
@@ -38,7 +38,7 @@ export class EnumDefinition extends ASTNodeWithChildren<EnumValue> {
      * Canonical name (or qualified name), e.g. `DefiningContract.SomeEnum`
      */
     get canonicalName(): string {
-        return getUserDefinedTypeFQName(this);
+        return getFQDefName(this);
     }
 
     /**

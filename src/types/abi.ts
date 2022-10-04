@@ -1,4 +1,3 @@
-import { AddressType, enumToIntType, PointerType, TypeNode, UserDefinedType } from ".";
 import {
     ContractDefinition,
     DataLocation,
@@ -16,12 +15,17 @@ import {
     IntType,
     MappingType,
     StringType,
-    TupleType
+    TupleType,
+    PointerType,
+    TypeNode,
+    UserDefinedType,
+    AddressType
 } from "./ast";
 import {
-    getUserDefinedTypeFQName,
+    getFQDefName,
     typeNameToTypeNode,
-    variableDeclarationToTypeNode
+    variableDeclarationToTypeNode,
+    enumToIntType
 } from "./utils";
 
 export enum ABIEncoderVersion {
@@ -176,7 +180,7 @@ export function abiTypeToLibraryCanonicalName(t: TypeNode): string {
     }
 
     if (t instanceof UserDefinedType) {
-        return getUserDefinedTypeFQName(t.definition);
+        return getFQDefName(t.definition);
     }
 
     if (t instanceof MappingType) {

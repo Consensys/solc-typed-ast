@@ -13,8 +13,4 @@ export class FixedBytesType extends TypeNode {
     pp(): string {
         return `bytes${this.size}`;
     }
-
-    getFields(): any[] {
-        return [this.size];
-    }
 }

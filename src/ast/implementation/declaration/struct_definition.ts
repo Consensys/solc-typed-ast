@@ -1,4 +1,4 @@
-import { getUserDefinedTypeFQName } from "../../..";
+import { getFQDefName } from "../../..";
 import { ASTNodeWithChildren } from "../../ast_node";
 import { SourceUnit } from "../meta/source_unit";
 import { ContractDefinition } from "./contract_definition";
@@ -51,7 +51,7 @@ export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
      * Canonical name (or qualified name), e.g. `DefiningContract.SomeStruct`
      */
     get canonicalName(): string {
-        return getUserDefinedTypeFQName(this);
+        return getFQDefName(this);
     }
 
     /**

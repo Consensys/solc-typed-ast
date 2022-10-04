@@ -15,7 +15,6 @@ import { Assignment } from "./implementation/expression/assignment";
 import { BinaryOperation } from "./implementation/expression/binary_operation";
 import { Conditional } from "./implementation/expression/conditional";
 import { ElementaryTypeNameExpression } from "./implementation/expression/elementary_type_name_expression";
-import { Expression } from "./implementation/expression/expression";
 import { FunctionCall } from "./implementation/expression/function_call";
 import { FunctionCallOptions } from "./implementation/expression/function_call_options";
 import { Identifier } from "./implementation/expression/identifier";
@@ -49,7 +48,6 @@ import { InlineAssembly } from "./implementation/statement/inline_assembly";
 import { PlaceholderStatement } from "./implementation/statement/placeholder_statement";
 import { Return } from "./implementation/statement/return";
 import { RevertStatement } from "./implementation/statement/revert_statement";
-import { Statement } from "./implementation/statement/statement";
 import { Throw } from "./implementation/statement/throw";
 import { TryCatchClause } from "./implementation/statement/try_catch_clause";
 import { TryStatement } from "./implementation/statement/try_statement";
@@ -60,7 +58,6 @@ import { ArrayTypeName } from "./implementation/type/array_type_name";
 import { ElementaryTypeName } from "./implementation/type/elementary_type_name";
 import { FunctionTypeName } from "./implementation/type/function_type_name";
 import { Mapping } from "./implementation/type/mapping";
-import { TypeName } from "./implementation/type/type_name";
 import { UserDefinedTypeName } from "./implementation/type/user_defined_type_name";
 
 /**
@@ -254,13 +251,6 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         ): Specific<ConstructorParameters<typeof ElementaryTypeNameExpression>> => [
             node.typeString,
             node.typeName,
-            node.raw
-        ]
-    ],
-    [
-        Expression,
-        (node: Expression): Specific<ConstructorParameters<typeof Expression>> => [
-            node.typeString,
             node.raw
         ]
     ],
@@ -566,13 +556,6 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         ]
     ],
     [
-        Statement,
-        (node: Statement): Specific<ConstructorParameters<typeof Statement>> => [
-            node.documentation,
-            node.raw
-        ]
-    ],
-    [
         Throw,
         (node: Throw): Specific<ConstructorParameters<typeof Throw>> => [
             node.documentation,
@@ -654,13 +637,6 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.typeString,
             node.vKeyType,
             node.vValueType,
-            node.raw
-        ]
-    ],
-    [
-        TypeName,
-        (node: TypeName): Specific<ConstructorParameters<typeof TypeName>> => [
-            node.typeString,
             node.raw
         ]
     ],

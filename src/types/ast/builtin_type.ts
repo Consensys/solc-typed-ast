@@ -13,8 +13,4 @@ export class BuiltinType extends TypeNode {
     pp(): string {
         return this.name;
     }
-
-    getFields(): any[] {
-        return [this.name];
-    }
 }

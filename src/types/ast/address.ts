@@ -13,8 +13,4 @@ export class AddressType extends TypeNode {
     pp(): string {
         return `address${this.payable ? " payable" : ""}`;
     }
-
-    getFields(): any[] {
-        return [this.payable];
-    }
 }

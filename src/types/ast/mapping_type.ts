@@ -15,8 +15,4 @@ export class MappingType extends TypeNode {
     pp(): string {
         return `mapping(${this.keyType.pp()} => ${this.valueType.pp()})`;
     }
-
-    getFields(): any[] {
-        return [this.keyType, this.valueType];
-    }
 }

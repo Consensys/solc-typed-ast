@@ -48,8 +48,10 @@ CALLDATA = "calldata"
 MAPPING = "mapping"
 FUNCTION = "function"
 RETURNS = "returns"
+PUBLIC = "public"
 EXTERNAL = "external"
 INTERNAL = "internal"
+PRIVATE = "private"
 PURE = "pure"
 VIEW = "view"
 NONPAYABLE = "nonpayable"
@@ -118,18 +120,18 @@ Keyword =
 
 StringLiteral =
     "'" chars: SingleStringChar* "'" {
-        return [chars.join(""), false];
+        return [chars.join(""), "string"];
     }
     / '"' chars: DoubleStringChar* '"' {
-        return [chars.join(""), false];
+        return [chars.join(""), "string"];
     }
 
 HexLiteral =
     HEX '"' val: HexDigit* '"' {
-        return [val.join(""), true];
+        return [val.join(""), "hexString"];
     }
     / HEX "'" val: HexDigit* "'" {
-        return [val.join(""), true];
+        return [val.join(""), "hexString"];
     }
 
 AnyChar =
@@ -356,8 +358,10 @@ TypeList =
     }
 
 FunctionVisibility =
-    EXTERNAL
+    PRIVATE
     / INTERNAL
+    / EXTERNAL
+    / PUBLIC
 
 FunctionMutability =
     PURE
@@ -445,6 +449,8 @@ ArrayPtrType =
     )* {
     return tail.reduce(
             (acc, cur) => {
+                acc = acc;
+                
                 if (cur.length > 3) {
                     const size = cur[4];
 

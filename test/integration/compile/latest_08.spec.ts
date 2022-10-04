@@ -31,24 +31,24 @@ const encounters = new Map<string, number>([
     ["EnumDefinition", 2],
     ["EnumValue", 6],
     ["ContractDefinition", 17],
-    ["FunctionDefinition", 32],
-    ["ParameterList", 83],
-    ["VariableDeclaration", 69],
-    ["ElementaryTypeName", 55],
-    ["Block", 48],
+    ["FunctionDefinition", 33],
+    ["ParameterList", 85],
+    ["VariableDeclaration", 71],
+    ["ElementaryTypeName", 57],
+    ["Block", 49],
     ["VariableDeclarationStatement", 16],
-    ["Literal", 37],
+    ["Literal", 38],
     ["UncheckedBlock", 4],
-    ["ExpressionStatement", 20],
+    ["ExpressionStatement", 21],
     ["UnaryOperation", 5],
-    ["Identifier", 89],
+    ["Identifier", 90],
     ["Return", 14],
     ["InheritanceSpecifier", 1],
     ["IdentifierPath", 33],
     ["UsingForDirective", 3],
     ["UserDefinedTypeName", 24],
     ["ModifierInvocation", 2],
-    ["FunctionCall", 41],
+    ["FunctionCall", 42],
     ["MemberAccess", 38],
     ["OverrideSpecifier", 1],
     ["ElementaryTypeNameExpression", 4],
@@ -116,11 +116,11 @@ for (const compilerKind of PossibleCompilerKinds) {
             // console.log(sourceUnit.print());
             // console.log(sourceUnit.getChildren().length);
 
-            expect(sourceUnit.id).toEqual(738);
-            expect(sourceUnit.src).toEqual("0:8621:0");
+            expect(sourceUnit.id).toEqual(750);
+            expect(sourceUnit.src).toEqual("0:8713:0");
             expect(sourceUnit.absolutePath).toEqual(mainSample);
             expect(sourceUnit.children.length).toEqual(30);
-            expect(sourceUnit.getChildren().length).toEqual(731);
+            expect(sourceUnit.getChildren().length).toEqual(743);
         });
 
         it(`Validate parsed output (${astKind})`, () => {
