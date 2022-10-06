@@ -233,7 +233,7 @@ StringLiteralType =
         / HexLiteral
         / StringLiteralErrorMsg
     ) {
-        return new StringLiteralType(literal[0], literal[1]);
+        return new StringLiteralType(literal[1]);
     }
 
 IntLiteralType =

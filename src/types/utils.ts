@@ -157,7 +157,8 @@ export function generalizeType(type: TypeNode): [TypeNode, DataLocation | undefi
                 type.parameters.map((paramT) => generalizeType(paramT)[0]),
                 type.returns.map((retT) => generalizeType(retT)[0]),
                 type.visibility,
-                type.mutability
+                type.mutability,
+                type.implicitFirstArg
             ),
             undefined
         ];
@@ -293,6 +294,15 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
     }
 
     throw new Error(`NYI converting AST Type ${astT.print()} to SType`);
+}
+
+export function isReferenceType(generalT: TypeNode): boolean {
+    return (
+        (generalT instanceof UserDefinedType && generalT.definition instanceof StructDefinition) ||
+        generalT instanceof ArrayType ||
+        generalT instanceof PackedArrayType ||
+        generalT instanceof MappingType
+    );
 }
 
 /**
@@ -440,6 +450,8 @@ export function getFallbackFun(contract: ContractDefinition): FunctionDefinition
     return undefined;
 }
 
+const uint160 = new IntType(160, false);
+
 /**
  * Return true IFF `fromT` can be implicitly casted to `toT`
  */
@@ -448,19 +460,15 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
         return true;
     }
 
-    if (
-        fromT instanceof PointerType &&
-        toT instanceof PointerType &&
-        eq(fromT.to, toT.to) &&
-        toT.location !== DataLocation.CallData
-    ) {
+    if (fromT instanceof PointerType && toT instanceof PointerType && eq(fromT.to, toT.to)) {
         return true;
     }
 
     if (fromT instanceof StringLiteralType) {
         /**
          * @todo Should we make an explicit check that string literal fits to bytes size?
-         * Note that string length is not teh same as count ob bytes in string due to multibyte chars.
+         * Note that string length is not the same as count ob bytes in string due to multibyte chars.
+         * Also for hex string literals we should check evenness of length
          */
         if (toT instanceof FixedBytesType) {
             return true;
@@ -476,28 +484,74 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
     }
 
     if (fromT instanceof IntLiteralType) {
-        if (toT instanceof FixedBytesType) {
+        if (
+            toT instanceof FixedBytesType &&
+            fromT.literal !== undefined &&
+            fromT.literal >= BigInt(0) &&
+            fromT.literal < BigInt(1) << BigInt(toT.size * 8)
+        ) {
             return true;
         }
 
         if (toT instanceof IntType && fromT.literal !== undefined && toT.fits(fromT.literal)) {
             return true;
         }
+
+        if (
+            toT instanceof AddressType &&
+            fromT.literal !== undefined &&
+            uint160.fits(fromT.literal)
+        ) {
+            return true;
+        }
     }
 
+    // We can implicitly cast from payable to address
     if (fromT instanceof AddressType && toT instanceof AddressType && !toT.payable) {
         return true;
     }
 
+    // We can implicitly cast from a fixed bytes type to a larger fixed bytes type
+    if (fromT instanceof FixedBytesType && toT instanceof FixedBytesType && toT.size > fromT.size) {
+        return true;
+    }
+
+    // We can implicitly cast from a smaller to a larger int type with the same sign
+    if (
+        fromT instanceof IntType &&
+        toT instanceof IntType &&
+        fromT.signed == toT.signed &&
+        fromT.nBits < toT.nBits
+    ) {
+        return true;
+    }
+
+    /// Can implicitly cast from unsigned ints <160 bits to address
+    if (
+        fromT instanceof IntType &&
+        !fromT.signed &&
+        fromT.nBits <= 160 &&
+        toT instanceof AddressType
+    ) {
+        return true;
+    }
+
     if (fromT instanceof UserDefinedType && fromT.definition instanceof ContractDefinition) {
+        // We can implicitly cast from contract to non-payable address
         if (toT instanceof AddressType && !toT.payable) {
             return true;
         }
 
+        // We can implicitly cast from contract to payable address if it has a payable recieve/fallback function
         if (toT instanceof AddressType && toT.payable) {
             const fbFun = getFallbackFun(fromT.definition);
 
             return fbFun !== undefined && fbFun.stateMutability === FunctionStateMutability.Payable;
+        }
+
+        // We can implicitly up-cast a contract
+        if (toT instanceof UserDefinedType && toT.definition instanceof ContractDefinition) {
+            return fromT.definition.isSubclassOf(toT.definition);
         }
     }
 

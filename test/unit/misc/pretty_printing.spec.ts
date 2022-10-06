@@ -10,6 +10,7 @@ import {
     FunctionLikeSetType,
     FunctionStateMutability,
     FunctionVisibility,
+    InferType,
     IntType,
     isPPAble,
     ModifierType,
@@ -90,6 +91,8 @@ describe("Utility formatting routines", () => {
     });
 
     describe("pp()", () => {
+        const infer = new InferType("0.8.15");
+
         const cases: Array<[any, string]> = [
             [1, "1"],
             [BigInt(1), "1"],
@@ -133,8 +136,14 @@ describe("Utility formatting routines", () => {
                 "modifier SomeModifier(int256,string)"
             ],
             [new SuperType(contractDef), "super(SomeContract#2)"],
-            [new FunctionLikeSetType([funA, funB]), "function_set { funA#5, funB#8 }"],
-            [new FunctionLikeSetType([evA, evB]), "event_set { evA#10, evB#12 }"]
+            [
+                new FunctionLikeSetType([infer.funDefToType(funA), infer.funDefToType(funB)]),
+                "function_set { funA#5, funB#8 }"
+            ],
+            [
+                new FunctionLikeSetType([infer.eventDefToType(evA), infer.eventDefToType(evB)]),
+                "event_set { evA#10, evB#12 }"
+            ]
         ];
 
         for (const [value, result] of cases) {

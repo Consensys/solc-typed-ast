@@ -9,6 +9,7 @@ import {
     BinaryOperation,
     CompileResult,
     CompilerKind,
+    CompilerVersions,
     compileSol,
     ContractDefinition,
     DataLocation,
@@ -19,6 +20,7 @@ import {
     Expression,
     ExternalReferenceType,
     FunctionCall,
+    FunctionCallKind,
     FunctionCallOptions,
     FunctionVisibility,
     Identifier,
@@ -29,7 +31,8 @@ import {
     PrettyFormatter,
     StructDefinition,
     TupleExpression,
-    UnaryOperation
+    UnaryOperation,
+    VariableDeclaration
 } from "../../../src";
 import {
     ArrayType,
@@ -44,6 +47,7 @@ import {
     ImportRefType,
     InferType,
     IntLiteralType,
+    IntType,
     ModuleType,
     PackedArrayType,
     parse,
@@ -135,7 +139,8 @@ export const samples: string[] = [
     "test/samples/solidity/builtins_0816.sol",
     "test/samples/solidity/type_inference/sample00.sol",
     "test/samples/solidity/type_inference/sample01.sol",
-    "test/samples/solidity/type_inference/sample02.sol"
+    "test/samples/solidity/type_inference/sample02.sol",
+    "test/samples/solidity/type_inference/sample03.sol"
 ];
 
 function toSoliditySource(expr: Expression, compilerVersion: string) {
@@ -373,9 +378,7 @@ function compareTypeNodes(
     if (
         inferredT instanceof StringLiteralType &&
         parsedT instanceof StringLiteralType &&
-        inferredT.kind !== "hexString" &&
-        parsedT.kind === "hexString" &&
-        Buffer.from(inferredT.literal).toString("hex") === parsedT.literal
+        inferredT.kind !== parsedT.kind
     ) {
         return true;
     }
@@ -438,17 +441,6 @@ function compareTypeNodes(
         inferredT instanceof TupleType &&
         parsedT instanceof TupleType &&
         parsedT.elements.length === 0
-    ) {
-        return true;
-    }
-
-    /// For literal strings with invalid utf-8 sequences we infer a hex string with precise literal.
-    /// typeString contains error message.
-    if (
-        inferredT instanceof StringLiteralType &&
-        inferredT.kind === "hexString" &&
-        parsedT instanceof StringLiteralType &&
-        parsedT.literal.includes("contains invalid UTF-8 sequence at position")
     ) {
         return true;
     }
@@ -524,16 +516,15 @@ function compareTypeNodes(
     }
 
     // We sometimes disagree with the inferred location of params for external
-    // functions on versions <=0.4.26. We always assume calldata, the typeString
-    // sometimes picks memory...
+    // functions. On <=0.4.26 we always assume calldata, while the typestring sometimes
+    // picks memory for args. On >=0.5.0 even when args are explicitly calldata sometimes
+    // the typestring parser is still memory
     if (
         inferredT instanceof FunctionType &&
         parsedT instanceof FunctionType &&
         inferredT.visibility === FunctionVisibility.External &&
-        parsedT.visibility === FunctionVisibility.External &&
         inferredT.parameters.length === parsedT.parameters.length &&
-        inferredT.parameters.length === parsedT.parameters.length &&
-        lt(version, "0.5.0")
+        inferredT.parameters.length === parsedT.parameters.length
     ) {
         return compareTypeNodes(
             generalizeType(inferredT)[0],
@@ -542,6 +533,43 @@ function compareTypeNodes(
             version
         );
     }
+
+    // For solidity <0.5.0 the kind field of string literals is "string" for hex strings.
+    // This causes some inaccuracies when comparing string literals just based on value.
+    // @todo remove this if/when we remove/refactor StringLiteralType
+    if (
+        inferredT instanceof StringLiteralType &&
+        parsedT instanceof StringLiteralType &&
+        expr instanceof Literal &&
+        expr.hexValue !== "" &&
+        lt(version, "0.5.0")
+    ) {
+        return true;
+    }
+
+    // For int constants the type string is the constant, we pick the declared variable type
+    if (
+        inferredT instanceof IntType &&
+        parsedT instanceof IntLiteralType &&
+        expr instanceof Identifier &&
+        expr.vReferencedDeclaration instanceof VariableDeclaration &&
+        expr.vReferencedDeclaration.constant
+    ) {
+        return true;
+    }
+
+    // For the callee of a type conversion we return the generalized type, instead of the specialized type.
+    if (
+        inferredT instanceof TypeNameType &&
+        parsedT instanceof TypeNameType &&
+        inferredT.type.pp() === generalizeType(parsedT.type)[0].pp() &&
+        expr.parent instanceof FunctionCall &&
+        expr.parent.vExpression === expr &&
+        expr.parent.kind == FunctionCallKind.TypeConversion
+    ) {
+        return true;
+    }
+
     /// Otherwise the types must match up exactly
     return eq(inferredT, parsedT);
 }
@@ -554,104 +582,117 @@ describe("Type inference for expressions", () => {
         path !== undefined
             ? fse
                   .readdirSync(path)
-                  .filter((name) => name.endsWith(".sol"))
+                  .filter((name) => name.endsWith(".sol") || name.endsWith(".json"))
                   .map((name) => join(path, name))
             : samples;
 
     for (const sample of sampleList) {
-        for (const compilerKind of [CompilerKind.Native]) {
-            it(`[${compilerKind}] ${sample}`, async () => {
-                let result: CompileResult;
+        it(`${sample}`, async () => {
+            let result: CompileResult;
+            let compilerVersion: string | undefined;
+            let data: any;
 
-                try {
+            try {
+                if (sample.endsWith(".sol")) {
                     result = await compileSol(
                         sample,
                         "auto",
                         undefined,
                         undefined,
                         undefined,
-                        compilerKind as CompilerKind
+                        CompilerKind.Native
                     );
-                } catch {
-                    console.error(`Failed compiling ${sample}`);
-                    return;
+                    expect(result.compilerVersion).toBeDefined();
+
+                    data = result.data;
+                    compilerVersion = result.compilerVersion;
+                } else if (sample.endsWith(".json")) {
+                    data = fse.readJSONSync(sample);
+                    const fetchedCompilerVersions = sample.match(/\d+\.\d+\.\d+/);
+
+                    assert(
+                        fetchedCompilerVersions !== null && fetchedCompilerVersions.length === 1,
+                        "Unable to fetch compiler version"
+                    );
+
+                    // Fix compiler version to lowest possible
+                    compilerVersion = lt(fetchedCompilerVersions[0], CompilerVersions[0])
+                        ? CompilerVersions[0]
+                        : fetchedCompilerVersions[0];
                 }
+            } catch {
+                console.error(`Failed compiling ${sample}`);
+                return;
+            }
 
-                const errors = detectCompileErrors(result.data);
+            const errors = detectCompileErrors(data);
 
-                expect(errors).toHaveLength(0);
-                expect(result.compilerVersion).toBeDefined();
+            expect(errors).toHaveLength(0);
 
-                const astKind = lt(result.compilerVersion as string, "0.5.0")
-                    ? ASTKind.Legacy
-                    : ASTKind.Modern;
+            assert(compilerVersion !== undefined, "Expected compiler version to be set to precise");
 
-                const { data, compilerVersion } = result;
+            const astKind = lt(compilerVersion as string, "0.5.0")
+                ? ASTKind.Legacy
+                : ASTKind.Modern;
 
-                assert(
-                    compilerVersion !== undefined,
-                    "Expected compiler version to be set to precise"
-                );
+            const reader = new ASTReader();
+            const sourceUnits = reader.read(data, astKind);
 
-                const reader = new ASTReader();
-                const sourceUnits = reader.read(data, astKind);
+            const infer = new InferType(compilerVersion);
 
-                const infer = new InferType(compilerVersion);
+            for (const unit of sourceUnits) {
+                for (const expr of unit.getChildrenBySelector<Expression>(
+                    (child) => child instanceof Expression
+                )) {
+                    const inferredType = infer.typeOf(expr);
 
-                for (const unit of sourceUnits) {
-                    for (const expr of unit.getChildrenBySelector<Expression>(
-                        (child) => child instanceof Expression
-                    )) {
-                        const inferredType = infer.typeOf(expr);
-
-                        // typeStrings for Identifiers in ImportDirectives may be undefined.
-                        if (expr.typeString === undefined) {
-                            continue;
-                        }
-
-                        // Skip nodes with broken typeStrings in legacy compilers
-                        if (expr.typeString === null) {
-                            continue;
-                        }
-
-                        // Skip modifier invocations
-                        if (expr.parent instanceof ModifierInvocation) {
-                            continue;
-                        }
-
-                        // Skip call options - we don't compute types for them
-                        if (expr instanceof FunctionCallOptions) {
-                            continue;
-                        }
-
-                        let parsedType: TypeNode;
-
-                        try {
-                            parsedType = parse(expr.typeString, {
-                                ctx: expr,
-                                version: compilerVersion
-                            });
-                        } catch (e) {
-                            if (e instanceof SyntaxError) {
-                                // Failed parsing. Skip
-                                continue;
-                            }
-
-                            throw e;
-                        }
-
-                        assert(
-                            compareTypeNodes(inferredType, parsedType, expr, compilerVersion),
-                            `Mismatch inferred type "{0}" and parsed type "{1}" (typeString "{2}") for expression {3} -> {4}`,
-                            inferredType,
-                            parsedType,
-                            expr.typeString,
-                            expr,
-                            toSoliditySource(expr, compilerVersion)
-                        );
+                    // typeStrings for Identifiers in ImportDirectives may be undefined.
+                    if (expr.typeString === undefined) {
+                        continue;
                     }
+
+                    // Skip nodes with broken typeStrings in legacy compilers
+                    if (expr.typeString === null) {
+                        continue;
+                    }
+
+                    // Skip modifier invocations
+                    if (expr.parent instanceof ModifierInvocation) {
+                        continue;
+                    }
+
+                    // Skip call options - we don't compute types for them
+                    if (expr instanceof FunctionCallOptions) {
+                        continue;
+                    }
+
+                    let parsedType: TypeNode;
+
+                    try {
+                        parsedType = parse(expr.typeString, {
+                            ctx: expr,
+                            version: compilerVersion
+                        });
+                    } catch (e) {
+                        if (e instanceof SyntaxError) {
+                            // Failed parsing. Skip
+                            continue;
+                        }
+
+                        throw e;
+                    }
+
+                    assert(
+                        compareTypeNodes(inferredType, parsedType, expr, compilerVersion),
+                        `Mismatch inferred type "{0}" and parsed type "{1}" (typeString "{2}") for expression {3} -> {4}`,
+                        inferredType,
+                        parsedType,
+                        expr.typeString,
+                        expr,
+                        toSoliditySource(expr, compilerVersion)
+                    );
                 }
-            });
-        }
+            }
+        });
     }
 });

@@ -212,7 +212,8 @@ export function applySubstitution(a: TypeNode, m: TypeSubstituion): TypeNode {
             applySubstitutions(a.parameters, m),
             applySubstitutions(a.returns, m),
             a.visibility,
-            a.mutability
+            a.mutability,
+            a.implicitFirstArg
         );
     }
 
@@ -280,14 +281,16 @@ export function applySubstitutions(as: TypeNode[], m: TypeSubstituion): TypeNode
 
             const mapped = m.get(elT.name);
 
-            assert(
-                mapped instanceof Array,
-                "TRest {0} not mapped to array. Instead mapped to {1}",
-                elT.name,
-                mapped
-            );
+            if (mapped) {
+                assert(
+                    mapped instanceof Array,
+                    `TRest ${elT.name} not mapped to array. Instead mapped to ${pp(mapped)}`
+                );
 
-            resTs.push(...mapped);
+                resTs.push(...mapped);
+            } else {
+                resTs.push(elT);
+            }
         } else {
             resTs.push(applySubstitution(elT, m));
         }
