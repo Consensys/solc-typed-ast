@@ -194,6 +194,8 @@ export function getFQDefName(def: NamedDefinition): string {
  *
  * @param astT - original AST `TypeName`
  * @returns equivalent `TypeNode`.
+ *
+ * @deprecated Use `InferType.typeOf()` instead.
  */
 export function typeNameToTypeNode(astT: TypeName): TypeNode {
     if (astT instanceof ElementaryTypeName) {
@@ -309,13 +311,15 @@ export function isReferenceType(generalT: TypeNode): boolean {
 /**
  * Computes a `TypeNode` equivalent of given `astT`,
  * specialized for location `loc` (if applicable).
+ *
+ * @deprecated Use `InferType.typeOf()` instead.
  */
 export function typeNameToSpecializedTypeNode(astT: TypeName, loc: DataLocation): TypeNode {
     return specializeType(typeNameToTypeNode(astT), loc);
 }
 
 /**
- * @deprecated
+ * @deprecated Use `InferType.inferVariableDeclLocation()` instead.
  */
 export function inferVariableDeclLocation(decl: VariableDeclaration): DataLocation {
     if (decl.stateVariable) {
@@ -525,7 +529,7 @@ export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string
         /**
          * Can implicitly cast from unsigned ints <=160 bits to address
          */
-        if (!fromT.signed && fromT.nBits <= 160 && toT instanceof AddressType) {
+        if (toT instanceof AddressType && !fromT.signed && fromT.nBits <= 160) {
             return true;
         }
     }
@@ -572,6 +576,7 @@ export function smallestFittingType(...literals: bigint[]): IntType | undefined 
 
     for (let i = 0; i < limits.length; i++) {
         let fitsAll = true;
+
         for (const literal of literals) {
             if (!(limits[i][0] <= literal && literal <= limits[i][1])) {
                 fitsAll = false;

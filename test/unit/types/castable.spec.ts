@@ -201,7 +201,7 @@ const cases: Array<
                 []
             );
 
-            a.linearizedBaseContracts.unshift(a.id);
+            a.linearizedBaseContracts.push(a.id);
 
             return new UserDefinedType(a.name, a);
         },
@@ -237,7 +237,7 @@ const cases: Array<
                 []
             );
 
-            a.linearizedBaseContracts.unshift(a.id);
+            a.linearizedBaseContracts.push(a.id);
 
             return new UserDefinedType(a.name, a);
         },
@@ -251,6 +251,8 @@ const cases: Array<
                 [],
                 []
             );
+
+            b.linearizedBaseContracts.push(b.id);
 
             return new UserDefinedType(b.name, b);
         },

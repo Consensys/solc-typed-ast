@@ -171,6 +171,9 @@ export class VariableDeclaration extends ASTNode {
         this.scope = value.id;
     }
 
+    /**
+     * @deprecated
+     */
     canonicalSignatureType(encoderVersion: ABIEncoderVersion): string {
         const type = variableDeclarationToTypeNode(this);
         const abiType = toABIEncodedType(type, encoderVersion);
@@ -181,6 +184,8 @@ export class VariableDeclaration extends ASTNode {
     /**
      * Computes the argument types and return type for the public accessor
      * corresponding to this state variable.
+     *
+     * @deprecated
      */
     getterArgsAndReturn(): [TypeNode[], TypeNode] {
         const argTypes: TypeNode[] = [];
@@ -241,6 +246,8 @@ export class VariableDeclaration extends ASTNode {
     /**
      * Computes the function type for the public accessor corresponding to this
      * state variable.
+     *
+     * @deprecated
      */
     getterFunType(): FunctionType {
         const [args, ret] = this.getterArgsAndReturn();
@@ -257,6 +264,8 @@ export class VariableDeclaration extends ASTNode {
     /**
      * Computes the canonical signature for the public accessor corresponding to
      * this state variable.
+     *
+     * @deprecated
      */
     getterCanonicalSignature(encoderVersion: ABIEncoderVersion): string {
         const [internalArgTypes] = this.getterArgsAndReturn();
@@ -268,6 +277,8 @@ export class VariableDeclaration extends ASTNode {
     /**
      * Computes the canonical signature hash for the public accessor
      * corresponding to this state variable.
+     *
+     * @deprecated
      */
     getterCanonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
         return encodeFuncSignature(this.getterCanonicalSignature(encoderVersion));

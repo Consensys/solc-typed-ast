@@ -179,7 +179,9 @@ function typesAreUnordered<T1 extends TypeNode, T2 extends TypeNode>(
 function stripSingletonParens(e: Expression): Expression {
     while (e instanceof TupleExpression && e.vOriginalComponents.length === 1) {
         const comp = e.vOriginalComponents[0];
-        assert(comp !== null, ``);
+
+        assert(comp !== null, 'Unexpected "null" component in tuple with single element');
+
         e = comp;
     }
 
@@ -211,9 +213,6 @@ function markFirstArgImplicit<T extends FunctionType | FunctionLikeSetType<Funct
 /**
  * Given two `FunctionType`s/`BuiltinFunctionType`s/`FunctionSetType`s `a` and `b`
  * return a `FunctionSetType` that includes everything in `a` and `b`.
- * @param a
- * @param b
- * @returns
  */
 function mergeFunTypes(
     a: FunctionType | BuiltinFunctionType | FunctionSetType,
@@ -426,7 +425,7 @@ export class InferType {
     }
 
     /**
-     * Infer the type of the binary op `node`.
+     * Infer the type of the binary op
      */
     typeOfBinaryOperation(node: BinaryOperation): TypeNode {
         if (
@@ -493,7 +492,7 @@ export class InferType {
     }
 
     /**
-     * Infer the type of the conditional `node`.
+     * Infer the type of the conditional expression
      */
     typeOfConditional(node: Conditional): TypeNode {
         const trueT = this.typeOf(node.vTrueExpression);
@@ -660,8 +659,9 @@ export class InferType {
 
         return undefined;
     }
+
     /**
-     * Infer the type of the function call `node`.
+     * Infer the type of the function call
      */
     typeOfFunctionCall(node: FunctionCall): TypeNode {
         if (node.kind === FunctionCallKind.StructConstructorCall) {
@@ -783,8 +783,10 @@ export class InferType {
             throw new SolTypeError(`Unexpected base type ${pp(baseT)} in slice ${pp(node)}`);
         }
 
-        /// TODO(dimo): This typing is not precise. We should add a special slice type as described
-        /// in the documentation here https://docs.soliditylang.org/en/latest/types.html#array-slices
+        /**
+         * @todo (dimo): This typing is not precise. We should add a special slice type as described
+         * in the documentation here https://docs.soliditylang.org/en/latest/types.html#array-slices
+         */
         return baseT;
     }
 
@@ -880,7 +882,7 @@ export class InferType {
     }
 
     /**
-     * Infer the type of the identifier `node`.
+     * Infer the type of the identifier
      */
     typeOfIdentifier(node: Identifier): TypeNode {
         const def = node.vReferencedDeclaration;
@@ -1055,7 +1057,7 @@ export class InferType {
     }
 
     /**
-     * If the `MemberAccess` `node` corresponds to a library function
+     * If the `MemberAccess` corresponds to a library function
      * bound with a `using for` directive, return the type of that function.
      */
     private typeOfMemberAccess_UsingFor(node: MemberAccess, baseT: TypeNode): TypeNode | undefined {
@@ -1082,9 +1084,10 @@ export class InferType {
                         for (const funId of usingFor.vFunctionList) {
                             if (funId.name === node.memberName) {
                                 const funDef = funId.vReferencedDeclaration;
+
                                 assert(
                                     funDef instanceof FunctionDefinition,
-                                    `Unexpected non-function decl {0} for name {1} in using for {2}`,
+                                    "Unexpected non-function decl {0} for name {1} in using for {2}",
                                     funDef,
                                     funId.name,
                                     usingFor
@@ -1097,6 +1100,7 @@ export class InferType {
 
                     if (usingFor.vLibraryName) {
                         const lib = usingFor.vLibraryName.vReferencedDeclaration;
+
                         assert(
                             lib instanceof ContractDefinition,
                             `Unexpected non-library decl {0} for name {1} in using for {2}`,
@@ -1127,7 +1131,7 @@ export class InferType {
     }
 
     /**
-     * If the `MemberAccess` `node` corresponds to a external function or a getter invoked on a contract
+     * If the `MemberAccess` corresponds to a external function or a getter invoked on a contract
      * return the type of the function/getter.
      */
     private typeOfMemberAccess_Resolved(node: MemberAccess, baseT: TypeNode): TypeNode | undefined {
@@ -1619,38 +1623,39 @@ export class InferType {
         }
 
         const funs = defs.filter(
-            (def) =>
+            (def): def is FunctionDefinition =>
                 def instanceof FunctionDefinition &&
                 (!externalOnly || // Only external/public functions visible on lookups on contract pointers
                     def.visibility === FunctionVisibility.External ||
                     def.visibility === FunctionVisibility.Public)
-        ) as FunctionDefinition[];
+        );
 
         const getters = defs.filter(
-            (def) =>
+            (def): def is VariableDeclaration =>
                 def instanceof VariableDeclaration &&
                 (!externalOnly || def.visibility === StateVariableVisibility.Public) // Only public vars are visible on lookups on contract pointers.
-        ) as VariableDeclaration[];
+        );
 
         const typeDefs = defs.filter(
-            (def) =>
+            (def): def is StructDefinition | EnumDefinition | ContractDefinition =>
                 !externalOnly && // Type Defs are not visible on lookups on contract pointers.
                 (def instanceof StructDefinition ||
                     def instanceof EnumDefinition ||
                     def instanceof ContractDefinition)
-        ) as Array<StructDefinition | EnumDefinition | ContractDefinition>;
+        );
 
         const eventDefs = defs.filter(
-            (def) => !externalOnly && def instanceof EventDefinition
-        ) as EventDefinition[];
+            (def): def is EventDefinition => !externalOnly && def instanceof EventDefinition
+        );
 
         const errorDefs = defs.filter(
-            (def) => !externalOnly && def instanceof ErrorDefinition
-        ) as ErrorDefinition[];
+            (def): def is ErrorDefinition => !externalOnly && def instanceof ErrorDefinition
+        );
 
         // For external calls its possible to have a mixture of functions and getters
         if (funs.length > 0 && externalOnly && getters.length > 0) {
             const nCallable = funs.length + getters.length;
+
             assert(
                 nCallable === defs.length,
                 "Unexpected number of callable matching {0} in {1}",
@@ -1745,10 +1750,10 @@ export class InferType {
     }
 
     /**
-     * Infer the data location for the given `VariableDeclaration`. For local vars with
-     * solidity <=0.4.26 we infer the location from the RHS.
+     * Infer the data location for the given `VariableDeclaration`.
+     * For local vars with solidity <=0.4.26 we infer the location from the RHS.
      */
-    private inferVariableDeclLocation(decl: VariableDeclaration): DataLocation {
+    inferVariableDeclLocation(decl: VariableDeclaration): DataLocation {
         if (decl.stateVariable) {
             return decl.constant ? DataLocation.Memory : DataLocation.Storage;
         }
@@ -1791,7 +1796,7 @@ export class InferType {
     }
 
     /**
-     * Given a `VariableDeclaration` node `decl` compute the `TypeNode` that corresponds to the variable.
+     * Given a `VariableDeclaration` node compute the `TypeNode` that corresponds to the variable.
      * This takes into account the storage location of the `decl`.
      */
     variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNode {

@@ -100,6 +100,8 @@ function getFunctionAttributes(
  * 
  * @param arg - an AST node with a type string (`Expression` or `VariableDeclaration`)
  * @param version - compiler version to be used. Useful as resolution rules changed between 0.4.x and 0.5.x.
+ *
+ * @deprecated Use `InferType.typeOf()` instead.
  */
 export function getNodeType(node: Expression | VariableDeclaration, version: string): TypeNode {
     return parse(node.typeString, { ctx: node, version }) as TypeNode;
@@ -115,6 +117,8 @@ export function getNodeType(node: Expression | VariableDeclaration, version: str
  * @param arg - either a type string, or a node with a type string (`Expression` or `VariableDeclaration`)
  * @param version - compiler version to be used. Useful as resolution rules changed between 0.4.x and 0.5.x.
  * @param ctx - `ASTNode` representing the context in which a type string is to be parsed
+ *
+ * @deprecated Use `InferType.typeOf()` instead.
  */
 export function getNodeTypeInCtx(arg: Expression | VariableDeclaration | string, version: string, ctx: ASTNode): TypeNode {
     const typeString = typeof arg === "string" ? arg : arg.typeString;
