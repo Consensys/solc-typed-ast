@@ -1,4 +1,3 @@
-import { FunctionDefinition } from "../../../ast";
 import { Range } from "../../../misc";
 import { BuiltinFunctionType } from "../builtin_function";
 import { EventType } from "../event_type";
@@ -21,8 +20,8 @@ export class FunctionLikeSetType<
     }
 
     pp(): string {
-        const setType = this.defs[0] instanceof FunctionDefinition ? "function_set" : "event_set";
-        return `${setType} { ${this.defs.map((fun) => `${fun.name}#${fun.id}`).join(", ")} }`;
+        const setType = this.defs[0] instanceof EventType ? "event_set" : "function_set";
+        return `${setType} { ${this.defs.map((fun) => fun.pp()).join(", ")} }`;
     }
 
     getFields(): any[] {

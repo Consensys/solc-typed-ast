@@ -138,11 +138,11 @@ describe("Utility formatting routines", () => {
             [new SuperType(contractDef), "super(SomeContract#2)"],
             [
                 new FunctionLikeSetType([infer.funDefToType(funA), infer.funDefToType(funB)]),
-                "function_set { funA#5, funB#8 }"
+                "function_set { function () view, function () view }"
             ],
             [
                 new FunctionLikeSetType([infer.eventDefToType(evA), infer.eventDefToType(evB)]),
-                "event_set { evA#10, evB#12 }"
+                "event_set { event evA(), event evB() }"
             ]
         ];
 

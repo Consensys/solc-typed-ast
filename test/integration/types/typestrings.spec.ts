@@ -97,13 +97,22 @@ const samples: Array<[string, string, ASTKind]> = [
     ]
 ];
 
-// Note that we weaken the typestring comparison to ignore pointer types
 function normalizeTypeString(typeStr: string): string {
-    return typeStr
+    // Note that we weaken the typestring comparison to ignore pointer types
+    let res = typeStr
         .replace(/ ref/g, "")
         .replace(/ pointer/g, "")
         .replace(/ slice/g, "")
         .trim();
+
+    // We strip string literal values
+    if (res.startsWith("literal_string hex")) {
+        res = "literal_hex_string";
+    } else if (res.startsWith('literal_string "')) {
+        res = "literal_string";
+    }
+
+    return res;
 }
 
 describe("Round-trip tests for typestring parser/printer", () => {
