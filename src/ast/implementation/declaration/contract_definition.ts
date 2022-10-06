@@ -294,7 +294,7 @@ export class ContractDefinition
 
             return selectors
                 .map((selector) => BigInt("0x" + selector))
-                .reduce((a, b) => a ^ b, BigInt(0))
+                .reduce((a, b) => a ^ b, 0n)
                 .toString(16)
                 .padStart(8, "0");
         }

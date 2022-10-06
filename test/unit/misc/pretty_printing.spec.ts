@@ -95,7 +95,7 @@ describe("Utility formatting routines", () => {
 
         const cases: Array<[any, string]> = [
             [1, "1"],
-            [BigInt(1), "1"],
+            [1n, "1"],
             ["abc", "abc"],
             [true, "true"],
             [false, "false"],

@@ -50,6 +50,7 @@ import {
 } from "./ast";
 import { VersionDependentType } from "./builtins";
 import { evalConstantExpr } from "./eval_const";
+import { types } from "../types/reserved";
 
 export function getTypeForCompilerVersion(
     typing: VersionDependentType,
@@ -450,12 +451,10 @@ export function getFallbackFun(contract: ContractDefinition): FunctionDefinition
     return undefined;
 }
 
-const uint160 = new IntType(160, false);
-
 /**
  * Return true IFF `fromT` can be implicitly casted to `toT`
  */
-export function castable(fromT: TypeNode, toT: TypeNode): boolean {
+export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string): boolean {
     if (eq(fromT, toT)) {
         return true;
     }
@@ -487,8 +486,8 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
         if (
             toT instanceof FixedBytesType &&
             fromT.literal !== undefined &&
-            fromT.literal >= BigInt(0) &&
-            fromT.literal < BigInt(1) << BigInt(toT.size * 8)
+            fromT.literal >= 0n &&
+            fromT.literal < 1n << BigInt(toT.size * 8)
         ) {
             return true;
         }
@@ -500,7 +499,8 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
         if (
             toT instanceof AddressType &&
             fromT.literal !== undefined &&
-            uint160.fits(fromT.literal)
+            types.uint160.fits(fromT.literal) &&
+            lt(compilerVersion, "0.5.0")
         ) {
             return true;
         }
@@ -516,24 +516,18 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
         return true;
     }
 
-    // We can implicitly cast from a smaller to a larger int type with the same sign
-    if (
-        fromT instanceof IntType &&
-        toT instanceof IntType &&
-        fromT.signed == toT.signed &&
-        fromT.nBits < toT.nBits
-    ) {
-        return true;
-    }
+    if (fromT instanceof IntType) {
+        // We can implicitly cast from a smaller to a larger int type with the same sign
+        if (toT instanceof IntType && fromT.signed == toT.signed && fromT.nBits < toT.nBits) {
+            return true;
+        }
 
-    /// Can implicitly cast from unsigned ints <160 bits to address
-    if (
-        fromT instanceof IntType &&
-        !fromT.signed &&
-        fromT.nBits <= 160 &&
-        toT instanceof AddressType
-    ) {
-        return true;
+        /**
+         * Can implicitly cast from unsigned ints <=160 bits to address
+         */
+        if (!fromT.signed && fromT.nBits <= 160 && toT instanceof AddressType) {
+            return true;
+        }
     }
 
     if (fromT instanceof UserDefinedType && fromT.definition instanceof ContractDefinition) {
@@ -561,12 +555,9 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
 const signedLimits: Array<[bigint, bigint]> = [];
 const unsignedLimits: Array<[bigint, bigint]> = [];
 
-for (let i = 1; i <= 32; i++) {
-    unsignedLimits.push([BigInt(0), BigInt(2) ** BigInt(i * 8) - BigInt(1)]);
-    signedLimits.push([
-        BigInt(-2) ** BigInt(i * 8 - 1),
-        BigInt(2) ** BigInt(i * 8 - 1) - BigInt(1)
-    ]);
+for (let i = 1n; i <= 32n; i++) {
+    unsignedLimits.push([0n, 2n ** (i * 8n) - 1n]);
+    signedLimits.push([-(2n ** (i * 8n - 1n)), 2n ** (i * 8n - 1n) - 1n]);
 }
 
 /**
@@ -575,7 +566,7 @@ for (let i = 1; i <= 32; i++) {
 export function smallestFittingType(...literals: bigint[]): IntType | undefined {
     /// TODO: Need a test for this logic that checks the boundary conditions
     /// when the literals include the MIN/MAX for both signed and unsigned types
-    const unsigned = forAll(literals, (literal) => literal >= BigInt(0));
+    const unsigned = forAll(literals, (literal) => literal >= 0n);
 
     const limits: Array<[bigint, bigint]> = unsigned ? unsignedLimits : signedLimits;
 
@@ -608,6 +599,6 @@ export function decimalToRational(d: Decimal): Rational {
 
     return {
         numerator: BigInt(valStr.replace(".", "")),
-        denominator: BigInt(10) ** BigInt(valStr.length - dotPos - 1)
+        denominator: 10n ** BigInt(valStr.length - dotPos - 1)
     };
 }

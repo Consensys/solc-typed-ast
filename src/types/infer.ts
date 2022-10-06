@@ -356,20 +356,16 @@ export class InferType {
      * Given two types `a` and `b` infer the common type that they are both
      * implicitly casted to, when appearing in a binary op/conditional.
      * Its currently usually `a` or `b`
-     *
-     * TODO: We should be able to simplify inferCommonType by moving a bunch of this logic to
-     * `castable(fromT, toT)` and then just doing something like:
-     *
-     * if (castable(a, b)) { return b; }
-     * if (castable(b, a)) { return a; }
-     *
-     * For a bunch of cases.
      */
     inferCommonType(a: TypeNode, b: TypeNode): TypeNode {
-        // The common type for two string literals is string memory. For example the type of
-        // flag ? "a" : "b" is string memory, not string literal.
-        // @todo This edge case is ugly. It suggests that perhaps we should
-        // remove StringLiteralType from the type system.
+        /**
+         * The common type for two string literals is string memory.
+         * For example the type of `flag ? "a" : "b"` is string memory,
+         * not string literal.
+         *
+         * @todo This edge case is ugly. It suggests that perhaps we should
+         * remove StringLiteralType from the type system.
+         */
         if (a instanceof StringLiteralType && b instanceof StringLiteralType) {
             return types.stringMemory;
         }
@@ -417,12 +413,12 @@ export class InferType {
         }
 
         // a implicitly castable to b - return b
-        if (castable(a, b)) {
+        if (castable(a, b, this.version)) {
             return b;
         }
 
         // b implicitly castable to a - return a
-        if (castable(b, a)) {
+        if (castable(b, a, this.version)) {
             return a;
         }
 
@@ -642,6 +638,7 @@ export class InferType {
                 funT instanceof FunctionType && funT.implicitFirstArg
                     ? funT.parameters.slice(1)
                     : funT.parameters;
+
             if (params.length !== argTs.length) {
                 continue;
             }
@@ -649,7 +646,7 @@ export class InferType {
             let argsMatch = true;
 
             for (let i = 0; i < params.length; i++) {
-                if (!castable(argTs[i], params[i])) {
+                if (!castable(argTs[i], params[i], this.version)) {
                     argsMatch = false;
 
                     break;
@@ -693,7 +690,7 @@ export class InferType {
             const argTs = node.vArguments.map((arg) => this.typeOf(arg));
             const m: TypeSubstituion = new Map();
 
-            buildSubstitutions(calleeT.parameters, argTs, m);
+            buildSubstitutions(calleeT.parameters, argTs, m, this.version);
 
             rets = applySubstitutions(calleeT.returns, m);
         } else {

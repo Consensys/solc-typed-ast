@@ -15,6 +15,7 @@ import {
 export const types = {
     bool: new BoolType(),
     uint256: new IntType(256, false),
+    uint160: new IntType(160, false),
     uint8: new IntType(8, false),
     byte: new FixedBytesType(1),
     bytes4: new FixedBytesType(4),
