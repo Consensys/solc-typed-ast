@@ -210,8 +210,14 @@ MaybeNegNumber =
         return sign === null ? num : -num;
     }
 
+InaccessibleDynamicType =
+    "inaccessible dynamic type" {
+        return new InaccessibleDynamicType();
+    }
+
 SimpleType =
     BoolType
+    / InaccessibleDynamicType
     / AddressType
     / IntLiteralType
     / RationalLiteralType

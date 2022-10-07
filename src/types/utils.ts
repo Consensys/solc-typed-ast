@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import { lt, satisfies } from "semver";
+import { gte, lt, satisfies } from "semver";
 import {
     ArrayTypeName,
     ContractDefinition,
@@ -463,6 +463,22 @@ export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string
         return true;
     }
 
+    /**
+     * When casting arrays to storage, we can cast fixed sized to dynamically sized arrays
+     */
+    if (
+        fromT instanceof PointerType &&
+        fromT.to instanceof ArrayType &&
+        toT instanceof PointerType &&
+        toT.to instanceof ArrayType &&
+        fromT.to.size !== undefined &&
+        toT.to.size === undefined &&
+        toT.location === DataLocation.Storage &&
+        eq(fromT.to.elementT, toT.to.elementT)
+    ) {
+        return true;
+    }
+
     if (fromT instanceof PointerType && toT instanceof PointerType && eq(fromT.to, toT.to)) {
         return true;
     }
@@ -487,11 +503,23 @@ export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string
     }
 
     if (fromT instanceof IntLiteralType) {
+        // In solidity >= 0.5.0 negative constants can't be vast to bytes
         if (
             toT instanceof FixedBytesType &&
             fromT.literal !== undefined &&
-            fromT.literal >= 0n &&
-            fromT.literal < 1n << BigInt(toT.size * 8)
+            fitsNBytes(fromT.literal, toT.size, false) &&
+            gte(compilerVersion, "0.5.0")
+        ) {
+            return true;
+        }
+
+        // In solidity < 0.5.0 negative constants can be vast to bytes
+        if (
+            toT instanceof FixedBytesType &&
+            fromT.literal !== undefined &&
+            (fitsNBytes(fromT.literal, toT.size, false) ||
+                fitsNBytes(fromT.literal, toT.size, true)) &&
+            lt(compilerVersion, "0.5.0")
         ) {
             return true;
         }
@@ -523,6 +551,11 @@ export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string
     if (fromT instanceof IntType) {
         // We can implicitly cast from a smaller to a larger int type with the same sign
         if (toT instanceof IntType && fromT.signed == toT.signed && fromT.nBits < toT.nBits) {
+            return true;
+        }
+
+        // In Solidity <=0.8.0 we can cast an unsigned type to a bigger signed type
+        if (toT instanceof IntType && !fromT.signed && toT.signed && fromT.nBits < toT.nBits) {
             return true;
         }
 
@@ -562,6 +595,12 @@ const unsignedLimits: Array<[bigint, bigint]> = [];
 for (let i = 1n; i <= 32n; i++) {
     unsignedLimits.push([0n, 2n ** (i * 8n) - 1n]);
     signedLimits.push([-(2n ** (i * 8n - 1n)), 2n ** (i * 8n - 1n) - 1n]);
+}
+
+function fitsNBytes(literal: bigint, nBytes: number, signed: boolean) {
+    const limits = signed ? signedLimits : unsignedLimits;
+
+    return literal >= limits[nBytes - 1][0] && literal <= limits[nBytes - 1][1];
 }
 
 /**

@@ -411,6 +411,22 @@ export class InferType {
             return new TupleType(commonElTs);
         }
 
+        const [fun, funSet] = typesAreUnordered(a, b, FunctionType, FunctionLikeSetType);
+
+        if (fun && funSet) {
+            for (const funT of funSet.defs) {
+                if (
+                    funT instanceof FunctionType &&
+                    eq(new TupleType(fun.parameters), new TupleType(funT.parameters)) &&
+                    eq(new TupleType(fun.returns), new TupleType(funT.returns)) &&
+                    (fun.visibility === FunctionVisibility.External) ===
+                        (funT.visibility === FunctionVisibility.External)
+                ) {
+                    return fun;
+                }
+            }
+        }
+
         // a implicitly castable to b - return b
         if (castable(a, b, this.version)) {
             return b;
@@ -628,24 +644,26 @@ export class InferType {
 
     private matchArguments(
         funs: Array<FunctionType | BuiltinFunctionType>,
-        args: Expression[]
+        args: Expression[],
+        callExp: Expression
     ): FunctionType | BuiltinFunctionType | undefined {
         const argTs: TypeNode[] = args.map((arg) => this.typeOf(arg));
+        // If we are matching with a
+        const argTsWithImplictArg =
+            callExp instanceof MemberAccess ? [this.typeOf(callExp.vExpression), ...argTs] : argTs;
 
         for (const funT of funs) {
-            const params =
-                funT instanceof FunctionType && funT.implicitFirstArg
-                    ? funT.parameters.slice(1)
-                    : funT.parameters;
+            const actualTs =
+                funT instanceof FunctionType && funT.implicitFirstArg ? argTsWithImplictArg : argTs;
 
-            if (params.length !== argTs.length) {
+            if (funT.parameters.length !== actualTs.length) {
                 continue;
             }
 
             let argsMatch = true;
 
-            for (let i = 0; i < params.length; i++) {
-                if (!castable(argTs[i], params[i], this.version)) {
+            for (let i = 0; i < funT.parameters.length; i++) {
+                if (!castable(actualTs[i], funT.parameters[i], this.version)) {
                     argsMatch = false;
 
                     break;
@@ -690,6 +708,19 @@ export class InferType {
             const argTs = node.vArguments.map((arg) => this.typeOf(arg));
             const m: TypeSubstituion = new Map();
 
+            /**
+             * We can push fixed sized arrays (e.g. uint[1]) to storage arrays of arrays (uint[][]).
+             * Add this implicit cast here
+             */
+            if (
+                calleeT instanceof BuiltinFunctionType &&
+                node.vFunctionName === "push" &&
+                !eq(calleeT.parameters[0], argTs[0]) &&
+                castable(argTs[0], calleeT.parameters[0], this.version)
+            ) {
+                argTs[0] = calleeT.parameters[0];
+            }
+
             buildSubstitutions(calleeT.parameters, argTs, m, this.version);
 
             rets = applySubstitutions(calleeT.returns, m);
@@ -703,7 +734,11 @@ export class InferType {
                     rets = [];
                 } else {
                     // Match based on args. Needs castable.
-                    const funT = this.matchArguments(calleeT.defs, node.vArguments);
+                    const funT = this.matchArguments(
+                        calleeT.defs,
+                        node.vArguments,
+                        node.vExpression
+                    );
 
                     if (funT === undefined) {
                         throw new SolTypeError(
@@ -965,6 +1000,10 @@ export class InferType {
                     defInitT = concreteT;
                 }
 
+                if (defInitT instanceof StringLiteralType) {
+                    return types.stringMemory;
+                }
+
                 return defInitT;
             }
 
@@ -1063,6 +1102,10 @@ export class InferType {
     private typeOfMemberAccess_UsingFor(node: MemberAccess, baseT: TypeNode): TypeNode | undefined {
         const containingContract = node.getClosestParentByType(ContractDefinition);
 
+        if (baseT instanceof TypeNameType) {
+            return undefined;
+        }
+
         if (containingContract) {
             for (const base of containingContract.vLinearizedBaseContracts) {
                 for (const usingFor of base.vUsingForDirectives) {
@@ -1137,20 +1180,39 @@ export class InferType {
     private typeOfMemberAccess_Resolved(node: MemberAccess, baseT: TypeNode): TypeNode | undefined {
         if (baseT instanceof UserDefinedType && baseT.definition instanceof ContractDefinition) {
             const contract = baseT.definition;
-            const field = this.typeOfResolved(node.memberName, contract, true);
+            const fieldT = this.typeOfResolved(node.memberName, contract, true);
+            let builtinT: TypeNode | undefined;
 
-            if (field) {
-                return field;
-            }
+            assert(
+                fieldT === undefined ||
+                    fieldT instanceof FunctionType ||
+                    fieldT instanceof FunctionLikeSetType,
+                `External field lookup for {0} on contract must be a function, not {1}`,
+                node.memberName,
+                fieldT
+            );
 
             // For solidity <0.5.0 contract variables are implicitly castable to address
             if (lt(this.version, "0.5.0")) {
-                const builtin = addressBuiltins.getFieldForVersion(node.memberName, this.version);
-
-                if (builtin) {
-                    return builtin;
-                }
+                builtinT = addressBuiltins.getFieldForVersion(node.memberName, this.version);
             }
+
+            if (fieldT && builtinT) {
+                assert(
+                    builtinT instanceof BuiltinFunctionType,
+                    `Unexpected address builtin {0} for field {1}`,
+                    builtinT,
+                    node.memberName
+                );
+
+                return mergeFunTypes(fieldT, builtinT);
+            }
+
+            if (fieldT) {
+                return fieldT;
+            }
+
+            return builtinT;
         }
 
         return undefined;
@@ -1474,6 +1536,8 @@ export class InferType {
                 elT = concreteT;
             }
 
+            elT = specializeType(generalizeType(elT)[0], DataLocation.Memory);
+
             return new PointerType(
                 new ArrayType(elT, BigInt(node.components.length)),
                 DataLocation.Memory
@@ -1671,7 +1735,10 @@ export class InferType {
 
         if (funs.length > 0) {
             assert(
-                funs.length === defs.length,
+                getters.length === 0 &&
+                    typeDefs.length === 0 &&
+                    eventDefs.length === 0 &&
+                    errorDefs.length === 0,
                 "Unexpected both functions and others matching {0} in {1}",
                 name,
                 ctxs
@@ -1692,7 +1759,10 @@ export class InferType {
 
         if (getters.length > 0) {
             assert(
-                getters.length === defs.length,
+                funs.length === 0 &&
+                    typeDefs.length === 0 &&
+                    eventDefs.length === 0 &&
+                    errorDefs.length === 0,
                 "Unexpected both getters and others matching {0} in {1}",
                 name,
                 ctxs
@@ -1803,6 +1873,7 @@ export class InferType {
         assert(decl.vType !== undefined, "Expected {0} to have type", decl);
 
         const generalType = typeNameToTypeNode(decl.vType);
+
         if (isReferenceType(generalType)) {
             const loc = this.inferVariableDeclLocation(decl);
 

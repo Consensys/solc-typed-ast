@@ -37,6 +37,9 @@ import {
     TypeNode,
     UserDefinedType
 } from "../ast";
+import {
+    InaccessibleDynamicType
+} from "../ast/internal/inaccessible_dynamic_type"
 
 function getFunctionAttributes(
     decorators: string[]
@@ -132,10 +135,23 @@ function makeUserDefinedType<T extends ASTNode>(
     version: string,
     ctx: ASTNode
 ): UserDefinedType {
-    const defs = [...resolveAny(name, ctx, version)];
+    let defs = [...resolveAny(name, ctx, version)];
 
     if (defs.length === 0) {
         throw new Error(`Couldn't find ${constructor.name} ${name}`);
+    }
+
+    /**
+     * Note that constructors below 0.5.0 may have same name as contract definition.
+     */
+    if (constructor === ContractDefinition) {
+        defs = defs.filter((def) =>
+            def instanceof ContractDefinition ||
+            (def instanceof FunctionDefinition &&
+                def.isConstructor &&
+                def.name === def.vScope.name)).map((def) => def instanceof FunctionDefinition ? def.vScope : def);
+    } else {
+        defs = defs.filter((def) => def instanceof constructor);
     }
 
     if (defs.length > 1) {
@@ -143,13 +159,6 @@ function makeUserDefinedType<T extends ASTNode>(
     }
 
     let def = defs[0];
-
-    /**
-     * Note that constructors below 0.5.0 may have same name as contract definition.
-     */
-    if (constructor === ContractDefinition && def.constructor === FunctionDefinition && def.name === name) {
-        def = def.vScope as ContractDefinition;
-    }
 
     if (!(def instanceof constructor)) {
         throw new Error(
