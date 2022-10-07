@@ -605,15 +605,13 @@ export const ENV_CUSTOM_PATH = "SOLC_TEST_SAMPLES_PATH";
 
 describe("Type inference for expressions", () => {
     const path = process.env[ENV_CUSTOM_PATH];
-    let sampleList =
+    const sampleList =
         path !== undefined
             ? fse
                   .readdirSync(path)
                   .filter((name) => name.endsWith(".sol") || name.endsWith(".json"))
                   .map((name) => join(path, name))
             : samples;
-
-    sampleList = fse.readFileSync("failing2_short.lst", { encoding: "utf-8" }).split("\n");
 
     for (const sample of sampleList) {
         it(`${sample}`, async () => {
