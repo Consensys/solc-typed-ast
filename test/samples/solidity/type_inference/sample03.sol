@@ -20,3 +20,14 @@ contract Main {
         t.foo(1,2);
     }
 }
+
+contract Foo {
+    function ret(uint256[] calldata x) external returns (uint[] calldata) {
+        return x;
+    }
+
+    function main() public {
+        uint[] memory arr = new uint[](4);
+        this.ret(arr)[1] = 1;
+    }
+}

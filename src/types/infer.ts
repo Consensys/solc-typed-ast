@@ -44,7 +44,7 @@ import {
     VariableDeclarationStatement
 } from "../ast";
 import { DataLocation } from "../ast/constants";
-import { assert, eq, pp } from "../misc";
+import { assert, eq, forAny, pp } from "../misc";
 import {
     AddressType,
     ArrayType,
@@ -98,7 +98,7 @@ import {
     castable,
     decimalToRational,
     generalizeType,
-    getFallbackFun,
+    getFallbackRecvFuns,
     getFQDefName,
     isReferenceType,
     smallestFittingType,
@@ -235,7 +235,37 @@ function mergeFunTypes(
     return new FunctionLikeSetType(funs);
 }
 
-const castableLocations: DataLocation[] = [DataLocation.Memory, DataLocation.Storage];
+/**
+ * Given 2 function pointer's visibilities infer a common visibility thats compatible with both.
+ * This is used to infer the visibility of the expression `flag ? fun1 : fun2` where fun1 and fun2 are
+ * function pointers.
+ */
+function inferCommonVisiblity(
+    a: FunctionVisibility,
+    b: FunctionVisibility
+): FunctionVisibility | undefined {
+    const visiblityOrder = [
+        FunctionVisibility.External,
+        FunctionVisibility.Public,
+        FunctionVisibility.Internal,
+        FunctionVisibility.Default,
+        FunctionVisibility.Private
+    ];
+
+    if (a == b) {
+        return a;
+    }
+
+    if (visiblityOrder.indexOf(a) > visiblityOrder.indexOf(b)) {
+        [b, a] = [a, b];
+    }
+
+    if (a === FunctionVisibility.External) {
+        return b == FunctionVisibility.Public ? FunctionVisibility.External : undefined;
+    }
+
+    return FunctionVisibility.Internal;
+}
 
 export class InferType {
     constructor(public readonly version: string) {}
@@ -384,8 +414,7 @@ export class InferType {
             a instanceof PointerType &&
             b instanceof PointerType &&
             eq(a.to, b.to) &&
-            castableLocations.includes(a.location) &&
-            castableLocations.includes(b.location)
+            a.location !== b.location
         ) {
             return new PointerType(a.to, DataLocation.Memory);
         }
@@ -405,7 +434,20 @@ export class InferType {
             const commonElTs: TypeNode[] = [];
 
             for (let i = 0; i < a.elements.length; i++) {
-                commonElTs.push(this.inferCommonType(a.elements[i], b.elements[i]));
+                let commonElT = this.inferCommonType(a.elements[i], b.elements[i]);
+
+                if (commonElT instanceof IntLiteralType && commonElT.literal !== undefined) {
+                    commonElT = smallestFittingType(commonElT.literal) as TypeNode;
+                    assert(
+                        commonElT !== undefined,
+                        `Can't infer common type for tuple elements {0} between {1} and {2}`,
+                        i,
+                        a,
+                        b
+                    );
+                }
+
+                commonElTs.push(commonElT);
             }
 
             return new TupleType(commonElTs);
@@ -424,6 +466,26 @@ export class InferType {
                 ) {
                     return fun;
                 }
+            }
+        }
+
+        if (
+            a instanceof FunctionType &&
+            b instanceof FunctionType &&
+            eq(new TupleType(a.parameters), new TupleType(b.parameters)) &&
+            eq(new TupleType(a.returns), new TupleType(b.returns)) &&
+            a.mutability === b.mutability
+        ) {
+            const commonVis = inferCommonVisiblity(a.visibility, b.visibility);
+
+            if (commonVis) {
+                return new FunctionType(
+                    undefined,
+                    a.parameters,
+                    a.returns,
+                    commonVis,
+                    a.mutability
+                );
             }
         }
 
@@ -469,8 +531,15 @@ export class InferType {
         }
 
         // After 0.6.0 the type of ** is just the type of the lhs
-        if (node.operator === "**" && gte(this.version, "0.6.0")) {
-            return a instanceof IntLiteralType ? types.uint256 : a;
+        // Between 0.6.0 and 0.7.0 if the lhs is an int literal type it
+        // took the type of the rhs if it wasn't a literal type. After 0.7.0 it
+        // just assumes uint256.
+        if (node.operator === "**") {
+            if (gte(this.version, "0.7.0")) {
+                return a instanceof IntLiteralType ? types.uint256 : a;
+            } else if (gte(this.version, "0.6.0")) {
+                return a instanceof IntLiteralType ? (b instanceof IntType ? b : types.uint256) : a;
+            }
         }
 
         if (binaryOperatorGroups.Arithmetic.includes(node.operator)) {
@@ -493,7 +562,7 @@ export class InferType {
             // For bitshifts just take the type of the lhs
             if ([">>", "<<"].includes(node.operator)) {
                 if (a instanceof IntLiteralType) {
-                    return types.uint256;
+                    return gte(this.version, "0.7.0") ? types.uint256 : b;
                 }
 
                 return a;
@@ -564,27 +633,36 @@ export class InferType {
             return calleeT;
         }
 
+        // After 0.8.0 all explicit casts to address are non-payable
+        if (gte(this.version, "0.8.0")) {
+            return calleeT;
+        }
+
         assert(node.vArguments.length === 1, `Unexpected number of args to type cast {0}`, node);
-        const argT = this.typeOf(node.vArguments[0]);
+        const arg = node.vArguments[0];
+        const argT = this.typeOf(arg);
+
+        if (arg instanceof Literal && arg.value.startsWith("0x") && arg.value.length === 42) {
+            return lt(this.version, "0.6.0") ? types.addressPayable : types.address;
+        }
 
         if (
-            (argT instanceof IntType ||
-                argT instanceof IntLiteralType ||
-                argT instanceof FixedBytesType) &&
-            lt(this.version, "0.8.0")
+            argT instanceof IntType ||
+            argT instanceof IntLiteralType ||
+            argT instanceof FixedBytesType
         ) {
             return types.addressPayable;
         }
 
-        if (argT instanceof AddressType) {
+        if (argT instanceof AddressType && lt(this.version, "0.6.0")) {
             return argT;
         }
 
         if (argT instanceof UserDefinedType && argT.definition instanceof ContractDefinition) {
             const contract = argT.definition;
-            const fallback = getFallbackFun(contract);
+            const funs = getFallbackRecvFuns(contract);
 
-            if (fallback && fallback.stateMutability === FunctionStateMutability.Payable) {
+            if (forAny(funs, (fun) => fun.stateMutability === FunctionStateMutability.Payable)) {
                 return types.addressPayable;
             }
         }
@@ -663,9 +741,9 @@ export class InferType {
             let argsMatch = true;
 
             for (let i = 0; i < funT.parameters.length; i++) {
-                if (!castable(actualTs[i], funT.parameters[i], this.version)) {
-                    argsMatch = false;
+                argsMatch = castable(actualTs[i], funT.parameters[i], this.version);
 
+                if (!argsMatch) {
                     break;
                 }
             }
@@ -694,11 +772,17 @@ export class InferType {
             return this.typeOfNewCall(node);
         }
 
-        const calleeT = this.typeOf(node.vCallee);
+        let calleeT = this.typeOf(node.vCallee);
 
         let rets: TypeNode[];
 
         if (node.vFunctionCallType === ExternalReferenceType.Builtin) {
+            if (calleeT instanceof FunctionLikeSetType) {
+                calleeT = calleeT.defs.filter(
+                    (d) => d instanceof BuiltinFunctionType
+                )[0] as BuiltinFunctionType;
+            }
+
             if (!(calleeT instanceof BuiltinFunctionType || calleeT instanceof FunctionType)) {
                 throw new SolTypeError(
                     `Unexpected builtin ${pp(node.vCallee)} in function call ${pp(node)}`
@@ -752,6 +836,17 @@ export class InferType {
                 throw new SolTypeError(
                     `Unexpected type ${calleeT.pp()} in function call ${pp(node)}`
                 );
+            }
+        }
+
+        // If any of the returns is a calldata pointer convert it to memory.
+        // This conversion happens implicitly as part of the function call, as
+        // the returned reference can be immediately assigned to.
+        for (let i = 0; i < rets.length; i++) {
+            const ret = rets[i];
+
+            if (ret instanceof PointerType && ret.location === DataLocation.CallData) {
+                rets[i] = specializeType(generalizeType(ret)[0], DataLocation.Memory);
             }
         }
 
@@ -1107,6 +1202,8 @@ export class InferType {
         }
 
         if (containingContract) {
+            let matchedFuns = new FunctionLikeSetType<BuiltinFunctionType | FunctionType>([]);
+
             for (const base of containingContract.vLinearizedBaseContracts) {
                 for (const usingFor of base.vUsingForDirectives) {
                     let match = false;
@@ -1136,7 +1233,10 @@ export class InferType {
                                     usingFor
                                 );
 
-                                return this.funDefToType(funDef, true);
+                                matchedFuns = mergeFunTypes(
+                                    matchedFuns,
+                                    this.funDefToType(funDef, true)
+                                );
                             }
                         }
                     }
@@ -1163,10 +1263,16 @@ export class InferType {
                                 usingFor.vLibraryName.name
                             );
 
-                            return markFirstArgImplicit(res);
+                            matchedFuns = mergeFunTypes(matchedFuns, markFirstArgImplicit(res));
                         }
                     }
                 }
+            }
+
+            if (matchedFuns.defs.length === 1) {
+                return matchedFuns.defs[0];
+            } else if (matchedFuns.defs.length > 1) {
+                return matchedFuns;
             }
         }
 
@@ -1197,14 +1303,7 @@ export class InferType {
                 builtinT = addressBuiltins.getFieldForVersion(node.memberName, this.version);
             }
 
-            if (fieldT && builtinT) {
-                assert(
-                    builtinT instanceof BuiltinFunctionType,
-                    `Unexpected address builtin {0} for field {1}`,
-                    builtinT,
-                    node.memberName
-                );
-
+            if (fieldT && builtinT instanceof BuiltinFunctionType) {
                 return mergeFunTypes(fieldT, builtinT);
             }
 
@@ -1242,10 +1341,6 @@ export class InferType {
             return mergeFunTypes(usingForT, resolvedT);
         }
 
-        if (usingForT !== undefined) {
-            return usingForT;
-        }
-
         if (resolvedT !== undefined) {
             return resolvedT;
         }
@@ -1279,11 +1374,24 @@ export class InferType {
                  * https://github.com/ethereum/solidity/releases/tag/v0.6.0
                  */
                 if (node.memberName === "push") {
-                    return new BuiltinFunctionType(
-                        undefined,
-                        [toT instanceof BytesType ? types.byte : toT.elementT],
-                        lt(this.version, "0.6.0") ? [types.uint256] : []
-                    );
+                    const isZeroArg =
+                        node.parent instanceof FunctionCall && node.parent.vArguments.length === 0;
+
+                    // In newer solidity versions you are allowed to do push() with no args,
+                    // Which returns a reference to the new location
+                    if (isZeroArg) {
+                        return new BuiltinFunctionType(
+                            undefined,
+                            [],
+                            [toT instanceof BytesType ? types.byte : toT.elementT]
+                        );
+                    } else {
+                        return new BuiltinFunctionType(
+                            undefined,
+                            [toT instanceof BytesType ? types.byte : toT.elementT],
+                            lt(this.version, "0.6.0") ? [types.uint256] : []
+                        );
+                    }
                 }
 
                 if (node.memberName === "pop") {
@@ -1477,6 +1585,10 @@ export class InferType {
 
         if (node.vReferencedDeclaration instanceof FunctionDefinition) {
             return this.funDefToType(node.vReferencedDeclaration);
+        }
+
+        if (usingForT !== undefined) {
+            return usingForT;
         }
 
         throw new SolTypeError(

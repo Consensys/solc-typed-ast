@@ -25,7 +25,7 @@ import {
     VariableDeclaration,
     VariableDeclarationStatement
 } from "../ast";
-import { assert, eq, forAll, pp } from "../misc";
+import { assert, eq, forAll, forAny, pp } from "../misc";
 import { ABIEncoderVersion, ABIEncoderVersions } from "./abi";
 import {
     AddressType,
@@ -443,16 +443,31 @@ export function getABIEncoderVersion(
     return lt(compilerVersion, "0.8.0") ? ABIEncoderVersion.V1 : ABIEncoderVersion.V2;
 }
 
-export function getFallbackFun(contract: ContractDefinition): FunctionDefinition | undefined {
+export function getFallbackRecvFuns(contract: ContractDefinition): FunctionDefinition[] {
+    const res: FunctionDefinition[] = [];
+
     for (const base of contract.vLinearizedBaseContracts) {
         for (const fun of base.vFunctions) {
             if (fun.kind === FunctionKind.Fallback || fun.kind === FunctionKind.Receive) {
-                return fun;
+                res.push(fun);
             }
         }
     }
 
-    return undefined;
+    return res;
+}
+
+function isVisiblityExternallyCalalble(a: FunctionVisibility): boolean {
+    return a === FunctionVisibility.External || a === FunctionVisibility.Public;
+}
+
+function functionVisibilitiesCompatible(a: FunctionVisibility, b: FunctionVisibility): boolean {
+    return (
+        a === b ||
+        (a === FunctionVisibility.External && isVisiblityExternallyCalalble(b)) ||
+        (b === FunctionVisibility.External && isVisiblityExternallyCalalble(a)) ||
+        (a !== FunctionVisibility.External && b !== FunctionVisibility.External)
+    );
 }
 
 /**
@@ -575,15 +590,26 @@ export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string
 
         // We can implicitly cast from contract to payable address if it has a payable recieve/fallback function
         if (toT instanceof AddressType && toT.payable) {
-            const fbFun = getFallbackFun(fromT.definition);
+            const funs = getFallbackRecvFuns(fromT.definition);
 
-            return fbFun !== undefined && fbFun.stateMutability === FunctionStateMutability.Payable;
+            return forAny(funs, (fun) => fun.stateMutability === FunctionStateMutability.Payable);
         }
 
         // We can implicitly up-cast a contract
         if (toT instanceof UserDefinedType && toT.definition instanceof ContractDefinition) {
             return fromT.definition.isSubclassOf(toT.definition);
         }
+    }
+
+    if (
+        fromT instanceof FunctionType &&
+        toT instanceof FunctionType &&
+        eq(new TupleType(fromT.parameters), new TupleType(toT.parameters)) &&
+        eq(new TupleType(fromT.returns), new TupleType(toT.returns)) &&
+        functionVisibilitiesCompatible(fromT.visibility, toT.visibility) &&
+        fromT.mutability === toT.mutability
+    ) {
+        return true;
     }
 
     return false;

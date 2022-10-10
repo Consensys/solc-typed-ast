@@ -1,5 +1,5 @@
 import expect from "expect";
-import { lt } from "semver";
+import { gte, lt } from "semver";
 import {
     assert,
     Assignment,
@@ -377,8 +377,8 @@ function compareTypeNodes(
     if (
         inferredT instanceof FunctionType &&
         parsedT instanceof FunctionType &&
-        inferredT.visibility === FunctionVisibility.External &&
-        parsedT.visibility === FunctionVisibility.External &&
+        (inferredT.visibility === FunctionVisibility.External ||
+            inferredT.visibility === FunctionVisibility.Public) &&
         externalParamsEq(inferredT.parameters, parsedT.parameters) &&
         eq(inferredT.returns, parsedT.returns)
     ) {
@@ -595,6 +595,48 @@ function compareTypeNodes(
 
     // The typestring includes 'inaccessible dynamic type'. Just assume we are correct
     if (parsedT.pp().includes("inaccessible dynamic type")) {
+        return true;
+    }
+
+    // After 0.8.0 the signature of push changed to include the implicit reference. Ignore those failrues
+    if (
+        inferredT instanceof BuiltinFunctionType &&
+        parsedT instanceof FunctionType &&
+        inferredT.parameters.length === 1 &&
+        parsedT.parameters.length === 2 &&
+        eq(inferredT.parameters[0], parsedT.parameters[1]) &&
+        expr instanceof MemberAccess &&
+        expr.memberName === "push" &&
+        gte(version, "0.8.0")
+    ) {
+        return true;
+    }
+
+    if (
+        inferredT instanceof BuiltinFunctionType &&
+        parsedT instanceof FunctionType &&
+        inferredT.parameters.length === 0 &&
+        parsedT.parameters.length === 1 &&
+        inferredT.returns.length === 1 &&
+        parsedT.returns.length === 1 &&
+        eq(inferredT.returns[0], parsedT.returns[0]) &&
+        expr instanceof MemberAccess &&
+        expr.memberName === "push" &&
+        gte(version, "0.8.0")
+    ) {
+        return true;
+    }
+
+    // After 0.8.0 the signature of pop changed to include the implicit reference. Ignore those failrues
+    if (
+        inferredT instanceof BuiltinFunctionType &&
+        parsedT instanceof FunctionType &&
+        inferredT.parameters.length === 0 &&
+        parsedT.parameters.length === 1 &&
+        expr instanceof MemberAccess &&
+        expr.memberName === "pop" &&
+        gte(version, "0.8.0")
+    ) {
         return true;
     }
 
