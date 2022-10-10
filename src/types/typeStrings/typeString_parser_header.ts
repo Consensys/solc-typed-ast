@@ -14,7 +14,7 @@ import {
     resolveAny,
     StructDefinition,
     UserDefinedValueTypeDefinition,
-    VariableDeclaration
+    VariableDeclaration,
 } from "../../ast";
 import {
     AddressType,
@@ -24,6 +24,7 @@ import {
     BytesType,
     FixedBytesType,
     FunctionType,
+    InaccessibleDynamicType,
     IntLiteralType,
     IntType,
     MappingType,
@@ -37,9 +38,7 @@ import {
     TypeNode,
     UserDefinedType
 } from "../ast";
-import {
-    InaccessibleDynamicType
-} from "../ast/internal/inaccessible_dynamic_type"
+import { assert, pp } from "../../misc";
 
 function getFunctionAttributes(
     decorators: string[]
@@ -137,10 +136,6 @@ function makeUserDefinedType<T extends ASTNode>(
 ): UserDefinedType {
     let defs = [...resolveAny(name, ctx, version)];
 
-    if (defs.length === 0) {
-        throw new Error(`Couldn't find ${constructor.name} ${name}`);
-    }
-
     /**
      * Note that constructors below 0.5.0 may have same name as contract definition.
      */
@@ -154,17 +149,23 @@ function makeUserDefinedType<T extends ASTNode>(
         defs = defs.filter((def) => def instanceof constructor);
     }
 
+    if (defs.length === 0) {
+        throw new Error(`Couldn't find ${constructor.name} ${name}`);
+    }
+
     if (defs.length > 1) {
         throw new Error(`Multiple matches for ${constructor.name} ${name}`);
     }
 
     let def = defs[0];
 
-    if (!(def instanceof constructor)) {
-        throw new Error(
-            `Expected ${name} to resolve to ${constructor.name} got ${def.constructor.name} instead`
-        );
-    }
+    assert(
+        def instanceof constructor,
+        "Expected {0} to resolve to {1} got {2} instead",
+        name,
+        constructor.name,
+        def
+    );
 
     return new UserDefinedType(name, def);
 }
