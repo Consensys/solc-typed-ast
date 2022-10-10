@@ -101,6 +101,7 @@ import {
     getFallbackRecvFuns,
     getFQDefName,
     isReferenceType,
+    isVisiblityExternallyCallable,
     smallestFittingType,
     specializeType,
     typeNameToTypeNode
@@ -440,7 +441,7 @@ export class InferType {
                     commonElT = smallestFittingType(commonElT.literal) as TypeNode;
                     assert(
                         commonElT !== undefined,
-                        `Can't infer common type for tuple elements {0} between {1} and {2}`,
+                        "Can't infer common type for tuple elements {0} between {1} and {2}",
                         i,
                         a,
                         b
@@ -537,8 +538,14 @@ export class InferType {
         if (node.operator === "**") {
             if (gte(this.version, "0.7.0")) {
                 return a instanceof IntLiteralType ? types.uint256 : a;
-            } else if (gte(this.version, "0.6.0")) {
-                return a instanceof IntLiteralType ? (b instanceof IntType ? b : types.uint256) : a;
+            }
+
+            if (gte(this.version, "0.6.0")) {
+                if (a instanceof IntLiteralType) {
+                    return b instanceof IntType ? b : types.uint256;
+                }
+
+                return a;
             }
         }
 
@@ -842,11 +849,13 @@ export class InferType {
         // If any of the returns is a calldata pointer convert it to memory.
         // This conversion happens implicitly as part of the function call, as
         // the returned reference can be immediately assigned to.
-        for (let i = 0; i < rets.length; i++) {
-            const ret = rets[i];
+        if (gte(this.version, "0.8.0")) {
+            for (let i = 0; i < rets.length; i++) {
+                const ret = rets[i];
 
-            if (ret instanceof PointerType && ret.location === DataLocation.CallData) {
-                rets[i] = specializeType(generalizeType(ret)[0], DataLocation.Memory);
+                if (ret instanceof PointerType && ret.location === DataLocation.CallData) {
+                    rets[i] = specializeType(generalizeType(ret)[0], DataLocation.Memory);
+                }
             }
         }
 
@@ -1213,6 +1222,7 @@ export class InferType {
                         match = true;
                     } else {
                         const usingForTyp = typeNameToTypeNode(usingFor.vTypeName);
+
                         match = eq(usingForTyp, generalizeType(baseT)[0]);
                     }
 
@@ -1246,7 +1256,7 @@ export class InferType {
 
                         assert(
                             lib instanceof ContractDefinition,
-                            `Unexpected non-library decl {0} for name {1} in using for {2}`,
+                            "Unexpected non-library decl {0} for name {1} in using for {2}",
                             lib,
                             usingFor.vLibraryName.name,
                             usingFor
@@ -1271,7 +1281,9 @@ export class InferType {
 
             if (matchedFuns.defs.length === 1) {
                 return matchedFuns.defs[0];
-            } else if (matchedFuns.defs.length > 1) {
+            }
+
+            if (matchedFuns.defs.length > 1) {
                 return matchedFuns;
             }
         }
@@ -1287,13 +1299,14 @@ export class InferType {
         if (baseT instanceof UserDefinedType && baseT.definition instanceof ContractDefinition) {
             const contract = baseT.definition;
             const fieldT = this.typeOfResolved(node.memberName, contract, true);
+
             let builtinT: TypeNode | undefined;
 
             assert(
                 fieldT === undefined ||
                     fieldT instanceof FunctionType ||
                     fieldT instanceof FunctionLikeSetType,
-                `External field lookup for {0} on contract must be a function, not {1}`,
+                "External field lookup for {0} on contract must be a function, not {1}",
                 node.memberName,
                 fieldT
             );
@@ -1303,11 +1316,11 @@ export class InferType {
                 builtinT = addressBuiltins.getFieldForVersion(node.memberName, this.version);
             }
 
-            if (fieldT && builtinT instanceof BuiltinFunctionType) {
-                return mergeFunTypes(fieldT, builtinT);
-            }
-
             if (fieldT) {
+                if (builtinT instanceof BuiltinFunctionType) {
+                    return mergeFunTypes(fieldT, builtinT);
+                }
+
                 return fieldT;
             }
 
@@ -1327,14 +1340,15 @@ export class InferType {
         if (usingForT !== undefined && resolvedT !== undefined) {
             assert(
                 usingForT instanceof FunctionType || usingForT instanceof FunctionLikeSetType,
-                `Expection function-like type not {0}`,
+                "Expection function-like type for using-for, not {0}",
                 usingForT
             );
+
             assert(
                 resolvedT instanceof FunctionType ||
                     resolvedT instanceof FunctionLikeSetType ||
                     resolvedT instanceof BuiltinFunctionType,
-                `Expection function-like type not {0}`,
+                "Expection function-like type for resolved, not {0}",
                 resolvedT
             );
 
@@ -1385,13 +1399,13 @@ export class InferType {
                             [],
                             [toT instanceof BytesType ? types.byte : toT.elementT]
                         );
-                    } else {
-                        return new BuiltinFunctionType(
-                            undefined,
-                            [toT instanceof BytesType ? types.byte : toT.elementT],
-                            lt(this.version, "0.6.0") ? [types.uint256] : []
-                        );
                     }
+
+                    return new BuiltinFunctionType(
+                        undefined,
+                        [toT instanceof BytesType ? types.byte : toT.elementT],
+                        lt(this.version, "0.6.0") ? [types.uint256] : []
+                    );
                 }
 
                 if (node.memberName === "pop") {
@@ -2009,12 +2023,8 @@ export class InferType {
             this.variableDeclarationToTypeNode(arg)
         );
 
-        const isExternallyAccessible =
-            def.visibility === FunctionVisibility.External ||
-            def.visibility === FunctionVisibility.Public;
-
         return new FunctionType(
-            isExternallyAccessible ? def.name : undefined,
+            isVisiblityExternallyCallable(def.visibility) ? def.name : undefined,
             argTs,
             retTs,
             def.visibility,

@@ -25,7 +25,8 @@ import {
     VariableDeclaration,
     VariableDeclarationStatement
 } from "../ast";
-import { assert, eq, forAll, forAny, pp } from "../misc";
+import { assert, eq, forAll, pp } from "../misc";
+import { types } from "../types/reserved";
 import { ABIEncoderVersion, ABIEncoderVersions } from "./abi";
 import {
     AddressType,
@@ -50,7 +51,6 @@ import {
 } from "./ast";
 import { VersionDependentType } from "./builtins";
 import { evalConstantExpr } from "./eval_const";
-import { types } from "../types/reserved";
 
 export function getTypeForCompilerVersion(
     typing: VersionDependentType,
@@ -457,15 +457,15 @@ export function getFallbackRecvFuns(contract: ContractDefinition): FunctionDefin
     return res;
 }
 
-function isVisiblityExternallyCalalble(a: FunctionVisibility): boolean {
+export function isVisiblityExternallyCallable(a: FunctionVisibility): boolean {
     return a === FunctionVisibility.External || a === FunctionVisibility.Public;
 }
 
 function functionVisibilitiesCompatible(a: FunctionVisibility, b: FunctionVisibility): boolean {
     return (
         a === b ||
-        (a === FunctionVisibility.External && isVisiblityExternallyCalalble(b)) ||
-        (b === FunctionVisibility.External && isVisiblityExternallyCalalble(a)) ||
+        (a === FunctionVisibility.External && isVisiblityExternallyCallable(b)) ||
+        (b === FunctionVisibility.External && isVisiblityExternallyCallable(a)) ||
         (a !== FunctionVisibility.External && b !== FunctionVisibility.External)
     );
 }
@@ -583,16 +583,19 @@ export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string
     }
 
     if (fromT instanceof UserDefinedType && fromT.definition instanceof ContractDefinition) {
-        // We can implicitly cast from contract to non-payable address
-        if (toT instanceof AddressType && !toT.payable) {
+        if (toT instanceof AddressType) {
+            // We can implicitly cast from contract to payable address if it has a payable recieve/fallback function
+            if (toT.payable) {
+                const fns = getFallbackRecvFuns(fromT.definition);
+
+                return (
+                    fns.length > 0 &&
+                    forAll(fns, (fn) => fn.stateMutability === FunctionStateMutability.Payable)
+                );
+            }
+
+            // We can implicitly cast from contract to non-payable address
             return true;
-        }
-
-        // We can implicitly cast from contract to payable address if it has a payable recieve/fallback function
-        if (toT instanceof AddressType && toT.payable) {
-            const funs = getFallbackRecvFuns(fromT.definition);
-
-            return forAny(funs, (fun) => fun.stateMutability === FunctionStateMutability.Payable);
         }
 
         // We can implicitly up-cast a contract

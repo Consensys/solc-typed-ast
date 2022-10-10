@@ -1,4 +1,6 @@
 import expect from "expect";
+import fse from "fs-extra";
+import { join } from "path";
 import { gte, lt } from "semver";
 import {
     assert,
@@ -48,6 +50,7 @@ import {
     InferType,
     IntLiteralType,
     IntType,
+    isVisiblityExternallyCallable,
     ModuleType,
     PackedArrayType,
     parse,
@@ -61,8 +64,6 @@ import {
     UserDefinedType
 } from "../../../src/types";
 import { SuperType } from "../../../src/types/ast/super";
-import fse from "fs-extra";
-import { join } from "path";
 
 export const samples: string[] = [
     "./test/samples/solidity/compile_04.sol",
@@ -377,8 +378,7 @@ function compareTypeNodes(
     if (
         inferredT instanceof FunctionType &&
         parsedT instanceof FunctionType &&
-        (inferredT.visibility === FunctionVisibility.External ||
-            inferredT.visibility === FunctionVisibility.Public) &&
+        isVisiblityExternallyCallable(inferredT.visibility) &&
         externalParamsEq(inferredT.parameters, parsedT.parameters) &&
         eq(inferredT.returns, parsedT.returns)
     ) {
@@ -753,7 +753,7 @@ describe("Type inference for expressions", () => {
 
                     assert(
                         compareTypeNodes(inferredType, parsedType, expr, compilerVersion),
-                        `Mismatch inferred type "{0}" and parsed type "{1}" (typeString "{2}") for expression {3} -> {4}`,
+                        'Mismatch inferred type "{0}" and parsed type "{1}" (typeString "{2}") for expression {3} -> {4}',
                         inferredType,
                         parsedType,
                         expr.typeString,
