@@ -46,10 +46,10 @@ contract Test {
         tx.gasprice;
         tx.origin;
 
-        // abi.encode();
-        // abi.encodePacked();
-        // abi.encodeWithSelector(0x00000000);
-        // abi.encodeWithSignature("main()");
+        abi.encode();
+        abi.encodePacked();
+        abi.encodeWithSelector(0x00000000);
+        abi.encodeWithSignature("main()");
 
         assert;
 

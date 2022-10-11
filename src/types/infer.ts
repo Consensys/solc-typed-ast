@@ -1435,19 +1435,17 @@ export class InferType {
 
             if (baseT.type instanceof BytesType || baseT.type instanceof StringType) {
                 if (node.memberName === "concat") {
-                    assert(
-                        node.parent instanceof FunctionCall,
-                        "Unexpected concat builtin not in a function call {0}",
-                        node
-                    );
+                    const argTs = [];
 
-                    const argTs = node.parent.vArguments.map((arg) => this.typeOf(arg));
+                    if (node.parent instanceof FunctionCall) {
+                        argTs.push(...node.parent.vArguments.map((arg) => this.typeOf(arg)));
 
-                    for (const argT of argTs) {
-                        if (!(argT instanceof PointerType && eq(argT.to, baseT.type))) {
-                            throw new SolTypeError(
-                                `Unexpected arguments to concat in ${pp(node.parent)}`
-                            );
+                        for (const argT of argTs) {
+                            if (!(argT instanceof PointerType && eq(argT.to, baseT.type))) {
+                                throw new SolTypeError(
+                                    `Unexpected arguments to concat in ${pp(node.parent)}`
+                                );
+                            }
                         }
                     }
 
