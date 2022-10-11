@@ -7,6 +7,6 @@ import { TypeNode } from "../type";
  */
 export class InaccessibleDynamicType extends TypeNode {
     pp(): string {
-        return "inaccessible dynamic type";
+        return "inaccessible_dynamic_type";
     }
 }

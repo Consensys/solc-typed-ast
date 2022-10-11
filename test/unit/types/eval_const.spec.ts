@@ -3,8 +3,10 @@ import { expect } from "expect";
 import {
     ASTNodeFactory,
     DataLocation,
+    EtherUnit,
     evalConstantExpr,
     Expression,
+    FunctionCallKind,
     isConstant,
     LiteralKind,
     Mutability,
@@ -75,6 +77,40 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                 factory.makeLiteral("<missing>", LiteralKind.Number, "", "0xff_ff"),
             true,
             65535n
+        ],
+        [
+            "Literal (uint with subdenomintation)",
+            (factory: ASTNodeFactory) =>
+                factory.makeLiteral("<missing>", LiteralKind.Number, "", "2", EtherUnit.Ether),
+            true,
+            2_000_000_000_000_000_000n
+        ],
+        [
+            "Literal (decimal)",
+            (factory: ASTNodeFactory) =>
+                factory.makeLiteral("<missing>", LiteralKind.Number, "", "2.5"),
+            true,
+            new Decimal(2.5)
+        ],
+        [
+            "Literal (decimal with subdenomintation)",
+            (factory: ASTNodeFactory) =>
+                factory.makeLiteral("<missing>", LiteralKind.Number, "", "2.5", EtherUnit.Ether),
+            true,
+            2_500_000_000_000_000_000n
+        ],
+        [
+            "Literal (uint with invalid subdenomintation)",
+            (factory: ASTNodeFactory) =>
+                factory.makeLiteral(
+                    "<missing>",
+                    LiteralKind.Number,
+                    "",
+                    "1",
+                    "unknown" as EtherUnit
+                ),
+            true,
+            undefined
         ],
         [
             "UnaryOperation (!true)",
@@ -824,6 +860,55 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     "+",
                     factory.makeIdentifierFor(v),
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "1")
+                );
+            },
+            false,
+            undefined
+        ],
+        [
+            "Identifier & StructDefinition (invalid)",
+            (factory: ASTNodeFactory) =>
+                factory.makeIdentifierFor(
+                    factory.makeStructDefinition("SomeStruct", 0, "internal", [])
+                ),
+            false,
+            undefined
+        ],
+        [
+            "FunctionCall (typeConversion)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "uint256",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint256", "uint256"),
+                    [factory.makeLiteral("uint8", LiteralKind.Number, "", "1")]
+                ),
+            true,
+            1n
+        ],
+        [
+            "FunctionCall (typeConversion, mutable variable)",
+            (factory: ASTNodeFactory) => {
+                return factory.makeFunctionCall(
+                    "uint256",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint256", "uint256"),
+                    [
+                        factory.makeVariableDeclaration(
+                            false,
+                            false,
+                            "A",
+                            0,
+                            true,
+                            DataLocation.Default,
+                            StateVariableVisibility.Public,
+                            Mutability.Mutable,
+                            "uint8",
+                            undefined,
+                            factory.makeElementaryTypeName("uint8", "uint8"),
+                            undefined
+                        )
+                    ]
                 );
             },
             false,

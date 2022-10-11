@@ -40,6 +40,18 @@ export class NonConstantExpressionError extends EvalError {
     }
 }
 
+function promoteToDec(v: Value): Decimal {
+    if (!(typeof v === "bigint" || v instanceof Decimal)) {
+        throw new Error(`Expected number not ${v}`);
+    }
+
+    return v instanceof Decimal ? v : new Decimal(v.toString());
+}
+
+function demoteFromDec(d: Decimal): Decimal | bigint {
+    return d.isInt() ? BigInt(d.toFixed()) : d;
+}
+
 export function isConstant(expr: Expression): boolean {
     if (expr instanceof Literal) {
         return true;
@@ -118,18 +130,18 @@ function evalLiteral(expr: Literal): Value {
 
     if (expr.kind === LiteralKind.Number) {
         const dec = new Decimal(expr.value.replace(/_/g, ""));
-
-        let val = dec.isInteger() ? BigInt(dec.toFixed()) : dec;
+        const val = dec.isInteger() ? BigInt(dec.toFixed()) : dec;
 
         if (expr.subdenomination !== undefined) {
             if (subdenominationMultipliers[expr.subdenomination] === undefined) {
                 throw new EvalError(expr, `Unknown denomination ${expr.subdenomination}`);
             }
 
-            val =
-                val instanceof Decimal
-                    ? val.times(subdenominationMultipliers[expr.subdenomination])
-                    : val * BigInt(subdenominationMultipliers[expr.subdenomination].toFixed());
+            if (val instanceof Decimal) {
+                return demoteFromDec(val.times(subdenominationMultipliers[expr.subdenomination]));
+            }
+
+            return val * BigInt(subdenominationMultipliers[expr.subdenomination].toFixed());
         }
 
         return val;
@@ -208,18 +220,6 @@ function evalBinaryLogic(expr: BinaryOperation, lVal: Value, rVal: Value): Value
     }
 
     throw new Error(`Unknown logic op ${op}`);
-}
-
-function promoteToDec(v: Value): Decimal {
-    if (!(typeof v === "bigint" || v instanceof Decimal)) {
-        throw new Error(`Expected number not ${v}`);
-    }
-
-    return v instanceof Decimal ? v : new Decimal(v.toString());
-}
-
-function demoteFromDec(d: Decimal): Decimal | bigint {
-    return d.isInt() ? BigInt(d.toFixed()) : d;
 }
 
 function evalBinaryEquality(expr: BinaryOperation, lVal: Value, rVal: Value): Value {
@@ -395,6 +395,14 @@ export function evalConstantExpr(expr: Expression): Value {
         if (decl instanceof VariableDeclaration) {
             return evalConstantExpr(decl.vValue as Expression);
         }
+    }
+
+    if (expr instanceof FunctionCall) {
+        /**
+         * @todo Implement properly, as Solidity permits overflow and underflow
+         * during constant evaluation.
+         */
+        return evalConstantExpr(expr.vArguments[0]);
     }
 
     /// Note that from the point of view of the type system constant conditionals and

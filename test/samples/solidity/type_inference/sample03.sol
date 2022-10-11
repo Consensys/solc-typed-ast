@@ -22,12 +22,21 @@ contract Main {
 }
 
 contract Foo {
-    function ret(uint256[] calldata x) external returns (uint[] calldata) {
+    function ret1(uint256[] calldata x) external returns (uint[] calldata) {
         return x;
+    }
+
+    function ret2(uint256[] calldata y) external returns (uint[] calldata) {
+        return y;
     }
 
     function main() public {
         uint[] memory arr = new uint[](4);
-        this.ret(arr)[1] = 1;
+
+        this.ret1(arr)[1] = 1;
+
+        (uint8 x, uint16 y) = true ? (0xff, 0xffff) : (0, 0);
+
+        function (uint256[] memory) external returns (uint[] memory) fn = false ? this.ret1 : this.ret2;
     }
 }
