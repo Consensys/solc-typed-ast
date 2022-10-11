@@ -849,7 +849,7 @@ export class InferType {
         // If any of the returns is a calldata pointer convert it to memory.
         // This conversion happens implicitly as part of the function call, as
         // the returned reference can be immediately assigned to.
-        if (gte(this.version, "0.8.0")) {
+        if (gte(this.version, "0.7.0")) {
             for (let i = 0; i < rets.length; i++) {
                 const ret = rets[i];
 
@@ -1295,7 +1295,39 @@ export class InferType {
      * If the `MemberAccess` corresponds to a external function or a getter invoked on a contract
      * return the type of the function/getter.
      */
-    private typeOfMemberAccess_Resolved(node: MemberAccess, baseT: TypeNode): TypeNode | undefined {
+    typeOfMemberAccess(node: MemberAccess): TypeNode {
+        const baseT = this.typeOf(node.vExpression);
+        const usingForT = this.typeOfMemberAccess_UsingFor(node, baseT);
+
+        const normalT = this.typeOfMemberAccessImpl(node, baseT);
+
+        if (normalT === undefined && usingForT !== undefined) {
+            return usingForT;
+        }
+
+        if (
+            usingForT !== undefined &&
+            (normalT instanceof FunctionType ||
+                normalT instanceof FunctionLikeSetType ||
+                normalT instanceof BuiltinFunctionType)
+        ) {
+            assert(
+                usingForT instanceof FunctionType || usingForT instanceof FunctionLikeSetType,
+                "Expection function-like type for using-for, not {0}",
+                usingForT
+            );
+            return mergeFunTypes(usingForT, normalT);
+        }
+
+        assert(
+            normalT !== undefined,
+            `Unknown field ${node.memberName} on ${pp(node)} of type ${pp(baseT)}`
+        );
+
+        return normalT;
+    }
+
+    private typeOfMemberAccessImpl(node: MemberAccess, baseT: TypeNode): TypeNode | undefined {
         if (baseT instanceof UserDefinedType && baseT.definition instanceof ContractDefinition) {
             const contract = baseT.definition;
             const fieldT = this.typeOfResolved(node.memberName, contract, true);
@@ -1324,39 +1356,9 @@ export class InferType {
                 return fieldT;
             }
 
-            return builtinT;
-        }
-
-        return undefined;
-    }
-
-    typeOfMemberAccess(node: MemberAccess): TypeNode {
-        const baseT = this.typeOf(node.vExpression);
-
-        const usingForT = this.typeOfMemberAccess_UsingFor(node, baseT);
-        const resolvedT = this.typeOfMemberAccess_Resolved(node, baseT);
-
-        // Both using for and contract functions found - merge into a single set
-        if (usingForT !== undefined && resolvedT !== undefined) {
-            assert(
-                usingForT instanceof FunctionType || usingForT instanceof FunctionLikeSetType,
-                "Expection function-like type for using-for, not {0}",
-                usingForT
-            );
-
-            assert(
-                resolvedT instanceof FunctionType ||
-                    resolvedT instanceof FunctionLikeSetType ||
-                    resolvedT instanceof BuiltinFunctionType,
-                "Expection function-like type for resolved, not {0}",
-                resolvedT
-            );
-
-            return mergeFunTypes(usingForT, resolvedT);
-        }
-
-        if (resolvedT !== undefined) {
-            return resolvedT;
+            if (builtinT) {
+                return builtinT;
+            }
         }
 
         if (baseT instanceof PointerType) {
@@ -1595,17 +1597,7 @@ export class InferType {
             }
         }
 
-        if (node.vReferencedDeclaration instanceof FunctionDefinition) {
-            return this.funDefToType(node.vReferencedDeclaration);
-        }
-
-        if (usingForT !== undefined) {
-            return usingForT;
-        }
-
-        throw new SolTypeError(
-            `Unknown field ${node.memberName} on ${pp(node)} of type ${pp(baseT)}`
-        );
+        return undefined;
     }
 
     typeOfNewExpression(newExpr: NewExpression): TypeNode {

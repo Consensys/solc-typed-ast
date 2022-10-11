@@ -512,8 +512,8 @@ function compareTypeNodes(
         exprIsABIDecodeArg(expr)
     ) {
         return compareTypeNodes(
-            generalizeType(inferredT)[0],
-            generalizeType(parsedT)[0],
+            generalizeType(inferredT.type)[0],
+            generalizeType(parsedT.type)[0],
             expr,
             version
         );
@@ -530,21 +530,14 @@ function compareTypeNodes(
         inferredT.parameters.length === parsedT.parameters.length &&
         inferredT.parameters.length === parsedT.parameters.length
     ) {
-        const genInferedT = generalizeType(inferredT)[0] as FunctionType;
-        const genParsedT = generalizeType(parsedT)[0] as FunctionType;
+        const infParams = generalizeType(new TupleType(inferredT.parameters))[0];
+        const infReturns = generalizeType(new TupleType(inferredT.returns))[0];
+        const parsedParams = generalizeType(new TupleType(parsedT.parameters))[0];
+        const parsedReturns = generalizeType(new TupleType(parsedT.returns))[0];
+
         return (
-            compareTypeNodes(
-                new TupleType(genInferedT.parameters),
-                new TupleType(genParsedT.parameters),
-                expr,
-                version
-            ) &&
-            compareTypeNodes(
-                new TupleType(genInferedT.returns),
-                new TupleType(genParsedT.returns),
-                expr,
-                version
-            )
+            compareTypeNodes(infParams, parsedParams, expr, version) &&
+            compareTypeNodes(infReturns, parsedReturns, expr, version)
         );
     }
 

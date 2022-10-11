@@ -151,20 +151,6 @@ export function generalizeType(type: TypeNode): [TypeNode, DataLocation | undefi
         return [new MappingType(genearlKeyT, generalValueT), DataLocation.Storage];
     }
 
-    if (type instanceof FunctionType) {
-        return [
-            new FunctionType(
-                type.name,
-                type.parameters.map((paramT) => generalizeType(paramT)[0]),
-                type.returns.map((retT) => generalizeType(retT)[0]),
-                type.visibility,
-                type.mutability,
-                type.implicitFirstArg
-            ),
-            undefined
-        ];
-    }
-
     if (type instanceof TypeNameType) {
         return generalizeType(type.type);
     }
