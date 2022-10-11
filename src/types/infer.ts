@@ -764,6 +764,33 @@ export class InferType {
     }
 
     /**
+     * Return true IFF the passed in node is an external call. There are 2 cases for external calls:
+     *
+     * 1. The builtin functions call/callcode/staticcall/delegatecall/transfer/send
+     * 2. Calling a function on some variable of type ContractDefinition
+     */
+    private isFunctionCallExternal(node: FunctionCall, calleeT: TypeNode): boolean {
+        if (
+            calleeT instanceof BuiltinFunctionType &&
+            ["call", "callcode", "staticcall", "delegatecall", "transfer", "send"].includes(
+                node.vFunctionName
+            )
+        ) {
+            return true;
+        }
+
+        const vExp = node.vExpression;
+
+        if (!(vExp instanceof MemberAccess)) {
+            return false;
+        }
+
+        const baseT = this.typeOf(vExp.vExpression);
+
+        return baseT instanceof UserDefinedType && baseT.definition instanceof ContractDefinition;
+    }
+
+    /**
      * Infer the type of the function call
      */
     typeOfFunctionCall(node: FunctionCall): TypeNode {
@@ -846,10 +873,9 @@ export class InferType {
             }
         }
 
-        // If any of the returns is a calldata pointer convert it to memory.
-        // This conversion happens implicitly as part of the function call, as
-        // the returned reference can be immediately assigned to.
-        if (gte(this.version, "0.7.0")) {
+        // If this is an external call, any data returned in calldata is automatically
+        // copied to memory, so the return type should be a memory pointer.
+        if (this.isFunctionCallExternal(node, calleeT)) {
             for (let i = 0; i < rets.length; i++) {
                 const ret = rets[i];
 

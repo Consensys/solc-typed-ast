@@ -30,10 +30,22 @@ contract Foo {
         return y;
     }
 
-    function main() public {
+    function ret3(uint256[] calldata y) public returns (uint[] calldata) {
+        return y;
+    }
+
+    function ret4(uint256[] calldata y) internal returns (uint[] calldata) {
+        return y;
+    }
+
+    function main(uint[] calldata p) public {
         uint[] memory arr = new uint[](4);
 
         this.ret1(arr)[1] = 1;
+
+        ret3(p);
+        this.ret3(p);
+        ret4(p);
 
         (uint8 x, uint16 y) = true ? (0xff, 0xffff) : (0, 0);
 
