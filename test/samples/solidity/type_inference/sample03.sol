@@ -44,6 +44,7 @@ contract Foo {
         this.ret1(arr)[1] = 1;
 
         ret3(p);
+        this.ret3;
         this.ret3(p);
         ret4(p);
 

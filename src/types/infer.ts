@@ -764,29 +764,26 @@ export class InferType {
     }
 
     /**
-     * Return true IFF the passed in node is an external call. There are 2 cases for external calls:
+     * Return true IFF the passed in node is an external callee. There are 2 cases for external calls:
      *
-     * 1. The builtin functions call/callcode/staticcall/delegatecall/transfer/send
+     * 1. The builtin functions (address).call/callcode/staticcall/delegatecall/transfer/send
      * 2. Calling a function on some variable of type ContractDefinition
      */
-    private isFunctionCallExternal(node: FunctionCall, calleeT: TypeNode): boolean {
+    private isFunctionCallExternal(callee: ASTNode, calleeT: TypeNode): boolean {
+        if (!(callee instanceof MemberAccess)) {
+            return false;
+        }
+
+        const name = callee.memberName;
+
         if (
             calleeT instanceof BuiltinFunctionType &&
-            ["call", "callcode", "staticcall", "delegatecall", "transfer", "send"].includes(
-                node.vFunctionName
-            )
+            ["call", "callcode", "staticcall", "delegatecall", "transfer", "send"].includes(name)
         ) {
             return true;
         }
 
-        const vExp = node.vExpression;
-
-        if (!(vExp instanceof MemberAccess)) {
-            return false;
-        }
-
-        const baseT = this.typeOf(vExp.vExpression);
-
+        const baseT = this.typeOf(callee.vExpression);
         return baseT instanceof UserDefinedType && baseT.definition instanceof ContractDefinition;
     }
 
@@ -870,18 +867,6 @@ export class InferType {
                 throw new SolTypeError(
                     `Unexpected type ${calleeT.pp()} in function call ${pp(node)}`
                 );
-            }
-        }
-
-        // If this is an external call, any data returned in calldata is automatically
-        // copied to memory, so the return type should be a memory pointer.
-        if (this.isFunctionCallExternal(node, calleeT)) {
-            for (let i = 0; i < rets.length; i++) {
-                const ret = rets[i];
-
-                if (ret instanceof PointerType && ret.location === DataLocation.CallData) {
-                    rets[i] = specializeType(generalizeType(ret)[0], DataLocation.Memory);
-                }
             }
         }
 
@@ -1357,10 +1342,42 @@ export class InferType {
         return normalT;
     }
 
+    private changeLocToMemory(
+        typ: FunctionType | FunctionLikeSetType<FunctionType>
+    ): FunctionType | FunctionLikeSetType<FunctionType> {
+        if (typ instanceof FunctionLikeSetType) {
+            const funTs = typ.defs.map((funT) => this.changeLocToMemory(funT) as FunctionType);
+
+            return new FunctionLikeSetType(funTs);
+        }
+
+        const params = typ.parameters.map((paramT) =>
+            paramT instanceof PointerType && paramT.location === DataLocation.CallData
+                ? specializeType(generalizeType(paramT)[0], DataLocation.Memory)
+                : paramT
+        );
+
+        const rets = typ.returns.map((retT) =>
+            retT instanceof PointerType && retT.location === DataLocation.CallData
+                ? specializeType(generalizeType(retT)[0], DataLocation.Memory)
+                : retT
+        );
+
+        return new FunctionType(
+            typ.name,
+            params,
+            rets,
+            typ.visibility,
+            typ.mutability,
+            typ.implicitFirstArg,
+            typ.src
+        );
+    }
+
     private typeOfMemberAccessImpl(node: MemberAccess, baseT: TypeNode): TypeNode | undefined {
         if (baseT instanceof UserDefinedType && baseT.definition instanceof ContractDefinition) {
             const contract = baseT.definition;
-            const fieldT = this.typeOfResolved(node.memberName, contract, true);
+            let fieldT = this.typeOfResolved(node.memberName, contract, true);
 
             let builtinT: TypeNode | undefined;
 
@@ -1379,8 +1396,15 @@ export class InferType {
             }
 
             if (fieldT) {
+                if (this.isFunctionCallExternal(node, baseT)) {
+                    fieldT = this.changeLocToMemory(fieldT);
+                }
+
                 if (builtinT instanceof BuiltinFunctionType) {
-                    return mergeFunTypes(fieldT, builtinT);
+                    return mergeFunTypes(
+                        fieldT as FunctionType | FunctionLikeSetType<FunctionType>,
+                        builtinT
+                    );
                 }
 
                 return fieldT;
