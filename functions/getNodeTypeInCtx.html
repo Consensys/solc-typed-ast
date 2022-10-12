@@ -21,6 +21,8 @@
 or an AST node with a type string (<code>Expression</code> or <code>VariableDeclaration</code>).</p>
 <p>The function uses a parser to process the type string,
 while resolving and user-defined type references in the context of <code>ctx</code>.</p>
+
+<h3>Deprecated</h3><p>Use <code>InferType.typeOf()</code> instead.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -39,7 +41,7 @@ while resolving and user-defined type references in the context of <code>ctx</co
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../classes/TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in src/types/typeStrings/typeString_parser.ts:119</li></ul></aside></li></ul></section></div>
+<li>Defined in src/types/typeStrings/typeString_parser.ts:125</li></ul></aside></li></ul></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -132,6 +134,7 @@ while resolving and user-defined type references in the context of <code>ctx</co
 <li class="tsd-kind-class"><a href="../classes/IfStatement.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>If<wbr/>Statement</a></li>
 <li class="tsd-kind-class"><a href="../classes/ImportDirective.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>Import<wbr/>Directive</a></li>
 <li class="tsd-kind-class"><a href="../classes/ImportRefType.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>Import<wbr/>Ref<wbr/>Type</a></li>
+<li class="tsd-kind-class"><a href="../classes/InaccessibleDynamicType.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>Inaccessible<wbr/>Dynamic<wbr/>Type</a></li>
 <li class="tsd-kind-class"><a href="../classes/IndexAccess.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>Index<wbr/>Access</a></li>
 <li class="tsd-kind-class"><a href="../classes/IndexRangeAccess.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>Index<wbr/>Range<wbr/>Access</a></li>
 <li class="tsd-kind-class"><a href="../classes/InferType.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-128-path"></use><use href="#icon-128-text"></use></svg>Infer<wbr/>Type</a></li>
@@ -249,6 +252,7 @@ while resolving and user-defined type references in the context of <code>ctx</co
 <li class="tsd-kind-type-alias"><a href="../types/Expectation.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Expectation</a></li>
 <li class="tsd-kind-type-alias"><a href="../types/ExportedSymbol.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Exported<wbr/>Symbol</a></li>
 <li class="tsd-kind-type-alias"><a href="../types/ExpressionConstructor.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Expression<wbr/>Constructor</a></li>
+<li class="tsd-kind-type-alias"><a href="../types/FunctionSetType.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Function<wbr/>Set<wbr/>Type</a></li>
 <li class="tsd-kind-type-alias"><a href="../types/NamedDefinition.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Named<wbr/>Definition</a></li>
 <li class="tsd-kind-type-alias"><a href="../types/PPIsh.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>PPIsh</a></li>
 <li class="tsd-kind-type-alias"><a href="../types/ParseFunction.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Parse<wbr/>Function</a></li>
@@ -334,6 +338,7 @@ while resolving and user-defined type references in the context of <code>ctx</co
 <li class="tsd-kind-function"><a href="extractSpecifiersFromSource.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>extract<wbr/>Specifiers<wbr/>From<wbr/>Source</a></li>
 <li class="tsd-kind-function"><a href="findAllFiles.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>find<wbr/>All<wbr/>Files</a></li>
 <li class="tsd-kind-function"><a href="forAll.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>for<wbr/>All</a></li>
+<li class="tsd-kind-function"><a href="forAny.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>for<wbr/>Any</a></li>
 <li class="tsd-kind-function"><a href="generalizeType.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>generalize<wbr/>Type</a></li>
 <li class="tsd-kind-function"><a href="getABIEncoderVersion.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>getABIEncoder<wbr/>Version</a></li>
 <li class="tsd-kind-function"><a href="getCachedMDPath.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>get<wbr/>CachedMDPath</a></li>
@@ -345,7 +350,7 @@ while resolving and user-defined type references in the context of <code>ctx</co
 <li class="tsd-kind-function"><a href="getDanglingDocumentation.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>get<wbr/>Dangling<wbr/>Documentation</a></li>
 <li class="tsd-kind-function"><a href="getDocumentation.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>get<wbr/>Documentation</a></li>
 <li class="tsd-kind-function"><a href="getFQDefName.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>getFQDef<wbr/>Name</a></li>
-<li class="tsd-kind-function"><a href="getFallbackFun.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>get<wbr/>Fallback<wbr/>Fun</a></li>
+<li class="tsd-kind-function"><a href="getFallbackRecvFuns.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>get<wbr/>Fallback<wbr/>Recv<wbr/>Funs</a></li>
 <li class="tsd-kind-function"><a href="getNodeType.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>get<wbr/>Node<wbr/>Type</a></li>
 <li class="current tsd-kind-function"><a href="getNodeTypeInCtx.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>get<wbr/>Node<wbr/>Type<wbr/>In<wbr/>Ctx</a></li>
 <li class="tsd-kind-function"><a href="getTypeForCompilerVersion.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>get<wbr/>Type<wbr/>For<wbr/>Compiler<wbr/>Version</a></li>
@@ -358,8 +363,10 @@ while resolving and user-defined type references in the context of <code>ctx</co
 <li class="tsd-kind-function"><a href="isFloating.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>is<wbr/>Floating</a></li>
 <li class="tsd-kind-function"><a href="isPPAble.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>isPPAble</a></li>
 <li class="tsd-kind-function"><a href="isPrimitive.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>is<wbr/>Primitive</a></li>
+<li class="tsd-kind-function"><a href="isReferenceType.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>is<wbr/>Reference<wbr/>Type</a></li>
 <li class="tsd-kind-function"><a href="isStructEqualityComparable.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>is<wbr/>Struct<wbr/>Equality<wbr/>Comparable</a></li>
 <li class="tsd-kind-function"><a href="isSubDir.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>is<wbr/>Sub<wbr/>Dir</a></li>
+<li class="tsd-kind-function"><a href="isVisiblityExternallyCallable.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>is<wbr/>Visiblity<wbr/>Externally<wbr/>Callable</a></li>
 <li class="tsd-kind-function"><a href="normalizeSpecifier.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>normalize<wbr/>Specifier</a></li>
 <li class="tsd-kind-function"><a href="parse.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>parse</a></li>
 <li class="tsd-kind-function"><a href="parseFileLevelDefinitions.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>parse<wbr/>File<wbr/>Level<wbr/>Definitions</a></li>

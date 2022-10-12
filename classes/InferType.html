@@ -18,7 +18,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="target">InferType</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L179">src/types/infer.ts:179</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L271">src/types/infer.ts:271</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -39,6 +39,7 @@
 <a href="InferType.html#funDefToType" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>fun<wbr/>Def<wbr/>To<wbr/>Type</span></a>
 <a href="InferType.html#inferCommonIntType" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>infer<wbr/>Common<wbr/>Int<wbr/>Type</span></a>
 <a href="InferType.html#inferCommonType" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>infer<wbr/>Common<wbr/>Type</span></a>
+<a href="InferType.html#inferVariableDeclLocation" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>infer<wbr/>Variable<wbr/>Decl<wbr/>Location</span></a>
 <a href="InferType.html#typeOf" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>type<wbr/>Of</span></a>
 <a href="InferType.html#typeOfAssignment" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>type<wbr/>Of<wbr/>Assignment</span></a>
 <a href="InferType.html#typeOfBinaryOperation" class="tsd-index-link tsd-kind-method tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>type<wbr/>Of<wbr/>Binary<wbr/>Operation</span></a>
@@ -74,14 +75,14 @@
 <h5>version: <span class="tsd-signature-type">string</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="InferType.html" class="tsd-signature-type" data-tsd-kind="Class">InferType</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L180">src/types/infer.ts:180</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L272">src/types/infer.ts:272</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="version" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>version</span><a href="#version" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L180">src/types/infer.ts:180</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L272">src/types/infer.ts:272</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="errDefToType" class="tsd-anchor"></a>
@@ -96,7 +97,7 @@
 <h5>def: <a href="ErrorDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">ErrorDefinition</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="ErrorType.html" class="tsd-signature-type" data-tsd-kind="Class">ErrorType</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1634">src/types/infer.ts:1634</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2088">src/types/infer.ts:2088</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="eventDefToType" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>event<wbr/>Def<wbr/>To<wbr/>Type</span><a href="#eventDefToType" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -109,20 +110,26 @@
 <h5>def: <a href="EventDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">EventDefinition</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="EventType.html" class="tsd-signature-type" data-tsd-kind="Class">EventType</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1626">src/types/infer.ts:1626</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2080">src/types/infer.ts:2080</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="funDefToType" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>fun<wbr/>Def<wbr/>To<wbr/>Type</span><a href="#funDefToType" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="funDefToType.funDefToType-1">fun<wbr/>Def<wbr/>To<wbr/>Type<span class="tsd-signature-symbol">(</span>def<span class="tsd-signature-symbol">: </span><a href="FunctionDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionDefinition</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="FunctionType.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionType</a><a href="#funDefToType.funDefToType-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="funDefToType.funDefToType-1">fun<wbr/>Def<wbr/>To<wbr/>Type<span class="tsd-signature-symbol">(</span>def<span class="tsd-signature-symbol">: </span><a href="FunctionDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionDefinition</a>, implicitFirstArg<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="FunctionType.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionType</a><a href="#funDefToType.funDefToType-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Convert a <code>FunctionDefinition</code> <code>def</code> into a function type.
+If <code>skipFirstArg</code> is true, omit the first parameter.
+This is used for functions bound with <code>using for</code> directives.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>def: <a href="FunctionDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionDefinition</a></h5></li></ul></div>
+<h5>def: <a href="FunctionDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionDefinition</a></h5></li>
+<li>
+<h5>implicitFirstArg: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="FunctionType.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionType</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1605">src/types/infer.ts:1605</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2061">src/types/infer.ts:2061</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="inferCommonIntType" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>infer<wbr/>Common<wbr/>Int<wbr/>Type</span><a href="#inferCommonIntType" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -139,7 +146,7 @@
 <h5>b: <a href="IntType.html" class="tsd-signature-type" data-tsd-kind="Class">IntType</a><span class="tsd-signature-symbol"> | </span><a href="IntLiteralType.html" class="tsd-signature-type" data-tsd-kind="Class">IntLiteralType</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="IntType.html" class="tsd-signature-type" data-tsd-kind="Class">IntType</a><span class="tsd-signature-symbol"> | </span><a href="IntLiteralType.html" class="tsd-signature-type" data-tsd-kind="Class">IntLiteralType</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L223">src/types/infer.ts:223</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L318">src/types/infer.ts:318</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="inferCommonType" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>infer<wbr/>Common<wbr/>Type</span><a href="#inferCommonType" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -148,11 +155,6 @@
 <div class="tsd-comment tsd-typography"><p>Given two types <code>a</code> and <code>b</code> infer the common type that they are both
 implicitly casted to, when appearing in a binary op/conditional.
 Its currently usually <code>a</code> or <code>b</code></p>
-<p>TODO: We should be able to simplify inferCommonType by moving a bunch of this logic to
-<code>castable(fromT, toT)</code> and then just doing something like:</p>
-<p>if (castable(a, b)) { return b; }
-if (castable(b, a)) { return a; }</p>
-<p>For a bunch of cases.</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -163,7 +165,23 @@ if (castable(b, a)) { return a; }</p>
 <h5>b: <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L303">src/types/infer.ts:303</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L390">src/types/infer.ts:390</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="inferVariableDeclLocation" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>infer<wbr/>Variable<wbr/>Decl<wbr/>Location</span><a href="#inferVariableDeclLocation" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+<li class="tsd-signature tsd-anchor-link" id="inferVariableDeclLocation.inferVariableDeclLocation-1">infer<wbr/>Variable<wbr/>Decl<wbr/>Location<span class="tsd-signature-symbol">(</span>decl<span class="tsd-signature-symbol">: </span><a href="VariableDeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../enums/DataLocation.html" class="tsd-signature-type" data-tsd-kind="Enumeration">DataLocation</a><a href="#inferVariableDeclLocation.inferVariableDeclLocation-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Infer the data location for the given <code>VariableDeclaration</code>.
+For local vars with solidity &lt;=0.4.26 we infer the location from the RHS.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>decl: <a href="VariableDeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="../enums/DataLocation.html" class="tsd-signature-type" data-tsd-kind="Enumeration">DataLocation</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1996">src/types/infer.ts:1996</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOf" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of</span><a href="#typeOf" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -178,7 +196,7 @@ if (castable(b, a)) { return a; }</p>
 <h5>node: <a href="Expression.html" class="tsd-signature-type" data-tsd-kind="Class">Expression</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1352">src/types/infer.ts:1352</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1758">src/types/infer.ts:1758</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfAssignment" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Assignment</span><a href="#typeOfAssignment" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -193,13 +211,13 @@ if (castable(b, a)) { return a; }</p>
 <h5>node: <a href="Assignment.html" class="tsd-signature-type" data-tsd-kind="Class">Assignment</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L185">src/types/infer.ts:185</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L277">src/types/infer.ts:277</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfBinaryOperation" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Binary<wbr/>Operation</span><a href="#typeOfBinaryOperation" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="typeOfBinaryOperation.typeOfBinaryOperation-1">type<wbr/>Of<wbr/>Binary<wbr/>Operation<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="BinaryOperation.html" class="tsd-signature-type" data-tsd-kind="Class">BinaryOperation</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><a href="#typeOfBinaryOperation.typeOfBinaryOperation-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Infer the type of the binary op <code>node</code>.</p>
+<div class="tsd-comment tsd-typography"><p>Infer the type of the binary op</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -208,7 +226,7 @@ if (castable(b, a)) { return a; }</p>
 <h5>node: <a href="BinaryOperation.html" class="tsd-signature-type" data-tsd-kind="Class">BinaryOperation</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L381">src/types/infer.ts:381</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L509">src/types/infer.ts:509</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfBuiltin" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Builtin</span><a href="#typeOfBuiltin" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -223,7 +241,7 @@ if (castable(b, a)) { return a; }</p>
 <h5>node: <a href="Identifier.html" class="tsd-signature-type" data-tsd-kind="Class">Identifier</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L775">src/types/infer.ts:775</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L987">src/types/infer.ts:987</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfBuiltinType" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Builtin<wbr/>Type</span><a href="#typeOfBuiltinType" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -242,13 +260,13 @@ for details.</p>
 <h5>node: <a href="Identifier.html" class="tsd-signature-type" data-tsd-kind="Class">Identifier</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L738">src/types/infer.ts:738</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L950">src/types/infer.ts:950</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfConditional" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Conditional</span><a href="#typeOfConditional" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="typeOfConditional.typeOfConditional-1">type<wbr/>Of<wbr/>Conditional<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="Conditional.html" class="tsd-signature-type" data-tsd-kind="Class">Conditional</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><a href="#typeOfConditional.typeOfConditional-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Infer the type of the conditional <code>node</code>.</p>
+<div class="tsd-comment tsd-typography"><p>Infer the type of the conditional expression</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -257,13 +275,13 @@ for details.</p>
 <h5>node: <a href="Conditional.html" class="tsd-signature-type" data-tsd-kind="Class">Conditional</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L444">src/types/infer.ts:444</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L589">src/types/infer.ts:589</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfFunctionCall" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Function<wbr/>Call</span><a href="#typeOfFunctionCall" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="typeOfFunctionCall.typeOfFunctionCall-1">type<wbr/>Of<wbr/>Function<wbr/>Call<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="FunctionCall.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionCall</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><a href="#typeOfFunctionCall.typeOfFunctionCall-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Infer the type of the function call <code>node</code>.</p>
+<div class="tsd-comment tsd-typography"><p>Infer the type of the function call</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -272,13 +290,13 @@ for details.</p>
 <h5>node: <a href="FunctionCall.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionCall</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L606">src/types/infer.ts:606</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L793">src/types/infer.ts:793</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfIdentifier" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Identifier</span><a href="#typeOfIdentifier" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="typeOfIdentifier.typeOfIdentifier-1">type<wbr/>Of<wbr/>Identifier<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="Identifier.html" class="tsd-signature-type" data-tsd-kind="Class">Identifier</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><a href="#typeOfIdentifier.typeOfIdentifier-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Infer the type of the identifier <code>node</code>.</p>
+<div class="tsd-comment tsd-typography"><p>Infer the type of the identifier</p>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -287,7 +305,7 @@ for details.</p>
 <h5>node: <a href="Identifier.html" class="tsd-signature-type" data-tsd-kind="Class">Identifier</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L825">src/types/infer.ts:825</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1037">src/types/infer.ts:1037</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfIndexAccess" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Index<wbr/>Access</span><a href="#typeOfIndexAccess" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -300,7 +318,7 @@ for details.</p>
 <h5>node: <a href="IndexAccess.html" class="tsd-signature-type" data-tsd-kind="Class">IndexAccess</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L675">src/types/infer.ts:675</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L885">src/types/infer.ts:885</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfIndexRangeAccess" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Index<wbr/>Range<wbr/>Access</span><a href="#typeOfIndexRangeAccess" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -313,7 +331,7 @@ for details.</p>
 <h5>node: <a href="IndexRangeAccess.html" class="tsd-signature-type" data-tsd-kind="Class">IndexRangeAccess</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L713">src/types/infer.ts:713</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L923">src/types/infer.ts:923</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfLiteral" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Literal</span><a href="#typeOfLiteral" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -326,12 +344,15 @@ for details.</p>
 <h5>node: <a href="Literal.html" class="tsd-signature-type" data-tsd-kind="Class">Literal</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L959">src/types/infer.ts:959</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1175">src/types/infer.ts:1175</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfMemberAccess" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Member<wbr/>Access</span><a href="#typeOfMemberAccess" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="typeOfMemberAccess.typeOfMemberAccess-1">type<wbr/>Of<wbr/>Member<wbr/>Access<span class="tsd-signature-symbol">(</span>node<span class="tsd-signature-symbol">: </span><a href="MemberAccess.html" class="tsd-signature-type" data-tsd-kind="Class">MemberAccess</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><a href="#typeOfMemberAccess.typeOfMemberAccess-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>If the <code>MemberAccess</code> corresponds to a external function or a getter invoked on a contract
+return the type of the function/getter.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
@@ -339,7 +360,7 @@ for details.</p>
 <h5>node: <a href="MemberAccess.html" class="tsd-signature-type" data-tsd-kind="Class">MemberAccess</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1002">src/types/infer.ts:1002</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1309">src/types/infer.ts:1309</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfNewCall" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>New<wbr/>Call</span><a href="#typeOfNewCall" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -354,7 +375,7 @@ for details.</p>
 <h5>node: <a href="FunctionCall.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionCall</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L559">src/types/infer.ts:559</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L716">src/types/infer.ts:716</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfNewExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>New<wbr/>Expression</span><a href="#typeOfNewExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -367,11 +388,11 @@ for details.</p>
 <h5>newExpr: <a href="NewExpression.html" class="tsd-signature-type" data-tsd-kind="Class">NewExpression</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1253">src/types/infer.ts:1253</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1657">src/types/infer.ts:1657</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfResolved" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Resolved</span><a href="#typeOfResolved" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="typeOfResolved.typeOfResolved-1">type<wbr/>Of<wbr/>Resolved<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, ctx<span class="tsd-signature-symbol">: </span><a href="ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a>, externalOnly<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><a href="#typeOfResolved.typeOfResolved-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="typeOfResolved.typeOfResolved-1">type<wbr/>Of<wbr/>Resolved<span class="tsd-signature-symbol">(</span>name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, ctxs<span class="tsd-signature-symbol">: </span><a href="ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol"> | </span><a href="ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">[]</span>, externalOnly<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><a href="#typeOfResolved.typeOfResolved-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Given a <code>name</code> and a ASTNode <code>ctx</code>, resolve that <code>name</code> in <code>ctx</code> and compute
 a type for the one (or more) definitions that resolve to <code>name</code>.</p>
@@ -390,12 +411,12 @@ visible.</li>
 <li>
 <h5>name: <span class="tsd-signature-type">string</span></h5></li>
 <li>
-<h5>ctx: <a href="ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a></h5></li>
+<h5>ctxs: <a href="ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol"> | </span><a href="ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">[]</span></h5></li>
 <li>
 <h5>externalOnly: <span class="tsd-signature-type">boolean</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1434">src/types/infer.ts:1434</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1840">src/types/infer.ts:1840</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfStructConstructorCall" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Struct<wbr/>Constructor<wbr/>Call</span><a href="#typeOfStructConstructorCall" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -410,7 +431,7 @@ visible.</li>
 <h5>node: <a href="FunctionCall.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionCall</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L454">src/types/infer.ts:454</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L599">src/types/infer.ts:599</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfTupleExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Tuple<wbr/>Expression</span><a href="#typeOfTupleExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -423,7 +444,7 @@ visible.</li>
 <h5>node: <a href="TupleExpression.html" class="tsd-signature-type" data-tsd-kind="Class">TupleExpression</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1285">src/types/infer.ts:1285</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1689">src/types/infer.ts:1689</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfTypeConversion" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Type<wbr/>Conversion</span><a href="#typeOfTypeConversion" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -438,7 +459,7 @@ visible.</li>
 <h5>node: <a href="FunctionCall.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionCall</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L527">src/types/infer.ts:527</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L683">src/types/infer.ts:683</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="typeOfUnaryOperation" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Unary<wbr/>Operation</span><a href="#typeOfUnaryOperation" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -451,13 +472,13 @@ visible.</li>
 <h5>node: <a href="UnaryOperation.html" class="tsd-signature-type" data-tsd-kind="Class">UnaryOperation</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1314">src/types/infer.ts:1314</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1720">src/types/infer.ts:1720</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class"><a id="variableDeclarationToTypeNode" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>variable<wbr/>Declaration<wbr/>To<wbr/>Type<wbr/>Node</span><a href="#variableDeclarationToTypeNode" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
 <li class="tsd-signature tsd-anchor-link" id="variableDeclarationToTypeNode.variableDeclarationToTypeNode-1">variable<wbr/>Declaration<wbr/>To<wbr/>Type<wbr/>Node<span class="tsd-signature-symbol">(</span>decl<span class="tsd-signature-symbol">: </span><a href="VariableDeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a><a href="#variableDeclarationToTypeNode.variableDeclarationToTypeNode-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Given a <code>VariableDeclaration</code> node <code>decl</code> compute the <code>TypeNode</code> that corresponds to the variable.
+<div class="tsd-comment tsd-typography"><p>Given a <code>VariableDeclaration</code> node compute the <code>TypeNode</code> that corresponds to the variable.
 This takes into account the storage location of the <code>decl</code>.</p>
 </div>
 <div class="tsd-parameters">
@@ -467,7 +488,7 @@ This takes into account the storage location of the <code>decl</code>.</p>
 <h5>decl: <a href="VariableDeclaration.html" class="tsd-signature-type" data-tsd-kind="Class">VariableDeclaration</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type" data-tsd-kind="Class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L1597">src/types/infer.ts:1597</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2042">src/types/infer.ts:2042</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
@@ -497,6 +518,7 @@ This takes into account the storage location of the <code>decl</code>.</p>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="InferType.html#funDefToType" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>fun<wbr/>Def<wbr/>To<wbr/>Type</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="InferType.html#inferCommonIntType" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>infer<wbr/>Common<wbr/>Int<wbr/>Type</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="InferType.html#inferCommonType" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>infer<wbr/>Common<wbr/>Type</a></li>
+<li class="tsd-kind-method tsd-parent-kind-class"><a href="InferType.html#inferVariableDeclLocation" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>infer<wbr/>Variable<wbr/>Decl<wbr/>Location</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="InferType.html#typeOf" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>type<wbr/>Of</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="InferType.html#typeOfAssignment" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>type<wbr/>Of<wbr/>Assignment</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class"><a href="InferType.html#typeOfBinaryOperation" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>type<wbr/>Of<wbr/>Binary<wbr/>Operation</a></li>
