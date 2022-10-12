@@ -70,6 +70,8 @@ export class EventDefinition extends ASTNode {
 
     /**
      * Returns canonical representation of the event signature as string
+     *
+     * @deprecated
      */
     canonicalSignature(encoderVersion: ABIEncoderVersion): string {
         const args = this.vParameters.vParameters.map((arg) =>
@@ -82,6 +84,8 @@ export class EventDefinition extends ASTNode {
     /**
      * Returns HEX string containing first 32 bytes of Keccak256 hash function
      * applied to the canonical representation of the event signature.
+     *
+     * @deprecated
      */
     canonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
         return encodeEventSignature(this.canonicalSignature(encoderVersion));

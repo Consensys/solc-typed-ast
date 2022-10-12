@@ -1,5 +1,5 @@
 import Decimal from "decimal.js";
-import { lt, satisfies } from "semver";
+import { gte, lt, satisfies } from "semver";
 import {
     ArrayTypeName,
     ContractDefinition,
@@ -26,6 +26,7 @@ import {
     VariableDeclarationStatement
 } from "../ast";
 import { assert, eq, forAll, pp } from "../misc";
+import { types } from "../types/reserved";
 import { ABIEncoderVersion, ABIEncoderVersions } from "./abi";
 import {
     AddressType,
@@ -150,19 +151,6 @@ export function generalizeType(type: TypeNode): [TypeNode, DataLocation | undefi
         return [new MappingType(genearlKeyT, generalValueT), DataLocation.Storage];
     }
 
-    if (type instanceof FunctionType) {
-        return [
-            new FunctionType(
-                type.name,
-                type.parameters.map((paramT) => generalizeType(paramT)[0]),
-                type.returns.map((retT) => generalizeType(retT)[0]),
-                type.visibility,
-                type.mutability
-            ),
-            undefined
-        ];
-    }
-
     if (type instanceof TypeNameType) {
         return generalizeType(type.type);
     }
@@ -192,6 +180,8 @@ export function getFQDefName(def: NamedDefinition): string {
  *
  * @param astT - original AST `TypeName`
  * @returns equivalent `TypeNode`.
+ *
+ * @deprecated Use `InferType.typeOf()` instead.
  */
 export function typeNameToTypeNode(astT: TypeName): TypeNode {
     if (astT instanceof ElementaryTypeName) {
@@ -295,16 +285,27 @@ export function typeNameToTypeNode(astT: TypeName): TypeNode {
     throw new Error(`NYI converting AST Type ${astT.print()} to SType`);
 }
 
+export function isReferenceType(generalT: TypeNode): boolean {
+    return (
+        (generalT instanceof UserDefinedType && generalT.definition instanceof StructDefinition) ||
+        generalT instanceof ArrayType ||
+        generalT instanceof PackedArrayType ||
+        generalT instanceof MappingType
+    );
+}
+
 /**
  * Computes a `TypeNode` equivalent of given `astT`,
  * specialized for location `loc` (if applicable).
+ *
+ * @deprecated Use `InferType.typeOf()` instead.
  */
 export function typeNameToSpecializedTypeNode(astT: TypeName, loc: DataLocation): TypeNode {
     return specializeType(typeNameToTypeNode(astT), loc);
 }
 
 /**
- * @deprecated
+ * @deprecated Use `InferType.inferVariableDeclLocation()` instead.
  */
 export function inferVariableDeclLocation(decl: VariableDeclaration): DataLocation {
     if (decl.stateVariable) {
@@ -428,39 +429,66 @@ export function getABIEncoderVersion(
     return lt(compilerVersion, "0.8.0") ? ABIEncoderVersion.V1 : ABIEncoderVersion.V2;
 }
 
-export function getFallbackFun(contract: ContractDefinition): FunctionDefinition | undefined {
+export function getFallbackRecvFuns(contract: ContractDefinition): FunctionDefinition[] {
+    const res: FunctionDefinition[] = [];
+
     for (const base of contract.vLinearizedBaseContracts) {
         for (const fun of base.vFunctions) {
             if (fun.kind === FunctionKind.Fallback || fun.kind === FunctionKind.Receive) {
-                return fun;
+                res.push(fun);
             }
         }
     }
 
-    return undefined;
+    return res;
+}
+
+export function isVisiblityExternallyCallable(a: FunctionVisibility): boolean {
+    return a === FunctionVisibility.External || a === FunctionVisibility.Public;
+}
+
+function functionVisibilitiesCompatible(a: FunctionVisibility, b: FunctionVisibility): boolean {
+    return (
+        a === b ||
+        (a === FunctionVisibility.External && isVisiblityExternallyCallable(b)) ||
+        (b === FunctionVisibility.External && isVisiblityExternallyCallable(a)) ||
+        (a !== FunctionVisibility.External && b !== FunctionVisibility.External)
+    );
 }
 
 /**
  * Return true IFF `fromT` can be implicitly casted to `toT`
  */
-export function castable(fromT: TypeNode, toT: TypeNode): boolean {
+export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string): boolean {
     if (eq(fromT, toT)) {
         return true;
     }
 
+    /**
+     * When casting arrays to storage, we can cast fixed sized to dynamically sized arrays
+     */
     if (
         fromT instanceof PointerType &&
+        fromT.to instanceof ArrayType &&
         toT instanceof PointerType &&
-        eq(fromT.to, toT.to) &&
-        toT.location !== DataLocation.CallData
+        toT.to instanceof ArrayType &&
+        fromT.to.size !== undefined &&
+        toT.to.size === undefined &&
+        toT.location === DataLocation.Storage &&
+        eq(fromT.to.elementT, toT.to.elementT)
     ) {
+        return true;
+    }
+
+    if (fromT instanceof PointerType && toT instanceof PointerType && eq(fromT.to, toT.to)) {
         return true;
     }
 
     if (fromT instanceof StringLiteralType) {
         /**
          * @todo Should we make an explicit check that string literal fits to bytes size?
-         * Note that string length is not teh same as count ob bytes in string due to multibyte chars.
+         * Note that string length is not the same as count ob bytes in string due to multibyte chars.
+         * Also for hex string literals we should check evenness of length
          */
         if (toT instanceof FixedBytesType) {
             return true;
@@ -476,29 +504,101 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
     }
 
     if (fromT instanceof IntLiteralType) {
-        if (toT instanceof FixedBytesType) {
+        // In solidity >= 0.5.0 negative constants can't be vast to bytes
+        if (
+            toT instanceof FixedBytesType &&
+            fromT.literal !== undefined &&
+            fitsNBytes(fromT.literal, toT.size, false) &&
+            gte(compilerVersion, "0.5.0")
+        ) {
+            return true;
+        }
+
+        // In solidity < 0.5.0 negative constants can be vast to bytes
+        if (
+            toT instanceof FixedBytesType &&
+            fromT.literal !== undefined &&
+            (fitsNBytes(fromT.literal, toT.size, false) ||
+                fitsNBytes(fromT.literal, toT.size, true)) &&
+            lt(compilerVersion, "0.5.0")
+        ) {
             return true;
         }
 
         if (toT instanceof IntType && fromT.literal !== undefined && toT.fits(fromT.literal)) {
             return true;
         }
+
+        if (
+            toT instanceof AddressType &&
+            fromT.literal !== undefined &&
+            types.uint160.fits(fromT.literal) &&
+            lt(compilerVersion, "0.5.0")
+        ) {
+            return true;
+        }
     }
 
+    // We can implicitly cast from payable to address
     if (fromT instanceof AddressType && toT instanceof AddressType && !toT.payable) {
         return true;
     }
 
-    if (fromT instanceof UserDefinedType && fromT.definition instanceof ContractDefinition) {
-        if (toT instanceof AddressType && !toT.payable) {
+    // We can implicitly cast from a fixed bytes type to a larger fixed bytes type
+    if (fromT instanceof FixedBytesType && toT instanceof FixedBytesType && toT.size > fromT.size) {
+        return true;
+    }
+
+    if (fromT instanceof IntType) {
+        // We can implicitly cast from a smaller to a larger int type with the same sign
+        if (toT instanceof IntType && fromT.signed == toT.signed && fromT.nBits < toT.nBits) {
             return true;
         }
 
-        if (toT instanceof AddressType && toT.payable) {
-            const fbFun = getFallbackFun(fromT.definition);
-
-            return fbFun !== undefined && fbFun.stateMutability === FunctionStateMutability.Payable;
+        // In Solidity <=0.8.0 we can cast an unsigned type to a bigger signed type
+        if (toT instanceof IntType && !fromT.signed && toT.signed && fromT.nBits < toT.nBits) {
+            return true;
         }
+
+        /**
+         * Can implicitly cast from unsigned ints <=160 bits to address
+         */
+        if (toT instanceof AddressType && !fromT.signed && fromT.nBits <= 160) {
+            return true;
+        }
+    }
+
+    if (fromT instanceof UserDefinedType && fromT.definition instanceof ContractDefinition) {
+        if (toT instanceof AddressType) {
+            // We can implicitly cast from contract to payable address if it has a payable recieve/fallback function
+            if (toT.payable) {
+                const fns = getFallbackRecvFuns(fromT.definition);
+
+                return (
+                    fns.length > 0 &&
+                    forAll(fns, (fn) => fn.stateMutability === FunctionStateMutability.Payable)
+                );
+            }
+
+            // We can implicitly cast from contract to non-payable address
+            return true;
+        }
+
+        // We can implicitly up-cast a contract
+        if (toT instanceof UserDefinedType && toT.definition instanceof ContractDefinition) {
+            return fromT.definition.isSubclassOf(toT.definition);
+        }
+    }
+
+    if (
+        fromT instanceof FunctionType &&
+        toT instanceof FunctionType &&
+        eq(new TupleType(fromT.parameters), new TupleType(toT.parameters)) &&
+        eq(new TupleType(fromT.returns), new TupleType(toT.returns)) &&
+        functionVisibilitiesCompatible(fromT.visibility, toT.visibility) &&
+        fromT.mutability === toT.mutability
+    ) {
+        return true;
     }
 
     return false;
@@ -507,12 +607,15 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
 const signedLimits: Array<[bigint, bigint]> = [];
 const unsignedLimits: Array<[bigint, bigint]> = [];
 
-for (let i = 1; i <= 32; i++) {
-    unsignedLimits.push([BigInt(0), BigInt(2) ** BigInt(i * 8) - BigInt(1)]);
-    signedLimits.push([
-        BigInt(-2) ** BigInt(i * 8 - 1),
-        BigInt(2) ** BigInt(i * 8 - 1) - BigInt(1)
-    ]);
+for (let i = 1n; i <= 32n; i++) {
+    unsignedLimits.push([0n, 2n ** (i * 8n) - 1n]);
+    signedLimits.push([-(2n ** (i * 8n - 1n)), 2n ** (i * 8n - 1n) - 1n]);
+}
+
+function fitsNBytes(literal: bigint, nBytes: number, signed: boolean) {
+    const limits = signed ? signedLimits : unsignedLimits;
+
+    return literal >= limits[nBytes - 1][0] && literal <= limits[nBytes - 1][1];
 }
 
 /**
@@ -521,12 +624,13 @@ for (let i = 1; i <= 32; i++) {
 export function smallestFittingType(...literals: bigint[]): IntType | undefined {
     /// TODO: Need a test for this logic that checks the boundary conditions
     /// when the literals include the MIN/MAX for both signed and unsigned types
-    const unsigned = forAll(literals, (literal) => literal >= BigInt(0));
+    const unsigned = forAll(literals, (literal) => literal >= 0n);
 
     const limits: Array<[bigint, bigint]> = unsigned ? unsignedLimits : signedLimits;
 
     for (let i = 0; i < limits.length; i++) {
         let fitsAll = true;
+
         for (const literal of literals) {
             if (!(limits[i][0] <= literal && literal <= limits[i][1])) {
                 fitsAll = false;
@@ -554,6 +658,6 @@ export function decimalToRational(d: Decimal): Rational {
 
     return {
         numerator: BigInt(valStr.replace(".", "")),
-        denominator: BigInt(10) ** BigInt(valStr.length - dotPos - 1)
+        denominator: 10n ** BigInt(valStr.length - dotPos - 1)
     };
 }
