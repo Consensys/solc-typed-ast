@@ -14,7 +14,7 @@ import {
     resolveAny,
     StructDefinition,
     UserDefinedValueTypeDefinition,
-    VariableDeclaration
+    VariableDeclaration,
 } from "../../ast";
 import {
     AddressType,
@@ -24,6 +24,7 @@ import {
     BytesType,
     FixedBytesType,
     FunctionType,
+    InaccessibleDynamicType,
     IntLiteralType,
     IntType,
     MappingType,
@@ -37,6 +38,7 @@ import {
     TypeNode,
     UserDefinedType
 } from "../ast";
+import { assert, pp } from "../../misc";
 
 function getFunctionAttributes(
     decorators: string[]
@@ -100,6 +102,8 @@ function getFunctionAttributes(
  * 
  * @param arg - an AST node with a type string (`Expression` or `VariableDeclaration`)
  * @param version - compiler version to be used. Useful as resolution rules changed between 0.4.x and 0.5.x.
+ *
+ * @deprecated Use `InferType.typeOf()` instead.
  */
 export function getNodeType(node: Expression | VariableDeclaration, version: string): TypeNode {
     return parse(node.typeString, { ctx: node, version }) as TypeNode;
@@ -115,6 +119,8 @@ export function getNodeType(node: Expression | VariableDeclaration, version: str
  * @param arg - either a type string, or a node with a type string (`Expression` or `VariableDeclaration`)
  * @param version - compiler version to be used. Useful as resolution rules changed between 0.4.x and 0.5.x.
  * @param ctx - `ASTNode` representing the context in which a type string is to be parsed
+ *
+ * @deprecated Use `InferType.typeOf()` instead.
  */
 export function getNodeTypeInCtx(arg: Expression | VariableDeclaration | string, version: string, ctx: ASTNode): TypeNode {
     const typeString = typeof arg === "string" ? arg : arg.typeString;
@@ -128,7 +134,20 @@ function makeUserDefinedType<T extends ASTNode>(
     version: string,
     ctx: ASTNode
 ): UserDefinedType {
-    const defs = [...resolveAny(name, ctx, version)];
+    let defs = [...resolveAny(name, ctx, version)];
+
+    /**
+     * Note that constructors below 0.5.0 may have same name as contract definition.
+     */
+    if (constructor === ContractDefinition) {
+        defs = defs.filter((def) =>
+            def instanceof ContractDefinition ||
+            (def instanceof FunctionDefinition &&
+                def.isConstructor &&
+                def.name === def.vScope.name)).map((def) => def instanceof FunctionDefinition ? def.vScope : def);
+    } else {
+        defs = defs.filter((def) => def instanceof constructor);
+    }
 
     if (defs.length === 0) {
         throw new Error(`Couldn't find ${constructor.name} ${name}`);
@@ -140,18 +159,13 @@ function makeUserDefinedType<T extends ASTNode>(
 
     let def = defs[0];
 
-    /**
-     * Note that constructors below 0.5.0 may have same name as contract definition.
-     */
-    if (constructor === ContractDefinition && def.constructor === FunctionDefinition && def.name === name) {
-        def = def.vScope as ContractDefinition;
-    }
-
-    if (!(def instanceof constructor)) {
-        throw new Error(
-            `Expected ${name} to resolve to ${constructor.name} got ${def.constructor.name} instead`
-        );
-    }
+    assert(
+        def instanceof constructor,
+        "Expected {0} to resolve to {1} got {2} instead",
+        name,
+        constructor.name,
+        def
+    );
 
     return new UserDefinedType(name, def);
 }

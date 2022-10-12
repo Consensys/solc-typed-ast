@@ -64,6 +64,8 @@ export class ErrorDefinition extends ASTNode {
 
     /**
      * Returns canonical representation of the error signature as string
+     *
+     * @deprecated
      */
     canonicalSignature(encoderVersion: ABIEncoderVersion): string {
         const args = this.vParameters.vParameters.map((arg) =>
@@ -76,6 +78,8 @@ export class ErrorDefinition extends ASTNode {
     /**
      * Returns HEX string containing first 4 bytes of Keccak256 hash function
      * applied to the canonical representation of the error signature.
+     *
+     * @deprecated
      */
     canonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
         return encodeFuncSignature(this.canonicalSignature(encoderVersion));

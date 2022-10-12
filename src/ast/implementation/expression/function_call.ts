@@ -148,6 +148,8 @@ export class FunctionCall extends Expression {
      * Returns canonical signature of referenced definition,
      * or `undefined` in case if there is callable is not
      * a user-defined entity.
+     *
+     * @deprecated
      */
     referencedCanonicalSignature(encoderVersion: ABIEncoderVersion): string | undefined {
         const declaration = this.vReferencedDeclaration;
@@ -167,6 +169,8 @@ export class FunctionCall extends Expression {
      * Returns canonical signature hash of referenced definition,
      * or `undefined` in case if there is callable is not
      * a user-defined entity.
+     *
+     * @deprecated
      */
     referencedCanonicalSignatureHash(encoderVersion: ABIEncoderVersion): string | undefined {
         const declaration = this.vReferencedDeclaration;

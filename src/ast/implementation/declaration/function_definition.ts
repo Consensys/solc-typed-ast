@@ -174,6 +174,8 @@ export class FunctionDefinition extends ASTNode {
      * Returns canonical representation of the function signature as string.
      *
      * NOTE: This property will contain empty strings for fallback functions and constructors.
+     *
+     * @deprecated
      */
     canonicalSignature(encoderVersion: ABIEncoderVersion): string {
         if (this.name === "" || this.isConstructor) {
@@ -205,6 +207,8 @@ export class FunctionDefinition extends ASTNode {
      * applied to the canonical representation of the function signature.
      *
      * NOTE: This property will contain empty strings for fallback functions and constructors.
+     *
+     * @deprecated
      */
     canonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
         const signature = this.canonicalSignature(encoderVersion);
