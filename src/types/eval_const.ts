@@ -129,7 +129,7 @@ function evalLiteral(expr: Literal): Value {
     }
 
     if (expr.kind === LiteralKind.Number) {
-        const dec = new Decimal(expr.value.replace(/_/g, ""));
+        const dec = new Decimal(expr.value.replaceAll("_", ""));
         const val = dec.isInteger() ? BigInt(dec.toFixed()) : dec;
 
         if (expr.subdenomination !== undefined) {

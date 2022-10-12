@@ -22,20 +22,20 @@ contract Main {
 }
 
 contract Foo {
-    function ret1(uint256[] calldata x) external returns (uint[] calldata) {
-        return x;
+    function ret1(uint256[] calldata a) external returns (uint[] calldata) {
+        return a;
     }
 
-    function ret2(uint256[] calldata y) external returns (uint[] calldata) {
-        return y;
+    function ret2(uint256[] calldata b) external returns (uint[] calldata) {
+        return b;
     }
 
-    function ret3(uint256[] calldata y) public returns (uint[] calldata) {
-        return y;
+    function ret3(uint256[] calldata c) public returns (uint[] calldata) {
+        return c;
     }
 
-    function ret4(uint256[] calldata y) internal returns (uint[] calldata) {
-        return y;
+    function ret4(uint256[] calldata e) internal returns (uint[] calldata) {
+        return e;
     }
 
     function main(uint[] calldata p) public {

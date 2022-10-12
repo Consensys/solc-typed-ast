@@ -1229,12 +1229,12 @@ export class InferType {
      * If the `MemberAccess` corresponds to a library function
      * bound with a `using for` directive, return the type of that function.
      */
-    private typeOfMemberAccess_UsingFor(node: MemberAccess, baseT: TypeNode): TypeNode | undefined {
-        const containingContract = node.getClosestParentByType(ContractDefinition);
-
+    private typeOfMemberAccessUsingFor(node: MemberAccess, baseT: TypeNode): TypeNode | undefined {
         if (baseT instanceof TypeNameType) {
             return undefined;
         }
+
+        const containingContract = node.getClosestParentByType(ContractDefinition);
 
         if (containingContract) {
             let matchedFuns = new FunctionLikeSetType<BuiltinFunctionType | FunctionType>([]);
@@ -1323,31 +1323,35 @@ export class InferType {
      */
     typeOfMemberAccess(node: MemberAccess): TypeNode {
         const baseT = this.typeOf(node.vExpression);
-        const usingForT = this.typeOfMemberAccess_UsingFor(node, baseT);
-
+        const usingForT = this.typeOfMemberAccessUsingFor(node, baseT);
         const normalT = this.typeOfMemberAccessImpl(node, baseT);
 
-        if (normalT === undefined && usingForT !== undefined) {
-            return usingForT;
-        }
+        if (usingForT !== undefined) {
+            if (normalT === undefined) {
+                return usingForT;
+            }
 
-        if (
-            usingForT !== undefined &&
-            (normalT instanceof FunctionType ||
+            if (
+                normalT instanceof FunctionType ||
                 normalT instanceof FunctionLikeSetType ||
-                normalT instanceof BuiltinFunctionType)
-        ) {
-            assert(
-                usingForT instanceof FunctionType || usingForT instanceof FunctionLikeSetType,
-                "Expection function-like type for using-for, not {0}",
-                usingForT
-            );
-            return mergeFunTypes(usingForT, normalT);
+                normalT instanceof BuiltinFunctionType
+            ) {
+                assert(
+                    usingForT instanceof FunctionType || usingForT instanceof FunctionLikeSetType,
+                    "Expection function-like type for using-for, not {0}",
+                    usingForT
+                );
+
+                return mergeFunTypes(usingForT, normalT);
+            }
         }
 
         assert(
             normalT !== undefined,
-            `Unknown field ${node.memberName} on ${pp(node)} of type ${pp(baseT)}`
+            "Unknown field {0} on {1} of type {2}",
+            node.memberName,
+            node,
+            baseT
         );
 
         return normalT;
