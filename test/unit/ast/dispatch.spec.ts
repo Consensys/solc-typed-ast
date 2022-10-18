@@ -3,10 +3,12 @@ import {
     ASTNodeConstructor,
     ASTReader,
     compileJson,
+    CompilerVersions05,
     ContractDefinition,
     EmitStatement,
     EventDefinition,
     FunctionDefinition,
+    InferType,
     ModifierDefinition,
     resolve,
     resolveByName,
@@ -23,6 +25,8 @@ describe("Dynamic dispatch AST utils", async () => {
 
     const [mainUnit] = reader.read(data);
     const [a, b, c, d, i] = mainUnit.vContracts;
+
+    const inference = new InferType(CompilerVersions05[CompilerVersions05.length - 1]);
 
     describe("resolve()", () => {
         const cases: Array<
@@ -82,7 +86,7 @@ describe("Dynamic dispatch AST utils", async () => {
             const definer = resolvable.vScope as ContractDefinition;
 
             it(`${resolvable.name} of ${definer.name} for ${scope.name}`, () => {
-                const node = resolve(scope, resolvable, onlyParents);
+                const node = resolve(scope, resolvable, inference, onlyParents);
 
                 if (expectation === undefined) {
                     expect(node === undefined).toEqual(true);
@@ -137,7 +141,7 @@ describe("Dynamic dispatch AST utils", async () => {
 
         for (const [scope, kind, name, onlyParents, expectations] of cases) {
             it(`${kind.name} ${name} for ${scope.name} (only parents: ${onlyParents})`, () => {
-                const result = resolveByName(scope, kind, name, onlyParents);
+                const result = resolveByName(scope, kind, name, inference, onlyParents);
 
                 expect(result.length).toEqual(expectations.length);
 
@@ -168,7 +172,7 @@ describe("Dynamic dispatch AST utils", async () => {
 
         for (const [scope, stmt, id] of cases) {
             it(`${stmt.type}#${stmt.id} for ${scope.name}`, () => {
-                const node = resolveEvent(scope, stmt);
+                const node = resolveEvent(scope, stmt, inference);
 
                 expect(node).toBeInstanceOf(EventDefinition);
                 expect((node as EventDefinition).id).toEqual(id);
@@ -217,7 +221,7 @@ describe("Dynamic dispatch AST utils", async () => {
             const definer = resolvable.vScope as ContractDefinition;
 
             it(`${resolvable.name} of ${definer.name} for ${scope.name}`, () => {
-                const node = resolveCallable(scope, resolvable, onlyParents);
+                const node = resolveCallable(scope, resolvable, inference, onlyParents);
 
                 if (expectation === undefined) {
                     expect(node === undefined).toEqual(true);

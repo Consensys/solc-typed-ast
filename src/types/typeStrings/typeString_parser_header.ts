@@ -39,6 +39,7 @@ import {
     UserDefinedType
 } from "../ast";
 import { assert, pp } from "../../misc";
+import { InferType } from "../infer";
 
 function getFunctionAttributes(
     decorators: string[]
@@ -105,8 +106,8 @@ function getFunctionAttributes(
  *
  * @deprecated Use `InferType.typeOf()` instead.
  */
-export function getNodeType(node: Expression | VariableDeclaration, version: string): TypeNode {
-    return parse(node.typeString, { ctx: node, version }) as TypeNode;
+export function getNodeType(node: Expression | VariableDeclaration, inference: InferType): TypeNode {
+    return parse(node.typeString, { ctx: node, inference }) as TypeNode;
 }
 
 /**
@@ -122,19 +123,19 @@ export function getNodeType(node: Expression | VariableDeclaration, version: str
  *
  * @deprecated Use `InferType.typeOf()` instead.
  */
-export function getNodeTypeInCtx(arg: Expression | VariableDeclaration | string, version: string, ctx: ASTNode): TypeNode {
+export function getNodeTypeInCtx(arg: Expression | VariableDeclaration | string, inference: InferType, ctx: ASTNode): TypeNode {
     const typeString = typeof arg === "string" ? arg : arg.typeString;
 
-    return parse(typeString, { ctx, version }) as TypeNode;
+    return parse(typeString, { ctx, inference }) as TypeNode;
 }
 
 function makeUserDefinedType<T extends ASTNode>(
     name: string,
     constructor: ASTNodeConstructor<T>,
-    version: string,
+    inference: InferType,
     ctx: ASTNode
 ): UserDefinedType {
-    let defs = [...resolveAny(name, ctx, version)];
+    let defs = [...resolveAny(name, ctx, inference)];
 
     /**
      * Note that constructors below 0.5.0 may have same name as contract definition.

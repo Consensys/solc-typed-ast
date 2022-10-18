@@ -1,4 +1,5 @@
 export * from "./ast";
+export * from "./abi";
 export * from "./builtins";
 export * from "./eval_const";
 export * from "./infer";

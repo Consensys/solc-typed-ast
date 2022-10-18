@@ -290,7 +290,7 @@ UserDefinedType =
         return makeUserDefinedType(
             name,
             StructDefinition,
-            options.version,
+            options.inference,
             options.ctx
         );
     }
@@ -298,7 +298,7 @@ UserDefinedType =
         return makeUserDefinedType(
             name,
             EnumDefinition,
-            options.version,
+            options.inference,
             options.ctx
         );
     }
@@ -306,7 +306,7 @@ UserDefinedType =
         return makeUserDefinedType(
             name,
             ContractDefinition,
-            options.version,
+            options.inference,
             options.ctx
         );
     }
@@ -314,14 +314,14 @@ UserDefinedType =
         return makeUserDefinedType(
             name,
             ContractDefinition,
-            options.version,
+            options.inference,
             options.ctx
         );
     } / name: FQName {
         return makeUserDefinedType(
             name,
             UserDefinedValueTypeDefinition,
-            options.version,
+            options.inference,
             options.ctx
         );
     }

@@ -1,6 +1,4 @@
-import { ABIEncoderVersion } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
-import { encodeFuncSignature } from "../../utils";
 import { SourceUnit } from "../meta";
 import { ParameterList } from "../meta/parameter_list";
 import { StructuredDocumentation } from "../meta/structured_documentation";
@@ -60,28 +58,5 @@ export class ErrorDefinition extends ASTNode {
      */
     get vScope(): ContractDefinition | SourceUnit {
         return this.parent as ContractDefinition | SourceUnit;
-    }
-
-    /**
-     * Returns canonical representation of the error signature as string
-     *
-     * @deprecated
-     */
-    canonicalSignature(encoderVersion: ABIEncoderVersion): string {
-        const args = this.vParameters.vParameters.map((arg) =>
-            arg.canonicalSignatureType(encoderVersion)
-        );
-
-        return this.name + "(" + args.join(",") + ")";
-    }
-
-    /**
-     * Returns HEX string containing first 4 bytes of Keccak256 hash function
-     * applied to the canonical representation of the error signature.
-     *
-     * @deprecated
-     */
-    canonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
-        return encodeFuncSignature(this.canonicalSignature(encoderVersion));
     }
 }

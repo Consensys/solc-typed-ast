@@ -1,4 +1,3 @@
-import { ABIEncoderVersion } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
 import { ExternalReferenceType, FunctionCallKind } from "../../constants";
 import { ErrorDefinition } from "../declaration/error_definition";
@@ -142,48 +141,6 @@ export class FunctionCall extends Expression {
         }
 
         return undefined;
-    }
-
-    /**
-     * Returns canonical signature of referenced definition,
-     * or `undefined` in case if there is callable is not
-     * a user-defined entity.
-     *
-     * @deprecated
-     */
-    referencedCanonicalSignature(encoderVersion: ABIEncoderVersion): string | undefined {
-        const declaration = this.vReferencedDeclaration;
-
-        if (declaration === undefined) {
-            return undefined;
-        }
-
-        if (declaration instanceof VariableDeclaration) {
-            return declaration.getterCanonicalSignature(encoderVersion);
-        }
-
-        return declaration.canonicalSignature(encoderVersion);
-    }
-
-    /**
-     * Returns canonical signature hash of referenced definition,
-     * or `undefined` in case if there is callable is not
-     * a user-defined entity.
-     *
-     * @deprecated
-     */
-    referencedCanonicalSignatureHash(encoderVersion: ABIEncoderVersion): string | undefined {
-        const declaration = this.vReferencedDeclaration;
-
-        if (declaration === undefined) {
-            return undefined;
-        }
-
-        if (declaration instanceof VariableDeclaration) {
-            return declaration.getterCanonicalSignatureHash(encoderVersion);
-        }
-
-        return declaration.canonicalSignatureHash(encoderVersion);
     }
 
     /**

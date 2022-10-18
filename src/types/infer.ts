@@ -2,13 +2,17 @@ import { Decimal } from "decimal.js";
 import { gte, lt } from "semver";
 import {
     AnyResolvable,
+    ArrayTypeName,
     Assignment,
     ASTNode,
     BinaryOperation,
     Conditional,
     ContractDefinition,
     ContractKind,
+    ElementaryTypeName,
     ElementaryTypeNameExpression,
+    encodeEventSignature,
+    encodeFuncSignature,
     EnumDefinition,
     ErrorDefinition,
     EventDefinition,
@@ -20,6 +24,7 @@ import {
     FunctionCallOptions,
     FunctionDefinition,
     FunctionStateMutability,
+    FunctionTypeName,
     FunctionVisibility,
     Identifier,
     IdentifierPath,
@@ -28,6 +33,7 @@ import {
     IndexRangeAccess,
     Literal,
     LiteralKind,
+    Mapping,
     MemberAccess,
     ModifierDefinition,
     NewExpression,
@@ -39,12 +45,14 @@ import {
     TupleExpression,
     TypeName,
     UnaryOperation,
+    UserDefinedTypeName,
     UserDefinedValueTypeDefinition,
     VariableDeclaration,
     VariableDeclarationStatement
 } from "../ast";
 import { DataLocation } from "../ast/constants";
 import { assert, eq, forAny, pp } from "../misc";
+import { ABIEncoderVersion, abiTypeToCanonicalName, abiTypeToLibraryCanonicalName } from "./abi";
 import {
     AddressType,
     ArrayType,
@@ -55,7 +63,6 @@ import {
     EventType,
     FixedBytesType,
     FunctionLikeSetType,
-    FunctionSetType,
     FunctionType,
     ImportRefType,
     IntLiteralType,
@@ -95,41 +102,30 @@ import {
 import { types } from "./reserved";
 import { parse } from "./typeStrings";
 import {
+    BINARY_OPERATOR_GROUPS,
     castable,
     decimalToRational,
+    enumToIntType,
     generalizeType,
     getFallbackRecvFuns,
     getFQDefName,
+    inferCommonVisiblity,
     isReferenceType,
     isVisiblityExternallyCallable,
+    mergeFunTypes,
     smallestFittingType,
     specializeType,
-    typeNameToTypeNode
+    stripSingletonParens,
+    SUBDENOMINATION_MULTIPLIERS
 } from "./utils";
 
-export const unaryImpureOperators = ["++", "--"];
+const unaryImpureOperators = ["++", "--"];
 
-export const binaryOperatorGroups = {
-    Arithmetic: ["+", "-", "*", "/", "%", "**"],
-    Bitwise: ["<<", ">>", "&", "|", "^"],
-    Comparison: ["<", ">", "<=", ">="],
-    Equality: ["==", "!="],
-    Logical: ["&&", "||"]
-};
+const RX_ADDRESS = /^address *(payable)?$/;
+const RX_INTEGER = /^(u?)int([0-9]*)$/;
+const RX_FIXED_BYTES = /^bytes([0-9]+)$/;
 
-export const subdenominationMultipliers: { [key: string]: Decimal } = {
-    seconds: new Decimal(1),
-    minutes: new Decimal(60),
-    hours: new Decimal(3600),
-    days: new Decimal(24 * 3600),
-    weeks: new Decimal(7 * 24 * 3600),
-    years: new Decimal(365 * 24 * 3600),
-    wei: new Decimal(1),
-    gwei: new Decimal(10 ** 9),
-    szabo: new Decimal(10 ** 12),
-    finney: new Decimal(10).toPower(15),
-    ether: new Decimal(10).toPower(18)
-};
+const CALL_BUILTINS = ["call", "callcode", "staticcall", "delegatecall", "transfer", "send"];
 
 /**
  * Some builtins have types that are not easy to express with our current hacky polymorphic support.
@@ -176,19 +172,6 @@ function typesAreUnordered<T1 extends TypeNode, T2 extends TypeNode>(
     return [undefined, undefined];
 }
 
-/// Strip any singleton parens from expressions. I.e. given (((e))) returns e.
-function stripSingletonParens(e: Expression): Expression {
-    while (e instanceof TupleExpression && e.vOriginalComponents.length === 1) {
-        const comp = e.vOriginalComponents[0];
-
-        assert(comp !== null, 'Unexpected "null" component in tuple with single element');
-
-        e = comp;
-    }
-
-    return e;
-}
-
 /**
  * Given a `FunctionType` or `FunctionSetType` `arg` return a new `FunctionType`/`FunctionSetType` with
  * all first arguments marked as implicit.
@@ -209,63 +192,6 @@ function markFirstArgImplicit<T extends FunctionType | FunctionLikeSetType<Funct
     }
 
     return new FunctionLikeSetType(arg.defs.map(markFirstArgImplicit)) as T;
-}
-
-/**
- * Given two `FunctionType`s/`BuiltinFunctionType`s/`FunctionSetType`s `a` and `b`
- * return a `FunctionSetType` that includes everything in `a` and `b`.
- */
-function mergeFunTypes(
-    a: FunctionType | BuiltinFunctionType | FunctionSetType,
-    b: FunctionType | BuiltinFunctionType | FunctionSetType
-): FunctionSetType {
-    const funs: Array<FunctionType | BuiltinFunctionType> = [];
-
-    if (a instanceof FunctionType || a instanceof BuiltinFunctionType) {
-        funs.push(a);
-    } else {
-        funs.push(...a.defs);
-    }
-
-    if (b instanceof FunctionType || b instanceof BuiltinFunctionType) {
-        funs.push(b);
-    } else {
-        funs.push(...b.defs);
-    }
-
-    return new FunctionLikeSetType(funs);
-}
-
-/**
- * Given 2 function pointer's visibilities infer a common visibility thats compatible with both.
- * This is used to infer the visibility of the expression `flag ? fun1 : fun2` where fun1 and fun2 are
- * function pointers.
- */
-function inferCommonVisiblity(
-    a: FunctionVisibility,
-    b: FunctionVisibility
-): FunctionVisibility | undefined {
-    const visiblityOrder = [
-        FunctionVisibility.External,
-        FunctionVisibility.Public,
-        FunctionVisibility.Internal,
-        FunctionVisibility.Default,
-        FunctionVisibility.Private
-    ];
-
-    if (a == b) {
-        return a;
-    }
-
-    if (visiblityOrder.indexOf(a) > visiblityOrder.indexOf(b)) {
-        [b, a] = [a, b];
-    }
-
-    if (a === FunctionVisibility.External) {
-        return b == FunctionVisibility.Public ? FunctionVisibility.External : undefined;
-    }
-
-    return FunctionVisibility.Internal;
 }
 
 export class InferType {
@@ -508,9 +434,9 @@ export class InferType {
      */
     typeOfBinaryOperation(node: BinaryOperation): TypeNode {
         if (
-            binaryOperatorGroups.Comparison.includes(node.operator) ||
-            binaryOperatorGroups.Equality.includes(node.operator) ||
-            binaryOperatorGroups.Logical.includes(node.operator)
+            BINARY_OPERATOR_GROUPS.Comparison.includes(node.operator) ||
+            BINARY_OPERATOR_GROUPS.Equality.includes(node.operator) ||
+            BINARY_OPERATOR_GROUPS.Logical.includes(node.operator)
         ) {
             return types.bool;
         }
@@ -549,7 +475,7 @@ export class InferType {
             }
         }
 
-        if (binaryOperatorGroups.Arithmetic.includes(node.operator)) {
+        if (BINARY_OPERATOR_GROUPS.Arithmetic.includes(node.operator)) {
             assert(
                 a instanceof IntType || a instanceof IntLiteralType,
                 "Unexpected type of {0}",
@@ -565,7 +491,7 @@ export class InferType {
             return this.inferCommonIntType(a, b);
         }
 
-        if (binaryOperatorGroups.Bitwise.includes(node.operator)) {
+        if (BINARY_OPERATOR_GROUPS.Bitwise.includes(node.operator)) {
             // For bitshifts just take the type of the lhs
             if ([">>", "<<"].includes(node.operator)) {
                 if (a instanceof IntLiteralType) {
@@ -646,12 +572,14 @@ export class InferType {
         }
 
         assert(node.vArguments.length === 1, `Unexpected number of args to type cast {0}`, node);
+
         const arg = node.vArguments[0];
-        const argT = this.typeOf(arg);
 
         if (arg instanceof Literal && arg.value.startsWith("0x") && arg.value.length === 42) {
             return lt(this.version, "0.6.0") ? types.addressPayable : types.address;
         }
+
+        const argT = this.typeOf(arg);
 
         if (
             argT instanceof IntType ||
@@ -666,10 +594,12 @@ export class InferType {
         }
 
         if (argT instanceof UserDefinedType && argT.definition instanceof ContractDefinition) {
-            const contract = argT.definition;
-            const funs = getFallbackRecvFuns(contract);
-
-            if (forAny(funs, (fun) => fun.stateMutability === FunctionStateMutability.Payable)) {
+            if (
+                forAny(
+                    getFallbackRecvFuns(argT.definition),
+                    (fn) => fn.stateMutability === FunctionStateMutability.Payable
+                )
+            ) {
                 return types.addressPayable;
             }
         }
@@ -716,9 +646,9 @@ export class InferType {
     typeOfNewCall(node: FunctionCall): TypeNode {
         const newExpr = node.vCallee;
 
-        assert(newExpr instanceof NewExpression, "Unexpected vcall {0}", newExpr);
+        assert(newExpr instanceof NewExpression, 'Unexpected "new" call {0}', newExpr);
 
-        const typ = typeNameToTypeNode(newExpr.vTypeName);
+        const typ = this.typeNameToTypeNode(newExpr.vTypeName);
         const loc =
             typ instanceof UserDefinedType && typ.definition instanceof ContractDefinition
                 ? DataLocation.Storage
@@ -733,7 +663,7 @@ export class InferType {
         callExp: Expression
     ): FunctionType | BuiltinFunctionType | undefined {
         const argTs: TypeNode[] = args.map((arg) => this.typeOf(arg));
-        // If we are matching with a
+
         const argTsWithImplictArg =
             callExp instanceof MemberAccess ? [this.typeOf(callExp.vExpression), ...argTs] : argTs;
 
@@ -774,16 +704,12 @@ export class InferType {
             return false;
         }
 
-        const name = callee.memberName;
-
-        if (
-            calleeT instanceof BuiltinFunctionType &&
-            ["call", "callcode", "staticcall", "delegatecall", "transfer", "send"].includes(name)
-        ) {
+        if (calleeT instanceof BuiltinFunctionType && CALL_BUILTINS.includes(callee.memberName)) {
             return true;
         }
 
         const baseT = this.typeOf(callee.vExpression);
+
         return baseT instanceof UserDefinedType && baseT.definition instanceof ContractDefinition;
     }
 
@@ -809,9 +735,7 @@ export class InferType {
 
         if (node.vFunctionCallType === ExternalReferenceType.Builtin) {
             if (calleeT instanceof FunctionLikeSetType) {
-                calleeT = calleeT.defs.filter(
-                    (d) => d instanceof BuiltinFunctionType
-                )[0] as BuiltinFunctionType;
+                calleeT = calleeT.defs.filter((d) => d instanceof BuiltinFunctionType)[0];
             }
 
             if (!(calleeT instanceof BuiltinFunctionType || calleeT instanceof FunctionType)) {
@@ -968,14 +892,14 @@ export class InferType {
             innerT instanceof IntType ||
             (innerT instanceof UserDefinedType && innerT.definition instanceof EnumDefinition)
         ) {
-            return applySubstitution(typeInt, new Map([["T", innerT]])) as BuiltinFunctionType;
+            return applySubstitution(typeInt, new Map([["T", innerT]]));
         }
 
         if (innerT instanceof UserDefinedType && innerT.definition instanceof ContractDefinition) {
             const resTemplateT =
                 innerT.definition.kind === ContractKind.Interface ? typeInterface : typeContract;
 
-            return applySubstitution(resTemplateT, new Map([["T", innerT]])) as BuiltinFunctionType;
+            return applySubstitution(resTemplateT, new Map([["T", innerT]]));
         }
 
         throw new SolTypeError(`Unexpected type ${innerT.pp()} in type() node ${pp(node)}`);
@@ -1173,25 +1097,27 @@ export class InferType {
     }
 
     typeOfLiteral(node: Literal): TypeNode {
-        if (node.kind === "number") {
+        if (node.kind === LiteralKind.Number) {
             if (node.typeString === "address") {
-                return new AddressType(false);
+                return types.address;
             }
 
             if (node.typeString === "address payable") {
-                return new AddressType(true);
+                return types.addressPayable;
             }
 
             let val = new Decimal(node.value.replaceAll("_", ""));
 
             if (node.subdenomination !== undefined) {
+                const multiplier = SUBDENOMINATION_MULTIPLIERS.get(node.subdenomination);
+
                 assert(
-                    node.subdenomination in subdenominationMultipliers,
+                    multiplier !== undefined,
                     "Unknown subdenomination {0}",
                     node.subdenomination
                 );
 
-                val = val.times(subdenominationMultipliers[node.subdenomination]);
+                val = val.times(multiplier);
             }
 
             if (val.isInteger()) {
@@ -1201,7 +1127,11 @@ export class InferType {
             return new RationalLiteralType(decimalToRational(val));
         }
 
-        if (node.kind === "string" || node.kind === "unicodeString" || node.kind === "hexString") {
+        if (
+            node.kind === LiteralKind.String ||
+            node.kind === LiteralKind.UnicodeString ||
+            node.kind === LiteralKind.HexString
+        ) {
             return new StringLiteralType(node.kind);
         }
 
@@ -1232,7 +1162,7 @@ export class InferType {
                         /// using for *;
                         match = true;
                     } else {
-                        const usingForTyp = typeNameToTypeNode(usingFor.vTypeName);
+                        const usingForTyp = this.typeNameToTypeNode(usingFor.vTypeName);
 
                         match = eq(usingForTyp, generalizeType(baseT)[0]);
                     }
@@ -1278,7 +1208,7 @@ export class InferType {
                         if (res) {
                             assert(
                                 res instanceof FunctionType || res instanceof FunctionLikeSetType,
-                                `Unexpected type {0} for {1} in library {1}`,
+                                "Unexpected type {0} for {1} in library {1}",
                                 res,
                                 node.memberName,
                                 usingFor.vLibraryName.name
@@ -1377,9 +1307,8 @@ export class InferType {
     private typeOfMemberAccessImpl(node: MemberAccess, baseT: TypeNode): TypeNode | undefined {
         if (baseT instanceof UserDefinedType && baseT.definition instanceof ContractDefinition) {
             const contract = baseT.definition;
-            let fieldT = this.typeOfResolved(node.memberName, contract, true);
 
-            let builtinT: TypeNode | undefined;
+            let fieldT = this.typeOfResolved(node.memberName, contract, true);
 
             assert(
                 fieldT === undefined ||
@@ -1389,6 +1318,8 @@ export class InferType {
                 node.memberName,
                 fieldT
             );
+
+            let builtinT: TypeNode | undefined;
 
             // For solidity <0.5.0 contract variables are implicitly castable to address
             if (lt(this.version, "0.5.0")) {
@@ -1431,7 +1362,7 @@ export class InferType {
                         fields[0]
                     );
 
-                    return specializeType(typeNameToTypeNode(fields[0].vType), baseT.location);
+                    return specializeType(this.typeNameToTypeNode(fields[0].vType), baseT.location);
                 }
             }
 
@@ -1539,15 +1470,13 @@ export class InferType {
                         componentT
                     );
 
+                    /**
+                     * Components of second arg of decode() are plain types,
+                     * however they got specialized or slightly promoted on assigment.
+                     */
                     if (componentT.type instanceof AddressType && !componentT.type.payable) {
-                        /**
-                         * Promote address to address payable
-                         */
-                        retTs.push(new AddressType(true));
+                        retTs.push(types.addressPayable);
                     } else {
-                        /**
-                         * Specialize types to memory
-                         */
                         retTs.push(specializeType(componentT.type, DataLocation.Memory));
                     }
                 }
@@ -1628,7 +1557,7 @@ export class InferType {
             baseT.type instanceof UserDefinedType &&
             baseT.type.definition instanceof UserDefinedValueTypeDefinition
         ) {
-            const innerT = typeNameToTypeNode(baseT.type.definition.underlyingType);
+            const innerT = this.typeNameToTypeNode(baseT.type.definition.underlyingType);
 
             if (node.memberName === "wrap") {
                 return new BuiltinFunctionType("wrap", [innerT], [baseT.type]);
@@ -1655,9 +1584,7 @@ export class InferType {
     }
 
     typeOfNewExpression(newExpr: NewExpression): TypeNode {
-        assert(newExpr instanceof NewExpression, "Unexpected vcall {0}", newExpr);
-
-        const typ = typeNameToTypeNode(newExpr.vTypeName);
+        const typ = this.typeNameToTypeNode(newExpr.vTypeName);
         const loc =
             typ instanceof UserDefinedType && typ.definition instanceof ContractDefinition
                 ? DataLocation.Storage
@@ -1689,32 +1616,32 @@ export class InferType {
     typeOfTupleExpression(node: TupleExpression): TypeNode {
         const componentTs = node.vComponents.map((cmp) => this.typeOf(cmp));
 
-        if (node.isInlineArray) {
-            assert(node.vComponents.length > 0, "Can't have an empty array initialize");
-
-            let elT = componentTs.reduce((prev, cur) => this.inferCommonType(prev, cur));
-
-            if (elT instanceof IntLiteralType) {
-                const concreteT = elT.smallestFittingType();
-
-                assert(
-                    concreteT !== undefined,
-                    "Unable to figure out concrete type for array of literals {0}",
-                    node
-                );
-
-                elT = concreteT;
-            }
-
-            elT = specializeType(generalizeType(elT)[0], DataLocation.Memory);
-
-            return new PointerType(
-                new ArrayType(elT, BigInt(node.components.length)),
-                DataLocation.Memory
-            );
+        if (!node.isInlineArray) {
+            return componentTs.length === 1 ? componentTs[0] : new TupleType(componentTs);
         }
 
-        return componentTs.length === 1 ? componentTs[0] : new TupleType(componentTs);
+        assert(node.vComponents.length > 0, "Can't have an empty array initializer");
+
+        let elT = componentTs.reduce((prev, cur) => this.inferCommonType(prev, cur));
+
+        if (elT instanceof IntLiteralType) {
+            const concreteT = elT.smallestFittingType();
+
+            assert(
+                concreteT !== undefined,
+                "Unable to figure out concrete type for array of literals {0}",
+                node
+            );
+
+            elT = concreteT;
+        }
+
+        elT = specializeType(generalizeType(elT)[0], DataLocation.Memory);
+
+        return new PointerType(
+            new ArrayType(elT, BigInt(node.components.length)),
+            DataLocation.Memory
+        );
     }
 
     typeOfUnaryOperation(node: UnaryOperation): TypeNode {
@@ -1772,11 +1699,11 @@ export class InferType {
             let innerT: TypeNode;
 
             if (node.typeName instanceof TypeName) {
-                innerT = typeNameToTypeNode(node.typeName);
+                innerT = this.typeNameToTypeNode(node.typeName);
             } else {
                 /// Prior to Solc 0.6.0 the TypeName is a string, which means we
                 /// unfortunately still need the typeString parser for backwards compat :(
-                innerT = parse(node.typeName, { ctx: node, version: this.version });
+                innerT = parse(node.typeName, { ctx: node, inference: this });
             }
 
             return new TypeNameType(innerT);
@@ -1849,7 +1776,7 @@ export class InferType {
         const defs: AnyResolvable[] = [];
 
         for (const ctx of ctxs) {
-            defs.push(...resolveAny(name, ctx, this.version, true));
+            defs.push(...resolveAny(name, ctx, this, true));
         }
 
         if (defs.length === 0) {
@@ -1899,7 +1826,7 @@ export class InferType {
 
             return new FunctionLikeSetType([
                 ...funs.map((funDef) => this.funDefToType(funDef)),
-                ...getters.map((getter) => getter.getterFunType())
+                ...getters.map((varDecl) => this.getterFunType(varDecl))
             ]);
         }
 
@@ -1941,7 +1868,7 @@ export class InferType {
             assert(getters.length === 1, "Unexpected overloading between getters for {0}", name);
 
             return externalOnly
-                ? getters[0].getterFunType()
+                ? this.getterFunType(getters[0])
                 : this.variableDeclarationToTypeNode(getters[0]);
         }
 
@@ -2042,7 +1969,7 @@ export class InferType {
     variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNode {
         assert(decl.vType !== undefined, "Expected {0} to have type", decl);
 
-        const generalType = typeNameToTypeNode(decl.vType);
+        const generalType = this.typeNameToTypeNode(decl.vType);
 
         if (isReferenceType(generalType)) {
             const loc = this.inferVariableDeclLocation(decl);
@@ -2091,5 +2018,388 @@ export class InferType {
         );
 
         return new ErrorType(def.name, argTs);
+    }
+
+    /**
+     * Computes the function type for the public accessor corresponding to a state variable
+     */
+    getterFunType(v: VariableDeclaration): FunctionType {
+        const [args, ret] = this.getterArgsAndReturn(v);
+
+        return new FunctionType(
+            v.name,
+            args,
+            ret instanceof TupleType ? ret.elements : [ret],
+            FunctionVisibility.External,
+            FunctionStateMutability.View
+        );
+    }
+
+    /**
+     * Computes the argument types and return type for the public accessor
+     * corresponding to a state variable.
+     */
+    getterArgsAndReturn(v: VariableDeclaration): [TypeNode[], TypeNode] {
+        const argTypes: TypeNode[] = [];
+
+        let type = v.vType;
+
+        assert(
+            type !== undefined,
+            "Called getterArgsAndReturn() on variable declaration without type",
+            v
+        );
+
+        while (true) {
+            if (type instanceof ArrayTypeName) {
+                argTypes.push(new IntType(256, false));
+
+                type = type.vBaseType;
+            } else if (type instanceof Mapping) {
+                argTypes.push(
+                    this.typeNameToSpecializedTypeNode(type.vKeyType, DataLocation.Memory)
+                );
+
+                type = type.vValueType;
+            } else {
+                break;
+            }
+        }
+
+        let retType = this.typeNameToSpecializedTypeNode(type, DataLocation.Memory);
+
+        if (
+            retType instanceof PointerType &&
+            retType.to instanceof UserDefinedType &&
+            retType.to.definition instanceof StructDefinition
+        ) {
+            const elements: TypeNode[] = [];
+
+            for (const member of retType.to.definition.vMembers) {
+                const memberT = member.vType;
+
+                assert(
+                    memberT !== undefined,
+                    "Unexpected untyped struct member",
+                    retType.to.definition
+                );
+
+                if (memberT instanceof Mapping || memberT instanceof ArrayTypeName) {
+                    continue;
+                }
+
+                elements.push(this.typeNameToSpecializedTypeNode(memberT, DataLocation.Memory));
+            }
+
+            retType = new TupleType(elements);
+        }
+
+        return [argTypes, retType];
+    }
+
+    /**
+     * Convert a given ast `TypeName` into a `TypeNode`.
+     * This produces "general type patterns" without any specific storage information.
+     */
+    typeNameToTypeNode(node: TypeName): TypeNode {
+        if (node instanceof ElementaryTypeName) {
+            const name = node.name.trim();
+
+            if (name === "bool") {
+                return types.bool;
+            }
+
+            if (RX_ADDRESS.test(name)) {
+                return node.stateMutability === "payable" ? types.addressPayable : types.address;
+            }
+
+            let m = name.match(RX_INTEGER);
+
+            if (m !== null) {
+                const signed = m[1] !== "u";
+                const nBits = m[2] === "" ? 256 : parseInt(m[2]);
+
+                return new IntType(nBits, signed);
+            }
+
+            m = name.match(RX_FIXED_BYTES);
+
+            if (m !== null) {
+                const size = parseInt(m[1]);
+
+                return new FixedBytesType(size);
+            }
+
+            if (name === "byte") {
+                return new FixedBytesType(1);
+            }
+
+            if (name === "bytes") {
+                return new BytesType();
+            }
+
+            if (name === "string") {
+                return new StringType();
+            }
+
+            throw new Error(`NYI converting elementary AST Type ${name}`);
+        }
+
+        if (node instanceof ArrayTypeName) {
+            const elT = this.typeNameToTypeNode(node.vBaseType);
+
+            let size: bigint | undefined;
+
+            if (node.vLength) {
+                const result = evalConstantExpr(node.vLength);
+
+                assert(
+                    typeof result === "bigint",
+                    "Expected bigint for size of an array type",
+                    node
+                );
+
+                size = result;
+            }
+
+            return new ArrayType(elT, size);
+        }
+
+        if (node instanceof UserDefinedTypeName) {
+            const def = node.vReferencedDeclaration;
+
+            if (
+                def instanceof StructDefinition ||
+                def instanceof EnumDefinition ||
+                def instanceof ContractDefinition ||
+                def instanceof UserDefinedValueTypeDefinition
+            ) {
+                return new UserDefinedType(getFQDefName(def), def);
+            }
+
+            throw new Error(`NYI typechecking of user-defined type ${def.print()}`);
+        }
+
+        if (node instanceof FunctionTypeName) {
+            /**
+             * `vType` is always defined here for parameters if a function type.
+             * Even in 0.4.x can't have function declarations with `var` args.
+             */
+            const args = node.vParameterTypes.vParameters.map((arg) =>
+                this.variableDeclarationToTypeNode(arg)
+            );
+
+            const rets = node.vReturnParameterTypes.vParameters.map((arg) =>
+                this.variableDeclarationToTypeNode(arg)
+            );
+
+            return new FunctionType(undefined, args, rets, node.visibility, node.stateMutability);
+        }
+
+        if (node instanceof Mapping) {
+            const keyT = this.typeNameToTypeNode(node.vKeyType);
+            const valueT = this.typeNameToTypeNode(node.vValueType);
+
+            return new MappingType(keyT, valueT);
+        }
+
+        throw new Error(`NYI converting AST Type ${node.print()} to SType`);
+    }
+
+    /**
+     * Computes a `TypeNode` equivalent of given `astT`,
+     * specialized for location `loc` (if applicable).
+     */
+    typeNameToSpecializedTypeNode(astT: TypeName, loc: DataLocation): TypeNode {
+        return specializeType(this.typeNameToTypeNode(astT), loc);
+    }
+
+    /**
+     * Convert an internal TypeNode to the external TypeNode that would correspond to it
+     * after ABI-encoding with encoder version `encoderVersion`. Follows the following rules:
+     *
+     * 1. Contract definitions turned to address.
+     * 2. Enum definitions turned to uint of minimal fitting size.
+     * 3. Any storage pointer types are converted to memory pointer types.
+     * 4. Throw an error on any nested mapping types.
+     *
+     * @see https://docs.soliditylang.org/en/latest/abi-spec.html
+     */
+    toABIEncodedType(
+        type: TypeNode,
+        encoderVersion: ABIEncoderVersion,
+        normalizePointers = false
+    ): TypeNode {
+        if (type instanceof MappingType) {
+            throw new Error("Cannot abi-encode mapping types");
+        }
+
+        if (type instanceof ArrayType) {
+            return new ArrayType(
+                this.toABIEncodedType(type.elementT, encoderVersion, normalizePointers),
+                type.size
+            );
+        }
+
+        if (type instanceof PointerType) {
+            const toT = this.toABIEncodedType(type.to, encoderVersion, normalizePointers);
+
+            return new PointerType(toT, normalizePointers ? DataLocation.Memory : type.location);
+        }
+
+        if (type instanceof UserDefinedType) {
+            if (type.definition instanceof UserDefinedValueTypeDefinition) {
+                return this.typeNameToTypeNode(type.definition.underlyingType);
+            }
+
+            if (type.definition instanceof ContractDefinition) {
+                return types.address;
+            }
+
+            if (type.definition instanceof EnumDefinition) {
+                return enumToIntType(type.definition);
+            }
+
+            if (type.definition instanceof StructDefinition) {
+                assert(
+                    encoderVersion !== ABIEncoderVersion.V1,
+                    "Getters of struct return type are not supported by ABI encoder v1"
+                );
+
+                const fieldTs = type.definition.vMembers.map((fieldT) =>
+                    this.variableDeclarationToTypeNode(fieldT)
+                );
+
+                return new TupleType(
+                    fieldTs.map((fieldT) =>
+                        this.toABIEncodedType(fieldT, encoderVersion, normalizePointers)
+                    )
+                );
+            }
+        }
+
+        return type;
+    }
+
+    /**
+     * Returns canonical representation of the signature as string.
+     *
+     * NOTE: Empty string will be returned for fallback functions and constructors.
+     */
+    signature(
+        node:
+            | FunctionDefinition
+            | EventDefinition
+            | ErrorDefinition
+            | ModifierDefinition
+            | VariableDeclaration,
+        encoderVersion: ABIEncoderVersion
+    ): string {
+        let args: string[];
+
+        if (node instanceof VariableDeclaration) {
+            const [getterArgs] = this.getterArgsAndReturn(node);
+
+            args = getterArgs.map((type) =>
+                abiTypeToCanonicalName(this.toABIEncodedType(type, encoderVersion, true))
+            );
+        } else {
+            if (node instanceof FunctionDefinition && (node.name === "" || node.isConstructor)) {
+                return "";
+            }
+
+            // Signatures are computed differently depending on whether this is a library function
+            // or a contract method
+            if (
+                node.vScope instanceof ContractDefinition &&
+                node.vScope.kind === ContractKind.Library
+            ) {
+                args = node.vParameters.vParameters.map((arg) => {
+                    const type = this.variableDeclarationToTypeNode(arg);
+
+                    return abiTypeToLibraryCanonicalName(type);
+                });
+            } else {
+                args = node.vParameters.vParameters.map((arg) => {
+                    const type = this.variableDeclarationToTypeNode(arg);
+                    const abiType = this.toABIEncodedType(type, encoderVersion);
+
+                    return abiTypeToCanonicalName(generalizeType(abiType)[0]);
+                });
+            }
+        }
+
+        return node.name + "(" + args.join(",") + ")";
+    }
+
+    /**
+     * Returns HEX string containing first 4 bytes of keccak256 hash function
+     * applied to the canonical representation of the passed
+     * function / event / error / modifier or public state variable getter signature.
+     *
+     * NOTE: Empty string will be returned for fallback functions and constructors.
+     */
+    signatureHash(
+        node:
+            | FunctionDefinition
+            | EventDefinition
+            | ErrorDefinition
+            | ModifierDefinition
+            | VariableDeclaration,
+        encoderVersion: ABIEncoderVersion
+    ): string {
+        if (node instanceof FunctionDefinition) {
+            const signature = this.signature(node, encoderVersion);
+
+            return signature ? encodeFuncSignature(signature) : "";
+        }
+
+        if (
+            node instanceof VariableDeclaration ||
+            node instanceof ErrorDefinition ||
+            node instanceof ModifierDefinition
+        ) {
+            return encodeFuncSignature(this.signature(node, encoderVersion));
+        }
+
+        if (node instanceof EventDefinition) {
+            return encodeEventSignature(this.signature(node, encoderVersion));
+        }
+
+        throw new Error(`Unable to compute signature hash for node ${pp(node)}`);
+    }
+
+    interfaceId(
+        contract: ContractDefinition,
+        encoderVersion: ABIEncoderVersion
+    ): string | undefined {
+        if (
+            contract.kind === ContractKind.Interface ||
+            (contract.kind === ContractKind.Contract && contract.abstract)
+        ) {
+            const selectors: string[] = [];
+
+            for (const fn of contract.vFunctions) {
+                const hash = this.signatureHash(fn, encoderVersion);
+
+                if (hash) {
+                    selectors.push(hash);
+                }
+            }
+
+            for (const v of contract.vStateVariables) {
+                if (v.visibility === StateVariableVisibility.Public) {
+                    selectors.push(this.signatureHash(v, encoderVersion));
+                }
+            }
+
+            return selectors
+                .map((selector) => BigInt("0x" + selector))
+                .reduce((a, b) => a ^ b, 0n)
+                .toString(16)
+                .padStart(8, "0");
+        }
+
+        return undefined;
     }
 }

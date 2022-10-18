@@ -1,9 +1,7 @@
 import { expect } from "expect";
 import {
-    AddressType,
     ArrayType,
     ASTNodeFactory,
-    BytesType,
     castable,
     CompilerVersions04,
     CompilerVersions05,
@@ -20,6 +18,7 @@ import {
     PointerType,
     StringLiteralType,
     TypeNode,
+    types,
     UserDefinedType
 } from "../../../src";
 
@@ -32,53 +31,43 @@ const cases: Array<
     ]
 > = [
     [
-        new PointerType(new ArrayType(new IntType(8, false)), DataLocation.Memory),
-        new PointerType(new ArrayType(new IntType(8, false)), DataLocation.CallData),
+        new PointerType(new ArrayType(types.uint8), DataLocation.Memory),
+        new PointerType(new ArrayType(types.uint8), DataLocation.CallData),
         LatestCompilerVersion,
         true
     ],
     [
-        new PointerType(new ArrayType(new IntType(8, false)), DataLocation.Memory),
+        new PointerType(new ArrayType(types.uint8), DataLocation.Memory),
         new PointerType(new ArrayType(new IntType(8, true)), DataLocation.CallData),
         LatestCompilerVersion,
         false
     ],
-    [new StringLiteralType("string"), new FixedBytesType(32), LatestCompilerVersion, true],
-    [new StringLiteralType("hexString"), new FixedBytesType(32), LatestCompilerVersion, true],
-    [
-        new StringLiteralType("string"),
-        new PointerType(new BytesType(), DataLocation.Memory),
-        LatestCompilerVersion,
-        true
-    ],
-    [
-        new StringLiteralType("hexString"),
-        new PointerType(new BytesType(), DataLocation.CallData),
-        LatestCompilerVersion,
-        true
-    ],
+    [new StringLiteralType("string"), types.bytes32, LatestCompilerVersion, true],
+    [new StringLiteralType("hexString"), types.bytes32, LatestCompilerVersion, true],
+    [new StringLiteralType("string"), types.bytesMemory, LatestCompilerVersion, true],
+    [new StringLiteralType("hexString"), types.bytesCalldata, LatestCompilerVersion, true],
     [new IntLiteralType(0xffn), new FixedBytesType(1), LatestCompilerVersion, true],
     [new IntLiteralType(-1n), new FixedBytesType(1), LatestCompilerVersion, false],
     [new IntLiteralType(0xffffn), new IntType(16, false), LatestCompilerVersion, true],
-    [new IntLiteralType(0n), new AddressType(false), CompilerVersions05[0], false],
+    [new IntLiteralType(0n), types.address, CompilerVersions05[0], false],
     [
         new IntLiteralType(0n),
-        new AddressType(false),
+        types.address,
         CompilerVersions04[CompilerVersions04.length - 1],
         true
     ],
-    [new AddressType(true), new AddressType(false), LatestCompilerVersion, true],
-    [new AddressType(false), new AddressType(true), LatestCompilerVersion, false],
+    [types.addressPayable, types.address, LatestCompilerVersion, true],
+    [types.address, types.addressPayable, LatestCompilerVersion, false],
     [new FixedBytesType(12), new FixedBytesType(24), LatestCompilerVersion, true],
     [new FixedBytesType(24), new FixedBytesType(12), LatestCompilerVersion, false],
     [new IntType(8, true), new IntType(16, true), LatestCompilerVersion, true],
-    [new IntType(8, false), new IntType(16, false), LatestCompilerVersion, true],
+    [types.uint8, new IntType(16, false), LatestCompilerVersion, true],
     [new IntType(16, true), new IntType(8, true), LatestCompilerVersion, false],
-    [new IntType(16, false), new IntType(8, false), LatestCompilerVersion, false],
-    [new IntType(8, false), new AddressType(false), LatestCompilerVersion, true],
-    [new IntType(160, false), new AddressType(false), LatestCompilerVersion, true],
-    [new IntType(256, false), new AddressType(false), LatestCompilerVersion, false],
-    [new IntType(8, true), new AddressType(false), LatestCompilerVersion, false],
+    [new IntType(16, false), types.uint8, LatestCompilerVersion, false],
+    [types.uint8, types.address, LatestCompilerVersion, true],
+    [types.uint160, types.address, LatestCompilerVersion, true],
+    [types.uint256, types.address, LatestCompilerVersion, false],
+    [new IntType(8, true), types.address, LatestCompilerVersion, false],
     [
         (factory) => {
             const c = factory.makeContractDefinition(
@@ -95,7 +84,7 @@ const cases: Array<
 
             return new UserDefinedType(c.name, c);
         },
-        new AddressType(false),
+        types.address,
         LatestCompilerVersion,
         true
     ],
@@ -115,7 +104,7 @@ const cases: Array<
 
             return new UserDefinedType(c.name, c);
         },
-        new AddressType(true),
+        types.addressPayable,
         LatestCompilerVersion,
         false
     ],
@@ -150,7 +139,7 @@ const cases: Array<
 
             return new UserDefinedType(c.name, c);
         },
-        new AddressType(true),
+        types.addressPayable,
         LatestCompilerVersion,
         true
     ],
@@ -185,7 +174,7 @@ const cases: Array<
 
             return new UserDefinedType(c.name, c);
         },
-        new AddressType(true),
+        types.addressPayable,
         LatestCompilerVersion,
         true
     ],

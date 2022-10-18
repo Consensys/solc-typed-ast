@@ -1,7 +1,7 @@
 import { gte, lt } from "semver";
 import { FunctionVisibility } from ".";
-import { forAll, pp } from "../misc";
-import { ABIEncoderVersion } from "../types/abi";
+import { assert, forAll, pp } from "../misc";
+import { ABIEncoderVersion, InferType } from "../types";
 import { ASTNode } from "./ast_node";
 import { StateVariableVisibility } from "./constants";
 import { ContractDefinition } from "./implementation/declaration/contract_definition";
@@ -115,8 +115,10 @@ function getContainingScope(node: ASTNode, version: string): ScopeNode | undefin
     if (pt instanceof Block || pt instanceof UncheckedBlock) {
         if (gte(version, "0.5.0")) {
             const ptChildren = pt.children;
+
             for (let i = ptChildren.indexOf(node) - 1; i >= 0; i--) {
                 const sibling = ptChildren[i];
+
                 if (sibling instanceof VariableDeclarationStatement) {
                     return sibling;
                 }
@@ -135,6 +137,7 @@ function getContainingScope(node: ASTNode, version: string): ScopeNode | undefin
  */
 function* lookupInSourceUnit(
     name: string,
+    inference: InferType,
     scope: SourceUnit,
     visitedUnits: Set<SourceUnit>
 ): Iterable<AnyResolvable> {
@@ -170,7 +173,7 @@ function* lookupInSourceUnit(
             } else if (child.vSymbolAliases.length === 0) {
                 // import "..."
                 // @todo maybe its better to go through child.vSourceUnit.vExportedSymbols here?
-                yield* lookupInScope(name, child.vSourceUnit, visitedUnits, false);
+                yield* lookupInScope(name, child.vSourceUnit, inference, visitedUnits, false);
             } else {
                 // `import {<name>} from "..."` or `import {a as <name>} from "..."`
                 for (const [foreignDef, alias] of child.vSymbolAliases) {
@@ -182,13 +185,11 @@ function* lookupInSourceUnit(
                         if (foreignDef instanceof ImportDirective) {
                             symImportName = foreignDef.unitAlias;
 
-                            if (symImportName === "") {
-                                throw new Error(
-                                    `Unexpected ImportDirective foreign def with non-unit alias ${pp(
-                                        foreignDef
-                                    )}`
-                                );
-                            }
+                            assert(
+                                symImportName !== "",
+                                "Unexpected ImportDirective foreign def with non-unit alias {0}",
+                                foreignDef
+                            );
                         } else {
                             symImportName = foreignDef.name;
                         }
@@ -208,6 +209,7 @@ function* lookupInSourceUnit(
  */
 function* lookupInContractDefinition(
     name: string,
+    inference: InferType,
     scope: ContractDefinition,
     ignoreVisiblity: boolean
 ): Iterable<AnyResolvable> {
@@ -239,22 +241,16 @@ function* lookupInContractDefinition(
                     continue;
                 }
 
-                let sigHash: string | undefined;
-
-                if (child instanceof FunctionDefinition) {
-                    // Its a safe to assume V2 as its backward-compatible and
-                    // we only use it internally here
-                    sigHash = child.canonicalSignatureHash(ABIEncoderVersion.V2);
-                } else if (
-                    child instanceof VariableDeclaration &&
-                    child.visibility === StateVariableVisibility.Public
-                ) {
-                    // Its a safe to assume V2 as its backward-compatible and
-                    // we only use it internally here
-                    sigHash = child.getterCanonicalSignatureHash(ABIEncoderVersion.V2);
-                } else if (child instanceof EventDefinition) {
-                    sigHash = child.canonicalSignatureHash(ABIEncoderVersion.V2);
-                }
+                /**
+                 * Its a safe to assume V2 as its backward-compatible and we only use it internally here
+                 */
+                const sigHash =
+                    child instanceof FunctionDefinition ||
+                    child instanceof EventDefinition ||
+                    (child instanceof VariableDeclaration &&
+                        child.visibility === StateVariableVisibility.Public)
+                        ? inference.signatureHash(child, ABIEncoderVersion.V2)
+                        : undefined;
 
                 if (sigHash !== undefined) {
                     if (overridenSigHashes.has(sigHash)) {
@@ -312,15 +308,16 @@ function* lookupInBlock(name: string, scope: Block | UncheckedBlock): Iterable<A
 function lookupInScope(
     name: string,
     scope: ScopeNode,
+    inference: InferType,
     visitedUnits = new Set<SourceUnit>(),
     ignoreVisiblity: boolean
 ): Set<AnyResolvable> {
     let results: Iterable<AnyResolvable>;
 
     if (scope instanceof SourceUnit) {
-        results = lookupInSourceUnit(name, scope, visitedUnits);
+        results = lookupInSourceUnit(name, inference, scope, visitedUnits);
     } else if (scope instanceof ContractDefinition) {
-        results = lookupInContractDefinition(name, scope, ignoreVisiblity);
+        results = lookupInContractDefinition(name, inference, scope, ignoreVisiblity);
     } else if (scope instanceof FunctionDefinition) {
         results = lookupInFunctionDefinition(name, scope);
     } else if (scope instanceof ModifierDefinition) {
@@ -358,12 +355,14 @@ function lookupInScope(
 export function resolveAny(
     name: string,
     ctx: ASTNode,
-    version: string,
+    inference: InferType,
     inclusive = false,
     ignoreVisiblity = false
 ): Set<AnyResolvable> {
     let scope: ScopeNode | undefined =
-        inclusive && isScope(ctx, version) ? ctx : getContainingScope(ctx, version);
+        inclusive && isScope(ctx, inference.version)
+            ? ctx
+            : getContainingScope(ctx, inference.version);
 
     const elements = name.split(".");
 
@@ -376,14 +375,14 @@ export function resolveAny(
             // If this is the first element (e.g. `A` in `A.B.C`), walk up the
             // stack of scopes starting from the current context, looking for `A`
             while (scope !== undefined) {
-                res = lookupInScope(element, scope, undefined, ignoreVisiblity);
+                res = lookupInScope(element, scope, inference, undefined, ignoreVisiblity);
 
                 if (res.size > 0) {
                     // Sanity check - when multiple results are found, they must either be overloaded events
                     // or overloaded functions/public state vars.
                     if (res.size > 1) {
-                        if (
-                            !forAll(
+                        assert(
+                            forAll(
                                 res,
                                 (def) =>
                                     def instanceof EventDefinition ||
@@ -391,14 +390,12 @@ export function resolveAny(
                                     (def instanceof VariableDeclaration &&
                                         def.stateVariable &&
                                         def.visibility === StateVariableVisibility.Public)
-                            )
-                        ) {
-                            throw new Error(
-                                `Unexpected intermediate def for ${element} in ${name}: ${[
-                                    ...res
-                                ].map((n) => `${n.constructor.name}#${n.id}`)}`
-                            );
-                        }
+                            ),
+                            "Unexpected intermediate def for {0} in {1}: {2}",
+                            element,
+                            name,
+                            res
+                        );
                     }
 
                     const first = [...res][0];
@@ -415,12 +412,12 @@ export function resolveAny(
                     }
                 }
 
-                scope = getContainingScope(scope, version);
+                scope = getContainingScope(scope, inference.version);
             }
         } else {
             // If this is a later segment (e.g. `B` or `C` in `A.B.C`),
             // then resolve it recursively in the current scope.
-            res = resolveAny(element, scope as ASTNode, version, true, ignoreVisiblity);
+            res = resolveAny(element, scope as ASTNode, inference, true, ignoreVisiblity);
         }
 
         // We didn't find anything - return empty set
@@ -436,29 +433,27 @@ export function resolveAny(
         // We found multiple definitions for an intermediate segment of
         // identifier path (e.g. multiple resolutions for `A` in `A.B`). This
         // shouldn't happen.
-        if (res.size > 1) {
-            throw new Error(
-                `Ambigious path resolution for ${element} in ${name} in ctx ${pp(ctx)}: got ${[
-                    ...res
-                ]
-                    .map(pp)
-                    .join(",")}`
-            );
-        }
+        assert(
+            res.size === 1,
+            "Ambigious path resolution for {0} in {1} in ctx {2}: got {3}",
+            element,
+            name,
+            ctx,
+            res
+        );
 
         const resolvedNode = [...res][0];
 
         // An intermediate segment in an identifier path (e.g. `A` in `A.B`) should always resolve to a
         // single imported source unit or contract.
-        if (
-            !(resolvedNode instanceof ImportDirective || resolvedNode instanceof ContractDefinition)
-        ) {
-            throw new Error(
-                `Unexpected non-scope node for ${element} in ${name} in ctx ${pp(ctx)}: got ${pp(
-                    resolvedNode
-                )}`
-            );
-        }
+        assert(
+            resolvedNode instanceof ImportDirective || resolvedNode instanceof ContractDefinition,
+            "Unexpected non-scope node for {0} in {1} in ctx {2}: got {3}",
+            element,
+            name,
+            ctx,
+            resolvedNode
+        );
 
         scope = resolvedNode instanceof ImportDirective ? resolvedNode.vSourceUnit : resolvedNode;
     }

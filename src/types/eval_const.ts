@@ -13,7 +13,7 @@ import {
     VariableDeclaration
 } from "../ast";
 import { pp } from "../misc";
-import { binaryOperatorGroups, subdenominationMultipliers } from "./infer";
+import { SUBDENOMINATION_MULTIPLIERS, BINARY_OPERATOR_GROUPS } from "./utils";
 /**
  * Tune up precision of decimal values to follow Solidity behavior.
  * Be careful with precision - setting it to large values causes NodeJS to crash.
@@ -133,15 +133,17 @@ function evalLiteral(expr: Literal): Value {
         const val = dec.isInteger() ? BigInt(dec.toFixed()) : dec;
 
         if (expr.subdenomination !== undefined) {
-            if (subdenominationMultipliers[expr.subdenomination] === undefined) {
+            const multiplier = SUBDENOMINATION_MULTIPLIERS.get(expr.subdenomination);
+
+            if (multiplier === undefined) {
                 throw new EvalError(expr, `Unknown denomination ${expr.subdenomination}`);
             }
 
             if (val instanceof Decimal) {
-                return demoteFromDec(val.times(subdenominationMultipliers[expr.subdenomination]));
+                return demoteFromDec(val.times(multiplier));
             }
 
-            return val * BigInt(subdenominationMultipliers[expr.subdenomination].toFixed());
+            return val * BigInt(multiplier.toFixed());
         }
 
         return val;
@@ -332,23 +334,23 @@ function evalBinary(expr: BinaryOperation): Value {
     const lVal = evalConstantExpr(expr.vLeftExpression);
     const rVal = evalConstantExpr(expr.vRightExpression);
 
-    if (binaryOperatorGroups.Logical.includes(expr.operator)) {
+    if (BINARY_OPERATOR_GROUPS.Logical.includes(expr.operator)) {
         return evalBinaryLogic(expr, lVal, rVal);
     }
 
-    if (binaryOperatorGroups.Equality.includes(expr.operator)) {
+    if (BINARY_OPERATOR_GROUPS.Equality.includes(expr.operator)) {
         return evalBinaryEquality(expr, lVal, rVal);
     }
 
-    if (binaryOperatorGroups.Comparison.includes(expr.operator)) {
+    if (BINARY_OPERATOR_GROUPS.Comparison.includes(expr.operator)) {
         return evalBinaryComparison(expr, lVal, rVal);
     }
 
-    if (binaryOperatorGroups.Arithmetic.includes(expr.operator)) {
+    if (BINARY_OPERATOR_GROUPS.Arithmetic.includes(expr.operator)) {
         return evalBinaryArithmetic(expr, lVal, rVal);
     }
 
-    if (binaryOperatorGroups.Bitwise.includes(expr.operator)) {
+    if (BINARY_OPERATOR_GROUPS.Bitwise.includes(expr.operator)) {
         return evalBinaryBitwise(expr, lVal, rVal);
     }
 

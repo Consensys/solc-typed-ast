@@ -1,13 +1,5 @@
-import { variableDeclarationToTypeNode } from "../../../types/utils";
-import { ABIEncoderVersion, abiTypeToLibraryCanonicalName } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
-import {
-    ContractKind,
-    FunctionKind,
-    FunctionStateMutability,
-    FunctionVisibility
-} from "../../constants";
-import { encodeFuncSignature } from "../../utils";
+import { FunctionKind, FunctionStateMutability, FunctionVisibility } from "../../constants";
 import { ModifierInvocation } from "../meta/modifier_invocation";
 import { OverrideSpecifier } from "../meta/override_specifier";
 import { ParameterList } from "../meta/parameter_list";
@@ -168,51 +160,5 @@ export class FunctionDefinition extends ASTNode {
         }
 
         this.scope = value.id;
-    }
-
-    /**
-     * Returns canonical representation of the function signature as string.
-     *
-     * NOTE: This property will contain empty strings for fallback functions and constructors.
-     *
-     * @deprecated
-     */
-    canonicalSignature(encoderVersion: ABIEncoderVersion): string {
-        if (this.name === "" || this.isConstructor) {
-            return "";
-        }
-
-        let args: string[];
-
-        // Signatures are computed differently depending on whether this is a library function
-        // or a contract method
-        if (
-            this.vScope instanceof ContractDefinition &&
-            this.vScope.kind === ContractKind.Library
-        ) {
-            args = this.vParameters.vParameters.map((arg) =>
-                abiTypeToLibraryCanonicalName(variableDeclarationToTypeNode(arg))
-            );
-        } else {
-            args = this.vParameters.vParameters.map((arg) =>
-                arg.canonicalSignatureType(encoderVersion)
-            );
-        }
-
-        return this.name + "(" + args.join(",") + ")";
-    }
-
-    /**
-     * Returns HEX string containing first 4 bytes of Keccak256 hash function
-     * applied to the canonical representation of the function signature.
-     *
-     * NOTE: This property will contain empty strings for fallback functions and constructors.
-     *
-     * @deprecated
-     */
-    canonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
-        const signature = this.canonicalSignature(encoderVersion);
-
-        return signature ? encodeFuncSignature(signature) : "";
     }
 }

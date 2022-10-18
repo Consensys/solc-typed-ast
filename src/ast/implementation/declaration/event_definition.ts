@@ -1,6 +1,4 @@
-import { ABIEncoderVersion } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
-import { encodeEventSignature } from "../../utils";
 import { ParameterList } from "../meta/parameter_list";
 import { StructuredDocumentation } from "../meta/structured_documentation";
 import { ContractDefinition } from "./contract_definition";
@@ -66,35 +64,5 @@ export class EventDefinition extends ASTNode {
      */
     get vScope(): ContractDefinition {
         return this.parent as ContractDefinition;
-    }
-
-    /**
-     * Returns canonical representation of the event signature as string
-     *
-     * @deprecated
-     */
-    canonicalSignature(encoderVersion: ABIEncoderVersion): string {
-        const args = this.vParameters.vParameters.map((arg) =>
-            arg.canonicalSignatureType(encoderVersion)
-        );
-
-        return this.name + "(" + args.join(",") + ")";
-    }
-
-    /**
-     * Returns HEX string containing first 32 bytes of Keccak256 hash function
-     * applied to the canonical representation of the event signature.
-     *
-     * @deprecated
-     */
-    canonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
-        return encodeEventSignature(this.canonicalSignature(encoderVersion));
-    }
-
-    /**
-     * Returns 32 bytes of event topic hash or `undefined` if event is declared as anonymous.
-     */
-    eventTopic(encoderVersion: ABIEncoderVersion): string | undefined {
-        return this.anonymous ? undefined : this.canonicalSignatureHash(encoderVersion);
     }
 }

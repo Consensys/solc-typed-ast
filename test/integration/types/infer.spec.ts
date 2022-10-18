@@ -636,7 +636,7 @@ function compareTypeNodes(
     return eq(inferredT, parsedT);
 }
 
-export const ENV_CUSTOM_PATH = "SOLC_TEST_SAMPLES_PATH";
+const ENV_CUSTOM_PATH = "SOLC_TEST_SAMPLES_PATH";
 
 describe("Type inference for expressions", () => {
     const path = process.env[ENV_CUSTOM_PATH];
@@ -700,13 +700,13 @@ describe("Type inference for expressions", () => {
             const reader = new ASTReader();
             const sourceUnits = reader.read(data, astKind);
 
-            const infer = new InferType(compilerVersion);
+            const inference = new InferType(compilerVersion);
 
             for (const unit of sourceUnits) {
                 for (const expr of unit.getChildrenBySelector<Expression>(
                     (child) => child instanceof Expression
                 )) {
-                    const inferredType = infer.typeOf(expr);
+                    const inferredType = inference.typeOf(expr);
 
                     // typeStrings for Identifiers in ImportDirectives may be undefined.
                     if (expr.typeString === undefined) {
@@ -733,7 +733,7 @@ describe("Type inference for expressions", () => {
                     try {
                         parsedType = parse(expr.typeString, {
                             ctx: expr,
-                            version: compilerVersion
+                            inference
                         });
                     } catch (e) {
                         if (e instanceof SyntaxError) {
