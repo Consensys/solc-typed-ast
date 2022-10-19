@@ -6,5 +6,4 @@ export * from "./infer";
 export * from "./misc";
 export * from "./polymorphic";
 export * from "./reserved";
-export * from "./typeStrings";
 export * from "./utils";

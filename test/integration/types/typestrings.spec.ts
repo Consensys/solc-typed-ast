@@ -18,16 +18,14 @@ import {
     Identifier,
     ModifierInvocation,
     PossibleCompilerKinds,
-    VariableDeclaration
-} from "../../../src";
-import {
-    generalizeType,
-    getNodeType,
+    VariableDeclaration,
     InferType,
     MappingType,
     PointerType,
-    specializeType
-} from "../../../src/types";
+    specializeType,
+    generalizeType
+} from "../../../src";
+import { getNodeType } from "../../utils/typeStrings/typeString_parser";
 
 const samples: Array<[string, string, ASTKind]> = [
     [

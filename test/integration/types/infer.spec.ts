@@ -53,17 +53,16 @@ import {
     isVisiblityExternallyCallable,
     ModuleType,
     PackedArrayType,
-    parse,
     PointerType,
     RationalLiteralType,
     StringLiteralType,
-    SyntaxError,
+    SuperType,
     TupleType,
     TypeNameType,
     TypeNode,
     UserDefinedType
 } from "../../../src/types";
-import { SuperType } from "../../../src/types/ast/super";
+import { parse, SyntaxError } from "../../utils/typeStrings/typeString_parser";
 
 export const samples: string[] = [
     "./test/samples/solidity/compile_04.sol",

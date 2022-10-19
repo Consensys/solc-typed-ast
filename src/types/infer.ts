@@ -56,6 +56,7 @@ import { ABIEncoderVersion, abiTypeToCanonicalName, abiTypeToLibraryCanonicalNam
 import {
     AddressType,
     ArrayType,
+    BoolType,
     BuiltinFunctionType,
     BuiltinStructType,
     BytesType,
@@ -100,7 +101,6 @@ import {
     TypeSubstituion
 } from "./polymorphic";
 import { types } from "./reserved";
-import { parse } from "./typeStrings";
 import {
     BINARY_OPERATOR_GROUPS,
     castable,
@@ -1696,15 +1696,10 @@ export class InferType {
         }
 
         if (node instanceof ElementaryTypeNameExpression) {
-            let innerT: TypeNode;
-
-            if (node.typeName instanceof TypeName) {
-                innerT = this.typeNameToTypeNode(node.typeName);
-            } else {
-                /// Prior to Solc 0.6.0 the TypeName is a string, which means we
-                /// unfortunately still need the typeString parser for backwards compat :(
-                innerT = parse(node.typeName, { ctx: node, inference: this });
-            }
+            const innerT =
+                node.typeName instanceof TypeName
+                    ? this.typeNameToTypeNode(node.typeName)
+                    : this.elementaryTypeNameStringToTypeNode(node.typeName);
 
             return new TypeNameType(innerT);
         }
@@ -2097,52 +2092,70 @@ export class InferType {
         return [argTypes, retType];
     }
 
+    elementaryTypeNameStringToTypeNode(name: string): TypeNode {
+        name = name.trim();
+
+        if (name === "bool") {
+            return new BoolType();
+        }
+
+        let m = name.match(RX_INTEGER);
+
+        if (m !== null) {
+            const isSigned = m[1] !== "u";
+            const bitWidth = m[2] === "" ? 256 : parseInt(m[2]);
+
+            return new IntType(bitWidth, isSigned);
+        }
+
+        m = name.match(RX_ADDRESS);
+
+        if (m !== null) {
+            const isPayable = m[1] === "payable";
+
+            return new AddressType(isPayable);
+        }
+
+        m = name.match(RX_FIXED_BYTES);
+
+        if (m !== null) {
+            const size = parseInt(m[1]);
+
+            return new FixedBytesType(size);
+        }
+
+        if (name === "byte") {
+            return new FixedBytesType(1);
+        }
+
+        if (name === "bytes") {
+            return new BytesType();
+        }
+
+        if (name === "string") {
+            return new StringType();
+        }
+
+        throw new Error(`NYI converting elementary type name "${name}"`);
+    }
+
     /**
      * Convert a given ast `TypeName` into a `TypeNode`.
      * This produces "general type patterns" without any specific storage information.
      */
     typeNameToTypeNode(node: TypeName): TypeNode {
         if (node instanceof ElementaryTypeName) {
-            const name = node.name.trim();
+            const type = this.elementaryTypeNameStringToTypeNode(node.name);
 
-            if (name === "bool") {
-                return types.bool;
+            /**
+             * The payability marker of an "address" type is contained
+             * in `stateMutability` property instead of "name" string.
+             */
+            if (type instanceof AddressType) {
+                type.payable = node.stateMutability === "payable";
             }
 
-            if (RX_ADDRESS.test(name)) {
-                return node.stateMutability === "payable" ? types.addressPayable : types.address;
-            }
-
-            let m = name.match(RX_INTEGER);
-
-            if (m !== null) {
-                const signed = m[1] !== "u";
-                const nBits = m[2] === "" ? 256 : parseInt(m[2]);
-
-                return new IntType(nBits, signed);
-            }
-
-            m = name.match(RX_FIXED_BYTES);
-
-            if (m !== null) {
-                const size = parseInt(m[1]);
-
-                return new FixedBytesType(size);
-            }
-
-            if (name === "byte") {
-                return new FixedBytesType(1);
-            }
-
-            if (name === "bytes") {
-                return new BytesType();
-            }
-
-            if (name === "string") {
-                return new StringType();
-            }
-
-            throw new Error(`NYI converting elementary AST Type ${name}`);
+            return type;
         }
 
         if (node instanceof ArrayTypeName) {
@@ -2177,7 +2190,7 @@ export class InferType {
                 return new UserDefinedType(getFQDefName(def), def);
             }
 
-            throw new Error(`NYI typechecking of user-defined type ${def.print()}`);
+            throw new Error(`NYI converting user-defined AST type ${def.print()} to TypeNode`);
         }
 
         if (node instanceof FunctionTypeName) {
@@ -2203,7 +2216,7 @@ export class InferType {
             return new MappingType(keyT, valueT);
         }
 
-        throw new Error(`NYI converting AST Type ${node.print()} to SType`);
+        throw new Error(`NYI converting AST type ${node.print()} to TypeNode`);
     }
 
     /**
