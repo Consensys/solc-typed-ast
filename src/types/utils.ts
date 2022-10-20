@@ -401,8 +401,8 @@ export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string
     if (fromT instanceof StringLiteralType) {
         /**
          * @todo Should we make an explicit check that string literal fits to bytes size?
-         * Note that string length is not the same as count ob bytes in string due to multibyte chars.
-         * Also for hex string literals we should check evenness of length
+         * Note that string length is not the same as count of bytes in string due to multibyte chars.
+         * Also for hex string literals we should check evenness of length.
          */
         if (toT instanceof FixedBytesType) {
             return true;

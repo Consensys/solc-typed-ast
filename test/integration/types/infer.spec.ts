@@ -51,7 +51,6 @@ import {
     IntLiteralType,
     IntType,
     isVisiblityExternallyCallable,
-    ModuleType,
     PackedArrayType,
     PointerType,
     RationalLiteralType,
@@ -62,6 +61,7 @@ import {
     TypeNode,
     UserDefinedType
 } from "../../../src/types";
+import { ModuleType } from "../../utils/typeStrings/ast/module_type";
 import { parse, SyntaxError } from "../../utils/typeStrings/typeString_parser";
 
 export const samples: string[] = [
@@ -405,8 +405,7 @@ function compareTypeNodes(
     }
 
     /// For imports we use the slightly richer ImportRefType while
-    /// the string parser returns the simpler ModuleType. ModuleType should
-    /// be considered deprecated
+    /// the string parser returns the simpler ModuleType.
     if (
         inferredT instanceof ImportRefType &&
         parsedT instanceof ModuleType &&

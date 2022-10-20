@@ -1679,6 +1679,15 @@ export class InferType {
         throw new Error(`NYI unary operator ${node.operator} in ${pp(node)}`);
     }
 
+    typeOfElementaryTypeNameExpression(node: ElementaryTypeNameExpression): TypeNode {
+        const innerT =
+            node.typeName instanceof TypeName
+                ? this.typeNameToTypeNode(node.typeName)
+                : this.elementaryTypeNameStringToTypeNode(node.typeName);
+
+        return new TypeNameType(innerT);
+    }
+
     /**
      * Given an expression infer its type.
      */
@@ -1696,12 +1705,7 @@ export class InferType {
         }
 
         if (node instanceof ElementaryTypeNameExpression) {
-            const innerT =
-                node.typeName instanceof TypeName
-                    ? this.typeNameToTypeNode(node.typeName)
-                    : this.elementaryTypeNameStringToTypeNode(node.typeName);
-
-            return new TypeNameType(innerT);
+            return this.typeOfElementaryTypeNameExpression(node);
         }
 
         if (node instanceof FunctionCall) {
@@ -2092,6 +2096,12 @@ export class InferType {
         return [argTypes, retType];
     }
 
+    /**
+     * Given the `name` string of elementary type,
+     * returns corresponding type node.
+     *
+     * @todo Consider fixes due to https://github.com/ConsenSys/solc-typed-ast/issues/160
+     */
     elementaryTypeNameStringToTypeNode(name: string): TypeNode {
         name = name.trim();
 

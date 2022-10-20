@@ -22,11 +22,9 @@ import {
     BytesType,
     FixedBytesType,
     FunctionType,
-    InaccessibleDynamicType,
     IntLiteralType,
     IntType,
     MappingType,
-    ModuleType,
     PointerType,
     RationalLiteralType,
     StringLiteralType,
@@ -39,6 +37,8 @@ import {
     pp,
     InferType
 } from "../../../src";
+import { InaccessibleDynamicType } from "./ast/inaccessible_dynamic_type";
+import { ModuleType } from "./ast/module_type";
 
 function getFunctionAttributes(
     decorators: string[]

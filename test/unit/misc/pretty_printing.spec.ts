@@ -10,7 +10,6 @@ import {
     FunctionLikeSetType,
     FunctionStateMutability,
     FunctionVisibility,
-    InaccessibleDynamicType,
     InferType,
     IntType,
     isPPAble,
@@ -146,7 +145,6 @@ describe("Utility formatting routines", () => {
                 new FunctionLikeSetType([infer.eventDefToType(evA), infer.eventDefToType(evB)]),
                 "event_set { event evA(), event evB() }"
             ],
-            [new InaccessibleDynamicType(), "inaccessible_dynamic_type"],
             [new TVar("T"), "<TVar T>"]
         ];
 
