@@ -647,7 +647,7 @@ describe("Type inference for expressions", () => {
             : samples;
 
     for (const sample of sampleList) {
-        it(`${sample}`, async () => {
+        it(sample, async () => {
             let result: CompileResult;
             let compilerVersion: string | undefined;
             let data: any;
@@ -689,11 +689,9 @@ describe("Type inference for expressions", () => {
 
             expect(errors).toHaveLength(0);
 
-            assert(compilerVersion !== undefined, "Expected compiler version to be set to precise");
+            assert(compilerVersion !== undefined, "Expected compiler version to be defined");
 
-            const astKind = lt(compilerVersion as string, "0.5.0")
-                ? ASTKind.Legacy
-                : ASTKind.Modern;
+            const astKind = lt(compilerVersion, "0.5.0") ? ASTKind.Legacy : ASTKind.Modern;
 
             const reader = new ASTReader();
             const sourceUnits = reader.read(data, astKind);

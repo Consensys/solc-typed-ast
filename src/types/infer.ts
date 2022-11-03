@@ -125,8 +125,6 @@ const RX_ADDRESS = /^address *(payable)?$/;
 const RX_INTEGER = /^(u?)int([0-9]*)$/;
 const RX_FIXED_BYTES = /^bytes([0-9]+)$/;
 
-const CALL_BUILTINS = ["call", "callcode", "staticcall", "delegatecall", "transfer", "send"];
-
 /**
  * Some builtins have types that are not easy to express with our current hacky polymorphic support.
  * For those we have the custom type constructors before, that introspect the AST to determine the type.
@@ -364,14 +362,17 @@ export class InferType {
                 let commonElT = this.inferCommonType(a.elements[i], b.elements[i]);
 
                 if (commonElT instanceof IntLiteralType && commonElT.literal !== undefined) {
-                    commonElT = smallestFittingType(commonElT.literal) as TypeNode;
+                    const fittingT = smallestFittingType(commonElT.literal);
+
                     assert(
-                        commonElT !== undefined,
+                        fittingT !== undefined,
                         "Can't infer common type for tuple elements {0} between {1} and {2}",
                         i,
                         a,
                         b
                     );
+
+                    commonElT = fittingT;
                 }
 
                 commonElTs.push(commonElT);
@@ -691,26 +692,6 @@ export class InferType {
         }
 
         return undefined;
-    }
-
-    /**
-     * Return true IFF the passed in node is an external callee. There are 2 cases for external calls:
-     *
-     * 1. The builtin functions (address).call/callcode/staticcall/delegatecall/transfer/send
-     * 2. Calling a function on some variable of type ContractDefinition
-     */
-    private isFunctionCallExternal(callee: ASTNode, calleeT: TypeNode): boolean {
-        if (!(callee instanceof MemberAccess)) {
-            return false;
-        }
-
-        if (calleeT instanceof BuiltinFunctionType && CALL_BUILTINS.includes(callee.memberName)) {
-            return true;
-        }
-
-        const baseT = this.typeOf(callee.vExpression);
-
-        return baseT instanceof UserDefinedType && baseT.definition instanceof ContractDefinition;
     }
 
     /**
@@ -1327,9 +1308,7 @@ export class InferType {
             }
 
             if (fieldT) {
-                if (this.isFunctionCallExternal(node, baseT)) {
-                    fieldT = this.changeLocToMemory(fieldT);
-                }
+                fieldT = this.changeLocToMemory(fieldT);
 
                 if (builtinT instanceof BuiltinFunctionType) {
                     return mergeFunTypes(
