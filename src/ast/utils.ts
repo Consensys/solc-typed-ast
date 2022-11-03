@@ -6,7 +6,7 @@ export type SourceLocation = { offset: number; length: number; sourceIndex: numb
 /**
  * Splits the string using the separator.
  * If the string contains well formed parenthesized expressions
- * then those expression will not be split even if the contain separators.
+ * then those expression will not be split even if they contain separators.
  *
  * E.g. if we call `split("a,b,c(d,e)", ",", "(", ")")` we will get `["a", "b", "c(d,e)"]`.
  *
