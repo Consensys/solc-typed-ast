@@ -1723,9 +1723,8 @@ export class InferType {
             return this.typeOfUnaryOperation(node);
         }
 
-        /// FunctionCallOptions don't really get a type
         if (node instanceof FunctionCallOptions) {
-            return types.noType;
+            return this.typeOf(node.vExpression);
         }
 
         throw new Error(`NYI type inference of node ${node.constructor.name}`);
