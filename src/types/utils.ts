@@ -360,7 +360,7 @@ export function isFunctionCallExternal(call: FunctionCall): boolean {
         return true;
     }
 
-    if (call.vExpression.typeString.endsWith(FunctionVisibility.External)) {
+    if (call.vExpression.typeString.includes(FunctionVisibility.External)) {
         return true;
     }
 
