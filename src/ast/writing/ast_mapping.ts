@@ -6,8 +6,19 @@ import {
     FunctionStateMutability,
     LiteralKind,
     Mutability,
-    StateVariableVisibility
+    StateVariableVisibility,
+    YulLiteralKind
 } from "../constants";
+import {
+    YulBlock,
+    YulExpression,
+    YulExpressionStatement,
+    YulFunctionCall,
+    YulIdentifier,
+    YulLiteral,
+    YulTypedName,
+    YulVariableDeclaration
+} from "../implementation";
 import {
     ContractDefinition,
     EnumDefinition,
@@ -1410,6 +1421,114 @@ class SourceUnitWriter extends ASTNodeWriter {
     }
 }
 
+class YulBlockWriter extends ASTNodeWriter {
+    writeInner(node: YulBlock, writer: ASTWriter): SrcDesc {
+        if (
+            node.children.length === 0 ||
+            (node.children.length === 1 && node.documentation === node.firstChild)
+        ) {
+            return ["{}"];
+        }
+
+        const formatter = writer.formatter;
+        const wrap = formatter.renderWrap();
+        const oldIndent = formatter.renderIndent();
+
+        formatter.increaseNesting();
+
+        const doc = node.documentation;
+        const nested = node.children.filter((node) => node !== doc);
+
+        const res: SrcDesc = [
+            "{",
+            wrap,
+            ...flatJoin(
+                nested.map<SrcDesc>((stmt) => [formatter.renderIndent(), ...writer.desc(stmt)]),
+                wrap
+            ),
+            wrap,
+            oldIndent,
+            "}"
+        ];
+
+        formatter.decreaseNesting();
+
+        return res;
+    }
+
+    writeWhole(node: YulBlock, writer: ASTWriter): SrcDesc {
+        return [
+            ...writePrecedingDocs(node.documentation, writer),
+            [node, this.writeInner(node, writer)]
+        ];
+    }
+}
+
+class YulLiteralWriter extends ASTNodeWriter {
+    writeInner(node: YulLiteral): SrcDesc {
+        let result: string;
+        if (node.kind === YulLiteralKind.String) {
+            result =
+                node.value === undefined ? `hex"${node.hexValue}"` : JSON.stringify(node.value);
+        } else {
+            result = node.value;
+        }
+
+        if (node.typeString) result = `${result}:${node.typeString}`;
+
+        return [result];
+    }
+}
+
+class YulIdentifierWriter extends ASTNodeWriter {
+    writeInner(node: YulIdentifier): SrcDesc {
+        return [node.name];
+    }
+}
+class YulTypedNameWriter extends ASTNodeWriter {
+    writeInner(node: YulTypedName): SrcDesc {
+        return [node.typeString ? node.name + ":" + node.typeString : node.name];
+    }
+}
+class YulFunctionCallWriter extends ASTNodeWriter {
+    writeInner(node: YulFunctionCall, writer: ASTWriter): SrcDesc {
+        const elements: DescArgs = [node.vFunctionName, "("];
+
+        const args = node.vArguments;
+
+        elements.push(...join(args, ", "));
+
+        elements.push(")");
+
+        return writer.desc(...elements);
+    }
+}
+
+class YulVariableDeclarationWriter extends ASTNodeWriter {
+    writeInner(node: YulVariableDeclaration, writer: ASTWriter): SrcDesc {
+        const elements: DescArgs = ["let ", ...join(node.variables, ",")];
+        if (node.value) {
+            elements.push(` := `, node.value);
+        }
+
+        return writer.desc(...elements);
+    }
+}
+
+class YulExpressionStatementWriter extends ASTNodeWriter {
+    writeInner(node: YulExpressionStatement, writer: ASTWriter): SrcDesc {
+        return writer.desc(node.vExpression);
+    }
+
+    writeWhole(node: YulExpressionStatement, writer: ASTWriter): SrcDesc {
+        const stmtDesc: SrcDesc = [[node, this.writeInner(node, writer)]];
+
+        stmtDesc.unshift(...writePrecedingDocs(node.documentation, writer));
+
+        return stmtDesc;
+    }
+}
+
 export const DefaultASTWriterMapping = new Map<ASTNodeConstructor<ASTNode>, ASTNodeWriter>([
     [ElementaryTypeName, new ElementaryTypeNameWriter()],
     [ArrayTypeName, new ArrayTypeNameWriter()],
@@ -1467,5 +1586,12 @@ export const DefaultASTWriterMapping = new Map<ASTNodeConstructor<ASTNode>, ASTN
     [StructuredDocumentation, new StructuredDocumentationWriter()],
     [ImportDirective, new ImportDirectiveWriter()],
     [PragmaDirective, new PragmaDirectiveWriter()],
-    [SourceUnit, new SourceUnitWriter()]
+    [SourceUnit, new SourceUnitWriter()],
+    [YulBlock, new YulBlockWriter()],
+    [YulLiteral, new YulLiteralWriter()],
+    [YulIdentifier, new YulIdentifierWriter()],
+    [YulTypedName, new YulTypedNameWriter()],
+    [YulFunctionCall, new YulFunctionCallWriter()],
+    [YulVariableDeclaration, new YulVariableDeclarationWriter()],
+    [YulExpressionStatement, new YulExpressionStatementWriter()]
 ]);
