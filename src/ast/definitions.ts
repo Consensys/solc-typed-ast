@@ -289,16 +289,28 @@ function* lookupInFunctionDefinition(
 /**
  * Lookup the definition corresponding to `name` in the `Block|UncheckedBlock` `scope`. Yield all matches.
  */
-function* lookupInBlock(name: string, scope: Block | UncheckedBlock): Iterable<AnyResolvable> {
-    for (const node of scope.children) {
-        if (!(node instanceof VariableDeclarationStatement)) {
-            continue;
-        }
-
-        for (const decl of node.vDeclarations) {
-            if (decl.name === name) {
-                yield decl;
-            }
+function* lookupInBlock(
+    name: string,
+    scope: Block | UncheckedBlock,
+    version: string
+): Iterable<AnyResolvable> {
+    let declarations: VariableDeclaration[];
+    if (version && lt(version, "0.5.0")) {
+        declarations = scope.getChildrenByType(VariableDeclaration);
+    } else {
+        declarations = scope.children
+            .filter((node) => node instanceof VariableDeclarationStatement)
+            .reduce(
+                (declarations: VariableDeclaration[], statement) => [
+                    ...declarations,
+                    ...(statement as VariableDeclarationStatement).vDeclarations
+                ],
+                []
+            );
+    }
+    for (const declaration of declarations) {
+        if (declaration.name === name) {
+            yield declaration;
         }
     }
 }
@@ -313,7 +325,8 @@ function lookupInScope(
     name: string,
     scope: ScopeNode,
     visitedUnits = new Set<SourceUnit>(),
-    ignoreVisiblity: boolean
+    ignoreVisiblity: boolean,
+    version = ""
 ): Set<AnyResolvable> {
     let results: Iterable<AnyResolvable>;
 
@@ -328,7 +341,7 @@ function lookupInScope(
     } else if (scope instanceof VariableDeclarationStatement) {
         results = scope.vDeclarations.filter((decl) => decl.name === name);
     } else if (scope instanceof Block || scope instanceof UncheckedBlock) {
-        results = lookupInBlock(name, scope);
+        results = lookupInBlock(name, scope, version);
     } else if (scope instanceof TryCatchClause) {
         results = scope.vParameters
             ? scope.vParameters.vParameters.filter((param) => param.name === name)
@@ -376,7 +389,7 @@ export function resolveAny(
             // If this is the first element (e.g. `A` in `A.B.C`), walk up the
             // stack of scopes starting from the current context, looking for `A`
             while (scope !== undefined) {
-                res = lookupInScope(element, scope, undefined, ignoreVisiblity);
+                res = lookupInScope(element, scope, undefined, ignoreVisiblity, version);
 
                 if (res.size > 0) {
                     // Sanity check - when multiple results are found, they must either be overloaded events
