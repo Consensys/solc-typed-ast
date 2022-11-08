@@ -317,7 +317,6 @@ function* lookupInBlock(
 
 /**
  * Lookup the definition corresponding to `name` in the `ScopeNode` `node`. If no match is found return an empty set.
- *
  * Otherwise return the set of all definitions matching by name in this scope. This function may return multuple results only in the following cases:
  * 1. Multiple FunctionDefinitions (and potentially VariableDeclarations corresponding to public state variables) with the same name and DIFFERENT SIGNATURES
  * 2. Multiple EventDefinitions with the same name and different signatures.
