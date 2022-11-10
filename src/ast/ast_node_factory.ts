@@ -829,6 +829,82 @@ export class ASTNodeFactory {
         this.lastId = context.lastId;
     }
 
+    makeYulAssignment(
+        ...args: Specific<ConstructorParameters<typeof YulAssignment>>
+    ): YulAssignment {
+        return this.make(YulAssignment, ...args);
+    }
+
+    makeYulBlock(...args: Specific<ConstructorParameters<typeof YulBlock>>): YulBlock {
+        return this.make(YulBlock, ...args);
+    }
+
+    makeYulBreak(...args: Specific<ConstructorParameters<typeof YulBreak>>): YulBreak {
+        return this.make(YulBreak, ...args);
+    }
+
+    makeYulContinue(...args: Specific<ConstructorParameters<typeof YulContinue>>): YulContinue {
+        return this.make(YulContinue, ...args);
+    }
+
+    makeYulCase(...args: Specific<ConstructorParameters<typeof YulCase>>): YulCase {
+        return this.make(YulCase, ...args);
+    }
+
+    makeYulExpressionStatement(
+        ...args: Specific<ConstructorParameters<typeof YulExpressionStatement>>
+    ): YulExpressionStatement {
+        return this.make(YulExpressionStatement, ...args);
+    }
+
+    makeYulForLoop(...args: Specific<ConstructorParameters<typeof YulForLoop>>): YulForLoop {
+        return this.make(YulForLoop, ...args);
+    }
+
+    makeYulFunctionDefinition(
+        ...args: Specific<ConstructorParameters<typeof YulFunctionDefinition>>
+    ): YulFunctionDefinition {
+        return this.make(YulFunctionDefinition, ...args);
+    }
+
+    makeYulIf(...args: Specific<ConstructorParameters<typeof YulIf>>): YulIf {
+        return this.make(YulIf, ...args);
+    }
+
+    makeYulLeave(...args: Specific<ConstructorParameters<typeof YulLeave>>): YulLeave {
+        return this.make(YulLeave, ...args);
+    }
+
+    makeYulSwitch(...args: Specific<ConstructorParameters<typeof YulSwitch>>): YulSwitch {
+        return this.make(YulSwitch, ...args);
+    }
+
+    makeYulVariableDeclaration(
+        ...args: Specific<ConstructorParameters<typeof YulVariableDeclaration>>
+    ): YulVariableDeclaration {
+        return this.make(YulVariableDeclaration, ...args);
+    }
+
+    makeYulLiteral(...args: Specific<ConstructorParameters<typeof YulLiteral>>): YulLiteral {
+        return this.make(YulLiteral, ...args);
+    }
+
+    makeYulIdentifier(
+        ...args: Specific<ConstructorParameters<typeof YulIdentifier>>
+    ): YulIdentifier {
+        return this.make(YulIdentifier, ...args);
+    }
+
+    makeYulFunctionCall(
+        ...args: Specific<ConstructorParameters<typeof YulFunctionCall>>
+    ): YulFunctionCall {
+        return this.make(YulFunctionCall, ...args);
+    }
+
+    makeYulTypedName(...args: Specific<ConstructorParameters<typeof YulTypedName>>): YulTypedName {
+        return this.make(YulTypedName, ...args);
+    }
+
     makeContractDefinition(
         ...args: Specific<ConstructorParameters<typeof ContractDefinition>>
     ): ContractDefinition {
