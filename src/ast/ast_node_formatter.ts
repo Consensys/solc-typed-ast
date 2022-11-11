@@ -1,4 +1,4 @@
-import { ASTContext, ASTNode } from "./";
+import { ASTContext, ASTNode, YulASTNode, YulASTNodeWithChildren } from "./";
 
 const INDENT = " ".repeat(4);
 const SKIP = new Set(["requiredContext", "raw", "ownChildren"]);
@@ -82,6 +82,9 @@ export class ASTNodeFormatter {
     }
 
     private formatNode(node: ASTNode, level: number, depth: number): string {
+        if (node instanceof YulASTNode || node instanceof YulASTNodeWithChildren) {
+            return this.formatValue(node.raw);
+        }
         const output = [];
         const value = this.formatNodeValue(node);
 
