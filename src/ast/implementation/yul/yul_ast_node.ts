@@ -1,6 +1,12 @@
 import { ASTNode, ASTNodeWithChildren } from "../../ast_node";
 import { InlineAssembly } from "../statement";
 
+export function isYulASTNode(
+    node: ASTNode
+): node is YulASTNode | YulASTNodeWithChildren<YulASTNode> {
+    return node instanceof YulASTNode || node instanceof YulASTNodeWithChildren;
+}
+
 export class YulASTNode extends ASTNode {}
 
 export interface YulASTNode {
