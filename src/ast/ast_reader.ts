@@ -1,5 +1,7 @@
+// import { deepFindIn } from "../misc";
 import { ASTNode, ASTNodeConstructor } from "./ast_node";
 import { SourceUnit } from "./implementation/meta/source_unit";
+import { isYulASTNode } from "./implementation/yul";
 import { LegacyConfiguration } from "./legacy";
 import { ModernConfiguration } from "./modern";
 import { DefaultNodePostprocessorList } from "./postprocessing";
@@ -46,6 +48,12 @@ export class ASTContext {
     id = contextIdSequence.next().value;
 
     /**
+     *  Temporary workaround
+     */
+    readonly yulIdStart = 1e5;
+    lastYulId = this.yulIdStart;
+
+    /**
      * Map from ID number to the `AST` node with same ID in tree
      */
     map = new Map<number, ASTNode>();
@@ -61,6 +69,9 @@ export class ASTContext {
         let last = 0;
 
         for (const id of this.map.keys()) {
+            if (id >= this.yulIdStart) {
+                continue;
+            }
             if (id > last) {
                 last = id;
             }
@@ -75,6 +86,9 @@ export class ASTContext {
 
     register(...nodes: ASTNode[]): void {
         for (const node of nodes) {
+            if (node.id === undefined && isYulASTNode(node)) {
+                node.id = ++this.lastYulId;
+            }
             if (this.map.has(node.id)) {
                 throw new Error(`The id ${node.id} is already taken for the context`);
             }
@@ -189,6 +203,19 @@ export class ASTReader {
         const entries: Array<[string, any]> = Object.entries(data.sources);
         const rootNodeTypeName = "SourceUnit";
         const result: SourceUnit[] = [];
+
+        // const nodes = entries.map((e) => e[1]);
+        // const hasAssemblyAST = deepFindIn(
+        //     nodes,
+        //     "nodeType",
+        //     (node: any) => node.nodeType.startsWith("Yul"),
+        //     true
+        // );
+        // if (hasAssemblyAST) {
+        //     const ids = deepFindIn(nodes, "id", (id) => typeof id === "number");
+        //     const lastId = Math.max(...ids);
+        //     this.context.lastOriginalId = lastId;
+        // }
 
         for (const [key, content] of entries) {
             let ast;

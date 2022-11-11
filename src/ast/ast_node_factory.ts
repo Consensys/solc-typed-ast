@@ -85,7 +85,8 @@ import {
     YulLiteral,
     YulIdentifier,
     YulFunctionCall,
-    YulTypedName
+    YulTypedName,
+    isYulASTNode
 } from "./implementation/yul";
 
 /**
@@ -821,12 +822,14 @@ export class ASTNodeFactory {
     postprocessor: ASTPostprocessor;
 
     private lastId: number;
+    private lastYulId: number;
 
     constructor(context = new ASTContext(), postprocessor = new ASTPostprocessor()) {
         this.context = context;
         this.postprocessor = postprocessor;
 
         this.lastId = context.lastId;
+        this.lastYulId = context.lastYulId;
     }
 
     makeYulAssignment(
@@ -1288,7 +1291,8 @@ export class ASTNodeFactory {
         type: ASTNodeConstructor<T>,
         ...args: Specific<ConstructorParameters<typeof type>>
     ): T {
-        const node = new type(++this.lastId, "0:0:0", ...args);
+        const id = isYulASTNode(type.prototype) ? ++this.lastYulId : ++this.lastId;
+        const node = new type(id, "0:0:0", ...args);
 
         this.context.register(node);
 
