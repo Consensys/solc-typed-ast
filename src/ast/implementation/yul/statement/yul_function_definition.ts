@@ -27,7 +27,7 @@ export class YulFunctionDefinition extends YulStatement {
      * Function body block: can be empty if function is declared, but not implemented.
      * Always filled otherwise.
      */
-    vBody?: YulBlock;
+    vBody: YulBlock;
 
     /**
      * A list of local variables that are declared and initialized with the input values
@@ -44,9 +44,10 @@ export class YulFunctionDefinition extends YulStatement {
         src: string,
         scope: number,
         name: string,
-        parameters: YulTypedName[],
-        returnParameters: YulTypedName[],
-        body?: YulBlock,
+        // solc does not generate empty arrays if parameters are not populated
+        parameters: YulTypedName[] = [],
+        returnParameters: YulTypedName[] = [],
+        body: YulBlock,
         documentation?: string | StructuredDocumentation,
         raw?: any
     ) {
