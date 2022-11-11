@@ -10,6 +10,7 @@ import {
     PossibleCompilerKinds,
     SourceUnit
 } from "../../../src";
+import { isYulASTNode } from "../../../src/ast/implementation/yul";
 import { createImprint } from "./common";
 
 const mainSample = "./test/samples/solidity/latest_08.sol";
@@ -120,7 +121,9 @@ for (const compilerKind of PossibleCompilerKinds) {
             expect(sourceUnit.src).toEqual("0:8713:0");
             expect(sourceUnit.absolutePath).toEqual(mainSample);
             expect(sourceUnit.children.length).toEqual(30);
-            expect(sourceUnit.getChildren().length).toEqual(743);
+
+            const children = sourceUnit.getChildrenBySelector((node) => !isYulASTNode(node), false);
+            expect(children.length).toEqual(743);
         });
 
         it(`Validate parsed output (${astKind})`, () => {
