@@ -1,6 +1,7 @@
 import { YulNode } from "../implementation/statement/inline_assembly";
 import { YulNodeWriter, YulWriter } from "./writer";
 
+/** @deprecated Use `ASTWriter` */
 class YulBlockWriter implements YulNodeWriter {
     write(node: YulNode, writer: YulWriter): string {
         if (node.statements.length === 0) {
@@ -24,6 +25,7 @@ class YulBlockWriter implements YulNodeWriter {
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulLiteralWriter implements YulNodeWriter {
     write(node: YulNode): string {
         let result;
@@ -44,18 +46,21 @@ class YulLiteralWriter implements YulNodeWriter {
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulIdentifierWriter implements YulNodeWriter {
     write(node: YulNode): string {
         return node.name;
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulTypedNameWriter implements YulNodeWriter {
     write(node: YulNode): string {
         return node.type !== "" ? node.name + ":" + node.type : node.name;
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulFunctionCallWriter implements YulNodeWriter {
     write(node: YulNode, writer: YulWriter): string {
         const id = writer.write(node.functionName);
@@ -65,6 +70,7 @@ class YulFunctionCallWriter implements YulNodeWriter {
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulVariableDeclarationWriter implements YulNodeWriter {
     write(node: YulNode, writer: YulWriter): string {
         const vars = node.variables.map((v: YulNode) => writer.write(v));
@@ -75,12 +81,14 @@ class YulVariableDeclarationWriter implements YulNodeWriter {
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulExpressionStatementWriter implements YulNodeWriter {
     write(node: YulNode, writer: YulWriter): string {
         return writer.write(node.expression);
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulAssignmentWriter implements YulNodeWriter {
     write(node: YulNode, writer: YulWriter): string {
         const lhs = node.variableNames.map((v: YulNode) => writer.write(v));
@@ -90,6 +98,7 @@ class YulAssignmentWriter implements YulNodeWriter {
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulIfWriter implements YulNodeWriter {
     write(node: YulNode, writer: YulWriter): string {
         const condition = writer.write(node.condition);
@@ -99,6 +108,7 @@ class YulIfWriter implements YulNodeWriter {
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulCaseWriter implements YulNodeWriter {
     write(node: YulNode, writer: YulWriter): string {
         const body = writer.write(node.body);
@@ -113,6 +123,7 @@ class YulCaseWriter implements YulNodeWriter {
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulSwitchWriter implements YulNodeWriter {
     write(node: YulNode, writer: YulWriter): string {
         const expression = writer.write(node.expression);
@@ -129,24 +140,28 @@ class YulSwitchWriter implements YulNodeWriter {
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulContinueWriter implements YulNodeWriter {
     write(): string {
         return "continue";
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulBreakWriter implements YulNodeWriter {
     write(): string {
         return "break";
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulLeaveWriter implements YulNodeWriter {
     write(): string {
         return "leave";
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulForLoopWriter implements YulNodeWriter {
     write(node: YulNode, writer: YulWriter): string {
         const pre = writer.write(node.pre);
@@ -158,6 +173,7 @@ class YulForLoopWriter implements YulNodeWriter {
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 class YulFunctionDefinitionWriter implements YulNodeWriter {
     write(node: YulNode, writer: YulWriter): string {
         const args = node.parameters

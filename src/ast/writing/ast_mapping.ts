@@ -10,15 +10,23 @@ import {
     YulLiteralKind
 } from "../constants";
 import {
+    YulAssignment,
     YulBlock,
-    YulExpression,
+    YulBreak,
+    YulCase,
+    YulContinue,
     YulExpressionStatement,
+    YulForLoop,
     YulFunctionCall,
+    YulFunctionDefinition,
     YulIdentifier,
+    YulIf,
+    YulLeave,
     YulLiteral,
+    YulSwitch,
     YulTypedName,
     YulVariableDeclaration
-} from "../implementation";
+} from "../implementation/yul";
 import {
     ContractDefinition,
     EnumDefinition,
@@ -88,8 +96,7 @@ import {
     UserDefinedTypeName
 } from "../implementation/type";
 import { SourceFormatter } from "./formatter";
-import { ASTNodeWriter, ASTWriter, DescArgs, SrcDesc, YulWriter } from "./writer";
-import { DefaultYulWriterMapping } from "./yul_mapping";
+import { ASTNodeWriter, ASTWriter, DescArgs, SrcDesc } from "./writer";
 
 type CompoundStatement = IfStatement | ForStatement | WhileStatement;
 
@@ -735,7 +742,7 @@ class PlaceholderStatementWriter extends SimpleStatementWriter<PlaceholderStatem
 
 class InlineAssemblyWriter extends ASTNodeWriter {
     writeInner(node: InlineAssembly, writer: ASTWriter): SrcDesc {
-        const result: SrcDesc = ["assembly "];
+        const result = ["assembly "];
 
         if (node.flags !== undefined) {
             const quotedFlags = node.flags.map((flag) => `"${flag}"`);
@@ -746,9 +753,7 @@ class InlineAssemblyWriter extends ASTNodeWriter {
         if (node.operations !== undefined) {
             result.push(node.operations);
         } else if (node.yul !== undefined) {
-            const yulWriter = new YulWriter(DefaultYulWriterMapping, writer.formatter);
-
-            result.push(yulWriter.write(node.yul));
+            return writer.desc(...result, node.yul);
         } else {
             throw new Error("Unable to detect Yul data in inline assembly node: " + node.print());
         }
@@ -1521,11 +1526,161 @@ class YulExpressionStatementWriter extends ASTNodeWriter {
     }
 
     writeWhole(node: YulExpressionStatement, writer: ASTWriter): SrcDesc {
-        const stmtDesc: SrcDesc = [[node, this.writeInner(node, writer)]];
+        return [
+            ...writePrecedingDocs(node.documentation, writer),
+            [node, this.writeInner(node, writer)]
+        ];
+    }
+}
 
-        stmtDesc.unshift(...writePrecedingDocs(node.documentation, writer));
+class YulAssignmentWriter implements ASTNodeWriter {
+    writeInner(node: YulAssignment, writer: ASTWriter): SrcDesc {
+        const elements: DescArgs = ["let ", ...join(node.variableNames, ","), ` := `, node.value];
 
-        return stmtDesc;
+        return writer.desc(...elements);
+    }
+
+    writeWhole(node: YulAssignment, writer: ASTWriter): SrcDesc {
+        return [
+            ...writePrecedingDocs(node.documentation, writer),
+            [node, this.writeInner(node, writer)]
+        ];
+    }
+}
+
+class YulIfWriter implements ASTNodeWriter {
+    writeInner(node: YulIf, writer: ASTWriter): SrcDesc {
+        return writer.desc("if ", node.vCondition, " ", node.vBody);
+    }
+
+    writeWhole(node: YulIf, writer: ASTWriter): SrcDesc {
+        return [
+            ...writePrecedingDocs(node.documentation, writer),
+            [node, this.writeInner(node, writer)]
+        ];
+    }
+}
+
+class YulCaseWriter implements ASTNodeWriter {
+    writeInner(node: YulCase, writer: ASTWriter): SrcDesc {
+        return writer.desc(
+            ...(node.value === "default" ? ["default"] : ["case ", node.value]),
+            " ",
+            node.vBody
+        );
+    }
+
+    writeWhole(node: YulCase, writer: ASTWriter): SrcDesc {
+        return [
+            ...writePrecedingDocs(node.documentation, writer),
+            [node, this.writeInner(node, writer)]
+        ];
+    }
+}
+
+class YulSwitchWriter implements ASTNodeWriter {
+    writeInner(node: YulSwitch, writer: ASTWriter): SrcDesc {
+        const formatter = writer.formatter;
+        const wrap = formatter.renderWrap();
+
+        return [
+            "switch ",
+            ...writer.desc(node.vExpression),
+            wrap,
+            ...flatJoin(
+                node.vCases.map<SrcDesc>((vCase) => [
+                    formatter.renderIndent(),
+                    ...writer.desc(vCase)
+                ]),
+                wrap
+            )
+        ];
+    }
+
+    writeWhole(node: YulSwitch, writer: ASTWriter): SrcDesc {
+        return [
+            ...writePrecedingDocs(node.documentation, writer),
+            [node, this.writeInner(node, writer)]
+        ];
+    }
+}
+
+class YulContinueWriter implements ASTNodeWriter {
+    writeInner(): SrcDesc {
+        return ["continue"];
+    }
+
+    writeWhole(node: YulContinue, writer: ASTWriter): SrcDesc {
+        return [...writePrecedingDocs(node.documentation, writer), [node, this.writeInner()]];
+    }
+}
+
+class YulBreakWriter implements ASTNodeWriter {
+    writeInner(): SrcDesc {
+        return ["break"];
+    }
+
+    writeWhole(node: YulBreak, writer: ASTWriter): SrcDesc {
+        return [...writePrecedingDocs(node.documentation, writer), [node, this.writeInner()]];
+    }
+}
+
+class YulLeaveWriter implements ASTNodeWriter {
+    writeInner(): SrcDesc {
+        return ["leave"];
+    }
+
+    writeWhole(node: YulLeave, writer: ASTWriter): SrcDesc {
+        return [...writePrecedingDocs(node.documentation, writer), [node, this.writeInner()]];
+    }
+}
+
+class YulForLoopWriter implements ASTNodeWriter {
+    writeInner(node: YulForLoop, writer: ASTWriter): SrcDesc {
+        // return `for ${pre} ${condition} ${post} ${body}`;
+        return writer.desc(
+            "for ",
+            ...join([node.vPre, node.vCondition, node.vPost, node.vBody], " ")
+        );
+    }
+
+    writeWhole(node: YulForLoop, writer: ASTWriter): SrcDesc {
+        return [
+            ...writePrecedingDocs(node.documentation, writer),
+            [node, this.writeInner(node, writer)]
+        ];
+    }
+}
+class YulFunctionDefinitionWriter implements ASTNodeWriter {
+    getHeader(node: YulFunctionDefinition): DescArgs {
+        const result: DescArgs = [
+            "function ",
+            node.name,
+            " (",
+            ...join(node.vParameters, ", "),
+            ")"
+        ];
+        if (node.vReturnParameters.length) {
+            result.push(" -> ", ...join(node.vParameters, ", "));
+        }
+        return result;
+    }
+
+    writeInner(node: YulFunctionDefinition, writer: ASTWriter): SrcDesc {
+        const args = this.getHeader(node);
+
+        const result = writer.desc(...args);
+
+        result.push(" ", ...writer.desc(node.vBody));
+
+        return result;
+    }
+
+    writeWhole(node: YulFunctionDefinition, writer: ASTWriter): SrcDesc {
+        return [
+            ...writePrecedingDocs(node.documentation, writer),
+            [node, this.writeInner(node, writer)]
+        ];
     }
 }
 
@@ -1593,5 +1748,14 @@ export const DefaultASTWriterMapping = new Map<ASTNodeConstructor<ASTNode>, ASTN
     [YulTypedName, new YulTypedNameWriter()],
     [YulFunctionCall, new YulFunctionCallWriter()],
     [YulVariableDeclaration, new YulVariableDeclarationWriter()],
-    [YulExpressionStatement, new YulExpressionStatementWriter()]
+    [YulExpressionStatement, new YulExpressionStatementWriter()],
+    [YulAssignment, new YulAssignmentWriter()],
+    [YulIf, new YulIfWriter()],
+    [YulCase, new YulCaseWriter()],
+    [YulSwitch, new YulSwitchWriter()],
+    [YulContinue, new YulContinueWriter()],
+    [YulBreak, new YulBreakWriter()],
+    [YulLeave, new YulLeaveWriter()],
+    [YulForLoop, new YulForLoopWriter()],
+    [YulFunctionDefinition, new YulFunctionDefinitionWriter()]
 ]);
