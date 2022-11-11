@@ -8,7 +8,7 @@ export class ModernYulCaseProcessor extends ModernNodeProcessor<YulCase> {
         config: ASTReaderConfiguration,
         raw: any
     ): ConstructorParameters<typeof YulCase> {
-        const [id, src, typeString] = super.process(reader, config, raw);
+        const [id, src] = super.process(reader, config, raw);
 
         const value =
             raw.value === "default" ? raw.value : (reader.convert(raw.value, config) as YulLiteral);
