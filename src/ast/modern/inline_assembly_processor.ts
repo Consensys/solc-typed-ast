@@ -1,5 +1,6 @@
 import { ASTReader, ASTReaderConfiguration } from "../ast_reader";
-import { InlineAssembly, YulNode } from "../implementation/statement/inline_assembly";
+import { InlineAssembly } from "../implementation/statement/inline_assembly";
+import { YulBlock } from "../implementation/yul";
 import { ModernNodeProcessor } from "./node_processor";
 
 export class ModernInlineAssemblyProcessor extends ModernNodeProcessor<InlineAssembly> {
@@ -13,7 +14,7 @@ export class ModernInlineAssemblyProcessor extends ModernNodeProcessor<InlineAss
         const externalReferences: any[] = raw.externalReferences;
         const documentation: string | undefined = raw.documentation;
         const operations: string | undefined = raw.operations;
-        const yul: YulNode | undefined = raw.AST;
+        const yul = raw.AST && (reader.convert(raw.AST, config) as YulBlock);
         const flags: string[] | undefined = raw.flags;
         const evmVersion: string | undefined = raw.evmVersion;
 
