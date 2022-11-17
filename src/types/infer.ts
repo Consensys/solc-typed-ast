@@ -1659,10 +1659,21 @@ export class InferType {
     }
 
     typeOfElementaryTypeNameExpression(node: ElementaryTypeNameExpression): TypeNode {
-        const innerT =
-            node.typeName instanceof TypeName
-                ? this.typeNameToTypeNode(node.typeName)
-                : this.elementaryTypeNameStringToTypeNode(node.typeName);
+        let innerT: TypeNode;
+
+        if (node.typeName instanceof TypeName) {
+            innerT = this.typeNameToTypeNode(node.typeName);
+        } else {
+            const elementaryT = this.elementaryTypeNameStringToTypeNode(node.typeName);
+
+            assert(
+                elementaryT !== undefined,
+                'NYI converting elementary type name "{0}"',
+                node.typeName
+            );
+
+            innerT = elementaryT;
+        }
 
         return new TypeNameType(innerT);
     }
@@ -2080,7 +2091,7 @@ export class InferType {
      *
      * @todo Consider fixes due to https://github.com/ConsenSys/solc-typed-ast/issues/160
      */
-    elementaryTypeNameStringToTypeNode(name: string): TypeNode {
+    elementaryTypeNameStringToTypeNode(name: string): TypeNode | undefined {
         name = name.trim();
 
         if (name === "bool") {
@@ -2124,7 +2135,7 @@ export class InferType {
             return new StringType();
         }
 
-        throw new Error(`NYI converting elementary type name "${name}"`);
+        return undefined;
     }
 
     /**
@@ -2134,6 +2145,8 @@ export class InferType {
     typeNameToTypeNode(node: TypeName): TypeNode {
         if (node instanceof ElementaryTypeName) {
             const type = this.elementaryTypeNameStringToTypeNode(node.name);
+
+            assert(type !== undefined, 'NYI converting elementary type name "{0}"', node.name);
 
             /**
              * The payability marker of an "address" type is contained
