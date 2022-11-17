@@ -6,9 +6,10 @@ import {
     TRest,
     TVar,
     TypeNameType,
-    TypeNode
+    TypeNode,
+    YulBuiltinFunctionType
 } from "./ast";
-import { types } from "./reserved";
+import { types, yulTypes } from "./reserved";
 
 export type VersionDependentType = [TypeNode, string];
 
@@ -383,5 +384,652 @@ export const globalBuiltins = new BuiltinStructType(
                 ]
             ]
         ]
+    ])
+);
+
+export const yulBuiltins = new BuiltinStructType(
+    "<yul_builtins>",
+    new Map([
+        ["stop", [[new YulBuiltinFunctionType("stop", [], []), ">=0.3.1"]]],
+        [
+            "add",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "add",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "sub",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "sub",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "mul",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "mul",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "div",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "div",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "sdiv",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "sdiv",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "mod",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "mod",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "smod",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "smod",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "exp",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "exp",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        ["not", [[new YulBuiltinFunctionType("not", [yulTypes.u256], [yulTypes.u256]), ">=0.3.1"]]],
+        [
+            "lt",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "lt",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "gt",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "gt",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "slt",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "slt",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "sgt",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "sgt",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "eq",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "eq",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "iszero",
+            [[new YulBuiltinFunctionType("iszero", [yulTypes.u256], [yulTypes.u256]), ">=0.3.1"]]
+        ],
+        [
+            "and",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "and",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "or",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "or",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "xor",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "xor",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "byte",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "byte",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "shl",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "shl",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.4.22"
+                ]
+            ]
+        ],
+        [
+            "shr",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "shr",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.4.22"
+                ]
+            ]
+        ],
+        [
+            "sar",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "sar",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.4.22"
+                ]
+            ]
+        ],
+        [
+            "addmod",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "addmod",
+                        [yulTypes.u256, yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "mulmod",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "mulmod",
+                        [yulTypes.u256, yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "signextend",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "signextend",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "keccak256",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "keccak256",
+                        [yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        ["pc", [[new YulBuiltinFunctionType("pc", [], [yulTypes.u256]), ">=0.3.1"]]],
+        ["pop", [[new YulBuiltinFunctionType("pop", [yulTypes.u256], []), ">=0.3.1"]]],
+        [
+            "mload",
+            [[new YulBuiltinFunctionType("mload", [yulTypes.u256], [yulTypes.u256]), ">=0.3.1"]]
+        ],
+        [
+            "mstore",
+            [[new YulBuiltinFunctionType("mstore", [yulTypes.u256, yulTypes.u256], []), ">=0.3.1"]]
+        ],
+        [
+            "mstore8",
+            [[new YulBuiltinFunctionType("mstore8", [yulTypes.u256, yulTypes.u256], []), ">=0.3.1"]]
+        ],
+        [
+            "sload",
+            [[new YulBuiltinFunctionType("sload", [yulTypes.u256], [yulTypes.u256]), ">=0.3.1"]]
+        ],
+        [
+            "sstore",
+            [[new YulBuiltinFunctionType("sstore", [yulTypes.u256, yulTypes.u256], []), ">=0.3.1"]]
+        ],
+        ["msize", [[new YulBuiltinFunctionType("msize", [], [yulTypes.u256]), ">=0.3.1"]]],
+        ["gas", [[new YulBuiltinFunctionType("gas", [], [yulTypes.u256]), ">=0.3.1"]]],
+        ["address", [[new YulBuiltinFunctionType("address", [], [yulTypes.u256]), ">=0.3.1"]]],
+        [
+            "balance",
+            [[new YulBuiltinFunctionType("balance", [yulTypes.u256], [yulTypes.u256]), ">=0.3.1"]]
+        ],
+        [
+            "selfbalance",
+            [[new YulBuiltinFunctionType("selfbalance", [], [yulTypes.u256]), ">=0.5.12"]]
+        ],
+        ["caller", [[new YulBuiltinFunctionType("caller", [], [yulTypes.u256]), ">=0.3.1"]]],
+        ["callvalue", [[new YulBuiltinFunctionType("callvalue", [], [yulTypes.u256]), ">=0.3.1"]]],
+        [
+            "calldataload",
+            [
+                [
+                    new YulBuiltinFunctionType("calldataload", [yulTypes.u256], [yulTypes.u256]),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "calldatasize",
+            [[new YulBuiltinFunctionType("calldatasize", [], [yulTypes.u256]), ">=0.3.1"]]
+        ],
+        [
+            "calldatacopy",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "calldatacopy",
+                        [yulTypes.u256, yulTypes.u256, yulTypes.u256],
+                        []
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        ["codesize", [[new YulBuiltinFunctionType("codesize", [], [yulTypes.u256]), ">=0.3.1"]]],
+        [
+            "codecopy",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "codecopy",
+                        [yulTypes.u256, yulTypes.u256, yulTypes.u256],
+                        []
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "extcodesize",
+            [
+                [
+                    new YulBuiltinFunctionType("extcodesize", [yulTypes.u256], [yulTypes.u256]),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "extcodecopy",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "extcodecopy",
+                        [yulTypes.u256, yulTypes.u256, yulTypes.u256, yulTypes.u256],
+                        []
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "returndatasize",
+            [[new YulBuiltinFunctionType("returndatasize", [], [yulTypes.u256]), ">=0.4.12"]]
+        ],
+        [
+            "returndatacopy",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "returndatacopy",
+                        [yulTypes.u256, yulTypes.u256, yulTypes.u256],
+                        []
+                    ),
+                    ">=0.4.12"
+                ]
+            ]
+        ],
+        [
+            "extcodehash",
+            [
+                [
+                    new YulBuiltinFunctionType("extcodehash", [yulTypes.u256], [yulTypes.u256]),
+                    ">=0.4.22"
+                ]
+            ]
+        ],
+        [
+            "create",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "create",
+                        [yulTypes.u256, yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "create2",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "create2",
+                        [yulTypes.u256, yulTypes.u256, yulTypes.u256, yulTypes.u256],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.4.22"
+                ]
+            ]
+        ],
+        [
+            "call",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "call",
+                        [
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256
+                        ],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "callcode",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "callcode",
+                        [
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256
+                        ],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "delegatecall",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "delegatecall",
+                        [
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256
+                        ],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "staticcall",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "staticcall",
+                        [
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256
+                        ],
+                        [yulTypes.u256]
+                    ),
+                    ">=0.4.12"
+                ]
+            ]
+        ],
+        [
+            "return",
+            [[new YulBuiltinFunctionType("return", [yulTypes.u256, yulTypes.u256], []), ">=0.3.1"]]
+        ],
+        [
+            "revert",
+            [[new YulBuiltinFunctionType("revert", [yulTypes.u256, yulTypes.u256], []), ">=0.4.12"]]
+        ],
+        [
+            "selfdestruct",
+            [[new YulBuiltinFunctionType("selfdestruct", [yulTypes.u256], []), ">=0.3.1"]]
+        ],
+        ["invalid", [[new YulBuiltinFunctionType("invalid", [], []), ">=0.3.1"]]],
+        [
+            "log0",
+            [[new YulBuiltinFunctionType("log0", [yulTypes.u256, yulTypes.u256], []), ">=0.3.1"]]
+        ],
+        [
+            "log1",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "log1",
+                        [yulTypes.u256, yulTypes.u256, yulTypes.u256],
+                        []
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "log2",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "log2",
+                        [yulTypes.u256, yulTypes.u256, yulTypes.u256, yulTypes.u256],
+                        []
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "log3",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "log3",
+                        [yulTypes.u256, yulTypes.u256, yulTypes.u256, yulTypes.u256, yulTypes.u256],
+                        []
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        [
+            "log4",
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "log4",
+                        [
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256,
+                            yulTypes.u256
+                        ],
+                        []
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
+        ],
+        ["chainid", [[new YulBuiltinFunctionType("chainid", [], [yulTypes.u256]), ">=0.5.12"]]],
+        ["basefee", [[new YulBuiltinFunctionType("basefee", [], [yulTypes.u256]), ">=0.8.7"]]],
+        ["origin", [[new YulBuiltinFunctionType("origin", [], [yulTypes.u256]), ">=0.3.1"]]],
+        ["gasprice", [[new YulBuiltinFunctionType("gasprice", [], [yulTypes.u256]), ">=0.3.1"]]],
+        [
+            "blockhash",
+            [[new YulBuiltinFunctionType("blockhash", [yulTypes.u256], [yulTypes.u256]), ">=0.3.1"]]
+        ],
+        ["coinbase", [[new YulBuiltinFunctionType("coinbase", [], [yulTypes.u256]), ">=0.3.1"]]],
+        ["timestamp", [[new YulBuiltinFunctionType("timestamp", [], [yulTypes.u256]), ">=0.3.1"]]],
+        ["number", [[new YulBuiltinFunctionType("number", [], [yulTypes.u256]), ">=0.3.1"]]],
+        [
+            "difficulty",
+            [[new YulBuiltinFunctionType("difficulty", [], [yulTypes.u256]), ">=0.3.1"]]
+        ],
+        ["gaslimit", [[new YulBuiltinFunctionType("gaslimit", [], [yulTypes.u256]), ">=0.3.1"]]]
     ])
 );
