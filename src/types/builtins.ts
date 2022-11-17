@@ -702,59 +702,106 @@ export const yulBuiltins = new BuiltinStructType(
                     new YulBuiltinFunctionType(
                         "keccak256",
                         [yulTypes.u256, yulTypes.u256],
-                        [yulTypes.u256]
+                        [yulTypes.u256],
+                        false
                     ),
                     ">=0.3.1"
                 ]
             ]
         ],
-        ["pc", [[new YulBuiltinFunctionType("pc", [], [yulTypes.u256]), ">=0.3.1"]]],
-        ["pop", [[new YulBuiltinFunctionType("pop", [yulTypes.u256], []), ">=0.3.1"]]],
+        ["pc", [[new YulBuiltinFunctionType("pc", [], [yulTypes.u256], false), ">=0.3.1"]]],
+        ["pop", [[new YulBuiltinFunctionType("pop", [yulTypes.u256], [], false), ">=0.3.1"]]],
         [
             "mload",
-            [[new YulBuiltinFunctionType("mload", [yulTypes.u256], [yulTypes.u256]), ">=0.3.1"]]
+            [
+                [
+                    new YulBuiltinFunctionType("mload", [yulTypes.u256], [yulTypes.u256], false),
+                    ">=0.3.1"
+                ]
+            ]
         ],
         [
             "mstore",
-            [[new YulBuiltinFunctionType("mstore", [yulTypes.u256, yulTypes.u256], []), ">=0.3.1"]]
+            [
+                [
+                    new YulBuiltinFunctionType("mstore", [yulTypes.u256, yulTypes.u256], [], false),
+                    ">=0.3.1"
+                ]
+            ]
         ],
         [
             "mstore8",
-            [[new YulBuiltinFunctionType("mstore8", [yulTypes.u256, yulTypes.u256], []), ">=0.3.1"]]
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "mstore8",
+                        [yulTypes.u256, yulTypes.u256],
+                        [],
+                        false
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
         ],
         [
             "sload",
-            [[new YulBuiltinFunctionType("sload", [yulTypes.u256], [yulTypes.u256]), ">=0.3.1"]]
+            [
+                [
+                    new YulBuiltinFunctionType("sload", [yulTypes.u256], [yulTypes.u256], false),
+                    ">=0.3.1"
+                ]
+            ]
         ],
         [
             "sstore",
-            [[new YulBuiltinFunctionType("sstore", [yulTypes.u256, yulTypes.u256], []), ">=0.3.1"]]
+            [
+                [
+                    new YulBuiltinFunctionType("sstore", [yulTypes.u256, yulTypes.u256], [], false),
+                    ">=0.3.1"
+                ]
+            ]
         ],
-        ["msize", [[new YulBuiltinFunctionType("msize", [], [yulTypes.u256]), ">=0.3.1"]]],
-        ["gas", [[new YulBuiltinFunctionType("gas", [], [yulTypes.u256]), ">=0.3.1"]]],
-        ["address", [[new YulBuiltinFunctionType("address", [], [yulTypes.u256]), ">=0.3.1"]]],
+        ["msize", [[new YulBuiltinFunctionType("msize", [], [yulTypes.u256], false), ">=0.3.1"]]],
+        ["gas", [[new YulBuiltinFunctionType("gas", [], [yulTypes.u256], false), ">=0.3.1"]]],
+        [
+            "address",
+            [[new YulBuiltinFunctionType("address", [], [yulTypes.u256], false), ">=0.3.1"]]
+        ],
         [
             "balance",
-            [[new YulBuiltinFunctionType("balance", [yulTypes.u256], [yulTypes.u256]), ">=0.3.1"]]
+            [
+                [
+                    new YulBuiltinFunctionType("balance", [yulTypes.u256], [yulTypes.u256], false),
+                    ">=0.3.1"
+                ]
+            ]
         ],
         [
             "selfbalance",
-            [[new YulBuiltinFunctionType("selfbalance", [], [yulTypes.u256]), ">=0.5.12"]]
+            [[new YulBuiltinFunctionType("selfbalance", [], [yulTypes.u256], false), ">=0.5.12"]]
         ],
-        ["caller", [[new YulBuiltinFunctionType("caller", [], [yulTypes.u256]), ">=0.3.1"]]],
-        ["callvalue", [[new YulBuiltinFunctionType("callvalue", [], [yulTypes.u256]), ">=0.3.1"]]],
+        ["caller", [[new YulBuiltinFunctionType("caller", [], [yulTypes.u256], false), ">=0.3.1"]]],
+        [
+            "callvalue",
+            [[new YulBuiltinFunctionType("callvalue", [], [yulTypes.u256], false), ">=0.3.1"]]
+        ],
         [
             "calldataload",
             [
                 [
-                    new YulBuiltinFunctionType("calldataload", [yulTypes.u256], [yulTypes.u256]),
+                    new YulBuiltinFunctionType(
+                        "calldataload",
+                        [yulTypes.u256],
+                        [yulTypes.u256],
+                        false
+                    ),
                     ">=0.3.1"
                 ]
             ]
         ],
         [
             "calldatasize",
-            [[new YulBuiltinFunctionType("calldatasize", [], [yulTypes.u256]), ">=0.3.1"]]
+            [[new YulBuiltinFunctionType("calldatasize", [], [yulTypes.u256], false), ">=0.3.1"]]
         ],
         [
             "calldatacopy",
@@ -763,13 +810,17 @@ export const yulBuiltins = new BuiltinStructType(
                     new YulBuiltinFunctionType(
                         "calldatacopy",
                         [yulTypes.u256, yulTypes.u256, yulTypes.u256],
-                        []
+                        [],
+                        false
                     ),
                     ">=0.3.1"
                 ]
             ]
         ],
-        ["codesize", [[new YulBuiltinFunctionType("codesize", [], [yulTypes.u256]), ">=0.3.1"]]],
+        [
+            "codesize",
+            [[new YulBuiltinFunctionType("codesize", [], [yulTypes.u256], false), ">=0.3.1"]]
+        ],
         [
             "codecopy",
             [
@@ -777,7 +828,8 @@ export const yulBuiltins = new BuiltinStructType(
                     new YulBuiltinFunctionType(
                         "codecopy",
                         [yulTypes.u256, yulTypes.u256, yulTypes.u256],
-                        []
+                        [],
+                        false
                     ),
                     ">=0.3.1"
                 ]
@@ -787,7 +839,12 @@ export const yulBuiltins = new BuiltinStructType(
             "extcodesize",
             [
                 [
-                    new YulBuiltinFunctionType("extcodesize", [yulTypes.u256], [yulTypes.u256]),
+                    new YulBuiltinFunctionType(
+                        "extcodesize",
+                        [yulTypes.u256],
+                        [yulTypes.u256],
+                        false
+                    ),
                     ">=0.3.1"
                 ]
             ]
@@ -799,7 +856,8 @@ export const yulBuiltins = new BuiltinStructType(
                     new YulBuiltinFunctionType(
                         "extcodecopy",
                         [yulTypes.u256, yulTypes.u256, yulTypes.u256, yulTypes.u256],
-                        []
+                        [],
+                        false
                     ),
                     ">=0.3.1"
                 ]
@@ -807,7 +865,7 @@ export const yulBuiltins = new BuiltinStructType(
         ],
         [
             "returndatasize",
-            [[new YulBuiltinFunctionType("returndatasize", [], [yulTypes.u256]), ">=0.4.12"]]
+            [[new YulBuiltinFunctionType("returndatasize", [], [yulTypes.u256], false), ">=0.4.12"]]
         ],
         [
             "returndatacopy",
@@ -816,7 +874,8 @@ export const yulBuiltins = new BuiltinStructType(
                     new YulBuiltinFunctionType(
                         "returndatacopy",
                         [yulTypes.u256, yulTypes.u256, yulTypes.u256],
-                        []
+                        [],
+                        false
                     ),
                     ">=0.4.12"
                 ]
@@ -826,7 +885,12 @@ export const yulBuiltins = new BuiltinStructType(
             "extcodehash",
             [
                 [
-                    new YulBuiltinFunctionType("extcodehash", [yulTypes.u256], [yulTypes.u256]),
+                    new YulBuiltinFunctionType(
+                        "extcodehash",
+                        [yulTypes.u256],
+                        [yulTypes.u256],
+                        false
+                    ),
                     ">=0.4.22"
                 ]
             ]
@@ -838,7 +902,8 @@ export const yulBuiltins = new BuiltinStructType(
                     new YulBuiltinFunctionType(
                         "create",
                         [yulTypes.u256, yulTypes.u256, yulTypes.u256],
-                        [yulTypes.u256]
+                        [yulTypes.u256],
+                        false
                     ),
                     ">=0.3.1"
                 ]
@@ -851,7 +916,8 @@ export const yulBuiltins = new BuiltinStructType(
                     new YulBuiltinFunctionType(
                         "create2",
                         [yulTypes.u256, yulTypes.u256, yulTypes.u256, yulTypes.u256],
-                        [yulTypes.u256]
+                        [yulTypes.u256],
+                        false
                     ),
                     ">=0.4.22"
                 ]
@@ -872,7 +938,8 @@ export const yulBuiltins = new BuiltinStructType(
                             yulTypes.u256,
                             yulTypes.u256
                         ],
-                        [yulTypes.u256]
+                        [yulTypes.u256],
+                        false
                     ),
                     ">=0.3.1"
                 ]
@@ -893,7 +960,8 @@ export const yulBuiltins = new BuiltinStructType(
                             yulTypes.u256,
                             yulTypes.u256
                         ],
-                        [yulTypes.u256]
+                        [yulTypes.u256],
+                        false
                     ),
                     ">=0.3.1"
                 ]
@@ -913,7 +981,8 @@ export const yulBuiltins = new BuiltinStructType(
                             yulTypes.u256,
                             yulTypes.u256
                         ],
-                        [yulTypes.u256]
+                        [yulTypes.u256],
+                        false
                     ),
                     ">=0.3.1"
                 ]
@@ -933,7 +1002,8 @@ export const yulBuiltins = new BuiltinStructType(
                             yulTypes.u256,
                             yulTypes.u256
                         ],
-                        [yulTypes.u256]
+                        [yulTypes.u256],
+                        false
                     ),
                     ">=0.4.12"
                 ]
@@ -941,20 +1011,35 @@ export const yulBuiltins = new BuiltinStructType(
         ],
         [
             "return",
-            [[new YulBuiltinFunctionType("return", [yulTypes.u256, yulTypes.u256], []), ">=0.3.1"]]
+            [
+                [
+                    new YulBuiltinFunctionType("return", [yulTypes.u256, yulTypes.u256], [], false),
+                    ">=0.3.1"
+                ]
+            ]
         ],
         [
             "revert",
-            [[new YulBuiltinFunctionType("revert", [yulTypes.u256, yulTypes.u256], []), ">=0.4.12"]]
+            [
+                [
+                    new YulBuiltinFunctionType("revert", [yulTypes.u256, yulTypes.u256], [], false),
+                    ">=0.4.12"
+                ]
+            ]
         ],
         [
             "selfdestruct",
-            [[new YulBuiltinFunctionType("selfdestruct", [yulTypes.u256], []), ">=0.3.1"]]
+            [[new YulBuiltinFunctionType("selfdestruct", [yulTypes.u256], [], false), ">=0.3.1"]]
         ],
-        ["invalid", [[new YulBuiltinFunctionType("invalid", [], []), ">=0.3.1"]]],
+        ["invalid", [[new YulBuiltinFunctionType("invalid", [], [], false), ">=0.3.1"]]],
         [
             "log0",
-            [[new YulBuiltinFunctionType("log0", [yulTypes.u256, yulTypes.u256], []), ">=0.3.1"]]
+            [
+                [
+                    new YulBuiltinFunctionType("log0", [yulTypes.u256, yulTypes.u256], [], false),
+                    ">=0.3.1"
+                ]
+            ]
         ],
         [
             "log1",
@@ -963,7 +1048,8 @@ export const yulBuiltins = new BuiltinStructType(
                     new YulBuiltinFunctionType(
                         "log1",
                         [yulTypes.u256, yulTypes.u256, yulTypes.u256],
-                        []
+                        [],
+                        false
                     ),
                     ">=0.3.1"
                 ]
@@ -976,7 +1062,8 @@ export const yulBuiltins = new BuiltinStructType(
                     new YulBuiltinFunctionType(
                         "log2",
                         [yulTypes.u256, yulTypes.u256, yulTypes.u256, yulTypes.u256],
-                        []
+                        [],
+                        false
                     ),
                     ">=0.3.1"
                 ]
@@ -989,7 +1076,8 @@ export const yulBuiltins = new BuiltinStructType(
                     new YulBuiltinFunctionType(
                         "log3",
                         [yulTypes.u256, yulTypes.u256, yulTypes.u256, yulTypes.u256, yulTypes.u256],
-                        []
+                        [],
+                        false
                     ),
                     ">=0.3.1"
                 ]
@@ -1009,27 +1097,56 @@ export const yulBuiltins = new BuiltinStructType(
                             yulTypes.u256,
                             yulTypes.u256
                         ],
-                        []
+                        [],
+                        false
                     ),
                     ">=0.3.1"
                 ]
             ]
         ],
-        ["chainid", [[new YulBuiltinFunctionType("chainid", [], [yulTypes.u256]), ">=0.5.12"]]],
-        ["basefee", [[new YulBuiltinFunctionType("basefee", [], [yulTypes.u256]), ">=0.8.7"]]],
-        ["origin", [[new YulBuiltinFunctionType("origin", [], [yulTypes.u256]), ">=0.3.1"]]],
-        ["gasprice", [[new YulBuiltinFunctionType("gasprice", [], [yulTypes.u256]), ">=0.3.1"]]],
+        [
+            "chainid",
+            [[new YulBuiltinFunctionType("chainid", [], [yulTypes.u256], false), ">=0.5.12"]]
+        ],
+        [
+            "basefee",
+            [[new YulBuiltinFunctionType("basefee", [], [yulTypes.u256], false), ">=0.8.7"]]
+        ],
+        ["origin", [[new YulBuiltinFunctionType("origin", [], [yulTypes.u256], false), ">=0.3.1"]]],
+        [
+            "gasprice",
+            [[new YulBuiltinFunctionType("gasprice", [], [yulTypes.u256], false), ">=0.3.1"]]
+        ],
         [
             "blockhash",
-            [[new YulBuiltinFunctionType("blockhash", [yulTypes.u256], [yulTypes.u256]), ">=0.3.1"]]
+            [
+                [
+                    new YulBuiltinFunctionType(
+                        "blockhash",
+                        [yulTypes.u256],
+                        [yulTypes.u256],
+                        false
+                    ),
+                    ">=0.3.1"
+                ]
+            ]
         ],
-        ["coinbase", [[new YulBuiltinFunctionType("coinbase", [], [yulTypes.u256]), ">=0.3.1"]]],
-        ["timestamp", [[new YulBuiltinFunctionType("timestamp", [], [yulTypes.u256]), ">=0.3.1"]]],
-        ["number", [[new YulBuiltinFunctionType("number", [], [yulTypes.u256]), ">=0.3.1"]]],
+        [
+            "coinbase",
+            [[new YulBuiltinFunctionType("coinbase", [], [yulTypes.u256], false), ">=0.3.1"]]
+        ],
+        [
+            "timestamp",
+            [[new YulBuiltinFunctionType("timestamp", [], [yulTypes.u256], false), ">=0.3.1"]]
+        ],
+        ["number", [[new YulBuiltinFunctionType("number", [], [yulTypes.u256], false), ">=0.3.1"]]],
         [
             "difficulty",
-            [[new YulBuiltinFunctionType("difficulty", [], [yulTypes.u256]), ">=0.3.1"]]
+            [[new YulBuiltinFunctionType("difficulty", [], [yulTypes.u256], false), ">=0.3.1"]]
         ],
-        ["gaslimit", [[new YulBuiltinFunctionType("gaslimit", [], [yulTypes.u256]), ">=0.3.1"]]]
+        [
+            "gaslimit",
+            [[new YulBuiltinFunctionType("gaslimit", [], [yulTypes.u256], false), ">=0.3.1"]]
+        ]
     ])
 );

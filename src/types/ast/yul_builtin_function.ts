@@ -8,14 +8,18 @@ import { Range } from "../../misc";
 export class YulBuiltinFunctionType extends FunctionLikeType {
     returns: TypeNode[];
 
+    isPure: boolean;
+
     constructor(
         name: string | undefined,
         parameters: TypeNode[],
         returns: TypeNode[],
+        isPure = true,
         src?: Range
     ) {
         super(name, parameters, src);
         this.returns = returns;
+        this.isPure = Boolean(isPure);
     }
 
     pp(): string {
