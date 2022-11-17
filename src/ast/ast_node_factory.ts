@@ -75,6 +75,7 @@ import {
     YulBreak,
     YulContinue,
     YulCase,
+    YulExpression,
     YulExpressionStatement,
     YulForLoop,
     YulFunctionDefinition,
@@ -1285,6 +1286,38 @@ export class ASTNodeFactory {
             target instanceof ImportDirective ? target.unitAlias : target.name,
             target.id
         );
+    }
+
+    makeYulIdentifierFor(
+        target:
+            | FunctionDefinition
+            | VariableDeclaration
+            | Identifier
+            | YulFunctionDefinition
+            | YulVariableDeclaration,
+        name?: string
+    ): YulIdentifier {
+        if (target instanceof YulVariableDeclaration) {
+            if (target.variables.length === 1) {
+                name = target.variables[0].name;
+            } else if (
+                name === undefined ||
+                target.variables.find((v) => v.name === name) === undefined
+            ) {
+                const declarationString = `${target.type} (${target.variables.map((v) => v.name)})`;
+                throw Error(`variable ${name} not found in ${declarationString}`);
+            }
+        } else {
+            name = target.name;
+        }
+        return this.makeYulIdentifier(name, target.id);
+    }
+
+    makeYulFunctionCallFor(
+        fn: YulFunctionDefinition,
+        parameters: YulExpression[]
+    ): YulFunctionCall {
+        return this.makeYulFunctionCall(this.makeYulIdentifierFor(fn), parameters);
     }
 
     makeUnfinalized<T extends ASTNode>(
