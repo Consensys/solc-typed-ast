@@ -28,3 +28,6 @@ export * from "./tuple_type";
 export * from "./type";
 export * from "./typename_type";
 export * from "./user_defined_type";
+export * from "./u256_type";
+export * from "./yul_builtin_function";
+export * from "./yul_function_type";
