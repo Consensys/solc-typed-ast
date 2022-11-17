@@ -8,7 +8,8 @@ import {
     AddressType,
     IntType,
     TupleType,
-    BuiltinFunctionType
+    BuiltinFunctionType,
+    U256Type
 } from "./ast";
 
 // Helper with some singleton types to avoid unnecessary allocations
@@ -28,4 +29,8 @@ export const types = {
     addressPayable: new AddressType(true),
     noType: new TupleType([]),
     typeOfType: new BuiltinFunctionType(undefined, [], [])
+};
+
+export const yulTypes = {
+    u256: new U256Type(undefined)
 };
