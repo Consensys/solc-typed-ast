@@ -40,8 +40,7 @@ export const typeContract = new BuiltinFunctionType(
             new Map([
                 ["name", [[types.stringMemory, ">=0.5.5"]]],
                 ["creationCode", [[types.bytesMemory, ">=0.5.3"]]],
-                ["runtimeCode", [[types.bytesMemory, ">=0.5.3"]]],
-                ["interfaceId", [[types.bytes4, ">=0.6.7"]]]
+                ["runtimeCode", [[types.bytesMemory, ">=0.5.3"]]]
             ])
         )
     ]
