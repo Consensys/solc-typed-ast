@@ -1,4 +1,6 @@
+import { ASTNode } from "../../ast_node";
 import { StructuredDocumentation } from "../meta";
+import { YulBlock } from "../yul";
 import { Statement } from "./statement";
 
 export interface YulNode {
@@ -12,7 +14,7 @@ export class InlineAssembly extends Statement {
     externalReferences: any[];
 
     operations?: string;
-    yul?: YulNode;
+    yul?: YulBlock;
 
     flags?: string[];
     evmVersion?: string;
@@ -22,7 +24,7 @@ export class InlineAssembly extends Statement {
         src: string,
         externalReferences: any[],
         operations?: string,
-        yul?: YulNode,
+        yul?: YulBlock,
         flags?: string[],
         evmVersion?: string,
         documentation?: string | StructuredDocumentation,
@@ -35,5 +37,10 @@ export class InlineAssembly extends Statement {
         this.yul = yul;
         this.flags = flags;
         this.evmVersion = evmVersion;
+        this.acceptChildren();
+    }
+
+    get children(): ASTNode[] {
+        return this.pickNodes(this.documentation, this.yul);
     }
 }

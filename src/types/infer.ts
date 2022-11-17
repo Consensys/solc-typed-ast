@@ -117,6 +117,12 @@ export const binaryOperatorGroups = {
     Logical: ["&&", "||"]
 };
 
+export const yulBinaryBuiltinGroups = {
+    Arithmetic: ["add", "sub", "div", "sdiv", "exp", "mul", "mod", "smod", "signextend"],
+    Bitwise: ["and", "or", "xor", "sar", "shl", "shr", "byte"],
+    Comparison: ["gt", "lt", "sgt", "slt", "eq"]
+};
+
 export const subdenominationMultipliers: { [key: string]: Decimal } = {
     seconds: new Decimal(1),
     minutes: new Decimal(60),

@@ -2,6 +2,7 @@ import { ASTNode, ASTNodeConstructor } from "../ast_node";
 import { YulNode } from "../implementation/statement/inline_assembly";
 import { SourceFormatter } from "./formatter";
 
+/** @deprecated Use `ASTWriter` */
 export interface YulNodeWriter {
     write(node: YulNode, writer: YulWriter): string;
 }
@@ -66,6 +67,7 @@ export abstract class ASTNodeWriter {
     }
 }
 
+/** @deprecated Use `ASTWriter` */
 export class YulWriter {
     mapping: Map<string, YulNodeWriter>;
     formatter: SourceFormatter;

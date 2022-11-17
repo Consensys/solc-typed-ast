@@ -55,3 +55,45 @@ export function assert(
 
     throw new Error(message);
 }
+
+/**
+ * Recursively search all values in an object or array.
+ * @param obj Object to search recursively
+ * @param matchKey Key an object must have to be matched
+ * @param cb Callback function to check objects with a matching key.
+ * If no callback provided, collects all properties at `matchKey` anywhere in the tree.
+ * If callback returns `true` for `node`, `node[matchKey]` is collected.
+ * If callback returns anything else, returned value is collected.
+ * @param onlyFirst Whether to stop after first located element
+ */
+export function deepFindIn(
+    obj: any,
+    matchKey: string | number,
+    cb?: (o: any) => any,
+    onlyFirst?: boolean
+): any[] {
+    const result: any[] = [];
+    for (const key of Object.getOwnPropertyNames(obj)) {
+        const value = obj[key];
+        if (key === matchKey) {
+            if (!cb) result.push(value);
+            else {
+                const ret = cb(obj);
+                if (ret || typeof ret === "number") {
+                    result.push(typeof ret === "boolean" ? value : ret);
+                }
+            }
+        } else if (value && typeof value === "object") {
+            result.push(...deepFindIn(value, matchKey, cb));
+        }
+        if (onlyFirst && result.length) break;
+    }
+    return result;
+}
+
+type Constructor<C> = new (...args: any[]) => C;
+
+export const isInstanceOf = <NodeTypes extends Array<Constructor<any>>>(
+    node: any,
+    ...nodeTypes: NodeTypes
+): node is InstanceType<NodeTypes[number]> => nodeTypes.some((type) => node instanceof type);

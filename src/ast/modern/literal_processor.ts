@@ -13,7 +13,7 @@ export class ModernLiteralProcessor extends ModernExpressionProcessor<Literal> {
 
         const kind: LiteralKind = raw.kind;
         const hexValue: string = raw.hexValue;
-        const value: string = raw.value === undefined ? null : raw.value;
+        const value: string = raw.value ?? null;
         const subdenomination: TimeUnit | EtherUnit | undefined = raw.subdenomination
             ? raw.subdenomination
             : undefined;

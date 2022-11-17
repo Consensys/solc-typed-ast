@@ -3,6 +3,7 @@ export * from "./implementation/expression";
 export * from "./implementation/meta";
 export * from "./implementation/statement";
 export * from "./implementation/type";
+export * from "./implementation/yul";
 export * from "./ast_node_factory";
 export * from "./ast_node_formatter";
 export * from "./ast_node";

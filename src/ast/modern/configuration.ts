@@ -57,6 +57,24 @@ import { ElementaryTypeName } from "../implementation/type/elementary_type_name"
 import { FunctionTypeName } from "../implementation/type/function_type_name";
 import { Mapping } from "../implementation/type/mapping";
 import { UserDefinedTypeName } from "../implementation/type/user_defined_type_name";
+import {
+    YulAssignment,
+    YulBlock,
+    YulBreak,
+    YulCase,
+    YulContinue,
+    YulExpressionStatement,
+    YulFunctionCall,
+    YulFunctionDefinition,
+    YulForLoop,
+    YulIdentifier,
+    YulIf,
+    YulLeave,
+    YulLiteral,
+    YulSwitch,
+    YulTypedName,
+    YulVariableDeclaration
+} from "../implementation/yul";
 import { ModernArrayTypeNameProcessor } from "./array_type_name_processor";
 import { ModernAssignmentProcessor } from "./assignment_processor";
 import { ModernBinaryOperationProcessor } from "./binary_operation_processor";
@@ -115,6 +133,23 @@ import { ModernUsingForDirectiveProcessor } from "./using_for_directive_processo
 import { ModernVariableDeclarationProcessor } from "./variable_declaration_processor";
 import { ModernVariableDeclarationStatementProcessor } from "./variable_declaration_statement_processor";
 import { ModernWhileStatementProcessor } from "./while_statement_processor";
+
+import { ModernYulAssignmentProcessor } from "./yul_assignment_processor";
+import { ModernYulBlockProcessor } from "./yul_block_processor";
+import { ModernYulBreakProcessor } from "./yul_break_processor";
+import { ModernYulCaseProcessor } from "./yul_case_processor";
+import { ModernYulContinueProcessor } from "./yul_continue_processor";
+import { ModernYulExpressionStatementProcessor } from "./yul_expression_statement_processor";
+import { ModernYulForLoopProcessor } from "./yul_for_loop_processor";
+import { ModernYulFunctionCallProcessor } from "./yul_function_call_processor";
+import { ModernYulFunctionDefinitionProcessor } from "./yul_function_definition_processor";
+import { ModernYulIdentifierProcessor } from "./yul_identifier_processor";
+import { ModernYulIfProcessor } from "./yul_if_processor";
+import { ModernYulLeaveProcessor } from "./yul_leave_processor";
+import { ModernYulLiteralProcessor } from "./yul_literal_processor";
+import { ModernYulSwitchProcessor } from "./yul_switch_processor";
+import { ModernYulTypedNameProcessor } from "./yul_typed_name_processor";
+import { ModernYulVariableDeclarationProcessor } from "./yul_variable_declaration_processor";
 
 const processors = {
     /**
@@ -181,7 +216,23 @@ const processors = {
     Continue: new ModernContinueProcessor(),
     PlaceholderStatement: new ModernPlaceholderStatementProcessor(),
     Throw: new ModernThrowProcessor(),
-    UserDefinedValueTypeDefinition: new ModernUserDefinedValueTypeDefinitionProcessor()
+    UserDefinedValueTypeDefinition: new ModernUserDefinedValueTypeDefinitionProcessor(),
+    YulAssignment: new ModernYulAssignmentProcessor(),
+    YulBlock: new ModernYulBlockProcessor(),
+    YulBreak: new ModernYulBreakProcessor(),
+    YulCase: new ModernYulCaseProcessor(),
+    YulContinue: new ModernYulContinueProcessor(),
+    YulExpressionStatement: new ModernYulExpressionStatementProcessor(),
+    YulFunctionCall: new ModernYulFunctionCallProcessor(),
+    YulFunctionDefinition: new ModernYulFunctionDefinitionProcessor(),
+    YulForLoop: new ModernYulForLoopProcessor(),
+    YulIdentifier: new ModernYulIdentifierProcessor(),
+    YulIf: new ModernYulIfProcessor(),
+    YulLeave: new ModernYulLeaveProcessor(),
+    YulLiteral: new ModernYulLiteralProcessor(),
+    YulSwitch: new ModernYulSwitchProcessor(),
+    YulTypedName: new ModernYulTypedNameProcessor(),
+    YulVariableDeclaration: new ModernYulVariableDeclarationProcessor()
 };
 
 export const ModernConfiguration: ASTReaderConfiguration = {
@@ -476,6 +527,86 @@ export const ModernConfiguration: ASTReaderConfiguration = {
         UserDefinedValueTypeDefinition: {
             constructor: UserDefinedValueTypeDefinition,
             processor: processors.UserDefinedValueTypeDefinition
+        },
+
+        YulAssignment: {
+            constructor: YulAssignment,
+            processor: processors.YulAssignment
+        },
+
+        YulBlock: {
+            constructor: YulBlock,
+            processor: processors.YulBlock
+        },
+
+        YulBreak: {
+            constructor: YulBreak,
+            processor: processors.YulBreak
+        },
+
+        YulCase: {
+            constructor: YulCase,
+            processor: processors.YulCase
+        },
+
+        YulContinue: {
+            constructor: YulContinue,
+            processor: processors.YulContinue
+        },
+
+        YulExpressionStatement: {
+            constructor: YulExpressionStatement,
+            processor: processors.YulExpressionStatement
+        },
+
+        YulFunctionCall: {
+            constructor: YulFunctionCall,
+            processor: processors.YulFunctionCall
+        },
+
+        YulFunctionDefinition: {
+            constructor: YulFunctionDefinition,
+            processor: processors.YulFunctionDefinition
+        },
+
+        YulForLoop: {
+            constructor: YulForLoop,
+            processor: processors.YulForLoop
+        },
+
+        YulIdentifier: {
+            constructor: YulIdentifier,
+            processor: processors.YulIdentifier
+        },
+
+        YulIf: {
+            constructor: YulIf,
+            processor: processors.YulIf
+        },
+
+        YulLeave: {
+            constructor: YulLeave,
+            processor: processors.YulLeave
+        },
+
+        YulLiteral: {
+            constructor: YulLiteral,
+            processor: processors.YulLiteral
+        },
+
+        YulSwitch: {
+            constructor: YulSwitch,
+            processor: processors.YulSwitch
+        },
+
+        YulTypedName: {
+            constructor: YulTypedName,
+            processor: processors.YulTypedName
+        },
+
+        YulVariableDeclaration: {
+            constructor: YulVariableDeclaration,
+            processor: processors.YulVariableDeclaration
         }
     }
 };

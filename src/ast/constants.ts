@@ -72,6 +72,12 @@ export enum LiteralKind {
     UnicodeString = "unicodeString"
 }
 
+export enum YulLiteralKind {
+    Number = "number",
+    Bool = "bool",
+    String = "string"
+}
+
 export enum EtherUnit {
     Wei = "wei",
     GWei = "gwei",

@@ -3,6 +3,7 @@ import {
     BinaryOperation,
     Conditional,
     Expression,
+    ExternalReferenceType,
     FunctionCall,
     FunctionCallKind,
     Identifier,
@@ -10,10 +11,19 @@ import {
     LiteralKind,
     TupleExpression,
     UnaryOperation,
-    VariableDeclaration
+    VariableDeclaration,
+    YulExpression,
+    YulFunctionCall,
+    YulIdentifier,
+    YulLiteral,
+    YulLiteralKind,
+    YulVariableDeclaration
 } from "../ast";
+import { LatestCompilerVersion } from "../compile";
 import { pp } from "../misc";
-import { binaryOperatorGroups, subdenominationMultipliers } from "./infer";
+import { YulBuiltinFunctionType } from "./ast";
+import { yulBuiltins } from "./builtins";
+import { binaryOperatorGroups, subdenominationMultipliers, yulBinaryBuiltinGroups } from "./infer";
 /**
  * Tune up precision of decimal values to follow Solidity behavior.
  * Be careful with precision - setting it to large values causes NodeJS to crash.
@@ -25,9 +35,9 @@ Decimal.set({ precision: 100 });
 export type Value = Decimal | boolean | string | bigint;
 
 export class EvalError extends Error {
-    expr: Expression;
+    expr: Expression | YulExpression;
 
-    constructor(e: Expression, msg: string) {
+    constructor(e: Expression | YulExpression, msg: string) {
         super(msg);
 
         this.expr = e;
@@ -35,7 +45,7 @@ export class EvalError extends Error {
 }
 
 export class NonConstantExpressionError extends EvalError {
-    constructor(e: Expression) {
+    constructor(e: Expression | YulExpression) {
         super(e, `Found non-constant expression ${pp(e)} during constant evaluation`);
     }
 }
@@ -52,8 +62,36 @@ function demoteFromDec(d: Decimal): Decimal | bigint {
     return d.isInt() ? BigInt(d.toFixed()) : d;
 }
 
-export function isConstant(expr: Expression): boolean {
+function utf8ToHex(s: string): string {
+    return Array.from(new TextEncoder().encode(s), (byte) =>
+        byte.toString(16).padStart(2, "0")
+    ).join("");
+}
+
+/**
+ * Used for evaluating yul constants, where all values are treated as uint256
+ */
+function coerceInteger(v: Value): bigint {
+    if (typeof v === "bigint") return v;
+    // If value is a yul literal string, it's already been converted to a BigInt.
+    // If it is any other string, it's an illegal reference to a string constant
+    if (typeof v === "string")
+        throw Error(
+            `coerceInteger called with a string - inline assembly can not reference external string literals`
+        );
+    if (v instanceof Decimal) return BigInt(v.toFixed());
+    return v ? BigInt(1) : BigInt(0);
+}
+
+export function isConstant(
+    expr: Expression | YulExpression,
+    version: string = LatestCompilerVersion
+): boolean {
     if (expr instanceof Literal) {
+        return true;
+    }
+
+    if (expr instanceof YulLiteral) {
         return true;
     }
 
@@ -91,7 +129,7 @@ export function isConstant(expr: Expression): boolean {
         return true;
     }
 
-    if (expr instanceof Identifier) {
+    if (expr instanceof Identifier || expr instanceof YulIdentifier) {
         const decl = expr.vReferencedDeclaration;
 
         if (
@@ -100,6 +138,10 @@ export function isConstant(expr: Expression): boolean {
             decl.vValue &&
             isConstant(decl.vValue)
         ) {
+            return true;
+        }
+
+        if (decl instanceof YulVariableDeclaration && decl.value && isConstant(decl.value)) {
             return true;
         }
     }
@@ -112,7 +154,33 @@ export function isConstant(expr: Expression): boolean {
         return true;
     }
 
+    if (
+        expr instanceof YulFunctionCall &&
+        expr.vFunctionCallType === ExternalReferenceType.Builtin
+    ) {
+        const builtinFunction = yulBuiltins.getFieldForVersion(expr.vFunctionName.name, version) as
+            | YulBuiltinFunctionType
+            | undefined;
+        if (builtinFunction?.isPure && expr.vArguments.every((arg) => isConstant(arg))) {
+            return true;
+        }
+    }
+
     return false;
+}
+
+function evalYulLiteral(expr: YulLiteral): bigint {
+    if (expr.kind === YulLiteralKind.String) {
+        return BigInt(`0x${utf8ToHex(expr.value as string).padEnd(64, "0")}`);
+    }
+    if (expr.kind === YulLiteralKind.Bool) {
+        return expr.value === "true" ? BigInt(1) : BigInt(0);
+    }
+    if (expr.kind === YulLiteralKind.Number) {
+        return BigInt(expr.value);
+    }
+
+    throw new EvalError(expr, `Unrecognized yul literal kind "${expr.kind}"`);
 }
 
 function evalLiteral(expr: Literal): Value {
@@ -355,6 +423,158 @@ function evalBinary(expr: BinaryOperation): Value {
     throw new EvalError(expr, `Unknown binary op ${expr.operator}`);
 }
 
+function evalYulBinaryComparison(expr: YulFunctionCall, lVal: bigint, rVal: bigint): Value {
+    const op = expr.vFunctionName.name;
+
+    const lDec = promoteToDec(lVal);
+    const rDec = promoteToDec(rVal);
+
+    if (op === "lt" || op === "slt") {
+        return coerceInteger(lDec.lessThan(rDec));
+    }
+
+    if (op === "gt" || op === "sgt") {
+        return coerceInteger(lDec.greaterThan(rDec));
+    }
+
+    if (op === "eq") {
+        return coerceInteger(lDec.eq(rDec));
+    }
+
+    throw new EvalError(expr, `Unknown comparison op ${expr.vFunctionName}`);
+}
+
+function evalYulBinaryArithmetic(expr: YulFunctionCall, lVal: bigint, rVal: bigint): Value {
+    const op = expr.vFunctionName.name;
+
+    const lDec = promoteToDec(lVal);
+    const rDec = promoteToDec(rVal);
+
+    let res: Decimal;
+
+    if (op === "add") {
+        res = lDec.plus(rDec);
+    } else if (op === "sub") {
+        res = lDec.minus(rDec);
+    } else if (op === "mul") {
+        res = lDec.times(rDec);
+    } else if (op === "div" || op === "sdiv") {
+        res = lDec.div(rDec);
+    } else if (op === "mod" || op === "smod") {
+        res = lDec.modulo(rDec);
+    } else if (op === "exp") {
+        res = lDec.pow(rDec);
+    } else if (op === "signextend") {
+        // @todo Implement `signextend`
+        throw new EvalError(expr, `Unimplemented binary op ${expr.vFunctionName}`);
+    } else {
+        throw new EvalError(expr, `Unknown arithmetic op ${expr.vFunctionName}`);
+    }
+
+    return coerceInteger(res);
+}
+
+function evalYulBinaryBitwise(expr: YulFunctionCall, lVal: bigint, rVal: bigint): Value {
+    const op = expr.vFunctionName.name;
+
+    if (op === "shl") {
+        return rVal << lVal;
+    }
+
+    // @todo How should sar be handled differently from shr?
+    if (op === "shr" || op === "sar") {
+        return rVal >> lVal;
+    }
+
+    if (op === "or") {
+        return lVal | rVal;
+    }
+
+    if (op === "and") {
+        return lVal & rVal;
+    }
+
+    if (op === "xor") {
+        return lVal ^ rVal;
+    }
+
+    if (op === "byte") {
+        const shiftSize = BigInt(248 - Number(lVal) * 8);
+        return (rVal >> shiftSize) & BigInt(0xff);
+    }
+
+    throw new EvalError(expr, `Unknown bitwise op ${expr.vFunctionName}`);
+}
+
+function evalYulUnary(expr: YulFunctionCall) {
+    if (expr.vArguments.length !== 1) {
+        throw new EvalError(
+            expr,
+            `Expected a single argument in unary builtin function ${pp(expr)}`
+        );
+    }
+
+    const subVal = coerceInteger(evalConstantExpr(expr.vArguments[0]));
+
+    if (expr.vFunctionName.name === "iszero") {
+        return coerceInteger(subVal === BigInt(0));
+    }
+
+    if (expr.vFunctionName.name === "not") {
+        return ~subVal;
+    }
+
+    throw new EvalError(expr, `NYI unary operator ${expr.vFunctionName}`);
+}
+
+function evalYulBinary(expr: YulFunctionCall) {
+    if (expr.vArguments.length !== 2) {
+        throw new EvalError(expr, `Expected two arguments in binary builtin function ${pp(expr)}`);
+    }
+
+    const [lVal, rVal] = expr.vArguments.map((arg) => coerceInteger(evalConstantExpr(arg)));
+
+    const op = expr.vFunctionName.name;
+
+    if (yulBinaryBuiltinGroups.Comparison.includes(op)) {
+        return evalYulBinaryComparison(expr, lVal, rVal);
+    }
+
+    if (yulBinaryBuiltinGroups.Arithmetic.includes(op)) {
+        return evalYulBinaryArithmetic(expr, lVal, rVal);
+    }
+
+    if (yulBinaryBuiltinGroups.Bitwise.includes(op)) {
+        return evalYulBinaryBitwise(expr, lVal, rVal);
+    }
+
+    throw new EvalError(expr, `Unknown binary op ${expr.vFunctionName}`);
+}
+
+function evalYulTernary(expr: YulFunctionCall): Value {
+    if (expr.vArguments.length !== 3) {
+        throw new EvalError(
+            expr,
+            `Expected three arguments in ternary builtin function ${pp(expr)}`
+        );
+    }
+    const op = expr.vFunctionName.name;
+
+    const [dec1, dec2, dec3] = expr.vArguments.map((arg) =>
+        promoteToDec(coerceInteger(evalConstantExpr(arg)))
+    );
+
+    if (op === "mulmod") {
+        return coerceInteger(dec1.mul(dec2).mod(dec3));
+    }
+
+    if (op === "addmod") {
+        return coerceInteger(dec1.add(dec2).mod(dec3));
+    }
+
+    throw new EvalError(expr, `Unknown ternary op ${expr.vFunctionName}`);
+}
+
 /**
  * Given a constant expression `expr` evaluate it to a concrete `Value`.
  * If `expr` is not constant throw `NonConstantExpressionError`.
@@ -362,13 +582,20 @@ function evalBinary(expr: BinaryOperation): Value {
  * TODO: The order of some operations changed in some version.
  * So perhaps to be fully precise here we will need a compiler version too?
  */
-export function evalConstantExpr(expr: Expression): Value {
+export function evalConstantExpr(
+    expr: Expression | YulExpression,
+    version = LatestCompilerVersion
+): Value {
     if (!isConstant(expr)) {
         throw new NonConstantExpressionError(expr);
     }
 
     if (expr instanceof Literal) {
         return evalLiteral(expr);
+    }
+
+    if (expr instanceof YulLiteral) {
+        return evalYulLiteral(expr);
     }
 
     if (expr instanceof UnaryOperation) {
@@ -389,6 +616,16 @@ export function evalConstantExpr(expr: Expression): Value {
             : evalConstantExpr(expr.vFalseExpression);
     }
 
+    if (expr instanceof YulIdentifier) {
+        const decl = expr.vReferencedDeclaration;
+        if (decl instanceof VariableDeclaration) {
+            return coerceInteger(evalConstantExpr(decl.vValue as Expression));
+        }
+        if (decl instanceof YulVariableDeclaration) {
+            return coerceInteger(evalConstantExpr(decl.value as YulExpression));
+        }
+    }
+
     if (expr instanceof Identifier) {
         const decl = expr.vReferencedDeclaration;
 
@@ -405,6 +642,25 @@ export function evalConstantExpr(expr: Expression): Value {
         return evalConstantExpr(expr.vArguments[0]);
     }
 
+    if (
+        expr instanceof YulFunctionCall &&
+        expr.vFunctionCallType === ExternalReferenceType.Builtin
+    ) {
+        const builtinFunction = yulBuiltins.getFieldForVersion(expr.vFunctionName.name, version) as
+            | YulBuiltinFunctionType
+            | undefined;
+        if (builtinFunction?.isPure) {
+            if (builtinFunction.parameters.length === 1) {
+                return evalYulUnary(expr);
+            }
+            if (builtinFunction.parameters.length === 2) {
+                return evalYulBinary(expr);
+            }
+            if (builtinFunction.parameters.length === 3) {
+                return evalYulTernary(expr);
+            }
+        }
+    }
     /// Note that from the point of view of the type system constant conditionals and
     /// indexing in constant array literals are not considered constant expressions.
     /// So for now we don't support them, but we may change that in the future.

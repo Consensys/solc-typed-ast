@@ -1,64 +1,94 @@
 import { ASTNode, ASTNodeConstructor } from "./ast_node";
 import { ASTContext, ASTPostprocessor } from "./ast_reader";
 import { FunctionStateMutability, FunctionVisibility } from "./constants";
-import { ContractDefinition } from "./implementation/declaration/contract_definition";
-import { EnumDefinition } from "./implementation/declaration/enum_definition";
-import { EnumValue } from "./implementation/declaration/enum_value";
-import { ErrorDefinition } from "./implementation/declaration/error_definition";
-import { EventDefinition } from "./implementation/declaration/event_definition";
-import { FunctionDefinition } from "./implementation/declaration/function_definition";
-import { ModifierDefinition } from "./implementation/declaration/modifier_definition";
-import { StructDefinition } from "./implementation/declaration/struct_definition";
-import { UserDefinedValueTypeDefinition } from "./implementation/declaration/user_defined_value_type_definition";
-import { VariableDeclaration } from "./implementation/declaration/variable_declaration";
-import { Assignment } from "./implementation/expression/assignment";
-import { BinaryOperation } from "./implementation/expression/binary_operation";
-import { Conditional } from "./implementation/expression/conditional";
-import { ElementaryTypeNameExpression } from "./implementation/expression/elementary_type_name_expression";
-import { FunctionCall } from "./implementation/expression/function_call";
-import { FunctionCallOptions } from "./implementation/expression/function_call_options";
-import { Identifier } from "./implementation/expression/identifier";
-import { IndexAccess } from "./implementation/expression/index_access";
-import { IndexRangeAccess } from "./implementation/expression/index_range_access";
-import { Literal } from "./implementation/expression/literal";
-import { MemberAccess } from "./implementation/expression/member_access";
-import { NewExpression } from "./implementation/expression/new_expression";
-import { PrimaryExpression } from "./implementation/expression/primary_expression";
-import { TupleExpression } from "./implementation/expression/tuple_expression";
-import { UnaryOperation } from "./implementation/expression/unary_operation";
-import { IdentifierPath } from "./implementation/meta/identifier_path";
-import { ImportDirective } from "./implementation/meta/import_directive";
-import { InheritanceSpecifier } from "./implementation/meta/inheritance_specifier";
-import { ModifierInvocation } from "./implementation/meta/modifier_invocation";
-import { OverrideSpecifier } from "./implementation/meta/override_specifier";
-import { ParameterList } from "./implementation/meta/parameter_list";
-import { PragmaDirective } from "./implementation/meta/pragma_directive";
-import { SourceUnit } from "./implementation/meta/source_unit";
-import { StructuredDocumentation } from "./implementation/meta/structured_documentation";
-import { UsingForDirective } from "./implementation/meta/using_for_directive";
-import { Block } from "./implementation/statement/block";
-import { Break } from "./implementation/statement/break";
-import { Continue } from "./implementation/statement/continue";
-import { DoWhileStatement } from "./implementation/statement/do_while_statement";
-import { EmitStatement } from "./implementation/statement/emit_statement";
-import { ExpressionStatement } from "./implementation/statement/expression_statement";
-import { ForStatement } from "./implementation/statement/for_statement";
-import { IfStatement } from "./implementation/statement/if_statement";
-import { InlineAssembly } from "./implementation/statement/inline_assembly";
-import { PlaceholderStatement } from "./implementation/statement/placeholder_statement";
-import { Return } from "./implementation/statement/return";
-import { RevertStatement } from "./implementation/statement/revert_statement";
-import { Throw } from "./implementation/statement/throw";
-import { TryCatchClause } from "./implementation/statement/try_catch_clause";
-import { TryStatement } from "./implementation/statement/try_statement";
-import { UncheckedBlock } from "./implementation/statement/unchecked_block";
-import { VariableDeclarationStatement } from "./implementation/statement/variable_declaration_statement";
-import { WhileStatement } from "./implementation/statement/while_statement";
-import { ArrayTypeName } from "./implementation/type/array_type_name";
-import { ElementaryTypeName } from "./implementation/type/elementary_type_name";
-import { FunctionTypeName } from "./implementation/type/function_type_name";
-import { Mapping } from "./implementation/type/mapping";
-import { UserDefinedTypeName } from "./implementation/type/user_defined_type_name";
+import {
+    ContractDefinition,
+    EnumDefinition,
+    EnumValue,
+    ErrorDefinition,
+    EventDefinition,
+    FunctionDefinition,
+    ModifierDefinition,
+    StructDefinition,
+    UserDefinedValueTypeDefinition,
+    VariableDeclaration
+} from "./implementation/declaration";
+import {
+    Assignment,
+    BinaryOperation,
+    Conditional,
+    ElementaryTypeNameExpression,
+    FunctionCall,
+    FunctionCallOptions,
+    Identifier,
+    IndexAccess,
+    IndexRangeAccess,
+    Literal,
+    MemberAccess,
+    NewExpression,
+    PrimaryExpression,
+    TupleExpression,
+    UnaryOperation
+} from "./implementation/expression";
+import {
+    IdentifierPath,
+    ImportDirective,
+    InheritanceSpecifier,
+    ModifierInvocation,
+    OverrideSpecifier,
+    ParameterList,
+    PragmaDirective,
+    SourceUnit,
+    StructuredDocumentation,
+    UsingForDirective
+} from "./implementation/meta";
+import {
+    Block,
+    Break,
+    Continue,
+    DoWhileStatement,
+    EmitStatement,
+    ExpressionStatement,
+    ForStatement,
+    IfStatement,
+    InlineAssembly,
+    PlaceholderStatement,
+    Return,
+    RevertStatement,
+    Throw,
+    TryCatchClause,
+    TryStatement,
+    UncheckedBlock,
+    VariableDeclarationStatement,
+    WhileStatement
+} from "./implementation/statement";
+import {
+    ArrayTypeName,
+    ElementaryTypeName,
+    FunctionTypeName,
+    Mapping,
+    UserDefinedTypeName
+} from "./implementation/type";
+import {
+    YulAssignment,
+    YulBlock,
+    YulBreak,
+    YulContinue,
+    YulCase,
+    YulExpression,
+    YulExpressionStatement,
+    YulForLoop,
+    YulFunctionDefinition,
+    YulIf,
+    YulLeave,
+    YulSwitch,
+    YulVariableDeclaration,
+    YulLiteral,
+    YulIdentifier,
+    YulFunctionCall,
+    YulTypedName,
+    isYulASTNode
+} from "./implementation/yul";
 
 /**
  * When applied to following tuple type:
@@ -651,6 +681,140 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.path,
             node.raw
         ]
+    ],
+    [
+        YulAssignment,
+        (node: YulAssignment): Specific<ConstructorParameters<typeof YulAssignment>> => [
+            node.variableNames,
+            node.value,
+            node.documentation
+        ]
+    ],
+    [
+        YulBlock,
+        (node: YulBlock): Specific<ConstructorParameters<typeof YulBlock>> => [
+            node.vStatements,
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        YulBreak,
+        (node: YulBreak): Specific<ConstructorParameters<typeof YulBreak>> => [
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        YulContinue,
+        (node: YulContinue): Specific<ConstructorParameters<typeof YulContinue>> => [
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        YulCase,
+        (node: YulCase): Specific<ConstructorParameters<typeof YulCase>> => [
+            node.value,
+            node.vBody,
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        YulExpressionStatement,
+        (
+            node: YulExpressionStatement
+        ): Specific<ConstructorParameters<typeof YulExpressionStatement>> => [
+            node.vExpression,
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        YulForLoop,
+        (node: YulForLoop): Specific<ConstructorParameters<typeof YulForLoop>> => [
+            node.vPre,
+            node.vCondition,
+            node.vPost,
+            node.vBody,
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        YulFunctionDefinition,
+        (
+            node: YulFunctionDefinition
+        ): Specific<ConstructorParameters<typeof YulFunctionDefinition>> => [
+            node.scope,
+            node.name,
+            node.vParameters,
+            node.vReturnParameters,
+            node.vBody,
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        YulIf,
+        (node: YulIf): Specific<ConstructorParameters<typeof YulIf>> => [
+            node.vCondition,
+            node.vBody,
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        YulLeave,
+        (node: YulLeave): Specific<ConstructorParameters<typeof YulLeave>> => [
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        YulSwitch,
+        (node: YulSwitch): Specific<ConstructorParameters<typeof YulSwitch>> => [
+            node.vExpression,
+            node.vCases,
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        YulVariableDeclaration,
+        (
+            node: YulVariableDeclaration
+        ): Specific<ConstructorParameters<typeof YulVariableDeclaration>> => [
+            node.variables,
+            node.value,
+            node.documentation,
+            node.raw
+        ]
+    ],
+    [
+        YulLiteral,
+        (node: YulLiteral): Specific<ConstructorParameters<typeof YulLiteral>> => {
+            return [node.kind, node.value, node.hexValue, node.typeString, node.raw];
+        }
+    ],
+    [
+        YulIdentifier,
+        (node: YulIdentifier): Specific<ConstructorParameters<typeof YulIdentifier>> => {
+            return [node.name, node.referencedDeclaration, node.raw];
+        }
+    ],
+    [
+        YulFunctionCall,
+        (node: YulFunctionCall): Specific<ConstructorParameters<typeof YulFunctionCall>> => {
+            return [node.vFunctionName, node.vArguments, node.raw];
+        }
+    ],
+    [
+        YulTypedName,
+        (node: YulTypedName): Specific<ConstructorParameters<typeof YulTypedName>> => {
+            return [node.name, node.typeString, node.raw];
+        }
     ]
 ]);
 
@@ -659,12 +823,90 @@ export class ASTNodeFactory {
     postprocessor: ASTPostprocessor;
 
     private lastId: number;
+    private lastYulId: number;
 
     constructor(context = new ASTContext(), postprocessor = new ASTPostprocessor()) {
         this.context = context;
         this.postprocessor = postprocessor;
 
         this.lastId = context.lastId;
+        this.lastYulId = context.lastYulId;
+    }
+
+    makeYulAssignment(
+        ...args: Specific<ConstructorParameters<typeof YulAssignment>>
+    ): YulAssignment {
+        return this.make(YulAssignment, ...args);
+    }
+
+    makeYulBlock(...args: Specific<ConstructorParameters<typeof YulBlock>>): YulBlock {
+        return this.make(YulBlock, ...args);
+    }
+
+    makeYulBreak(...args: Specific<ConstructorParameters<typeof YulBreak>>): YulBreak {
+        return this.make(YulBreak, ...args);
+    }
+
+    makeYulContinue(...args: Specific<ConstructorParameters<typeof YulContinue>>): YulContinue {
+        return this.make(YulContinue, ...args);
+    }
+
+    makeYulCase(...args: Specific<ConstructorParameters<typeof YulCase>>): YulCase {
+        return this.make(YulCase, ...args);
+    }
+
+    makeYulExpressionStatement(
+        ...args: Specific<ConstructorParameters<typeof YulExpressionStatement>>
+    ): YulExpressionStatement {
+        return this.make(YulExpressionStatement, ...args);
+    }
+
+    makeYulForLoop(...args: Specific<ConstructorParameters<typeof YulForLoop>>): YulForLoop {
+        return this.make(YulForLoop, ...args);
+    }
+
+    makeYulFunctionDefinition(
+        ...args: Specific<ConstructorParameters<typeof YulFunctionDefinition>>
+    ): YulFunctionDefinition {
+        return this.make(YulFunctionDefinition, ...args);
+    }
+
+    makeYulIf(...args: Specific<ConstructorParameters<typeof YulIf>>): YulIf {
+        return this.make(YulIf, ...args);
+    }
+
+    makeYulLeave(...args: Specific<ConstructorParameters<typeof YulLeave>>): YulLeave {
+        return this.make(YulLeave, ...args);
+    }
+
+    makeYulSwitch(...args: Specific<ConstructorParameters<typeof YulSwitch>>): YulSwitch {
+        return this.make(YulSwitch, ...args);
+    }
+
+    makeYulVariableDeclaration(
+        ...args: Specific<ConstructorParameters<typeof YulVariableDeclaration>>
+    ): YulVariableDeclaration {
+        return this.make(YulVariableDeclaration, ...args);
+    }
+
+    makeYulLiteral(...args: Specific<ConstructorParameters<typeof YulLiteral>>): YulLiteral {
+        return this.make(YulLiteral, ...args);
+    }
+
+    makeYulIdentifier(
+        ...args: Specific<ConstructorParameters<typeof YulIdentifier>>
+    ): YulIdentifier {
+        return this.make(YulIdentifier, ...args);
+    }
+
+    makeYulFunctionCall(
+        ...args: Specific<ConstructorParameters<typeof YulFunctionCall>>
+    ): YulFunctionCall {
+        return this.make(YulFunctionCall, ...args);
+    }
+
+    makeYulTypedName(...args: Specific<ConstructorParameters<typeof YulTypedName>>): YulTypedName {
+        return this.make(YulTypedName, ...args);
     }
 
     makeContractDefinition(
@@ -1046,11 +1288,44 @@ export class ASTNodeFactory {
         );
     }
 
+    makeYulIdentifierFor(
+        target:
+            | FunctionDefinition
+            | VariableDeclaration
+            | Identifier
+            | YulFunctionDefinition
+            | YulVariableDeclaration,
+        name?: string
+    ): YulIdentifier {
+        if (target instanceof YulVariableDeclaration) {
+            if (target.variables.length === 1) {
+                name = target.variables[0].name;
+            } else if (
+                name === undefined ||
+                target.variables.find((v) => v.name === name) === undefined
+            ) {
+                const declarationString = `${target.type} (${target.variables.map((v) => v.name)})`;
+                throw Error(`variable ${name} not found in ${declarationString}`);
+            }
+        } else {
+            name = target.name;
+        }
+        return this.makeYulIdentifier(name, target.id);
+    }
+
+    makeYulFunctionCallFor(
+        fn: YulFunctionDefinition,
+        parameters: YulExpression[]
+    ): YulFunctionCall {
+        return this.makeYulFunctionCall(this.makeYulIdentifierFor(fn), parameters);
+    }
+
     makeUnfinalized<T extends ASTNode>(
         type: ASTNodeConstructor<T>,
         ...args: Specific<ConstructorParameters<typeof type>>
     ): T {
-        const node = new type(++this.lastId, "0:0:0", ...args);
+        const id = isYulASTNode(type.prototype) ? ++this.lastYulId : ++this.lastId;
+        const node = new type(id, "0:0:0", ...args);
 
         this.context.register(node);
 
