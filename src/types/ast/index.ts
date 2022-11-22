@@ -16,7 +16,6 @@ export * from "./int_literal";
 export * from "./int_type";
 export * from "./mapping_type";
 export * from "./modifier_type";
-export * from "./module_type";
 export * from "./numeric_literal";
 export * from "./packed_array_type";
 export * from "./pointer";

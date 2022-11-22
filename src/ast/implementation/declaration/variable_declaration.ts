@@ -1,34 +1,9 @@
-import { assert } from "../../../misc/utils";
-import {
-    FunctionType,
-    IntType,
-    PointerType,
-    TupleType,
-    TypeNode,
-    UserDefinedType
-} from "../../../types/ast";
-import {
-    generalizeType,
-    typeNameToSpecializedTypeNode,
-    variableDeclarationToTypeNode
-} from "../../../types/utils";
-import { ABIEncoderVersion, abiTypeToCanonicalName, toABIEncodedType } from "../../../types/abi";
 import { ASTNode } from "../../ast_node";
-import {
-    DataLocation,
-    FunctionStateMutability,
-    FunctionVisibility,
-    Mutability,
-    StateVariableVisibility
-} from "../../constants";
-import { encodeFuncSignature } from "../../utils";
+import { DataLocation, Mutability, StateVariableVisibility } from "../../constants";
 import { Expression } from "../expression/expression";
 import { OverrideSpecifier } from "../meta/override_specifier";
 import { StructuredDocumentation } from "../meta/structured_documentation";
-import { ArrayTypeName } from "../type/array_type_name";
-import { Mapping } from "../type/mapping";
 import { TypeName } from "../type/type_name";
-import { StructDefinition } from "./struct_definition";
 
 export class VariableDeclaration extends ASTNode {
     /**
@@ -169,118 +144,5 @@ export class VariableDeclaration extends ASTNode {
         }
 
         this.scope = value.id;
-    }
-
-    /**
-     * @deprecated
-     */
-    canonicalSignatureType(encoderVersion: ABIEncoderVersion): string {
-        const type = variableDeclarationToTypeNode(this);
-        const abiType = toABIEncodedType(type, encoderVersion);
-
-        return abiTypeToCanonicalName(generalizeType(abiType)[0]);
-    }
-
-    /**
-     * Computes the argument types and return type for the public accessor
-     * corresponding to this state variable.
-     *
-     * @deprecated
-     */
-    getterArgsAndReturn(): [TypeNode[], TypeNode] {
-        const argTypes: TypeNode[] = [];
-
-        let type = this.vType;
-
-        assert(
-            type !== undefined,
-            "Called getterArgsAndReturn() on variable declaration without type",
-            this
-        );
-
-        while (true) {
-            if (type instanceof ArrayTypeName) {
-                argTypes.push(new IntType(256, false));
-
-                type = type.vBaseType;
-            } else if (type instanceof Mapping) {
-                argTypes.push(typeNameToSpecializedTypeNode(type.vKeyType, DataLocation.Memory));
-
-                type = type.vValueType;
-            } else {
-                break;
-            }
-        }
-
-        let retType = typeNameToSpecializedTypeNode(type, DataLocation.Memory);
-
-        if (
-            retType instanceof PointerType &&
-            retType.to instanceof UserDefinedType &&
-            retType.to.definition instanceof StructDefinition
-        ) {
-            const elements: TypeNode[] = [];
-
-            for (const member of retType.to.definition.vMembers) {
-                const memberT = member.vType;
-
-                assert(
-                    memberT !== undefined,
-                    "Unexpected untyped struct member",
-                    retType.to.definition
-                );
-
-                if (memberT instanceof Mapping || memberT instanceof ArrayTypeName) {
-                    continue;
-                }
-
-                elements.push(typeNameToSpecializedTypeNode(memberT, DataLocation.Memory));
-            }
-
-            retType = new TupleType(elements);
-        }
-
-        return [argTypes, retType];
-    }
-
-    /**
-     * Computes the function type for the public accessor corresponding to this
-     * state variable.
-     *
-     * @deprecated
-     */
-    getterFunType(): FunctionType {
-        const [args, ret] = this.getterArgsAndReturn();
-
-        return new FunctionType(
-            this.name,
-            args,
-            ret instanceof TupleType ? ret.elements : [ret],
-            FunctionVisibility.External,
-            FunctionStateMutability.View
-        );
-    }
-
-    /**
-     * Computes the canonical signature for the public accessor corresponding to
-     * this state variable.
-     *
-     * @deprecated
-     */
-    getterCanonicalSignature(encoderVersion: ABIEncoderVersion): string {
-        const [internalArgTypes] = this.getterArgsAndReturn();
-        const argTypes = internalArgTypes.map((typ) => toABIEncodedType(typ, encoderVersion, true));
-
-        return this.name + "(" + argTypes.map(abiTypeToCanonicalName).join(",") + ")";
-    }
-
-    /**
-     * Computes the canonical signature hash for the public accessor
-     * corresponding to this state variable.
-     *
-     * @deprecated
-     */
-    getterCanonicalSignatureHash(encoderVersion: ABIEncoderVersion): string {
-        return encodeFuncSignature(this.getterCanonicalSignature(encoderVersion));
     }
 }

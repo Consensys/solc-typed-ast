@@ -3,7 +3,6 @@ import {
     abi,
     address06Builtins,
     addressBuiltins,
-    AddressType,
     BoolType,
     BuiltinFunctionType,
     BuiltinStructType,
@@ -11,9 +10,7 @@ import {
     CompilerVersions,
     DataLocation,
     eq,
-    FixedBytesType,
     globalBuiltins,
-    IntType,
     LatestCompilerVersion,
     PointerType,
     TRest,
@@ -24,58 +21,53 @@ import {
 const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> = [
     [globalBuiltins, "abi", ["0.4.13", "0.4.21"], undefined],
     [globalBuiltins, "abi", ["0.4.22", LatestCompilerVersion], abi],
-    [globalBuiltins, "block.coinbase", ["0.4.13", "0.4.26"], new AddressType(false)],
-    [globalBuiltins, "block.coinbase", ["0.5.0", LatestCompilerVersion], new AddressType(true)],
-    [
-        globalBuiltins,
-        "block.difficulty",
-        ["0.4.13", LatestCompilerVersion],
-        new IntType(256, false)
-    ],
-    [globalBuiltins, "block.gaslimit", ["0.4.13", LatestCompilerVersion], new IntType(256, false)],
-    [globalBuiltins, "block.number", ["0.4.13", LatestCompilerVersion], new IntType(256, false)],
-    [globalBuiltins, "block.timestamp", ["0.4.13", LatestCompilerVersion], new IntType(256, false)],
+    [globalBuiltins, "block.coinbase", ["0.4.13", "0.4.26"], types.address],
+    [globalBuiltins, "block.coinbase", ["0.5.0", LatestCompilerVersion], types.addressPayable],
+    [globalBuiltins, "block.difficulty", ["0.4.13", LatestCompilerVersion], types.uint256],
+    [globalBuiltins, "block.gaslimit", ["0.4.13", LatestCompilerVersion], types.uint256],
+    [globalBuiltins, "block.number", ["0.4.13", LatestCompilerVersion], types.uint256],
+    [globalBuiltins, "block.timestamp", ["0.4.13", LatestCompilerVersion], types.uint256],
     [globalBuiltins, "block.blockhash", ["0.5.0", LatestCompilerVersion], undefined],
     [
         globalBuiltins,
         "block.blockhash",
         ["0.4.13", "0.4.26"],
-        new BuiltinFunctionType("blockhash", [new IntType(256, false)], [new FixedBytesType(32)])
+        new BuiltinFunctionType("blockhash", [types.uint256], [types.bytes32])
     ],
     [globalBuiltins, "block.chainid", ["0.4.13", "0.7.6"], undefined],
-    [globalBuiltins, "block.chainid", ["0.8.0", LatestCompilerVersion], new IntType(256, false)],
+    [globalBuiltins, "block.chainid", ["0.8.0", LatestCompilerVersion], types.uint256],
     [globalBuiltins, "block.basefee", ["0.4.13", "0.8.6"], undefined],
-    [globalBuiltins, "block.basefee", ["0.8.7", LatestCompilerVersion], new IntType(256, false)],
+    [globalBuiltins, "block.basefee", ["0.8.7", LatestCompilerVersion], types.uint256],
     [
         globalBuiltins,
         "msg.data",
         ["0.4.13", LatestCompilerVersion],
         new PointerType(new BytesType(), DataLocation.CallData)
     ],
-    [globalBuiltins, "msg.sender", ["0.4.13", "0.4.26"], new AddressType(false)],
-    [globalBuiltins, "msg.sender", ["0.5.0", "0.7.6"], new AddressType(true)],
-    [globalBuiltins, "msg.sender", ["0.8.0", LatestCompilerVersion], new AddressType(false)],
-    [globalBuiltins, "msg.sig", ["0.4.13", LatestCompilerVersion], new FixedBytesType(4)],
-    [globalBuiltins, "msg.value", ["0.4.13", LatestCompilerVersion], new IntType(256, false)],
+    [globalBuiltins, "msg.sender", ["0.4.13", "0.4.26"], types.address],
+    [globalBuiltins, "msg.sender", ["0.5.0", "0.7.6"], types.addressPayable],
+    [globalBuiltins, "msg.sender", ["0.8.0", LatestCompilerVersion], types.address],
+    [globalBuiltins, "msg.sig", ["0.4.13", LatestCompilerVersion], types.bytes4],
+    [globalBuiltins, "msg.value", ["0.4.13", LatestCompilerVersion], types.uint256],
     [globalBuiltins, "msg.gas", ["0.5.0", LatestCompilerVersion], undefined],
-    [globalBuiltins, "msg.gas", ["0.4.13", "0.4.26"], new IntType(256, false)],
-    [globalBuiltins, "tx.gasprice", ["0.4.13", LatestCompilerVersion], new IntType(256, false)],
-    [globalBuiltins, "tx.origin", ["0.4.13", "0.4.26"], new AddressType(false)],
-    [globalBuiltins, "tx.origin", ["0.5.0", "0.7.6"], new AddressType(true)],
-    [globalBuiltins, "tx.origin", ["0.8.0", LatestCompilerVersion], new AddressType(false)],
+    [globalBuiltins, "msg.gas", ["0.4.13", "0.4.26"], types.uint256],
+    [globalBuiltins, "tx.gasprice", ["0.4.13", LatestCompilerVersion], types.uint256],
+    [globalBuiltins, "tx.origin", ["0.4.13", "0.4.26"], types.address],
+    [globalBuiltins, "tx.origin", ["0.5.0", "0.7.6"], types.addressPayable],
+    [globalBuiltins, "tx.origin", ["0.8.0", LatestCompilerVersion], types.address],
     [globalBuiltins, "blockhash", ["0.4.13", "0.4.21"], undefined],
     [
         globalBuiltins,
         "blockhash",
         ["0.4.22", LatestCompilerVersion],
-        new BuiltinFunctionType("blockhash", [new IntType(256, false)], [new FixedBytesType(32)])
+        new BuiltinFunctionType("blockhash", [types.uint256], [types.bytes32])
     ],
     [globalBuiltins, "gasleft", ["0.4.13", "0.4.20"], undefined],
     [
         globalBuiltins,
         "gasleft",
         ["0.4.21", LatestCompilerVersion],
-        new BuiltinFunctionType("gasleft", [], [new IntType(256, false)])
+        new BuiltinFunctionType("gasleft", [], [types.uint256])
     ],
     [
         globalBuiltins,
@@ -91,8 +83,8 @@ const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> 
         ["0.4.13", LatestCompilerVersion],
         new BuiltinFunctionType(
             "addmod",
-            [new IntType(256, false), new IntType(256, false), new IntType(256, false)],
-            [new IntType(256, false)]
+            [types.uint256, types.uint256, types.uint256],
+            [types.uint256]
         )
     ],
     [
@@ -101,76 +93,64 @@ const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> 
         ["0.4.13", LatestCompilerVersion],
         new BuiltinFunctionType(
             "mulmod",
-            [new IntType(256, false), new IntType(256, false), new IntType(256, false)],
-            [new IntType(256, false)]
+            [types.uint256, types.uint256, types.uint256],
+            [types.uint256]
         )
     ],
     [
         globalBuiltins,
         "suicide",
         ["0.4.13", "0.4.26"],
-        new BuiltinFunctionType("suicide", [new AddressType(false)], [])
+        new BuiltinFunctionType("suicide", [types.address], [])
     ],
     [globalBuiltins, "suicide", ["0.5.0", LatestCompilerVersion], undefined],
     [
         globalBuiltins,
         "selfdestruct",
         ["0.4.13", "0.4.26"],
-        new BuiltinFunctionType("selfdestruct", [new AddressType(false)], [])
+        new BuiltinFunctionType("selfdestruct", [types.address], [])
     ],
     [
         globalBuiltins,
         "selfdestruct",
         ["0.5.0", LatestCompilerVersion],
-        new BuiltinFunctionType("selfdestruct", [new AddressType(true)], [])
+        new BuiltinFunctionType("selfdestruct", [types.addressPayable], [])
     ],
     [
         globalBuiltins,
         "keccak256",
         ["0.4.13", "0.4.26"],
-        new BuiltinFunctionType("keccak256", [new TRest("T")], [new FixedBytesType(32)])
+        new BuiltinFunctionType("keccak256", [new TRest("T")], [types.bytes32])
     ],
     [
         globalBuiltins,
         "keccak256",
         ["0.5.0", LatestCompilerVersion],
-        new BuiltinFunctionType(
-            "keccak256",
-            [new PointerType(new BytesType(), DataLocation.Memory)],
-            [new FixedBytesType(32)]
-        )
+        new BuiltinFunctionType("keccak256", [types.bytesMemory], [types.bytes32])
     ],
     [
         globalBuiltins,
         "sha256",
         ["0.4.13", "0.4.26"],
-        new BuiltinFunctionType("sha256", [new TRest("T")], [new FixedBytesType(32)])
+        new BuiltinFunctionType("sha256", [new TRest("T")], [types.bytes32])
     ],
     [
         globalBuiltins,
         "sha256",
         ["0.5.0", LatestCompilerVersion],
-        new BuiltinFunctionType(
-            "sha256",
-            [new PointerType(new BytesType(), DataLocation.Memory)],
-            [new FixedBytesType(32)]
-        )
+        new BuiltinFunctionType("sha256", [types.bytesMemory], [types.bytes32])
     ],
     [
         globalBuiltins,
         "ripemd160",
         ["0.4.13", "0.4.26"],
-        new BuiltinFunctionType("ripemd160", [new TRest("T")], [new FixedBytesType(20)])
+        new BuiltinFunctionType("ripemd160", [new TRest("T")], [types.bytes20])
     ],
     [
         globalBuiltins,
         "ripemd160",
         ["0.5.0", LatestCompilerVersion],
-        new BuiltinFunctionType(
-            "ripemd160",
-            [new PointerType(new BytesType(), DataLocation.Memory)],
-            [new FixedBytesType(20)]
-        )
+        new BuiltinFunctionType("ripemd160", [types.bytesMemory], [types.bytes20])
     ],
     [
         globalBuiltins,
@@ -178,33 +158,23 @@ const cases: Array<[BuiltinStructType, string, string[], TypeNode | undefined]> 
         ["0.4.13", LatestCompilerVersion],
         new BuiltinFunctionType(
             "ecrecover",
-            [
-                new FixedBytesType(32),
-                new IntType(8, false),
-                new FixedBytesType(32),
-                new FixedBytesType(32)
-            ],
-            [new AddressType(false)]
+            [types.bytes32, types.uint8, types.bytes32, types.bytes32],
+            [types.address]
         )
     ],
-    [addressBuiltins, "balance", ["0.4.13", LatestCompilerVersion], new IntType(256, false)],
+    [addressBuiltins, "balance", ["0.4.13", LatestCompilerVersion], types.uint256],
     [
         addressBuiltins,
         "staticcall",
         ["0.5.0", LatestCompilerVersion],
         new BuiltinFunctionType(
             "staticcall",
-            [new PointerType(new BytesType(), DataLocation.Memory)],
-            [new BoolType(), new PointerType(new BytesType(), DataLocation.Memory)]
+            [types.bytesMemory],
+            [new BoolType(), types.bytesMemory]
         )
     ],
     [addressBuiltins, "code", ["0.4.13", "0.7.6"], undefined],
-    [
-        address06Builtins,
-        "code",
-        ["0.8.0", LatestCompilerVersion],
-        new PointerType(new BytesType(), DataLocation.Memory)
-    ]
+    [address06Builtins, "code", ["0.8.0", LatestCompilerVersion], types.bytesMemory]
 ];
 
 describe("getTypeForCompilerVersion() and builtin types", () => {

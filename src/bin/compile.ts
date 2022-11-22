@@ -24,6 +24,7 @@ import {
     FunctionDefinition,
     FunctionVisibility,
     getABIEncoderVersion,
+    InferType,
     isExact,
     LatestCompilerVersion,
     PossibleCompilerKinds,
@@ -318,6 +319,8 @@ function error(message: string): never {
             ? getABIEncoderVersion(units, result.compilerVersion as string)
             : undefined;
 
+        const inference = new InferType(result.compilerVersion || LatestCompilerVersion);
+
         const walker: ASTNodeCallback = (node) => {
             const level = node.getParents().length;
             const indent = INDENT.repeat(level);
@@ -329,7 +332,9 @@ function error(message: string): never {
             } else if (node instanceof ContractDefinition) {
                 message += " -> " + node.kind + " " + node.name;
 
-                const interfaceId = encoderVersion ? node.interfaceId(encoderVersion) : undefined;
+                const interfaceId = encoderVersion
+                    ? inference.interfaceId(node, encoderVersion)
+                    : undefined;
 
                 if (interfaceId) {
                     message += ` [id: ${interfaceId}]`;
@@ -340,11 +345,11 @@ function error(message: string): never {
                     (node.visibility === FunctionVisibility.Public ||
                         node.visibility === FunctionVisibility.External) &&
                     encoderVersion
-                        ? node.canonicalSignature(encoderVersion)
+                        ? inference.signature(node, encoderVersion)
                         : undefined;
 
                 if (signature && encoderVersion) {
-                    const selector = node.canonicalSignatureHash(encoderVersion);
+                    const selector = inference.signatureHash(node, encoderVersion);
 
                     message += ` -> ${signature} [selector: ${selector}]`;
                 } else {
@@ -352,8 +357,8 @@ function error(message: string): never {
                 }
             } else if (node instanceof ErrorDefinition || node instanceof EventDefinition) {
                 if (encoderVersion) {
-                    const signature = node.canonicalSignature(encoderVersion);
-                    const selector = node.canonicalSignatureHash(encoderVersion);
+                    const signature = inference.signature(node, encoderVersion);
+                    const selector = inference.signatureHash(node, encoderVersion);
 
                     message += ` -> ${signature} [selector: ${selector}]`;
                 }
@@ -365,8 +370,8 @@ function error(message: string): never {
                         node.visibility === StateVariableVisibility.Public &&
                         encoderVersion !== undefined
                     ) {
-                        const signature = node.getterCanonicalSignature(encoderVersion);
-                        const selector = node.getterCanonicalSignatureHash(encoderVersion);
+                        const signature = inference.signature(node, encoderVersion);
+                        const selector = inference.signatureHash(node, encoderVersion);
 
                         message += ` [getter: ${signature}, selector: ${selector}]`;
                     }

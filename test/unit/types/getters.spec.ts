@@ -1,6 +1,5 @@
 import expect from "expect";
 import {
-    AddressType,
     assert,
     ASTNodeConstructor,
     ASTReader,
@@ -16,13 +15,16 @@ import {
     FunctionType,
     FunctionVisibility,
     getFQDefName,
+    InferType,
     IntType,
+    LatestCompilerVersion,
     PointerType,
     PossibleCompilerKinds,
     SourceUnit,
     StringType,
     StructDefinition,
     TypeNode,
+    types,
     UserDefinedType,
     UserDefinedValueTypeDefinition,
     UserDefinition,
@@ -67,8 +69,8 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                 "a",
                 new FunctionType(
                     "a",
-                    [new IntType(256, false)],
-                    [new IntType(256, false)],
+                    [types.uint256],
+                    [types.uint256],
                     FunctionVisibility.External,
                     FunctionStateMutability.View
                 )
@@ -77,8 +79,8 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                 "b",
                 new FunctionType(
                     "b",
-                    [new AddressType(false)],
-                    [new IntType(256, false)],
+                    [types.address],
+                    [types.uint256],
                     FunctionVisibility.External,
                     FunctionStateMutability.View
                 )
@@ -116,7 +118,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                 new FunctionType(
                     "e",
                     [],
-                    [new AddressType(false)],
+                    [types.address],
                     FunctionVisibility.External,
                     FunctionStateMutability.View
                 )
@@ -128,7 +130,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
 
                     return new FunctionType(
                         "f",
-                        [new IntType(256, false)],
+                        [types.uint256],
                         [
                             new IntType(8, true),
                             new PointerType(new StringType(), DataLocation.Memory),
@@ -149,7 +151,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
 
                     return new FunctionType(
                         "g",
-                        [new IntType(256, false)],
+                        [types.uint256],
                         [new UserDefinedType(def.name, def)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
@@ -262,7 +264,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
 
                     return new FunctionType(
                         "udtvMapping",
-                        [new UserDefinedType(getFQDefName(defA), defA), new IntType(256, false)],
+                        [new UserDefinedType(getFQDefName(defA), defA), types.uint256],
                         [new UserDefinedType(getFQDefName(defU), defU)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
@@ -287,7 +289,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                                 new UserDefinedType(getFQDefName(def), def),
                                 DataLocation.Memory
                             ),
-                            new IntType(256, false)
+                            types.uint256
                         ],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
@@ -303,8 +305,8 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                 "a",
                 new FunctionType(
                     "a",
-                    [new IntType(256, false)],
-                    [new IntType(256, false)],
+                    [types.uint256],
+                    [types.uint256],
                     FunctionVisibility.External,
                     FunctionStateMutability.View
                 )
@@ -313,8 +315,8 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                 "b",
                 new FunctionType(
                     "b",
-                    [new AddressType(false)],
-                    [new IntType(256, false)],
+                    [types.address],
+                    [types.uint256],
                     FunctionVisibility.External,
                     FunctionStateMutability.View
                 )
@@ -352,7 +354,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
                 new FunctionType(
                     "e",
                     [],
-                    [new AddressType(false)],
+                    [types.address],
                     FunctionVisibility.External,
                     FunctionStateMutability.View
                 )
@@ -364,7 +366,7 @@ const cases: Array<[string, Array<[string, TypeNode | DeferredTypeNode]>]> = [
 
                     return new FunctionType(
                         "f",
-                        [new IntType(256, false)],
+                        [types.uint256],
                         [new UserDefinedType(def.name, def)],
                         FunctionVisibility.External,
                         FunctionStateMutability.View
@@ -380,9 +382,10 @@ describe("getterFunType()", () => {
         for (const kind of PossibleCompilerKinds) {
             describe(`[${kind}] sample`, () => {
                 let unit: SourceUnit;
+                let inference: InferType;
 
                 before(async () => {
-                    const { data } = await compileSol(
+                    const { data, compilerVersion } = await compileSol(
                         sample,
                         "auto",
                         undefined,
@@ -401,6 +404,8 @@ describe("getterFunType()", () => {
                     expect(units.length).toEqual(1);
 
                     unit = units[0];
+
+                    inference = new InferType(compilerVersion || LatestCompilerVersion);
                 });
 
                 for (const [stateVarName, typing] of mapping) {
@@ -409,7 +414,7 @@ describe("getterFunType()", () => {
                     }`, () => {
                         const expectedType = typing instanceof TypeNode ? typing : typing(unit);
                         const stateVar = getStateVar(unit, stateVarName);
-                        const resultType = stateVar.getterFunType();
+                        const resultType = inference.getterFunType(stateVar);
 
                         assert(
                             eq(resultType, expectedType),

@@ -51,19 +51,18 @@ import {
     IntLiteralType,
     IntType,
     isVisiblityExternallyCallable,
-    ModuleType,
     PackedArrayType,
-    parse,
     PointerType,
     RationalLiteralType,
     StringLiteralType,
-    SyntaxError,
+    SuperType,
     TupleType,
     TypeNameType,
     TypeNode,
     UserDefinedType
 } from "../../../src/types";
-import { SuperType } from "../../../src/types/ast/super";
+import { ModuleType } from "../../utils/typeStrings/ast/module_type";
+import { parse, SyntaxError } from "../../utils/typeStrings/typeString_parser";
 
 export const samples: string[] = [
     "./test/samples/solidity/compile_04.sol",
@@ -406,8 +405,7 @@ function compareTypeNodes(
     }
 
     /// For imports we use the slightly richer ImportRefType while
-    /// the string parser returns the simpler ModuleType. ModuleType should
-    /// be considered deprecated
+    /// the string parser returns the simpler ModuleType.
     if (
         inferredT instanceof ImportRefType &&
         parsedT instanceof ModuleType &&
@@ -636,7 +634,7 @@ function compareTypeNodes(
     return eq(inferredT, parsedT);
 }
 
-export const ENV_CUSTOM_PATH = "SOLC_TEST_SAMPLES_PATH";
+const ENV_CUSTOM_PATH = "SOLC_TEST_SAMPLES_PATH";
 
 describe("Type inference for expressions", () => {
     const path = process.env[ENV_CUSTOM_PATH];
@@ -649,7 +647,7 @@ describe("Type inference for expressions", () => {
             : samples;
 
     for (const sample of sampleList) {
-        it(`${sample}`, async () => {
+        it(sample, async () => {
             let result: CompileResult;
             let compilerVersion: string | undefined;
             let data: any;
@@ -691,22 +689,20 @@ describe("Type inference for expressions", () => {
 
             expect(errors).toHaveLength(0);
 
-            assert(compilerVersion !== undefined, "Expected compiler version to be set to precise");
+            assert(compilerVersion !== undefined, "Expected compiler version to be defined");
 
-            const astKind = lt(compilerVersion as string, "0.5.0")
-                ? ASTKind.Legacy
-                : ASTKind.Modern;
+            const astKind = lt(compilerVersion, "0.5.0") ? ASTKind.Legacy : ASTKind.Modern;
 
             const reader = new ASTReader();
             const sourceUnits = reader.read(data, astKind);
 
-            const infer = new InferType(compilerVersion);
+            const inference = new InferType(compilerVersion);
 
             for (const unit of sourceUnits) {
                 for (const expr of unit.getChildrenBySelector<Expression>(
                     (child) => child instanceof Expression
                 )) {
-                    const inferredType = infer.typeOf(expr);
+                    const inferredType = inference.typeOf(expr);
 
                     // typeStrings for Identifiers in ImportDirectives may be undefined.
                     if (expr.typeString === undefined) {
@@ -733,7 +729,7 @@ describe("Type inference for expressions", () => {
                     try {
                         parsedType = parse(expr.typeString, {
                             ctx: expr,
-                            version: compilerVersion
+                            inference
                         });
                     } catch (e) {
                         if (e instanceof SyntaxError) {

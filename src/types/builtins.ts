@@ -1,5 +1,4 @@
 import {
-    AddressType,
     BuiltinFunctionType,
     BuiltinStructType,
     IntType,
@@ -41,8 +40,7 @@ export const typeContract = new BuiltinFunctionType(
             new Map([
                 ["name", [[types.stringMemory, ">=0.5.5"]]],
                 ["creationCode", [[types.bytesMemory, ">=0.5.3"]]],
-                ["runtimeCode", [[types.bytesMemory, ">=0.5.3"]]],
-                ["interfaceId", [[types.bytes4, ">=0.6.7"]]]
+                ["runtimeCode", [[types.bytesMemory, ">=0.5.3"]]]
             ])
         )
     ]
@@ -336,7 +334,7 @@ export const globalBuiltins = new BuiltinStructType(
                     new BuiltinFunctionType(
                         "ecrecover",
                         [types.bytes32, types.uint8, types.bytes32, types.bytes32],
-                        [new AddressType(false)]
+                        [types.address]
                     ),
                     ">=0.4.13"
                 ]

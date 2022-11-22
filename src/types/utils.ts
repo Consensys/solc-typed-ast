@@ -1,39 +1,37 @@
 import Decimal from "decimal.js";
 import { gte, lt, satisfies } from "semver";
 import {
-    ArrayTypeName,
     ContractDefinition,
     DataLocation,
-    ElementaryTypeName,
     EnumDefinition,
     ErrorDefinition,
     EventDefinition,
+    Expression,
+    ExternalReferenceType,
+    FunctionCall,
+    FunctionCallKind,
     FunctionDefinition,
     FunctionKind,
     FunctionStateMutability,
-    FunctionTypeName,
     FunctionVisibility,
-    Mapping,
     ModifierDefinition,
-    ParameterList,
     PragmaDirective,
     SourceUnit,
     StructDefinition,
-    TypeName,
-    UserDefinedTypeName,
-    UserDefinedValueTypeDefinition,
-    VariableDeclaration,
-    VariableDeclarationStatement
+    TupleExpression,
+    VariableDeclaration
 } from "../ast";
-import { assert, eq, forAll, pp } from "../misc";
-import { types } from "../types/reserved";
+import { assert, eq, forAll, forAny } from "../misc";
+import { types } from "../types";
 import { ABIEncoderVersion, ABIEncoderVersions } from "./abi";
 import {
     AddressType,
     ArrayType,
-    BoolType,
+    BuiltinFunctionType,
     BytesType,
     FixedBytesType,
+    FunctionLikeSetType,
+    FunctionSetType,
     FunctionType,
     IntLiteralType,
     IntType,
@@ -50,7 +48,30 @@ import {
     UserDefinition
 } from "./ast";
 import { VersionDependentType } from "./builtins";
-import { evalConstantExpr } from "./eval_const";
+
+export const SUBDENOMINATION_MULTIPLIERS = new Map<string, Decimal>([
+    ["seconds", new Decimal(1)],
+    ["minutes", new Decimal(60)],
+    ["hours", new Decimal(3600)],
+    ["days", new Decimal(24 * 3600)],
+    ["weeks", new Decimal(7 * 24 * 3600)],
+    ["years", new Decimal(365 * 24 * 3600)],
+    ["wei", new Decimal(1)],
+    ["gwei", new Decimal(10 ** 9)],
+    ["szabo", new Decimal(10 ** 12)],
+    ["finney", new Decimal(10).toPower(15)],
+    ["ether", new Decimal(10).toPower(18)]
+]);
+
+export const CALL_BUILTINS = ["call", "callcode", "staticcall", "delegatecall", "transfer", "send"];
+
+export const BINARY_OPERATOR_GROUPS = {
+    Arithmetic: ["+", "-", "*", "/", "%", "**"],
+    Bitwise: ["<<", ">>", "&", "|", "^"],
+    Comparison: ["<", ">", "<=", ">="],
+    Equality: ["==", "!="],
+    Logical: ["&&", "||"]
+};
 
 export function getTypeForCompilerVersion(
     typing: VersionDependentType,
@@ -59,6 +80,78 @@ export function getTypeForCompilerVersion(
     const [type, version] = typing;
 
     return satisfies(compilerVersion, version) ? type : undefined;
+}
+
+/**
+ * Given 2 function pointer's visibilities infer a common visibility thats compatible with both.
+ * This is used to infer the visibility of the expression `flag ? fun1 : fun2` where fun1 and fun2 are
+ * function pointers.
+ */
+export function inferCommonVisiblity(
+    a: FunctionVisibility,
+    b: FunctionVisibility
+): FunctionVisibility | undefined {
+    const visiblityOrder = [
+        FunctionVisibility.External,
+        FunctionVisibility.Public,
+        FunctionVisibility.Internal,
+        FunctionVisibility.Default,
+        FunctionVisibility.Private
+    ];
+
+    if (a == b) {
+        return a;
+    }
+
+    if (visiblityOrder.indexOf(a) > visiblityOrder.indexOf(b)) {
+        [b, a] = [a, b];
+    }
+
+    if (a === FunctionVisibility.External) {
+        return b == FunctionVisibility.Public ? FunctionVisibility.External : undefined;
+    }
+
+    return FunctionVisibility.Internal;
+}
+
+/**
+ * Given two `FunctionType`s/`BuiltinFunctionType`s/`FunctionSetType`s `a` and `b`
+ * return a `FunctionSetType` that includes everything in `a` and `b`.
+ */
+export function mergeFunTypes(
+    a: FunctionType | BuiltinFunctionType | FunctionSetType,
+    b: FunctionType | BuiltinFunctionType | FunctionSetType
+): FunctionSetType {
+    const funs: Array<FunctionType | BuiltinFunctionType> = [];
+
+    if (a instanceof FunctionType || a instanceof BuiltinFunctionType) {
+        funs.push(a);
+    } else {
+        funs.push(...a.defs);
+    }
+
+    if (b instanceof FunctionType || b instanceof BuiltinFunctionType) {
+        funs.push(b);
+    } else {
+        funs.push(...b.defs);
+    }
+
+    return new FunctionLikeSetType(funs);
+}
+
+/**
+ * Strip any singleton parens from expressions. I.e. given (((e))) returns e.
+ */
+export function stripSingletonParens(e: Expression): Expression {
+    while (e instanceof TupleExpression && e.vOriginalComponents.length === 1) {
+        const comp = e.vOriginalComponents[0];
+
+        assert(comp !== null, 'Unexpected "null" component in tuple with single element');
+
+        e = comp;
+    }
+
+    return e;
 }
 
 /**
@@ -174,117 +267,6 @@ export function getFQDefName(def: NamedDefinition): string {
     return def.vScope instanceof ContractDefinition ? `${def.vScope.name}.${def.name}` : def.name;
 }
 
-/**
- * Convert a given ast `TypeName` into a `TypeNode`. This produces "general
- * type patterns" without any specific storage information.
- *
- * @param astT - original AST `TypeName`
- * @returns equivalent `TypeNode`.
- *
- * @deprecated Use `InferType.typeOf()` instead.
- */
-export function typeNameToTypeNode(astT: TypeName): TypeNode {
-    if (astT instanceof ElementaryTypeName) {
-        const name = astT.name.trim();
-
-        if (name === "bool") {
-            return new BoolType();
-        }
-
-        const rxAddress = /^address *(payable)?$/;
-
-        if (rxAddress.test(name)) {
-            return new AddressType(astT.stateMutability === "payable");
-        }
-
-        const rxInt = /^(u?)int([0-9]*)$/;
-
-        let m = name.match(rxInt);
-
-        if (m !== null) {
-            const signed = m[1] !== "u";
-            const nBits = m[2] === "" ? 256 : parseInt(m[2]);
-
-            return new IntType(nBits, signed);
-        }
-
-        const rxFixedBytes = /^bytes([0-9]+)$/;
-
-        m = name.match(rxFixedBytes);
-
-        if (m !== null) {
-            const size = parseInt(m[1]);
-
-            return new FixedBytesType(size);
-        }
-
-        if (name === "byte") {
-            return new FixedBytesType(1);
-        }
-
-        if (name === "bytes") {
-            return new BytesType();
-        }
-
-        if (name === "string") {
-            return new StringType();
-        }
-
-        throw new Error(`NYI converting elementary AST Type ${name}`);
-    }
-
-    if (astT instanceof ArrayTypeName) {
-        const elT = typeNameToTypeNode(astT.vBaseType);
-
-        let size: bigint | undefined;
-
-        if (astT.vLength) {
-            const result = evalConstantExpr(astT.vLength);
-
-            assert(typeof result === "bigint", "Expected bigint for size of an array type", astT);
-
-            size = result;
-        }
-
-        return new ArrayType(elT, size);
-    }
-
-    if (astT instanceof UserDefinedTypeName) {
-        const def = astT.vReferencedDeclaration;
-
-        if (
-            def instanceof StructDefinition ||
-            def instanceof EnumDefinition ||
-            def instanceof ContractDefinition ||
-            def instanceof UserDefinedValueTypeDefinition
-        ) {
-            return new UserDefinedType(getFQDefName(def), def);
-        }
-
-        throw new Error(`NYI typechecking of user-defined type ${def.print()}`);
-    }
-
-    if (astT instanceof FunctionTypeName) {
-        /**
-         * `vType` is always defined here for parameters if a function type.
-         * Even in 0.4.x can't have function declarations with `var` args.
-         */
-        const args = astT.vParameterTypes.vParameters.map(variableDeclarationToTypeNode);
-        const rets = astT.vReturnParameterTypes.vParameters.map(variableDeclarationToTypeNode);
-
-        return new FunctionType(undefined, args, rets, astT.visibility, astT.stateMutability);
-    }
-
-    if (astT instanceof Mapping) {
-        const keyT = typeNameToTypeNode(astT.vKeyType);
-        const valueT = typeNameToTypeNode(astT.vValueType);
-
-        return new MappingType(keyT, valueT);
-    }
-
-    throw new Error(`NYI converting AST Type ${astT.print()} to SType`);
-}
-
 export function isReferenceType(generalT: TypeNode): boolean {
     return (
         (generalT instanceof UserDefinedType && generalT.definition instanceof StructDefinition) ||
@@ -292,69 +274,6 @@ export function isReferenceType(generalT: TypeNode): boolean {
         generalT instanceof PackedArrayType ||
         generalT instanceof MappingType
     );
-}
-
-/**
- * Computes a `TypeNode` equivalent of given `astT`,
- * specialized for location `loc` (if applicable).
- *
- * @deprecated Use `InferType.typeOf()` instead.
- */
-export function typeNameToSpecializedTypeNode(astT: TypeName, loc: DataLocation): TypeNode {
-    return specializeType(typeNameToTypeNode(astT), loc);
-}
-
-/**
- * @deprecated Use `InferType.inferVariableDeclLocation()` instead.
- */
-export function inferVariableDeclLocation(decl: VariableDeclaration): DataLocation {
-    if (decl.stateVariable) {
-        return decl.constant ? DataLocation.Memory : DataLocation.Storage;
-    }
-
-    if (decl.storageLocation !== DataLocation.Default) {
-        return decl.storageLocation;
-    }
-
-    if (decl.parent instanceof ParameterList) {
-        // In 0.4.x param/return locations may be omitted. We assume calldata
-        // for external and memory for the rest
-        const fun = decl.parent.parent as FunctionDefinition;
-
-        return fun.visibility === FunctionVisibility.External
-            ? DataLocation.CallData
-            : DataLocation.Memory;
-    }
-
-    if (decl.parent instanceof VariableDeclarationStatement) {
-        // In 0.4.x local var locations may be omitted. We assume memory.
-        return DataLocation.Memory;
-    }
-
-    if (decl.parent instanceof StructDefinition) {
-        return DataLocation.Default;
-    }
-
-    if (decl.parent instanceof SourceUnit) {
-        // Global vars don't have a location (no ref types yet)
-        return DataLocation.Default;
-    }
-
-    throw new Error(`NYI variable declaration ${pp(decl)}`);
-}
-
-/**
- * Given a `VariableDeclaration` node `decl` compute the `TypeNode` that corresponds to the variable.
- * This takes into account the storage location of the `decl`.
- *
- * @deprecated Use `InferType.variableDeclarationToTypeNode()` instead.
- */
-export function variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNode {
-    assert(decl.vType !== undefined, "Expected {0} to have type", decl);
-
-    const loc = inferVariableDeclLocation(decl);
-
-    return typeNameToSpecializedTypeNode(decl.vType, loc);
 }
 
 export function enumToIntType(decl: EnumDefinition): IntType {
@@ -429,6 +348,25 @@ export function getABIEncoderVersion(
     return lt(compilerVersion, "0.8.0") ? ABIEncoderVersion.V1 : ABIEncoderVersion.V2;
 }
 
+export function isFunctionCallExternal(call: FunctionCall): boolean {
+    if (call.kind !== FunctionCallKind.FunctionCall) {
+        return false;
+    }
+
+    if (
+        call.vFunctionCallType === ExternalReferenceType.Builtin &&
+        CALL_BUILTINS.includes(call.vFunctionName)
+    ) {
+        return true;
+    }
+
+    if (call.vExpression.typeString.includes(FunctionVisibility.External)) {
+        return true;
+    }
+
+    return false;
+}
+
 export function getFallbackRecvFuns(contract: ContractDefinition): FunctionDefinition[] {
     const res: FunctionDefinition[] = [];
 
@@ -487,8 +425,8 @@ export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string
     if (fromT instanceof StringLiteralType) {
         /**
          * @todo Should we make an explicit check that string literal fits to bytes size?
-         * Note that string length is not the same as count ob bytes in string due to multibyte chars.
-         * Also for hex string literals we should check evenness of length
+         * Note that string length is not the same as count of bytes in string due to multibyte chars.
+         * Also for hex string literals we should check evenness of length.
          */
         if (toT instanceof FixedBytesType) {
             return true;
@@ -570,13 +508,11 @@ export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string
 
     if (fromT instanceof UserDefinedType && fromT.definition instanceof ContractDefinition) {
         if (toT instanceof AddressType) {
-            // We can implicitly cast from contract to payable address if it has a payable recieve/fallback function
+            // We can implicitly cast from contract to payable address if it has a payable receive/fallback function
             if (toT.payable) {
-                const fns = getFallbackRecvFuns(fromT.definition);
-
-                return (
-                    fns.length > 0 &&
-                    forAll(fns, (fn) => fn.stateMutability === FunctionStateMutability.Payable)
+                return forAny(
+                    getFallbackRecvFuns(fromT.definition),
+                    (fn) => fn.stateMutability === FunctionStateMutability.Payable
                 );
             }
 
