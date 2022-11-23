@@ -204,7 +204,7 @@ export function evalUnaryImpl(operator: string, value: Value): Value {
 
 export function evalBinaryImpl(operator: string, left: Value, right: Value): Value {
     if (BINARY_OPERATOR_GROUPS.Logical.includes(operator)) {
-        if (!(typeof left === "boolean" && typeof left === "boolean")) {
+        if (!(typeof left === "boolean" && typeof right === "boolean")) {
             throw new EvalError(`${operator} expects booleans not ${str(left)} and ${str(right)}`);
         }
 
