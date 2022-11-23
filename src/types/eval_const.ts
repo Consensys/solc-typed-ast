@@ -176,7 +176,7 @@ export function evalUnaryImpl(operator: string, value: Value): Value {
             return ~value;
         }
 
-        throw new EvalError(`Expected ${str(value)} to be an bigint`);
+        throw new EvalError(`Expected ${str(value)} to be a bigint`);
     }
 
     if (operator === "+") {
@@ -184,7 +184,7 @@ export function evalUnaryImpl(operator: string, value: Value): Value {
             return value;
         }
 
-        throw new EvalError(`Expected ${str(value)} to be an bigint or decimal`);
+        throw new EvalError(`Expected ${str(value)} to be a bigint or a decimal`);
     }
 
     if (operator === "-") {
@@ -196,7 +196,7 @@ export function evalUnaryImpl(operator: string, value: Value): Value {
             return -value;
         }
 
-        throw new EvalError(`Expected ${str(value)} to be an bigint or decimal`);
+        throw new EvalError(`Expected ${str(value)} to be a bigint or a decimal`);
     }
 
     throw new EvalError(`Unable to process ${operator}${str(value)}`);
