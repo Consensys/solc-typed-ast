@@ -74,9 +74,13 @@ export const BINARY_OPERATOR_GROUPS = {
 };
 
 export function getTypeForCompilerVersion(
-    typing: VersionDependentType,
+    typing: TypeNode | VersionDependentType,
     compilerVersion: string
 ): TypeNode | undefined {
+    if (typing instanceof TypeNode) {
+        return typing;
+    }
+
     const [type, version] = typing;
 
     return satisfies(compilerVersion, version) ? type : undefined;
