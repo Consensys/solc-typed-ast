@@ -1,7 +1,7 @@
 import { gte, lt } from "semver";
 import { FunctionVisibility } from ".";
 import { assert, forAll, pp } from "../misc";
-import { ABIEncoderVersion, InferType } from "../types";
+import { InferType } from "../types";
 import { ASTNode } from "./ast_node";
 import { StateVariableVisibility } from "./constants";
 import { ContractDefinition } from "./implementation/declaration/contract_definition";
@@ -249,7 +249,7 @@ function* lookupInContractDefinition(
                     child instanceof EventDefinition ||
                     (child instanceof VariableDeclaration &&
                         child.visibility === StateVariableVisibility.Public)
-                        ? inference.signatureHash(child, ABIEncoderVersion.V2)
+                        ? inference.signatureHash(child)
                         : undefined;
 
                 if (sigHash !== undefined) {

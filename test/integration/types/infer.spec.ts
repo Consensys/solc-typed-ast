@@ -46,6 +46,7 @@ import {
     FunctionLikeSetType,
     FunctionType,
     generalizeType,
+    getABIEncoderVersion,
     ImportRefType,
     InferType,
     IntLiteralType,
@@ -696,9 +697,12 @@ describe("Type inference for expressions", () => {
             const reader = new ASTReader();
             const sourceUnits = reader.read(data, astKind);
 
-            const inference = new InferType(compilerVersion);
-
             for (const unit of sourceUnits) {
+                const inference = new InferType(
+                    compilerVersion,
+                    getABIEncoderVersion(unit, compilerVersion)
+                );
+
                 for (const expr of unit.getChildrenBySelector<Expression>(
                     (child) => child instanceof Expression
                 )) {

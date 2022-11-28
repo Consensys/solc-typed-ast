@@ -14,6 +14,7 @@ import {
     FunctionStateMutability,
     FunctionType,
     FunctionVisibility,
+    getABIEncoderVersion,
     getFQDefName,
     InferType,
     IntType,
@@ -385,7 +386,7 @@ describe("getterFunType()", () => {
                 let inference: InferType;
 
                 before(async () => {
-                    const { data, compilerVersion } = await compileSol(
+                    const result = await compileSol(
                         sample,
                         "auto",
                         undefined,
@@ -393,6 +394,9 @@ describe("getterFunType()", () => {
                         undefined,
                         kind as CompilerKind
                     );
+
+                    const data = result.data;
+                    const compilerVersion = result.compilerVersion || LatestCompilerVersion;
 
                     const errors = detectCompileErrors(data);
 
@@ -405,7 +409,10 @@ describe("getterFunType()", () => {
 
                     unit = units[0];
 
-                    inference = new InferType(compilerVersion || LatestCompilerVersion);
+                    inference = new InferType(
+                        compilerVersion,
+                        getABIEncoderVersion(unit, compilerVersion)
+                    );
                 });
 
                 for (const [stateVarName, typing] of mapping) {

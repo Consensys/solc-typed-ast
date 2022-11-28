@@ -1,5 +1,6 @@
 import expect from "expect";
 import {
+    ABIEncoderVersion,
     ASTContext,
     ASTNode,
     ASTNodeFactory,
@@ -92,7 +93,7 @@ describe("Utility formatting routines", () => {
     });
 
     describe("pp()", () => {
-        const infer = new InferType("0.8.15");
+        const infer = new InferType("0.8.15", ABIEncoderVersion.V2);
 
         const cases: Array<[any, string]> = [
             [1, "1"],

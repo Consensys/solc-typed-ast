@@ -193,7 +193,10 @@ function markFirstArgImplicit<T extends FunctionType | FunctionLikeSetType<Funct
 }
 
 export class InferType {
-    constructor(public readonly version: string) {}
+    constructor(
+        public readonly version: string,
+        public readonly encoderVersion: ABIEncoderVersion
+    ) {}
 
     /**
      * Infer the type of the assignment `node`. (In solidity assignments are expressions)
@@ -2076,6 +2079,21 @@ export class InferType {
                     continue;
                 }
 
+                /**
+                 * Prior to Solidity 0.5.1, nested structs were ommited as the getter resulting tuple members.
+                 *
+                 * @see https://github.com/ethereum/solidity/releases/tag/v0.5.1
+                 *
+                 * > Type Checker: Disallow struct return types for getters of public state variables unless the new ABI encoder is active.
+                 */
+                if (
+                    this.encoderVersion === ABIEncoderVersion.V1 &&
+                    retType instanceof UserDefinedTypeName &&
+                    retType.vReferencedDeclaration instanceof StructDefinition
+                ) {
+                    continue;
+                }
+
                 elements.push(this.typeNameToSpecializedTypeNode(memberT, DataLocation.Memory));
             }
 
@@ -2306,8 +2324,7 @@ export class InferType {
             | EventDefinition
             | ErrorDefinition
             | ModifierDefinition
-            | VariableDeclaration,
-        encoderVersion: ABIEncoderVersion
+            | VariableDeclaration
     ): string {
         let args: string[];
 
@@ -2315,7 +2332,7 @@ export class InferType {
             const [getterArgs] = this.getterArgsAndReturn(node);
 
             args = getterArgs.map((type) =>
-                abiTypeToCanonicalName(this.toABIEncodedType(type, encoderVersion, true))
+                abiTypeToCanonicalName(this.toABIEncodedType(type, this.encoderVersion, true))
             );
         } else {
             if (node instanceof FunctionDefinition && (node.name === "" || node.isConstructor)) {
@@ -2336,7 +2353,7 @@ export class InferType {
             } else {
                 args = node.vParameters.vParameters.map((arg) => {
                     const type = this.variableDeclarationToTypeNode(arg);
-                    const abiType = this.toABIEncodedType(type, encoderVersion);
+                    const abiType = this.toABIEncodedType(type, this.encoderVersion);
 
                     return abiTypeToCanonicalName(generalizeType(abiType)[0]);
                 });
@@ -2359,11 +2376,10 @@ export class InferType {
             | EventDefinition
             | ErrorDefinition
             | ModifierDefinition
-            | VariableDeclaration,
-        encoderVersion: ABIEncoderVersion
+            | VariableDeclaration
     ): string {
         if (node instanceof FunctionDefinition) {
-            const signature = this.signature(node, encoderVersion);
+            const signature = this.signature(node);
 
             return signature ? encodeFuncSignature(signature) : "";
         }
@@ -2373,20 +2389,17 @@ export class InferType {
             node instanceof ErrorDefinition ||
             node instanceof ModifierDefinition
         ) {
-            return encodeFuncSignature(this.signature(node, encoderVersion));
+            return encodeFuncSignature(this.signature(node));
         }
 
         if (node instanceof EventDefinition) {
-            return encodeEventSignature(this.signature(node, encoderVersion));
+            return encodeEventSignature(this.signature(node));
         }
 
         throw new Error(`Unable to compute signature hash for node ${pp(node)}`);
     }
 
-    interfaceId(
-        contract: ContractDefinition,
-        encoderVersion: ABIEncoderVersion
-    ): string | undefined {
+    interfaceId(contract: ContractDefinition): string | undefined {
         if (
             contract.kind === ContractKind.Interface ||
             (contract.kind === ContractKind.Contract && contract.abstract)
@@ -2394,7 +2407,7 @@ export class InferType {
             const selectors: string[] = [];
 
             for (const fn of contract.vFunctions) {
-                const hash = this.signatureHash(fn, encoderVersion);
+                const hash = this.signatureHash(fn);
 
                 if (hash) {
                     selectors.push(hash);
@@ -2403,7 +2416,7 @@ export class InferType {
 
             for (const v of contract.vStateVariables) {
                 if (v.visibility === StateVariableVisibility.Public) {
-                    selectors.push(this.signatureHash(v, encoderVersion));
+                    selectors.push(this.signatureHash(v));
                 }
             }
 

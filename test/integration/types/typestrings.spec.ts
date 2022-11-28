@@ -23,7 +23,8 @@ import {
     MappingType,
     PointerType,
     specializeType,
-    generalizeType
+    generalizeType,
+    getABIEncoderVersion
 } from "../../../src";
 import { getNodeType } from "../../utils/typeStrings/typeString_parser";
 
@@ -137,9 +138,12 @@ describe("Round-trip tests for typestring parser/printer", () => {
                 const reader = new ASTReader();
                 const sourceUnits = reader.read(data, astKind);
 
-                const inference = new InferType(compilerVersion);
-
                 for (const unit of sourceUnits) {
+                    const inference = new InferType(
+                        compilerVersion,
+                        getABIEncoderVersion(unit, compilerVersion)
+                    );
+
                     for (const node of unit.getChildrenBySelector(
                         (child) =>
                             child instanceof Expression || child instanceof VariableDeclaration

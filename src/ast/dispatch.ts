@@ -1,4 +1,4 @@
-import { ABIEncoderVersion, InferType } from "../types";
+import { InferType } from "../types";
 import { ASTNodeConstructor } from "./ast_node";
 import { StateVariableVisibility } from "./constants";
 import { ContractDefinition } from "./implementation/declaration/contract_definition";
@@ -48,10 +48,9 @@ export function resolve<T extends Resolvable>(
     if (target instanceof VariableDeclaration) {
         finder = (candidate) => candidate.name === target.name;
     } else {
-        const signatureHash = inference.signatureHash(target, ABIEncoderVersion.V2);
+        const signatureHash = inference.signatureHash(target);
 
-        finder = (candidate) =>
-            signatureHash === inference.signatureHash(candidate, ABIEncoderVersion.V2);
+        finder = (candidate) => signatureHash === inference.signatureHash(candidate);
     }
 
     for (const base of scope.vLinearizedBaseContracts) {
@@ -112,7 +111,7 @@ export function resolveByName<T extends Resolvable>(
             const resolvableIdentifier =
                 resolvable instanceof VariableDeclaration
                     ? resolvable.name
-                    : inference.signatureHash(resolvable, ABIEncoderVersion.V2);
+                    : inference.signatureHash(resolvable);
 
             if (resolvable.name === name && !found.has(resolvableIdentifier)) {
                 result.push(resolvable as T);
@@ -164,7 +163,7 @@ export function resolveCallable(
     inference: InferType,
     onlyParents = false
 ): FunctionDefinition | VariableDeclaration | undefined {
-    const selector = inference.signatureHash(definition, ABIEncoderVersion.V2);
+    const selector = inference.signatureHash(definition);
 
     for (const base of scope.vLinearizedBaseContracts) {
         if (onlyParents && base === scope) {
@@ -172,14 +171,14 @@ export function resolveCallable(
         }
 
         for (const fn of base.vFunctions) {
-            if (inference.signatureHash(fn, ABIEncoderVersion.V2) === selector) {
+            if (inference.signatureHash(fn) === selector) {
                 return fn;
             }
         }
 
         for (const v of base.vStateVariables) {
             if (v.visibility === StateVariableVisibility.Public) {
-                if (inference.signatureHash(v, ABIEncoderVersion.V2) === selector) {
+                if (inference.signatureHash(v) === selector) {
                     return v;
                 }
             }
