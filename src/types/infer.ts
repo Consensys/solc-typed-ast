@@ -2079,19 +2079,14 @@ export class InferType {
                     continue;
                 }
 
-                /**
-                 * Prior to Solidity 0.5.1, nested structs were ommited as the getter resulting tuple members.
-                 *
-                 * @see https://github.com/ethereum/solidity/releases/tag/v0.5.1
-                 *
-                 * > Type Checker: Disallow struct return types for getters of public state variables unless the new ABI encoder is active.
-                 */
                 if (
-                    this.encoderVersion === ABIEncoderVersion.V1 &&
-                    retType instanceof UserDefinedTypeName &&
-                    retType.vReferencedDeclaration instanceof StructDefinition
+                    memberT instanceof UserDefinedTypeName &&
+                    memberT.vReferencedDeclaration instanceof StructDefinition
                 ) {
-                    continue;
+                    assert(
+                        this.encoderVersion !== ABIEncoderVersion.V1,
+                        "Nested structs in getter return type are not supported by ABI encoder v1"
+                    );
                 }
 
                 elements.push(this.typeNameToSpecializedTypeNode(memberT, DataLocation.Memory));
@@ -2257,24 +2252,20 @@ export class InferType {
      *
      * @see https://docs.soliditylang.org/en/latest/abi-spec.html
      */
-    toABIEncodedType(
-        type: TypeNode,
-        encoderVersion: ABIEncoderVersion,
-        normalizePointers = false
-    ): TypeNode {
+    toABIEncodedType(type: TypeNode, normalizePointers = false): TypeNode {
         if (type instanceof MappingType) {
             throw new Error("Cannot abi-encode mapping types");
         }
 
         if (type instanceof ArrayType) {
             return new ArrayType(
-                this.toABIEncodedType(type.elementT, encoderVersion, normalizePointers),
+                this.toABIEncodedType(type.elementT, normalizePointers),
                 type.size
             );
         }
 
         if (type instanceof PointerType) {
-            const toT = this.toABIEncodedType(type.to, encoderVersion, normalizePointers);
+            const toT = this.toABIEncodedType(type.to, normalizePointers);
 
             return new PointerType(toT, normalizePointers ? DataLocation.Memory : type.location);
         }
@@ -2294,7 +2285,7 @@ export class InferType {
 
             if (type.definition instanceof StructDefinition) {
                 assert(
-                    encoderVersion !== ABIEncoderVersion.V1,
+                    this.encoderVersion !== ABIEncoderVersion.V1,
                     "Getters of struct return type are not supported by ABI encoder v1"
                 );
 
@@ -2303,9 +2294,7 @@ export class InferType {
                 );
 
                 return new TupleType(
-                    fieldTs.map((fieldT) =>
-                        this.toABIEncodedType(fieldT, encoderVersion, normalizePointers)
-                    )
+                    fieldTs.map((fieldT) => this.toABIEncodedType(fieldT, normalizePointers))
                 );
             }
         }
@@ -2332,7 +2321,7 @@ export class InferType {
             const [getterArgs] = this.getterArgsAndReturn(node);
 
             args = getterArgs.map((type) =>
-                abiTypeToCanonicalName(this.toABIEncodedType(type, this.encoderVersion, true))
+                abiTypeToCanonicalName(this.toABIEncodedType(type, true))
             );
         } else {
             if (node instanceof FunctionDefinition && (node.name === "" || node.isConstructor)) {
@@ -2353,7 +2342,7 @@ export class InferType {
             } else {
                 args = node.vParameters.vParameters.map((arg) => {
                     const type = this.variableDeclarationToTypeNode(arg);
-                    const abiType = this.toABIEncodedType(type, this.encoderVersion);
+                    const abiType = this.toABIEncodedType(type);
 
                     return abiTypeToCanonicalName(generalizeType(abiType)[0]);
                 });

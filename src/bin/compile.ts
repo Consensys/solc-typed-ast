@@ -372,8 +372,9 @@ function error(message: string): never {
             console.log(indent + message);
         };
 
+        const compilerVersion = result.compilerVersion || LatestCompilerVersion;
+
         for (const unit of units) {
-            const compilerVersion = result.compilerVersion || LatestCompilerVersion;
             const encoderVersion = getABIEncoderVersion(unit, compilerVersion);
             const inference = new InferType(compilerVersion, encoderVersion);
 
