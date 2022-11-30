@@ -881,7 +881,9 @@ export class InferType {
 
         if (innerT instanceof UserDefinedType && innerT.definition instanceof ContractDefinition) {
             const resTemplateT =
-                innerT.definition.kind === ContractKind.Interface ? typeInterface : typeContract;
+                innerT.definition.kind === ContractKind.Interface || innerT.definition.abstract
+                    ? typeInterface
+                    : typeContract;
 
             return applySubstitution(resTemplateT, new Map([["T", innerT]]));
         }

@@ -241,9 +241,6 @@ function* lookupInContractDefinition(
                     continue;
                 }
 
-                /**
-                 * Its a safe to assume V2 as its backward-compatible and we only use it internally here
-                 */
                 const sigHash =
                     child instanceof FunctionDefinition ||
                     child instanceof EventDefinition ||
