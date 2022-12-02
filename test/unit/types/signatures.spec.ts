@@ -99,7 +99,7 @@ describe("Check canonical signatures are generated correctly", () => {
                 const sourceUnits = reader.read(data, ASTKind.Any);
                 const unit = sourceUnits[0];
 
-                const inference = new InferType(compilerVersion);
+                const inference = new InferType(compilerVersion, encoderVer);
 
                 const runTestsHelper = (
                     contractName: string,
@@ -120,7 +120,7 @@ describe("Check canonical signatures are generated correctly", () => {
                             def instanceof VariableDeclaration ||
                             def instanceof FunctionDefinition
                         ) {
-                            signature = inference.signature(def, encoderVer);
+                            signature = inference.signature(def);
                         } else {
                             throw new Error(`NYI: ${def.print()}`);
                         }

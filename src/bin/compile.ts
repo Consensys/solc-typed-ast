@@ -3,7 +3,7 @@ import { Command } from "commander";
 import fse from "fs-extra";
 import {
     ASTKind,
-    ASTNodeCallback,
+    ASTNode,
     ASTNodeFormatter,
     ASTReader,
     ASTWriter,
@@ -315,13 +315,7 @@ function error(message: string): never {
     if (options.tree) {
         const INDENT = "|   ";
 
-        const encoderVersion = result.compilerVersion
-            ? getABIEncoderVersion(units, result.compilerVersion as string)
-            : undefined;
-
-        const inference = new InferType(result.compilerVersion || LatestCompilerVersion);
-
-        const walker: ASTNodeCallback = (node) => {
+        const writer = (unit: SourceUnit, inference: InferType, node: ASTNode) => {
             const level = node.getParents().length;
             const indent = INDENT.repeat(level);
 
@@ -332,9 +326,7 @@ function error(message: string): never {
             } else if (node instanceof ContractDefinition) {
                 message += " -> " + node.kind + " " + node.name;
 
-                const interfaceId = encoderVersion
-                    ? inference.interfaceId(node, encoderVersion)
-                    : undefined;
+                const interfaceId = inference.interfaceId(node);
 
                 if (interfaceId) {
                     message += ` [id: ${interfaceId}]`;
@@ -343,35 +335,29 @@ function error(message: string): never {
                 const signature =
                     node.vScope instanceof ContractDefinition &&
                     (node.visibility === FunctionVisibility.Public ||
-                        node.visibility === FunctionVisibility.External) &&
-                    encoderVersion
-                        ? inference.signature(node, encoderVersion)
+                        node.visibility === FunctionVisibility.External)
+                        ? inference.signature(node)
                         : undefined;
 
-                if (signature && encoderVersion) {
-                    const selector = inference.signatureHash(node, encoderVersion);
+                if (signature) {
+                    const selector = inference.signatureHash(node);
 
                     message += ` -> ${signature} [selector: ${selector}]`;
                 } else {
                     message += ` -> ${node.kind}`;
                 }
             } else if (node instanceof ErrorDefinition || node instanceof EventDefinition) {
-                if (encoderVersion) {
-                    const signature = inference.signature(node, encoderVersion);
-                    const selector = inference.signatureHash(node, encoderVersion);
+                const signature = inference.signature(node);
+                const selector = inference.signatureHash(node);
 
-                    message += ` -> ${signature} [selector: ${selector}]`;
-                }
+                message += ` -> ${signature} [selector: ${selector}]`;
             } else if (node instanceof VariableDeclaration) {
                 if (node.stateVariable) {
                     message += ` -> ${node.typeString} ${node.visibility} ${node.name}`;
 
-                    if (
-                        node.visibility === StateVariableVisibility.Public &&
-                        encoderVersion !== undefined
-                    ) {
-                        const signature = inference.signature(node, encoderVersion);
-                        const selector = inference.signatureHash(node, encoderVersion);
+                    if (node.visibility === StateVariableVisibility.Public) {
+                        const signature = inference.signature(node);
+                        const selector = inference.signatureHash(node);
 
                         message += ` [getter: ${signature}, selector: ${selector}]`;
                     }
@@ -386,8 +372,13 @@ function error(message: string): never {
             console.log(indent + message);
         };
 
+        const compilerVersion = result.compilerVersion || LatestCompilerVersion;
+
         for (const unit of units) {
-            unit.walk(walker);
+            const encoderVersion = getABIEncoderVersion(unit, compilerVersion);
+            const inference = new InferType(compilerVersion, encoderVersion);
+
+            unit.walk(writer.bind(undefined, unit, inference));
 
             console.log();
         }

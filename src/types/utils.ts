@@ -15,7 +15,6 @@ import {
     FunctionStateMutability,
     FunctionVisibility,
     ModifierDefinition,
-    PragmaDirective,
     SourceUnit,
     StructDefinition,
     TupleExpression,
@@ -307,46 +306,29 @@ export function enumToIntType(decl: EnumDefinition): IntType {
  * correct ABIEncoder version for these units. If mulitple incompatible explicit pragmas are found,
  * throw an error.
  */
-export function getABIEncoderVersion(
-    units: SourceUnit[],
-    compilerVersion: string
-): ABIEncoderVersion {
-    const explicitEncoderVersions = new Set<ABIEncoderVersion>();
+export function getABIEncoderVersion(unit: SourceUnit, compilerVersion: string): ABIEncoderVersion {
+    for (const directive of unit.vPragmaDirectives) {
+        if (directive.vIdentifier === "abicoder") {
+            const raw = directive.literals[1];
 
-    for (const unit of units) {
-        for (const nd of unit.getChildrenByType(PragmaDirective)) {
-            if (
-                nd.vIdentifier === "experimental" &&
-                nd.literals.length === 2 &&
-                ABIEncoderVersions.has(nd.literals[1])
-            ) {
-                explicitEncoderVersions.add(nd.literals[1] as ABIEncoderVersion);
+            if (raw === "v1") {
+                return ABIEncoderVersion.V1;
             }
 
-            if (nd.vIdentifier === "abicoder") {
-                let version: ABIEncoderVersion;
-                const rawVer = nd.literals[1];
-
-                if (rawVer === "v1") {
-                    version = ABIEncoderVersion.V1;
-                } else if (rawVer === "v2") {
-                    version = ABIEncoderVersion.V2;
-                } else {
-                    throw new Error(`Unknown abicoder pragma version ${rawVer}`);
-                }
-
-                explicitEncoderVersions.add(version);
+            if (raw === "v2") {
+                return ABIEncoderVersion.V2;
             }
+
+            throw new Error(`Unknown abicoder pragma version ${raw}`);
         }
-    }
 
-    assert(
-        explicitEncoderVersions.size < 2,
-        `Multiple encoder versions found: ${[...explicitEncoderVersions].join(", ")}`
-    );
-
-    if (explicitEncoderVersions.size === 1) {
-        return [...explicitEncoderVersions][0];
+        if (
+            directive.vIdentifier === "experimental" &&
+            directive.literals.length === 2 &&
+            ABIEncoderVersions.has(directive.literals[1])
+        ) {
+            return directive.literals[1] as ABIEncoderVersion;
+        }
     }
 
     return lt(compilerVersion, "0.8.0") ? ABIEncoderVersion.V1 : ABIEncoderVersion.V2;

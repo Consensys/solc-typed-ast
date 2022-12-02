@@ -193,7 +193,10 @@ function markFirstArgImplicit<T extends FunctionType | FunctionLikeSetType<Funct
 }
 
 export class InferType {
-    constructor(public readonly version: string) {}
+    constructor(
+        public readonly version: string,
+        public readonly encoderVersion: ABIEncoderVersion
+    ) {}
 
     /**
      * Infer the type of the assignment `node`. (In solidity assignments are expressions)
@@ -878,7 +881,9 @@ export class InferType {
 
         if (innerT instanceof UserDefinedType && innerT.definition instanceof ContractDefinition) {
             const resTemplateT =
-                innerT.definition.kind === ContractKind.Interface ? typeInterface : typeContract;
+                innerT.definition.kind === ContractKind.Interface || innerT.definition.abstract
+                    ? typeInterface
+                    : typeContract;
 
             return applySubstitution(resTemplateT, new Map([["T", innerT]]));
         }
@@ -2230,7 +2235,7 @@ export class InferType {
 
     /**
      * Convert an internal TypeNode to the external TypeNode that would correspond to it
-     * after ABI-encoding with encoder version `encoderVersion`. Follows the following rules:
+     * after ABI-encoding with encoder version. Follows the following rules:
      *
      * 1. Contract definitions turned to address.
      * 2. Enum definitions turned to uint of minimal fitting size.
@@ -2239,24 +2244,20 @@ export class InferType {
      *
      * @see https://docs.soliditylang.org/en/latest/abi-spec.html
      */
-    toABIEncodedType(
-        type: TypeNode,
-        encoderVersion: ABIEncoderVersion,
-        normalizePointers = false
-    ): TypeNode {
+    toABIEncodedType(type: TypeNode, normalizePointers = false): TypeNode {
         if (type instanceof MappingType) {
             throw new Error("Cannot abi-encode mapping types");
         }
 
         if (type instanceof ArrayType) {
             return new ArrayType(
-                this.toABIEncodedType(type.elementT, encoderVersion, normalizePointers),
+                this.toABIEncodedType(type.elementT, normalizePointers),
                 type.size
             );
         }
 
         if (type instanceof PointerType) {
-            const toT = this.toABIEncodedType(type.to, encoderVersion, normalizePointers);
+            const toT = this.toABIEncodedType(type.to, normalizePointers);
 
             return new PointerType(toT, normalizePointers ? DataLocation.Memory : type.location);
         }
@@ -2275,19 +2276,12 @@ export class InferType {
             }
 
             if (type.definition instanceof StructDefinition) {
-                assert(
-                    encoderVersion !== ABIEncoderVersion.V1,
-                    "Getters of struct return type are not supported by ABI encoder v1"
-                );
-
                 const fieldTs = type.definition.vMembers.map((fieldT) =>
                     this.variableDeclarationToTypeNode(fieldT)
                 );
 
                 return new TupleType(
-                    fieldTs.map((fieldT) =>
-                        this.toABIEncodedType(fieldT, encoderVersion, normalizePointers)
-                    )
+                    fieldTs.map((fieldT) => this.toABIEncodedType(fieldT, normalizePointers))
                 );
             }
         }
@@ -2306,8 +2300,7 @@ export class InferType {
             | EventDefinition
             | ErrorDefinition
             | ModifierDefinition
-            | VariableDeclaration,
-        encoderVersion: ABIEncoderVersion
+            | VariableDeclaration
     ): string {
         let args: string[];
 
@@ -2315,15 +2308,15 @@ export class InferType {
             const [getterArgs] = this.getterArgsAndReturn(node);
 
             args = getterArgs.map((type) =>
-                abiTypeToCanonicalName(this.toABIEncodedType(type, encoderVersion, true))
+                abiTypeToCanonicalName(this.toABIEncodedType(type, true))
             );
         } else {
             if (node instanceof FunctionDefinition && (node.name === "" || node.isConstructor)) {
                 return "";
             }
 
-            // Signatures are computed differently depending on whether this is a library function
-            // or a contract method
+            // Signatures are computed differently depending on
+            // whether this is a library function or a contract method
             if (
                 node.vScope instanceof ContractDefinition &&
                 node.vScope.kind === ContractKind.Library
@@ -2336,7 +2329,7 @@ export class InferType {
             } else {
                 args = node.vParameters.vParameters.map((arg) => {
                     const type = this.variableDeclarationToTypeNode(arg);
-                    const abiType = this.toABIEncodedType(type, encoderVersion);
+                    const abiType = this.toABIEncodedType(type);
 
                     return abiTypeToCanonicalName(generalizeType(abiType)[0]);
                 });
@@ -2359,11 +2352,10 @@ export class InferType {
             | EventDefinition
             | ErrorDefinition
             | ModifierDefinition
-            | VariableDeclaration,
-        encoderVersion: ABIEncoderVersion
+            | VariableDeclaration
     ): string {
         if (node instanceof FunctionDefinition) {
-            const signature = this.signature(node, encoderVersion);
+            const signature = this.signature(node);
 
             return signature ? encodeFuncSignature(signature) : "";
         }
@@ -2373,20 +2365,17 @@ export class InferType {
             node instanceof ErrorDefinition ||
             node instanceof ModifierDefinition
         ) {
-            return encodeFuncSignature(this.signature(node, encoderVersion));
+            return encodeFuncSignature(this.signature(node));
         }
 
         if (node instanceof EventDefinition) {
-            return encodeEventSignature(this.signature(node, encoderVersion));
+            return encodeEventSignature(this.signature(node));
         }
 
         throw new Error(`Unable to compute signature hash for node ${pp(node)}`);
     }
 
-    interfaceId(
-        contract: ContractDefinition,
-        encoderVersion: ABIEncoderVersion
-    ): string | undefined {
+    interfaceId(contract: ContractDefinition): string | undefined {
         if (
             contract.kind === ContractKind.Interface ||
             (contract.kind === ContractKind.Contract && contract.abstract)
@@ -2394,7 +2383,7 @@ export class InferType {
             const selectors: string[] = [];
 
             for (const fn of contract.vFunctions) {
-                const hash = this.signatureHash(fn, encoderVersion);
+                const hash = this.signatureHash(fn);
 
                 if (hash) {
                     selectors.push(hash);
@@ -2403,7 +2392,7 @@ export class InferType {
 
             for (const v of contract.vStateVariables) {
                 if (v.visibility === StateVariableVisibility.Public) {
-                    selectors.push(this.signatureHash(v, encoderVersion));
+                    selectors.push(this.signatureHash(v));
                 }
             }
 

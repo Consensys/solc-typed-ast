@@ -8,6 +8,7 @@ import {
     EmitStatement,
     EventDefinition,
     FunctionDefinition,
+    getABIEncoderVersion,
     InferType,
     ModifierDefinition,
     resolve,
@@ -23,10 +24,14 @@ describe("Dynamic dispatch AST utils", async () => {
     const reader = new ASTReader();
     const { data } = await compileJson("test/samples/solidity/dispatch_05.json", "auto");
 
+    const compilerVersion = CompilerVersions05[CompilerVersions05.length - 1];
     const [mainUnit] = reader.read(data);
     const [a, b, c, d, i] = mainUnit.vContracts;
 
-    const inference = new InferType(CompilerVersions05[CompilerVersions05.length - 1]);
+    const inference = new InferType(
+        compilerVersion,
+        getABIEncoderVersion(mainUnit, compilerVersion)
+    );
 
     describe("resolve()", () => {
         const cases: Array<
