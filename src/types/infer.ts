@@ -2081,16 +2081,6 @@ export class InferType {
                     continue;
                 }
 
-                if (
-                    memberT instanceof UserDefinedTypeName &&
-                    memberT.vReferencedDeclaration instanceof StructDefinition
-                ) {
-                    assert(
-                        this.encoderVersion !== ABIEncoderVersion.V1,
-                        "Nested structs in getter return type are not supported by ABI encoder v1"
-                    );
-                }
-
                 elements.push(this.typeNameToSpecializedTypeNode(memberT, DataLocation.Memory));
             }
 
@@ -2245,7 +2235,7 @@ export class InferType {
 
     /**
      * Convert an internal TypeNode to the external TypeNode that would correspond to it
-     * after ABI-encoding with encoder version `encoderVersion`. Follows the following rules:
+     * after ABI-encoding with encoder version. Follows the following rules:
      *
      * 1. Contract definitions turned to address.
      * 2. Enum definitions turned to uint of minimal fitting size.
@@ -2286,11 +2276,6 @@ export class InferType {
             }
 
             if (type.definition instanceof StructDefinition) {
-                assert(
-                    this.encoderVersion !== ABIEncoderVersion.V1,
-                    "Getters of struct return type are not supported by ABI encoder v1"
-                );
-
                 const fieldTs = type.definition.vMembers.map((fieldT) =>
                     this.variableDeclarationToTypeNode(fieldT)
                 );
@@ -2330,8 +2315,8 @@ export class InferType {
                 return "";
             }
 
-            // Signatures are computed differently depending on whether this is a library function
-            // or a contract method
+            // Signatures are computed differently depending on
+            // whether this is a library function or a contract method
             if (
                 node.vScope instanceof ContractDefinition &&
                 node.vScope.kind === ContractKind.Library

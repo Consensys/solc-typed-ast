@@ -40,3 +40,33 @@ contract C {
         L.f(caller, v);
     }
 }
+
+/**
+ * Note that structs can not participate as mapping keys,
+ * therefore can not be subject of public variable getters arguments.
+ * They can only appear as return types.
+ */
+contract D {
+    struct S0 {
+        address s;
+    }
+
+    struct S1 {
+        uint x;
+        uint y;
+        S0 p;
+    }
+
+    struct S2 {
+        bool b;
+        S1 s;
+        address a;
+    }
+
+    S2 public s2;
+    S1 public s1;
+    S0 public s0;
+
+    function fnA(S2 memory _s2, S1 memory _s1, S0 memory _s0) public returns (S2 memory, S1 memory, S0 memory) {}
+    function fnB(S2[] memory _s2, S1[] memory _s1, S0[] memory _s0) public returns (S2[] memory, S1[] memory, S0[] memory) {}
+}
