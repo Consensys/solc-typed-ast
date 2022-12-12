@@ -17,6 +17,7 @@ SourceUnit #1510
     <getter> vUserDefinedValueTypes: Array(3) [ UserDefinedValueTypeDefinition #1077, UserDefinedValueTypeDefinition #1079, UserDefinedValueTypeDefinition #1338 ]
     <getter> vUsingForDirectives: Array(2) [ UsingForDirective #1342, UsingForDirective #1348 ]
     <getter> vExportedSymbols: Map(26) { "A_0813" -> ContractDefinition #1447, "Builtins_0811" -> ContractDefinition #1273, "CatchPanic" -> ContractDefinition #904, "EmitsIdentifierPath" -> ContractDefinition #826, "EnumABC" -> EnumDefinition #773, "EnumTypeMinMax_088" -> ContractDefinition #1203, "ExternalFnSelectorAndAddress_0810" -> ContractDefinition #1234, "Features082" -> ContractDefinition #989, "Features084" -> ContractDefinition #1058, "Features087" -> ContractDefinition #1075, "Features_0812" -> ContractDefinition #1336, "Features_0813" -> ContractDefinition #1454, "Features_0815" -> ContractDefinition #1509, "InterfaceWithUDTV_088" -> ContractDefinition #1178, "LI" -> ImportDirective #769, "LibErrors084" -> ContractDefinition #1000, "LibWithUDVT_088" -> ContractDefinition #1167, "Price" -> UserDefinedValueTypeDefinition #1077, "Quantity" -> UserDefinedValueTypeDefinition #1079, "RestrictedNumber_0813" -> UserDefinedValueTypeDefinition #1338, "UncheckedMathExample" -> ContractDefinition #790, "UnitLevelError084" -> ErrorDefinition #994, "UsesNewAddressMembers" -> ContractDefinition #847, "createRestrictedNumber_0813" -> FunctionDefinition #1418, "minusOne" -> FunctionDefinition #1390, "plusOne" -> FunctionDefinition #1369 }
+    <getter> abiEncoderVersion: "ABIEncoderV2"
     <getter> children: Array(30) [ PragmaDirective #767, PragmaDirective #768, ImportDirective #769, EnumDefinition #773, ContractDefinition #790, ContractDefinition #826, ContractDefinition #847, ContractDefinition #904, ContractDefinition #989, ErrorDefinition #994, ContractDefinition #1000, ContractDefinition #1058, ContractDefinition #1075, UserDefinedValueTypeDefinition #1077, UserDefinedValueTypeDefinition #1079, ContractDefinition #1167, ContractDefinition #1178, ContractDefinition #1203, ContractDefinition #1234, ContractDefinition #1273, ContractDefinition #1336, UserDefinedValueTypeDefinition #1338, UsingForDirective #1342, UsingForDirective #1348, FunctionDefinition #1369, FunctionDefinition #1390, FunctionDefinition #1418, ContractDefinition #1447, ContractDefinition #1454, ContractDefinition #1509 ]
     <getter> type: "SourceUnit"
     <getter> firstChild: PragmaDirective #767
@@ -15037,6 +15038,7 @@ SourceUnit #1526
     <getter> vUserDefinedValueTypes: Array(0)
     <getter> vUsingForDirectives: Array(0)
     <getter> vExportedSymbols: Map(2) { "SomeContract" -> ContractDefinition #1524, "SomeLib" -> ContractDefinition #1525 }
+    <getter> abiEncoderVersion: "ABIEncoderV2"
     <getter> children: Array(4) [ PragmaDirective #1511, PragmaDirective #1512, ContractDefinition #1524, ContractDefinition #1525 ]
     <getter> type: "SourceUnit"
     <getter> firstChild: PragmaDirective #1511

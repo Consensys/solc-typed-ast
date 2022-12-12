@@ -23,7 +23,6 @@ import {
     EventDefinition,
     FunctionDefinition,
     FunctionVisibility,
-    getABIEncoderVersion,
     InferType,
     isExact,
     LatestCompilerVersion,
@@ -315,7 +314,7 @@ function error(message: string): never {
     if (options.tree) {
         const INDENT = "|   ";
 
-        const writer = (unit: SourceUnit, inference: InferType, node: ASTNode) => {
+        const writer = (inference: InferType, node: ASTNode) => {
             const level = node.getParents().length;
             const indent = INDENT.repeat(level);
 
@@ -373,12 +372,10 @@ function error(message: string): never {
         };
 
         const compilerVersion = result.compilerVersion || LatestCompilerVersion;
+        const inference = new InferType(compilerVersion);
 
         for (const unit of units) {
-            const encoderVersion = getABIEncoderVersion(unit, compilerVersion);
-            const inference = new InferType(compilerVersion, encoderVersion);
-
-            unit.walk(writer.bind(undefined, unit, inference));
+            unit.walk(writer.bind(undefined, inference));
 
             console.log();
         }

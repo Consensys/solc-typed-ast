@@ -17,6 +17,7 @@ SourceUnit #146
     <getter> vUserDefinedValueTypes: Array(0)
     <getter> vUsingForDirectives: Array(0)
     <getter> vExportedSymbols: Map(3) { "A" -> ContractDefinition #90, "B" -> ContractDefinition #100, "C" -> ContractDefinition #145 }
+    <getter> abiEncoderVersion: undefined
     <getter> children: Array(3) [ ContractDefinition #90, ContractDefinition #100, ContractDefinition #145 ]
     <getter> type: "SourceUnit"
     <getter> firstChild: ContractDefinition #90

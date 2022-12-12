@@ -8,7 +8,6 @@ import {
     EmitStatement,
     EventDefinition,
     FunctionDefinition,
-    getABIEncoderVersion,
     InferType,
     ModifierDefinition,
     resolve,
@@ -28,10 +27,7 @@ describe("Dynamic dispatch AST utils", async () => {
     const [mainUnit] = reader.read(data);
     const [a, b, c, d, i] = mainUnit.vContracts;
 
-    const inference = new InferType(
-        compilerVersion,
-        getABIEncoderVersion(mainUnit, compilerVersion)
-    );
+    const inference = new InferType(compilerVersion);
 
     describe("resolve()", () => {
         const cases: Array<

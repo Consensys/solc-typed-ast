@@ -22,7 +22,7 @@ import {
 } from "../ast";
 import { assert, eq, forAll, forAny } from "../misc";
 import { types } from "../types";
-import { ABIEncoderVersion, ABIEncoderVersions } from "./abi";
+import { ABIEncoderVersion } from "./abi";
 import {
     AddressType,
     ArrayType,
@@ -301,34 +301,11 @@ export function enumToIntType(decl: EnumDefinition): IntType {
     return new IntType(size, false);
 }
 
-/**
- * Given a set of compiled units and their corresponding compiler version, determine the
- * correct ABIEncoder version for these units. If mulitple incompatible explicit pragmas are found,
- * throw an error.
- */
 export function getABIEncoderVersion(unit: SourceUnit, compilerVersion: string): ABIEncoderVersion {
-    for (const directive of unit.vPragmaDirectives) {
-        if (directive.vIdentifier === "abicoder") {
-            const raw = directive.literals[1];
+    const predefined = unit.abiEncoderVersion;
 
-            if (raw === "v1") {
-                return ABIEncoderVersion.V1;
-            }
-
-            if (raw === "v2") {
-                return ABIEncoderVersion.V2;
-            }
-
-            throw new Error(`Unknown abicoder pragma version ${raw}`);
-        }
-
-        if (
-            directive.vIdentifier === "experimental" &&
-            directive.literals.length === 2 &&
-            ABIEncoderVersions.has(directive.literals[1])
-        ) {
-            return directive.literals[1] as ABIEncoderVersion;
-        }
+    if (predefined) {
+        return predefined;
     }
 
     return lt(compilerVersion, "0.8.0") ? ABIEncoderVersion.V1 : ABIEncoderVersion.V2;

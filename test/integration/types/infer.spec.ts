@@ -46,7 +46,6 @@ import {
     FunctionLikeSetType,
     FunctionType,
     generalizeType,
-    getABIEncoderVersion,
     ImportRefType,
     InferType,
     IntLiteralType,
@@ -138,6 +137,8 @@ export const samples: string[] = [
     "test/samples/solidity/builtins_0426.sol",
     "test/samples/solidity/builtins_0426.sol",
     "test/samples/solidity/builtins_0816.sol",
+    "test/samples/solidity/different_abi_encoders/v1_imports_v2/v1.sol",
+    "test/samples/solidity/different_abi_encoders/v2_imports_v1/v2.sol",
     "test/samples/solidity/type_inference/sample00.sol",
     "test/samples/solidity/type_inference/sample01.sol",
     "test/samples/solidity/type_inference/sample02.sol",
@@ -694,15 +695,12 @@ describe("Type inference for expressions", () => {
 
             const astKind = lt(compilerVersion, "0.5.0") ? ASTKind.Legacy : ASTKind.Modern;
 
+            const inference = new InferType(compilerVersion);
+
             const reader = new ASTReader();
             const sourceUnits = reader.read(data, astKind);
 
             for (const unit of sourceUnits) {
-                const inference = new InferType(
-                    compilerVersion,
-                    getABIEncoderVersion(unit, compilerVersion)
-                );
-
                 for (const expr of unit.getChildrenBySelector<Expression>(
                     (child) => child instanceof Expression
                 )) {

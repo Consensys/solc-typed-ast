@@ -29,6 +29,32 @@ const cases: Array<[string, Array<[CompilerKind, string]>]> = [
         ]
     ],
     [
+        "./test/samples/solidity/different_abi_encoders/v1_imports_v2/v1.sol",
+        [
+            [
+                CompilerKind.WASM,
+                "./test/samples/solidity/different_abi_encoders/v1_imports_v2/v1.nodes.wasm.txt"
+            ],
+            [
+                CompilerKind.Native,
+                "./test/samples/solidity/different_abi_encoders/v1_imports_v2/v1.nodes.native.txt"
+            ]
+        ]
+    ],
+    [
+        "./test/samples/solidity/different_abi_encoders/v2_imports_v1/v2.sol",
+        [
+            [
+                CompilerKind.WASM,
+                "./test/samples/solidity/different_abi_encoders/v2_imports_v1/v2.nodes.wasm.txt"
+            ],
+            [
+                CompilerKind.Native,
+                "./test/samples/solidity/different_abi_encoders/v2_imports_v1/v2.nodes.native.txt"
+            ]
+        ]
+    ],
+    [
         "./test/samples/solidity/latest_08.sol",
         [
             [CompilerKind.WASM, "./test/samples/solidity/latest_08.nodes.wasm.txt"],
