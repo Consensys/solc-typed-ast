@@ -62,7 +62,7 @@ import {
     UserDefinedType
 } from "../../../src/types";
 import { ModuleType } from "../../utils/typeStrings/ast/module_type";
-import { parse, SyntaxError } from "../../utils/typeStrings/typeString_parser";
+import { parse, PeggySyntaxError } from "../../utils/typeStrings/typeString_parser";
 
 export const samples: string[] = [
     "./test/samples/solidity/compile_04.sol",
@@ -734,7 +734,7 @@ describe("Type inference for expressions", () => {
                             inference
                         });
                     } catch (e) {
-                        if (e instanceof SyntaxError) {
+                        if (e instanceof PeggySyntaxError) {
                             // Failed parsing. Skip
                             continue;
                         }
