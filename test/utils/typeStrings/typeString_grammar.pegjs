@@ -210,8 +210,14 @@ MaybeNegNumber =
         return sign === null ? num : -num;
     }
 
+InaccessibleDynamicType =
+    "inaccessible dynamic type" {
+        return new InaccessibleDynamicType();
+    }
+
 SimpleType =
     BoolType
+    / InaccessibleDynamicType
     / AddressType
     / IntLiteralType
     / RationalLiteralType
@@ -233,7 +239,7 @@ StringLiteralType =
         / HexLiteral
         / StringLiteralErrorMsg
     ) {
-        return new StringLiteralType(literal[0], literal[1]);
+        return new StringLiteralType(literal[1]);
     }
 
 IntLiteralType =
@@ -284,7 +290,7 @@ UserDefinedType =
         return makeUserDefinedType(
             name,
             StructDefinition,
-            options.version,
+            options.inference,
             options.ctx
         );
     }
@@ -292,7 +298,7 @@ UserDefinedType =
         return makeUserDefinedType(
             name,
             EnumDefinition,
-            options.version,
+            options.inference,
             options.ctx
         );
     }
@@ -300,7 +306,7 @@ UserDefinedType =
         return makeUserDefinedType(
             name,
             ContractDefinition,
-            options.version,
+            options.inference,
             options.ctx
         );
     }
@@ -308,14 +314,14 @@ UserDefinedType =
         return makeUserDefinedType(
             name,
             ContractDefinition,
-            options.version,
+            options.inference,
             options.ctx
         );
     } / name: FQName {
         return makeUserDefinedType(
             name,
             UserDefinedValueTypeDefinition,
-            options.version,
+            options.inference,
             options.ctx
         );
     }

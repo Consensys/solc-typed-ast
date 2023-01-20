@@ -12,6 +12,12 @@ export class FunctionType extends FunctionLikeType {
     public readonly returns: TypeNode[];
     public visibility: FunctionVisibility;
     public readonly mutability: FunctionStateMutability;
+    /**
+     * If this function type corresponds to a library function
+     * bound to a type with a `using for` directive, the first
+     * argument is implicitly the object on which the function is invoked.
+     */
+    public readonly implicitFirstArg: boolean;
 
     constructor(
         name: string | undefined,
@@ -19,6 +25,7 @@ export class FunctionType extends FunctionLikeType {
         returns: TypeNode[],
         visibility: FunctionVisibility,
         mutability: FunctionStateMutability,
+        implicitFirstArg = false,
         src?: Range
     ) {
         super(name, parameters, src);
@@ -26,6 +33,7 @@ export class FunctionType extends FunctionLikeType {
         this.returns = returns;
         this.visibility = visibility;
         this.mutability = mutability;
+        this.implicitFirstArg = implicitFirstArg;
     }
 
     getChildren(): Node[] {

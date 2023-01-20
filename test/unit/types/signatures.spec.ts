@@ -1,6 +1,7 @@
 import expect from "expect";
 import { lt } from "semver";
 import {
+    ABIEncoderVersion,
     AnyResolvable,
     assert,
     ASTKind,
@@ -13,17 +14,15 @@ import {
     ErrorDefinition,
     EventDefinition,
     FunctionDefinition,
-    FunctionStateMutability,
+    FunctionLikeType,
     FunctionType,
-    FunctionVisibility,
     generalizeType,
+    InferType,
     PossibleCompilerKinds,
     resolveAny,
     SourceUnit,
-    VariableDeclaration,
-    variableDeclarationToTypeNode
+    VariableDeclaration
 } from "../../../src";
-import { ABIEncoderVersion } from "../../../src/types/abi";
 
 const samples: Array<[string, string, ABIEncoderVersion]> = [
     [
@@ -50,14 +49,14 @@ function resolveOne(
     name: string,
     contractName: string,
     unit: SourceUnit,
-    compilerVersion: string
+    inference: InferType
 ): AnyResolvable | undefined {
-    const contracts = [...resolveAny(contractName, unit, compilerVersion, true)];
+    const contracts = [...resolveAny(contractName, unit, inference, true)];
 
     assert(contracts.length === 1, `Contract ${contractName} not found in ${unit.sourceEntryKey}`);
 
     const contract = contracts[0] as ContractDefinition;
-    const defs = [...resolveAny(name, contract, compilerVersion, true)];
+    const defs = [...resolveAny(name, contract, inference, true)];
 
     if (defs.length === 0) {
         return undefined;
@@ -100,6 +99,8 @@ describe("Check canonical signatures are generated correctly", () => {
                 const sourceUnits = reader.read(data, ASTKind.Any);
                 const unit = sourceUnits[0];
 
+                const inference = new InferType(compilerVersion, encoderVer);
+
                 const runTestsHelper = (
                     contractName: string,
                     functionHashes: any,
@@ -107,7 +108,7 @@ describe("Check canonical signatures are generated correctly", () => {
                 ) => {
                     for (const expectedSignature in functionHashes) {
                         const defName = expectedSignature.slice(0, expectedSignature.indexOf("("));
-                        const def = resolveOne(defName, contractName, unit, compilerVersion);
+                        const def = resolveOne(defName, contractName, unit, inference);
 
                         if (def === undefined) {
                             continue;
@@ -115,10 +116,11 @@ describe("Check canonical signatures are generated correctly", () => {
 
                         let signature: string;
 
-                        if (def instanceof VariableDeclaration) {
-                            signature = def.getterCanonicalSignature(encoderVer);
-                        } else if (def instanceof FunctionDefinition) {
-                            signature = def.canonicalSignature(encoderVer);
+                        if (
+                            def instanceof VariableDeclaration ||
+                            def instanceof FunctionDefinition
+                        ) {
+                            signature = inference.signature(def);
                         } else {
                             throw new Error(`NYI: ${def.print()}`);
                         }
@@ -141,42 +143,22 @@ describe("Check canonical signatures are generated correctly", () => {
                             continue;
                         }
 
-                        const def = resolveOne(abiEntry.name, contractName, unit, compilerVersion);
+                        const def = resolveOne(abiEntry.name, contractName, unit, inference);
 
                         if (def === undefined) {
                             continue;
                         }
 
-                        let funT: FunctionType;
+                        let funT: FunctionType | FunctionLikeType;
 
                         if (def instanceof VariableDeclaration) {
-                            funT = def.getterFunType();
+                            funT = inference.getterFunType(def);
                         } else if (def instanceof FunctionDefinition) {
-                            funT = new FunctionType(
-                                def.name,
-                                def.vParameters.vParameters.map(variableDeclarationToTypeNode),
-                                def.vReturnParameters.vParameters.map(
-                                    variableDeclarationToTypeNode
-                                ),
-                                def.visibility,
-                                def.stateMutability
-                            );
+                            funT = inference.funDefToType(def);
                         } else if (def instanceof EventDefinition) {
-                            funT = new FunctionType(
-                                def.name,
-                                def.vParameters.vParameters.map(variableDeclarationToTypeNode),
-                                [],
-                                FunctionVisibility.Default,
-                                FunctionStateMutability.View
-                            );
+                            funT = inference.eventDefToType(def);
                         } else if (def instanceof ErrorDefinition) {
-                            funT = new FunctionType(
-                                def.name,
-                                def.vParameters.vParameters.map(variableDeclarationToTypeNode),
-                                [],
-                                FunctionVisibility.Default,
-                                FunctionStateMutability.View
-                            );
+                            funT = inference.errDefToType(def);
                         } else {
                             throw new Error(`NYI: ${def.print()}`);
                         }
@@ -190,6 +172,13 @@ describe("Check canonical signatures are generated correctly", () => {
                         }
 
                         if (abiEntry.type === "function") {
+                            assert(
+                                funT instanceof FunctionType,
+                                "Expected function type, got {0} for {1}",
+                                funT,
+                                def
+                            );
+
                             expect(funT.returns.length).toEqual(abiEntry.outputs.length);
 
                             for (let i = 0; i < funT.returns.length; i++) {

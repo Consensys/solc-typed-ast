@@ -11,6 +11,16 @@ export function forAll<T>(iterable: Iterable<T>, cb: (v: T) => boolean): boolean
     return true;
 }
 
+export function forAny<T>(iterable: Iterable<T>, cb: (v: T) => boolean): boolean {
+    for (const el of iterable) {
+        if (cb(el)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 export function assert(
     condition: boolean,
     message: string,

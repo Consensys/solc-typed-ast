@@ -4,15 +4,11 @@ import { TypeNode } from "./type";
 export type StringLiteralKind = "string" | "unicodeString" | "hexString";
 
 export class StringLiteralType extends TypeNode {
-    // TODO: Its awkward to include the expression value in the type.
-    // Should remove below fields. First check if consumers use these
-    public readonly literal: string;
     public readonly kind: StringLiteralKind;
 
-    constructor(literal: string, kind: StringLiteralKind, src?: Range) {
+    constructor(kind: StringLiteralKind, src?: Range) {
         super(src);
 
-        this.literal = literal;
         this.kind = kind;
     }
 
@@ -21,10 +17,10 @@ export class StringLiteralType extends TypeNode {
     }
 
     pp(): string {
-        return `literal_string ${this.isHex ? "hex" : ""}"${this.literal}"`;
+        return this.isHex ? `literal_hex_string` : `literal_string`;
     }
 
     getFields(): any[] {
-        return [this.literal, this.kind];
+        return [this.kind];
     }
 }

@@ -1,38 +1,36 @@
 import Decimal from "decimal.js";
-import { lt, satisfies } from "semver";
+import { gte, lt, satisfies } from "semver";
 import {
-    ArrayTypeName,
     ContractDefinition,
     DataLocation,
-    ElementaryTypeName,
     EnumDefinition,
     ErrorDefinition,
     EventDefinition,
+    Expression,
+    ExternalReferenceType,
+    FunctionCall,
+    FunctionCallKind,
     FunctionDefinition,
     FunctionKind,
     FunctionStateMutability,
-    FunctionTypeName,
     FunctionVisibility,
-    Mapping,
     ModifierDefinition,
-    ParameterList,
-    PragmaDirective,
     SourceUnit,
     StructDefinition,
-    TypeName,
-    UserDefinedTypeName,
-    UserDefinedValueTypeDefinition,
-    VariableDeclaration,
-    VariableDeclarationStatement
+    TupleExpression,
+    VariableDeclaration
 } from "../ast";
-import { assert, eq, forAll, pp } from "../misc";
+import { assert, eq, forAll, forAny } from "../misc";
+import { types } from "../types";
 import { ABIEncoderVersion, ABIEncoderVersions } from "./abi";
 import {
     AddressType,
     ArrayType,
-    BoolType,
+    BuiltinFunctionType,
     BytesType,
     FixedBytesType,
+    FunctionLikeSetType,
+    FunctionSetType,
     FunctionType,
     IntLiteralType,
     IntType,
@@ -49,15 +47,114 @@ import {
     UserDefinition
 } from "./ast";
 import { VersionDependentType } from "./builtins";
-import { evalConstantExpr } from "./eval_const";
+
+export const SUBDENOMINATION_MULTIPLIERS = new Map<string, Decimal>([
+    ["seconds", new Decimal(1)],
+    ["minutes", new Decimal(60)],
+    ["hours", new Decimal(3600)],
+    ["days", new Decimal(24 * 3600)],
+    ["weeks", new Decimal(7 * 24 * 3600)],
+    ["years", new Decimal(365 * 24 * 3600)],
+    ["wei", new Decimal(1)],
+    ["gwei", new Decimal(10 ** 9)],
+    ["szabo", new Decimal(10 ** 12)],
+    ["finney", new Decimal(10).toPower(15)],
+    ["ether", new Decimal(10).toPower(18)]
+]);
+
+export const CALL_BUILTINS = ["call", "callcode", "staticcall", "delegatecall", "transfer", "send"];
+
+export const BINARY_OPERATOR_GROUPS = {
+    Arithmetic: ["+", "-", "*", "/", "%", "**"],
+    Bitwise: ["<<", ">>", "&", "|", "^"],
+    Comparison: ["<", ">", "<=", ">="],
+    Equality: ["==", "!="],
+    Logical: ["&&", "||"]
+};
 
 export function getTypeForCompilerVersion(
-    typing: VersionDependentType,
+    typing: TypeNode | VersionDependentType,
     compilerVersion: string
 ): TypeNode | undefined {
+    if (typing instanceof TypeNode) {
+        return typing;
+    }
+
     const [type, version] = typing;
 
     return satisfies(compilerVersion, version) ? type : undefined;
+}
+
+/**
+ * Given 2 function pointer's visibilities infer a common visibility thats compatible with both.
+ * This is used to infer the visibility of the expression `flag ? fun1 : fun2` where fun1 and fun2 are
+ * function pointers.
+ */
+export function inferCommonVisiblity(
+    a: FunctionVisibility,
+    b: FunctionVisibility
+): FunctionVisibility | undefined {
+    const visiblityOrder = [
+        FunctionVisibility.External,
+        FunctionVisibility.Public,
+        FunctionVisibility.Internal,
+        FunctionVisibility.Default,
+        FunctionVisibility.Private
+    ];
+
+    if (a == b) {
+        return a;
+    }
+
+    if (visiblityOrder.indexOf(a) > visiblityOrder.indexOf(b)) {
+        [b, a] = [a, b];
+    }
+
+    if (a === FunctionVisibility.External) {
+        return b == FunctionVisibility.Public ? FunctionVisibility.External : undefined;
+    }
+
+    return FunctionVisibility.Internal;
+}
+
+/**
+ * Given two `FunctionType`s/`BuiltinFunctionType`s/`FunctionSetType`s `a` and `b`
+ * return a `FunctionSetType` that includes everything in `a` and `b`.
+ */
+export function mergeFunTypes(
+    a: FunctionType | BuiltinFunctionType | FunctionSetType,
+    b: FunctionType | BuiltinFunctionType | FunctionSetType
+): FunctionSetType {
+    const funs: Array<FunctionType | BuiltinFunctionType> = [];
+
+    if (a instanceof FunctionType || a instanceof BuiltinFunctionType) {
+        funs.push(a);
+    } else {
+        funs.push(...a.defs);
+    }
+
+    if (b instanceof FunctionType || b instanceof BuiltinFunctionType) {
+        funs.push(b);
+    } else {
+        funs.push(...b.defs);
+    }
+
+    return new FunctionLikeSetType(funs);
+}
+
+/**
+ * Strip any singleton parens from expressions. I.e. given (((e))) returns e.
+ */
+export function stripSingletonParens(e: Expression): Expression {
+    while (e instanceof TupleExpression && e.vOriginalComponents.length === 1) {
+        const comp = e.vOriginalComponents[0];
+
+        assert(comp !== null, 'Unexpected "null" component in tuple with single element');
+
+        e = comp;
+    }
+
+    return e;
 }
 
 /**
@@ -150,19 +247,6 @@ export function generalizeType(type: TypeNode): [TypeNode, DataLocation | undefi
         return [new MappingType(genearlKeyT, generalValueT), DataLocation.Storage];
     }
 
-    if (type instanceof FunctionType) {
-        return [
-            new FunctionType(
-                type.name,
-                type.parameters.map((paramT) => generalizeType(paramT)[0]),
-                type.returns.map((retT) => generalizeType(retT)[0]),
-                type.visibility,
-                type.mutability
-            ),
-            undefined
-        ];
-    }
-
     if (type instanceof TypeNameType) {
         return generalizeType(type.type);
     }
@@ -186,174 +270,13 @@ export function getFQDefName(def: NamedDefinition): string {
     return def.vScope instanceof ContractDefinition ? `${def.vScope.name}.${def.name}` : def.name;
 }
 
-/**
- * Convert a given ast `TypeName` into a `TypeNode`. This produces "general
- * type patterns" without any specific storage information.
- *
- * @param astT - original AST `TypeName`
- * @returns equivalent `TypeNode`.
- */
-export function typeNameToTypeNode(astT: TypeName): TypeNode {
-    if (astT instanceof ElementaryTypeName) {
-        const name = astT.name.trim();
-
-        if (name === "bool") {
-            return new BoolType();
-        }
-
-        const rxAddress = /^address *(payable)?$/;
-
-        if (rxAddress.test(name)) {
-            return new AddressType(astT.stateMutability === "payable");
-        }
-
-        const rxInt = /^(u?)int([0-9]*)$/;
-
-        let m = name.match(rxInt);
-
-        if (m !== null) {
-            const signed = m[1] !== "u";
-            const nBits = m[2] === "" ? 256 : parseInt(m[2]);
-
-            return new IntType(nBits, signed);
-        }
-
-        const rxFixedBytes = /^bytes([0-9]+)$/;
-
-        m = name.match(rxFixedBytes);
-
-        if (m !== null) {
-            const size = parseInt(m[1]);
-
-            return new FixedBytesType(size);
-        }
-
-        if (name === "byte") {
-            return new FixedBytesType(1);
-        }
-
-        if (name === "bytes") {
-            return new BytesType();
-        }
-
-        if (name === "string") {
-            return new StringType();
-        }
-
-        throw new Error(`NYI converting elementary AST Type ${name}`);
-    }
-
-    if (astT instanceof ArrayTypeName) {
-        const elT = typeNameToTypeNode(astT.vBaseType);
-
-        let size: bigint | undefined;
-
-        if (astT.vLength) {
-            const result = evalConstantExpr(astT.vLength);
-
-            assert(typeof result === "bigint", "Expected bigint for size of an array type", astT);
-
-            size = result;
-        }
-
-        return new ArrayType(elT, size);
-    }
-
-    if (astT instanceof UserDefinedTypeName) {
-        const def = astT.vReferencedDeclaration;
-
-        if (
-            def instanceof StructDefinition ||
-            def instanceof EnumDefinition ||
-            def instanceof ContractDefinition ||
-            def instanceof UserDefinedValueTypeDefinition
-        ) {
-            return new UserDefinedType(getFQDefName(def), def);
-        }
-
-        throw new Error(`NYI typechecking of user-defined type ${def.print()}`);
-    }
-
-    if (astT instanceof FunctionTypeName) {
-        /**
-         * `vType` is always defined here for parameters if a function type.
-         * Even in 0.4.x can't have function declarations with `var` args.
-         */
-        const args = astT.vParameterTypes.vParameters.map(variableDeclarationToTypeNode);
-        const rets = astT.vReturnParameterTypes.vParameters.map(variableDeclarationToTypeNode);
-
-        return new FunctionType(undefined, args, rets, astT.visibility, astT.stateMutability);
-    }
-
-    if (astT instanceof Mapping) {
-        const keyT = typeNameToTypeNode(astT.vKeyType);
-        const valueT = typeNameToTypeNode(astT.vValueType);
-
-        return new MappingType(keyT, valueT);
-    }
-
-    throw new Error(`NYI converting AST Type ${astT.print()} to SType`);
-}
-
-/**
- * Computes a `TypeNode` equivalent of given `astT`,
- * specialized for location `loc` (if applicable).
- */
-export function typeNameToSpecializedTypeNode(astT: TypeName, loc: DataLocation): TypeNode {
-    return specializeType(typeNameToTypeNode(astT), loc);
-}
-
-/**
- * @deprecated
- */
-export function inferVariableDeclLocation(decl: VariableDeclaration): DataLocation {
-    if (decl.stateVariable) {
-        return decl.constant ? DataLocation.Memory : DataLocation.Storage;
-    }
-
-    if (decl.storageLocation !== DataLocation.Default) {
-        return decl.storageLocation;
-    }
-
-    if (decl.parent instanceof ParameterList) {
-        // In 0.4.x param/return locations may be omitted. We assume calldata
-        // for external and memory for the rest
-        const fun = decl.parent.parent as FunctionDefinition;
-
-        return fun.visibility === FunctionVisibility.External
-            ? DataLocation.CallData
-            : DataLocation.Memory;
-    }
-
-    if (decl.parent instanceof VariableDeclarationStatement) {
-        // In 0.4.x local var locations may be omitted. We assume memory.
-        return DataLocation.Memory;
-    }
-
-    if (decl.parent instanceof StructDefinition) {
-        return DataLocation.Default;
-    }
-
-    if (decl.parent instanceof SourceUnit) {
-        // Global vars don't have a location (no ref types yet)
-        return DataLocation.Default;
-    }
-
-    throw new Error(`NYI variable declaration ${pp(decl)}`);
-}
-
-/**
- * Given a `VariableDeclaration` node `decl` compute the `TypeNode` that corresponds to the variable.
- * This takes into account the storage location of the `decl`.
- *
- * @deprecated Use `InferType.variableDeclarationToTypeNode()` instead.
- */
-export function variableDeclarationToTypeNode(decl: VariableDeclaration): TypeNode {
-    assert(decl.vType !== undefined, "Expected {0} to have type", decl);
-
-    const loc = inferVariableDeclLocation(decl);
-
-    return typeNameToSpecializedTypeNode(decl.vType, loc);
+export function isReferenceType(generalT: TypeNode): boolean {
+    return (
+        (generalT instanceof UserDefinedType && generalT.definition instanceof StructDefinition) ||
+        generalT instanceof ArrayType ||
+        generalT instanceof PackedArrayType ||
+        generalT instanceof MappingType
+    );
 }
 
 export function enumToIntType(decl: EnumDefinition): IntType {
@@ -383,84 +306,113 @@ export function enumToIntType(decl: EnumDefinition): IntType {
  * correct ABIEncoder version for these units. If mulitple incompatible explicit pragmas are found,
  * throw an error.
  */
-export function getABIEncoderVersion(
-    units: SourceUnit[],
-    compilerVersion: string
-): ABIEncoderVersion {
-    const explicitEncoderVersions = new Set<ABIEncoderVersion>();
+export function getABIEncoderVersion(unit: SourceUnit, compilerVersion: string): ABIEncoderVersion {
+    for (const directive of unit.vPragmaDirectives) {
+        if (directive.vIdentifier === "abicoder") {
+            const raw = directive.literals[1];
 
-    for (const unit of units) {
-        for (const nd of unit.getChildrenByType(PragmaDirective)) {
-            if (
-                nd.vIdentifier === "experimental" &&
-                nd.literals.length === 2 &&
-                ABIEncoderVersions.has(nd.literals[1])
-            ) {
-                explicitEncoderVersions.add(nd.literals[1] as ABIEncoderVersion);
+            if (raw === "v1") {
+                return ABIEncoderVersion.V1;
             }
 
-            if (nd.vIdentifier === "abicoder") {
-                let version: ABIEncoderVersion;
-                const rawVer = nd.literals[1];
-
-                if (rawVer === "v1") {
-                    version = ABIEncoderVersion.V1;
-                } else if (rawVer === "v2") {
-                    version = ABIEncoderVersion.V2;
-                } else {
-                    throw new Error(`Unknown abicoder pragma version ${rawVer}`);
-                }
-
-                explicitEncoderVersions.add(version);
+            if (raw === "v2") {
+                return ABIEncoderVersion.V2;
             }
+
+            throw new Error(`Unknown abicoder pragma version ${raw}`);
         }
-    }
 
-    assert(
-        explicitEncoderVersions.size < 2,
-        `Multiple encoder versions found: ${[...explicitEncoderVersions].join(", ")}`
-    );
-
-    if (explicitEncoderVersions.size === 1) {
-        return [...explicitEncoderVersions][0];
+        if (
+            directive.vIdentifier === "experimental" &&
+            directive.literals.length === 2 &&
+            ABIEncoderVersions.has(directive.literals[1])
+        ) {
+            return directive.literals[1] as ABIEncoderVersion;
+        }
     }
 
     return lt(compilerVersion, "0.8.0") ? ABIEncoderVersion.V1 : ABIEncoderVersion.V2;
 }
 
-export function getFallbackFun(contract: ContractDefinition): FunctionDefinition | undefined {
+export function isFunctionCallExternal(call: FunctionCall): boolean {
+    if (call.kind !== FunctionCallKind.FunctionCall) {
+        return false;
+    }
+
+    if (
+        call.vFunctionCallType === ExternalReferenceType.Builtin &&
+        CALL_BUILTINS.includes(call.vFunctionName)
+    ) {
+        return true;
+    }
+
+    if (call.vExpression.typeString.includes(FunctionVisibility.External)) {
+        return true;
+    }
+
+    return false;
+}
+
+export function getFallbackRecvFuns(contract: ContractDefinition): FunctionDefinition[] {
+    const res: FunctionDefinition[] = [];
+
     for (const base of contract.vLinearizedBaseContracts) {
         for (const fun of base.vFunctions) {
             if (fun.kind === FunctionKind.Fallback || fun.kind === FunctionKind.Receive) {
-                return fun;
+                res.push(fun);
             }
         }
     }
 
-    return undefined;
+    return res;
+}
+
+export function isVisiblityExternallyCallable(a: FunctionVisibility): boolean {
+    return a === FunctionVisibility.External || a === FunctionVisibility.Public;
+}
+
+function functionVisibilitiesCompatible(a: FunctionVisibility, b: FunctionVisibility): boolean {
+    return (
+        a === b ||
+        (a === FunctionVisibility.External && isVisiblityExternallyCallable(b)) ||
+        (b === FunctionVisibility.External && isVisiblityExternallyCallable(a)) ||
+        (a !== FunctionVisibility.External && b !== FunctionVisibility.External)
+    );
 }
 
 /**
  * Return true IFF `fromT` can be implicitly casted to `toT`
  */
-export function castable(fromT: TypeNode, toT: TypeNode): boolean {
+export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string): boolean {
     if (eq(fromT, toT)) {
         return true;
     }
 
+    /**
+     * When casting arrays to storage, we can cast fixed sized to dynamically sized arrays
+     */
     if (
         fromT instanceof PointerType &&
+        fromT.to instanceof ArrayType &&
         toT instanceof PointerType &&
-        eq(fromT.to, toT.to) &&
-        toT.location !== DataLocation.CallData
+        toT.to instanceof ArrayType &&
+        fromT.to.size !== undefined &&
+        toT.to.size === undefined &&
+        toT.location === DataLocation.Storage &&
+        eq(fromT.to.elementT, toT.to.elementT)
     ) {
+        return true;
+    }
+
+    if (fromT instanceof PointerType && toT instanceof PointerType && eq(fromT.to, toT.to)) {
         return true;
     }
 
     if (fromT instanceof StringLiteralType) {
         /**
          * @todo Should we make an explicit check that string literal fits to bytes size?
-         * Note that string length is not teh same as count ob bytes in string due to multibyte chars.
+         * Note that string length is not the same as count of bytes in string due to multibyte chars.
+         * Also for hex string literals we should check evenness of length.
          */
         if (toT instanceof FixedBytesType) {
             return true;
@@ -476,29 +428,99 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
     }
 
     if (fromT instanceof IntLiteralType) {
-        if (toT instanceof FixedBytesType) {
+        // In solidity >= 0.5.0 negative constants can't be vast to bytes
+        if (
+            toT instanceof FixedBytesType &&
+            fromT.literal !== undefined &&
+            fitsNBytes(fromT.literal, toT.size, false) &&
+            gte(compilerVersion, "0.5.0")
+        ) {
+            return true;
+        }
+
+        // In solidity < 0.5.0 negative constants can be vast to bytes
+        if (
+            toT instanceof FixedBytesType &&
+            fromT.literal !== undefined &&
+            (fitsNBytes(fromT.literal, toT.size, false) ||
+                fitsNBytes(fromT.literal, toT.size, true)) &&
+            lt(compilerVersion, "0.5.0")
+        ) {
             return true;
         }
 
         if (toT instanceof IntType && fromT.literal !== undefined && toT.fits(fromT.literal)) {
             return true;
         }
+
+        if (
+            toT instanceof AddressType &&
+            fromT.literal !== undefined &&
+            types.uint160.fits(fromT.literal) &&
+            lt(compilerVersion, "0.5.0")
+        ) {
+            return true;
+        }
     }
 
+    // We can implicitly cast from payable to address
     if (fromT instanceof AddressType && toT instanceof AddressType && !toT.payable) {
         return true;
     }
 
-    if (fromT instanceof UserDefinedType && fromT.definition instanceof ContractDefinition) {
-        if (toT instanceof AddressType && !toT.payable) {
+    // We can implicitly cast from a fixed bytes type to a larger fixed bytes type
+    if (fromT instanceof FixedBytesType && toT instanceof FixedBytesType && toT.size > fromT.size) {
+        return true;
+    }
+
+    if (fromT instanceof IntType) {
+        // We can implicitly cast from a smaller to a larger int type with the same sign
+        if (toT instanceof IntType && fromT.signed == toT.signed && fromT.nBits < toT.nBits) {
             return true;
         }
 
-        if (toT instanceof AddressType && toT.payable) {
-            const fbFun = getFallbackFun(fromT.definition);
-
-            return fbFun !== undefined && fbFun.stateMutability === FunctionStateMutability.Payable;
+        // In Solidity <=0.8.0 we can cast an unsigned type to a bigger signed type
+        if (toT instanceof IntType && !fromT.signed && toT.signed && fromT.nBits < toT.nBits) {
+            return true;
         }
+
+        /**
+         * Can implicitly cast from unsigned ints <=160 bits to address
+         */
+        if (toT instanceof AddressType && !fromT.signed && fromT.nBits <= 160) {
+            return true;
+        }
+    }
+
+    if (fromT instanceof UserDefinedType && fromT.definition instanceof ContractDefinition) {
+        if (toT instanceof AddressType) {
+            // We can implicitly cast from contract to payable address if it has a payable receive/fallback function
+            if (toT.payable) {
+                return forAny(
+                    getFallbackRecvFuns(fromT.definition),
+                    (fn) => fn.stateMutability === FunctionStateMutability.Payable
+                );
+            }
+
+            // We can implicitly cast from contract to non-payable address
+            return true;
+        }
+
+        // We can implicitly up-cast a contract
+        if (toT instanceof UserDefinedType && toT.definition instanceof ContractDefinition) {
+            return fromT.definition.isSubclassOf(toT.definition);
+        }
+    }
+
+    if (
+        fromT instanceof FunctionType &&
+        toT instanceof FunctionType &&
+        eq(new TupleType(fromT.parameters), new TupleType(toT.parameters)) &&
+        eq(new TupleType(fromT.returns), new TupleType(toT.returns)) &&
+        functionVisibilitiesCompatible(fromT.visibility, toT.visibility) &&
+        fromT.mutability === toT.mutability
+    ) {
+        return true;
     }
 
     return false;
@@ -507,12 +529,15 @@ export function castable(fromT: TypeNode, toT: TypeNode): boolean {
 const signedLimits: Array<[bigint, bigint]> = [];
 const unsignedLimits: Array<[bigint, bigint]> = [];
 
-for (let i = 1; i <= 32; i++) {
-    unsignedLimits.push([BigInt(0), BigInt(2) ** BigInt(i * 8) - BigInt(1)]);
-    signedLimits.push([
-        BigInt(-2) ** BigInt(i * 8 - 1),
-        BigInt(2) ** BigInt(i * 8 - 1) - BigInt(1)
-    ]);
+for (let i = 1n; i <= 32n; i++) {
+    unsignedLimits.push([0n, 2n ** (i * 8n) - 1n]);
+    signedLimits.push([-(2n ** (i * 8n - 1n)), 2n ** (i * 8n - 1n) - 1n]);
+}
+
+function fitsNBytes(literal: bigint, nBytes: number, signed: boolean) {
+    const limits = signed ? signedLimits : unsignedLimits;
+
+    return literal >= limits[nBytes - 1][0] && literal <= limits[nBytes - 1][1];
 }
 
 /**
@@ -521,12 +546,13 @@ for (let i = 1; i <= 32; i++) {
 export function smallestFittingType(...literals: bigint[]): IntType | undefined {
     /// TODO: Need a test for this logic that checks the boundary conditions
     /// when the literals include the MIN/MAX for both signed and unsigned types
-    const unsigned = forAll(literals, (literal) => literal >= BigInt(0));
+    const unsigned = forAll(literals, (literal) => literal >= 0n);
 
     const limits: Array<[bigint, bigint]> = unsigned ? unsignedLimits : signedLimits;
 
     for (let i = 0; i < limits.length; i++) {
         let fitsAll = true;
+
         for (const literal of literals) {
             if (!(limits[i][0] <= literal && literal <= limits[i][1])) {
                 fitsAll = false;
@@ -554,6 +580,6 @@ export function decimalToRational(d: Decimal): Rational {
 
     return {
         numerator: BigInt(valStr.replace(".", "")),
-        denominator: BigInt(10) ** BigInt(valStr.length - dotPos - 1)
+        denominator: 10n ** BigInt(valStr.length - dotPos - 1)
     };
 }

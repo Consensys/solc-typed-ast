@@ -7,7 +7,6 @@
         "**/coverage/**",
         "**/docs/**",
         "**/.compiler_cache/**",
-        "src/types/typeStrings/typeString_parser*.ts",
         "src/compile/inference/file_level_definitions_parser*.ts"
     ],
     "reporter": ["lcov", "text-summary"],

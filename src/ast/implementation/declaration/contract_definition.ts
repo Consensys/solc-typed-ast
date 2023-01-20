@@ -1,6 +1,5 @@
-import { ABIEncoderVersion } from "../../../types/abi";
 import { ASTNode, ASTNodeWithChildren } from "../../ast_node";
-import { ContractKind, StateVariableVisibility } from "../../constants";
+import { ContractKind } from "../../constants";
 import {
     getDanglingDocumentation,
     getDocumentation,
@@ -269,37 +268,6 @@ export class ContractDefinition
      */
     get vConstructor(): FunctionDefinition | undefined {
         return this.vFunctions.find((fn) => fn.isConstructor);
-    }
-
-    interfaceId(encoderVersion: ABIEncoderVersion): string | undefined {
-        if (
-            this.kind === ContractKind.Interface ||
-            (this.kind === ContractKind.Contract && this.abstract)
-        ) {
-            const selectors: string[] = [];
-
-            for (const fn of this.vFunctions) {
-                const hash = fn.canonicalSignatureHash(encoderVersion);
-
-                if (hash) {
-                    selectors.push(hash);
-                }
-            }
-
-            for (const v of this.vStateVariables) {
-                if (v.visibility === StateVariableVisibility.Public) {
-                    selectors.push(v.getterCanonicalSignatureHash(encoderVersion));
-                }
-            }
-
-            return selectors
-                .map((selector) => BigInt("0x" + selector))
-                .reduce((a, b) => a ^ b, BigInt(0))
-                .toString(16)
-                .padStart(8, "0");
-        }
-
-        return undefined;
     }
 
     /**

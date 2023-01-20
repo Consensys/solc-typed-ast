@@ -3,8 +3,10 @@ import { expect } from "expect";
 import {
     ASTNodeFactory,
     DataLocation,
+    EtherUnit,
     evalConstantExpr,
     Expression,
+    FunctionCallKind,
     isConstant,
     LiteralKind,
     Mutability,
@@ -67,14 +69,48 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             (factory: ASTNodeFactory) =>
                 factory.makeLiteral("<missing>", LiteralKind.Number, "", "256"),
             true,
-            BigInt(256)
+            256n
         ],
         [
             "Literal (uint16, underscore separator)",
             (factory: ASTNodeFactory) =>
                 factory.makeLiteral("<missing>", LiteralKind.Number, "", "0xff_ff"),
             true,
-            BigInt(65535)
+            65535n
+        ],
+        [
+            "Literal (uint with subdenomintation)",
+            (factory: ASTNodeFactory) =>
+                factory.makeLiteral("<missing>", LiteralKind.Number, "", "2", EtherUnit.Ether),
+            true,
+            2_000_000_000_000_000_000n
+        ],
+        [
+            "Literal (decimal)",
+            (factory: ASTNodeFactory) =>
+                factory.makeLiteral("<missing>", LiteralKind.Number, "", "2.5"),
+            true,
+            new Decimal(2.5)
+        ],
+        [
+            "Literal (decimal with subdenomintation)",
+            (factory: ASTNodeFactory) =>
+                factory.makeLiteral("<missing>", LiteralKind.Number, "", "2.5", EtherUnit.Ether),
+            true,
+            2_500_000_000_000_000_000n
+        ],
+        [
+            "Literal (uint with invalid subdenomintation)",
+            (factory: ASTNodeFactory) =>
+                factory.makeLiteral(
+                    "<missing>",
+                    LiteralKind.Number,
+                    "",
+                    "1",
+                    "unknown" as EtherUnit
+                ),
+            true,
+            undefined
         ],
         [
             "UnaryOperation (!true)",
@@ -122,7 +158,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "0")
                 ),
             true,
-            BigInt(-1)
+            -1n
         ],
         [
             "UnaryOperation (~false)",
@@ -146,7 +182,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "1")
                 ),
             true,
-            BigInt(-1)
+            -1n
         ],
         [
             "UnaryOperation (-0.5)",
@@ -182,7 +218,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "1")
                 ),
             true,
-            BigInt(1)
+            1n
         ],
         [
             "UnaryOperation (+0.5)",
@@ -458,7 +494,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "2")
                 ),
             true,
-            BigInt(3)
+            3n
         ],
         [
             "BinaryOperation (1 - 2)",
@@ -470,7 +506,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "2")
                 ),
             true,
-            BigInt(-1)
+            -1n
         ],
         [
             "BinaryOperation (2 * 2)",
@@ -482,7 +518,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "2")
                 ),
             true,
-            BigInt(4)
+            4n
         ],
         [
             "BinaryOperation (4 / 2)",
@@ -494,7 +530,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "2")
                 ),
             true,
-            BigInt(2)
+            2n
         ],
         /**
          * @todo Need to double-check and fix
@@ -509,7 +545,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
         //             factory.makeLiteral("<missing>", LiteralKind.Number, "", "2")
         //         ),
         //     true,
-        //     "BigInt(0)"
+        //     "0n"
         // ],
         [
             "BinaryOperation (3 % 2)",
@@ -521,7 +557,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "2")
                 ),
             true,
-            BigInt(1)
+            1n
         ],
         [
             "BinaryOperation (4 % 2)",
@@ -533,7 +569,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "2")
                 ),
             true,
-            BigInt(0)
+            0n
         ],
         [
             "BinaryOperation (2 ** 8)",
@@ -545,7 +581,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "8")
                 ),
             true,
-            BigInt(256)
+            256n
         ],
         [
             "BinaryOperation (2 ** 256)",
@@ -557,7 +593,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "256")
                 ),
             true,
-            BigInt("115792089237316195423570985008687907853269984665640564039457584007913129639936")
+            115792089237316195423570985008687907853269984665640564039457584007913129639936n
         ],
         [
             "BinaryOperation (2 << 5)",
@@ -569,7 +605,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "5")
                 ),
             true,
-            BigInt(64)
+            64n
         ],
         [
             "BinaryOperation (2 << 100)",
@@ -581,7 +617,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "100")
                 ),
             true,
-            BigInt("2535301200456458802993406410752")
+            2535301200456458802993406410752n
         ],
         [
             "BinaryOperation (126 >> 3)",
@@ -593,7 +629,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "3")
                 ),
             true,
-            BigInt(15)
+            15n
         ],
         [
             "BinaryOperation (2535301200456458802993406410752 >> 100)",
@@ -610,7 +646,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "100")
                 ),
             true,
-            BigInt(2)
+            2n
         ],
         [
             "BinaryOperation (11 | 116)",
@@ -622,7 +658,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "116")
                 ),
             true,
-            BigInt(127)
+            127n
         ],
         [
             "BinaryOperation (-11 | -116)",
@@ -634,7 +670,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "-116")
                 ),
             true,
-            BigInt(-3)
+            -3n
         ],
         [
             "BinaryOperation (10 & 3)",
@@ -646,7 +682,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "3")
                 ),
             true,
-            BigInt(2)
+            2n
         ],
         [
             "BinaryOperation (-10 & -3)",
@@ -658,7 +694,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "-3")
                 ),
             true,
-            BigInt(-12)
+            -12n
         ],
         [
             "BinaryOperation (8 ^ 10)",
@@ -670,7 +706,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "10")
                 ),
             true,
-            BigInt(2)
+            2n
         ],
         [
             "BinaryOperation (-8 ^ -10)",
@@ -682,7 +718,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "-10")
                 ),
             true,
-            BigInt(14)
+            14n
         ],
         [
             "BinaryOperation (0.5 ^ 0.5)",
@@ -746,7 +782,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "10")
                 ]),
             true,
-            BigInt(10)
+            10n
         ],
         [
             "Conditional (true ? 10 : 1000)",
@@ -758,7 +794,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "1000")
                 ),
             true,
-            BigInt(10)
+            10n
         ],
         [
             "Conditional (false ? 10 : 1000)",
@@ -770,7 +806,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "1000")
                 ),
             true,
-            BigInt(1000)
+            1000n
         ],
         [
             "Identifier & VariableDeclaration (A + 1, const A = 2)",
@@ -799,7 +835,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                 );
             },
             true,
-            BigInt(3)
+            3n
         ],
         [
             "Identifier & VariableDeclaration (A + 1, mutable A)",
@@ -828,10 +864,59 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             },
             false,
             undefined
+        ],
+        [
+            "Identifier & StructDefinition (invalid)",
+            (factory: ASTNodeFactory) =>
+                factory.makeIdentifierFor(
+                    factory.makeStructDefinition("SomeStruct", 0, "internal", [])
+                ),
+            false,
+            undefined
+        ],
+        [
+            "FunctionCall (typeConversion)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "uint256",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint256", "uint256"),
+                    [factory.makeLiteral("uint8", LiteralKind.Number, "", "1")]
+                ),
+            true,
+            1n
+        ],
+        [
+            "FunctionCall (typeConversion, mutable variable)",
+            (factory: ASTNodeFactory) => {
+                return factory.makeFunctionCall(
+                    "uint256",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint256", "uint256"),
+                    [
+                        factory.makeVariableDeclaration(
+                            false,
+                            false,
+                            "A",
+                            0,
+                            true,
+                            DataLocation.Default,
+                            StateVariableVisibility.Public,
+                            Mutability.Mutable,
+                            "uint8",
+                            undefined,
+                            factory.makeElementaryTypeName("uint8", "uint8"),
+                            undefined
+                        )
+                    ]
+                );
+            },
+            false,
+            undefined
         ]
     ];
 
-describe("Constant expression evaluator unit test", () => {
+describe("Constant expression evaluator unit test (isConstant() + evalConstantExpr())", () => {
     let factory: ASTNodeFactory;
 
     before(() => {

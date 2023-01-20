@@ -1,5 +1,4 @@
 import {
-    AddressType,
     BuiltinFunctionType,
     BuiltinStructType,
     IntType,
@@ -335,7 +334,7 @@ export const globalBuiltins = new BuiltinStructType(
                     new BuiltinFunctionType(
                         "ecrecover",
                         [types.bytes32, types.uint8, types.bytes32, types.bytes32],
-                        [new AddressType(false)]
+                        [types.address]
                     ),
                     ">=0.4.13"
                 ]

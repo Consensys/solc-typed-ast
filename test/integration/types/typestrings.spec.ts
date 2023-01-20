@@ -18,16 +18,15 @@ import {
     Identifier,
     ModifierInvocation,
     PossibleCompilerKinds,
-    VariableDeclaration
-} from "../../../src";
-import {
-    generalizeType,
-    getNodeType,
+    VariableDeclaration,
+    InferType,
     MappingType,
     PointerType,
     specializeType,
-    variableDeclarationToTypeNode
-} from "../../../src/types";
+    generalizeType,
+    getABIEncoderVersion
+} from "../../../src";
+import { getNodeType } from "../../utils/typeStrings/typeString_parser";
 
 const samples: Array<[string, string, ASTKind]> = [
     [
@@ -97,13 +96,22 @@ const samples: Array<[string, string, ASTKind]> = [
     ]
 ];
 
-// Note that we weaken the typestring comparison to ignore pointer types
 function normalizeTypeString(typeStr: string): string {
-    return typeStr
+    // Note that we weaken the typestring comparison to ignore pointer types
+    let res = typeStr
         .replace(/ ref/g, "")
         .replace(/ pointer/g, "")
         .replace(/ slice/g, "")
         .trim();
+
+    // We strip string literal values
+    if (res.startsWith("literal_string hex")) {
+        res = "literal_hex_string";
+    } else if (res.startsWith('literal_string "')) {
+        res = "literal_string";
+    }
+
+    return res;
 }
 
 describe("Round-trip tests for typestring parser/printer", () => {
@@ -120,6 +128,7 @@ describe("Round-trip tests for typestring parser/printer", () => {
                 );
 
                 expect(result.compilerVersion).toEqual(compilerVersion);
+
                 const errors = detectCompileErrors(result.data);
 
                 expect(errors).toHaveLength(0);
@@ -130,6 +139,11 @@ describe("Round-trip tests for typestring parser/printer", () => {
                 const sourceUnits = reader.read(data, astKind);
 
                 for (const unit of sourceUnits) {
+                    const inference = new InferType(
+                        compilerVersion,
+                        getABIEncoderVersion(unit, compilerVersion)
+                    );
+
                     for (const node of unit.getChildrenBySelector(
                         (child) =>
                             child instanceof Expression || child instanceof VariableDeclaration
@@ -146,7 +160,7 @@ describe("Round-trip tests for typestring parser/printer", () => {
                             continue;
                         }
 
-                        const typeNode = getNodeType(typedASTNode, compilerVersion);
+                        const typeNode = getNodeType(typedASTNode, inference);
 
                         // Edge case: We don't fully model type strings for external function type names.
                         // External function type strings contain the funtion name as well, which we ignore
@@ -189,7 +203,7 @@ describe("Round-trip tests for typestring parser/printer", () => {
                             typedASTNode.vReferencedDeclaration instanceof VariableDeclaration &&
                             typedASTNode.vReferencedDeclaration.vType !== undefined
                         ) {
-                            const compType2 = variableDeclarationToTypeNode(
+                            const compType2 = inference.variableDeclarationToTypeNode(
                                 typedASTNode.vReferencedDeclaration
                             );
 

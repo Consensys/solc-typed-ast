@@ -40,7 +40,12 @@ export type TypeSubstituion = Map<string, TypeNode | TypeNode[]>;
  * `b` doesn't have any type vars, compute a substituion from type var names
  * to type nodes that converts a to b
  */
-export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): void {
+export function buildSubstituion(
+    a: TypeNode,
+    b: TypeNode,
+    m: TypeSubstituion,
+    compilerVersion: string
+): void {
     if (a instanceof TVar) {
         const existingMapping = m.get(a.name);
 
@@ -64,7 +69,7 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
             throw new SolTypePatternMismatchError(a, b);
         }
 
-        buildSubstituion(a.elementT, b.elementT, m);
+        buildSubstituion(a.elementT, b.elementT, m, compilerVersion);
         return;
     }
 
@@ -73,35 +78,35 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
             throw new SolTypePatternMismatchError(a, b);
         }
 
-        buildSubstitutions(a.parameters, b.parameters, m);
-        buildSubstitutions(a.returns, b.returns, m);
+        buildSubstitutions(a.parameters, b.parameters, m, compilerVersion);
+        buildSubstitutions(a.returns, b.returns, m, compilerVersion);
         return;
     }
 
     if (a instanceof BuiltinFunctionType && b instanceof BuiltinFunctionType) {
-        buildSubstitutions(a.parameters, b.parameters, m);
-        buildSubstitutions(a.returns, b.returns, m);
+        buildSubstitutions(a.parameters, b.parameters, m, compilerVersion);
+        buildSubstitutions(a.returns, b.returns, m, compilerVersion);
         return;
     }
 
     if (a instanceof MappingType && b instanceof MappingType) {
-        buildSubstituion(a.keyType, b.keyType, m);
-        buildSubstituion(a.valueType, b.valueType, m);
+        buildSubstituion(a.keyType, b.keyType, m, compilerVersion);
+        buildSubstituion(a.valueType, b.valueType, m, compilerVersion);
         return;
     }
 
     if (a instanceof PointerType && b instanceof PointerType) {
-        buildSubstituion(a.to, b.to, m);
+        buildSubstituion(a.to, b.to, m, compilerVersion);
         return;
     }
 
     if (a instanceof TupleType && b instanceof TupleType) {
-        buildSubstitutions(a.elements, b.elements, m);
+        buildSubstitutions(a.elements, b.elements, m, compilerVersion);
         return;
     }
 
     if (a instanceof TypeNameType && b instanceof TypeNameType) {
-        buildSubstituion(a.type, b.type, m);
+        buildSubstituion(a.type, b.type, m, compilerVersion);
         return;
     }
 
@@ -129,7 +134,7 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
                     throw new SolTypePatternMismatchError(a, b);
                 }
 
-                buildSubstituion(aType, bType, m);
+                buildSubstituion(aType, bType, m, compilerVersion);
             }
         }
 
@@ -140,7 +145,7 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
         return;
     }
 
-    if (castable(b, a)) {
+    if (castable(b, a, compilerVersion)) {
         return;
     }
 
@@ -152,7 +157,12 @@ export function buildSubstituion(a: TypeNode, b: TypeNode, m: TypeSubstituion): 
  * accumulate the neccessary substitutions to convert as into bs. Note that as
  * may contain TVars and TRest, but bs must be concrete.
  */
-export function buildSubstitutions(as: TypeNode[], bs: TypeNode[], m: TypeSubstituion): void {
+export function buildSubstitutions(
+    as: TypeNode[],
+    bs: TypeNode[],
+    m: TypeSubstituion,
+    compilerVersion: string
+): void {
     for (let i = 0; i < as.length; i++) {
         // Note below we allow the last TRest to match to an empty list of types.
         if (i >= bs.length && !(i === as.length - 1 && as[i] instanceof TRest)) {
@@ -180,7 +190,7 @@ export function buildSubstitutions(as: TypeNode[], bs: TypeNode[], m: TypeSubsti
             return;
         }
 
-        buildSubstituion(patternT, bs[i], m);
+        buildSubstituion(patternT, bs[i], m, compilerVersion);
     }
 }
 
@@ -212,7 +222,8 @@ export function applySubstitution(a: TypeNode, m: TypeSubstituion): TypeNode {
             applySubstitutions(a.parameters, m),
             applySubstitutions(a.returns, m),
             a.visibility,
-            a.mutability
+            a.mutability,
+            a.implicitFirstArg
         );
     }
 
@@ -280,14 +291,16 @@ export function applySubstitutions(as: TypeNode[], m: TypeSubstituion): TypeNode
 
             const mapped = m.get(elT.name);
 
-            assert(
-                mapped instanceof Array,
-                "TRest {0} not mapped to array. Instead mapped to {1}",
-                elT.name,
-                mapped
-            );
+            if (mapped) {
+                assert(
+                    mapped instanceof Array,
+                    `TRest ${elT.name} not mapped to array. Instead mapped to ${pp(mapped)}`
+                );
 
-            resTs.push(...mapped);
+                resTs.push(...mapped);
+            } else {
+                resTs.push(elT);
+            }
         } else {
             resTs.push(applySubstitution(elT, m));
         }

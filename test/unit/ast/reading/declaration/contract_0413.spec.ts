@@ -1,6 +1,5 @@
 import expect from "expect";
 import { ASTReader, compileJson, ContractDefinition, SourceUnit } from "../../../../../src";
-import { ABIEncoderVersion } from "../../../../../src/types/abi";
 
 describe("ContractDefinition (Solc 0.4.13)", () => {
     const sample = "test/samples/solidity/declarations/contract_0413.json";
@@ -45,12 +44,6 @@ describe("ContractDefinition (Solc 0.4.13)", () => {
         expect(contract.vFunctions[0].name).toEqual("add");
         expect(contract.vFunctions[0].implemented).toEqual(true);
         expect(contract.vFunctions[0].isConstructor).toEqual(false);
-        expect(contract.vFunctions[0].canonicalSignature(ABIEncoderVersion.V1)).toEqual(
-            "add(uint256,uint256)"
-        );
-        expect(contract.vFunctions[0].canonicalSignatureHash(ABIEncoderVersion.V1)).toEqual(
-            "771602f7"
-        );
 
         expect(contract.getChildren().length).toEqual(16);
     });
@@ -79,12 +72,6 @@ describe("ContractDefinition (Solc 0.4.13)", () => {
         expect(contract.vFunctions[0].name).toEqual("some");
         expect(contract.vFunctions[0].implemented).toEqual(false);
         expect(contract.vFunctions[0].isConstructor).toEqual(false);
-        expect(contract.vFunctions[0].canonicalSignature(ABIEncoderVersion.V1)).toEqual(
-            "some(uint256,uint256)"
-        );
-        expect(contract.vFunctions[0].canonicalSignatureHash(ABIEncoderVersion.V1)).toEqual(
-            "cdb3deb6"
-        );
 
         expect(contract.getChildren().length).toEqual(9);
     });
@@ -129,19 +116,11 @@ describe("ContractDefinition (Solc 0.4.13)", () => {
         expect(contract.vFunctions[0].implemented).toEqual(true);
         expect(contract.vFunctions[0].isConstructor).toEqual(true);
         expect(contract.vFunctions[0] === contract.vConstructor).toEqual(true);
-        expect(contract.vFunctions[0].canonicalSignature(ABIEncoderVersion.V1)).toEqual("");
-        expect(contract.vFunctions[0].canonicalSignatureHash(ABIEncoderVersion.V1)).toEqual("");
 
         expect(contract.vFunctions[1].id).toEqual(71);
         expect(contract.vFunctions[1].name).toEqual("some");
         expect(contract.vFunctions[1].implemented).toEqual(true);
         expect(contract.vFunctions[1].isConstructor).toEqual(false);
-        expect(contract.vFunctions[1].canonicalSignature(ABIEncoderVersion.V1)).toEqual(
-            "some(uint256,uint256)"
-        );
-        expect(contract.vFunctions[1].canonicalSignatureHash(ABIEncoderVersion.V1)).toEqual(
-            "cdb3deb6"
-        );
 
         expect(contract.vModifiers.length).toEqual(0);
 

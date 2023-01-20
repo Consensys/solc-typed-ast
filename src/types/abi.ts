@@ -1,12 +1,7 @@
-import {
-    ContractDefinition,
-    DataLocation,
-    EnumDefinition,
-    StructDefinition,
-    UserDefinedValueTypeDefinition
-} from "..";
+import { DataLocation } from "..";
 import { assert } from "../misc";
 import {
+    AddressType,
     ArrayType,
     BoolType,
     BytesType,
@@ -14,19 +9,13 @@ import {
     FunctionType,
     IntType,
     MappingType,
+    PointerType,
     StringType,
     TupleType,
-    PointerType,
     TypeNode,
-    UserDefinedType,
-    AddressType
+    UserDefinedType
 } from "./ast";
-import {
-    getFQDefName,
-    typeNameToTypeNode,
-    variableDeclarationToTypeNode,
-    enumToIntType
-} from "./utils";
+import { getFQDefName } from "./utils";
 
 export enum ABIEncoderVersion {
     V1 = "ABIEncoderV1",
@@ -34,71 +23,6 @@ export enum ABIEncoderVersion {
 }
 
 export const ABIEncoderVersions = new Set<string>([ABIEncoderVersion.V1, ABIEncoderVersion.V2]);
-
-/**
- * Convert an internal TypeNode to the external TypeNode that would correspond to it
- * after ABI-encoding with encoder version `encoderVersion`. Follows the following rules:
- *
- * 1. Contract definitions turned to address.
- * 2. Enum definitions turned to uint of minimal fitting size.
- * 3. Any storage pointer types are converted to memory pointer types.
- * 4. Throw an error on any nested mapping types.
- *
- * @see https://docs.soliditylang.org/en/latest/abi-spec.html
- */
-export function toABIEncodedType(
-    type: TypeNode,
-    encoderVersion: ABIEncoderVersion,
-    normalizePointers = false
-): TypeNode {
-    if (type instanceof MappingType) {
-        throw new Error("Cannot abi-encode mapping types");
-    }
-
-    if (type instanceof ArrayType) {
-        return new ArrayType(
-            toABIEncodedType(type.elementT, encoderVersion, normalizePointers),
-            type.size
-        );
-    }
-
-    if (type instanceof PointerType) {
-        const toT = toABIEncodedType(type.to, encoderVersion, normalizePointers);
-
-        return new PointerType(toT, normalizePointers ? DataLocation.Memory : type.location);
-    }
-
-    if (type instanceof UserDefinedType) {
-        if (type.definition instanceof UserDefinedValueTypeDefinition) {
-            return typeNameToTypeNode(type.definition.underlyingType);
-        }
-
-        if (type.definition instanceof ContractDefinition) {
-            return new AddressType(false);
-        }
-
-        if (type.definition instanceof EnumDefinition) {
-            return enumToIntType(type.definition);
-        }
-
-        if (type.definition instanceof StructDefinition) {
-            assert(
-                encoderVersion !== ABIEncoderVersion.V1,
-                "Getters of struct return type are not supported by ABI encoder v1"
-            );
-
-            const fieldTs = type.definition.vMembers.map((fieldT) =>
-                variableDeclarationToTypeNode(fieldT)
-            );
-
-            return new TupleType(
-                fieldTs.map((fieldT) => toABIEncodedType(fieldT, encoderVersion, normalizePointers))
-            );
-        }
-    }
-
-    return type;
-}
 
 /**
  * Get the canonical name for the `TypeNode` `t`, to be used in

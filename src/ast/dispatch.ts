@@ -1,4 +1,4 @@
-import { ABIEncoderVersion } from "../types/abi";
+import { InferType } from "../types";
 import { ASTNodeConstructor } from "./ast_node";
 import { StateVariableVisibility } from "./constants";
 import { ContractDefinition } from "./implementation/declaration/contract_definition";
@@ -14,32 +14,33 @@ import { EmitStatement } from "./implementation/statement/emit_statement";
 type FunctionLikeResolvable = FunctionDefinition | ModifierDefinition | EventDefinition;
 type Resolvable = FunctionLikeResolvable | VariableDeclaration;
 
-function getResolvableCollection<T extends Resolvable>(
+function getResolvableCollection(
     contract: ContractDefinition,
-    target: ASTNodeConstructor<T>
+    target: ASTNodeConstructor<Resolvable>
 ): readonly Resolvable[] {
-    let collection: readonly Resolvable[];
-
     if (target === FunctionDefinition) {
-        collection = contract.vFunctions;
-    } else if (target === ModifierDefinition) {
-        collection = contract.vModifiers;
-    } else if (target === EventDefinition) {
-        collection = contract.vEvents;
-    } else if (target === VariableDeclaration) {
-        collection = contract.vStateVariables;
-    } else {
-        throw new Error(
-            "Unable to select resolvable collection for target " + target.constructor.name
-        );
+        return contract.vFunctions;
     }
 
-    return collection;
+    if (target === ModifierDefinition) {
+        return contract.vModifiers;
+    }
+
+    if (target === EventDefinition) {
+        return contract.vEvents;
+    }
+
+    if (target === VariableDeclaration) {
+        return contract.vStateVariables;
+    }
+
+    throw new Error("Unable to select resolvable collection for target " + target.name);
 }
 
 export function resolve<T extends Resolvable>(
     scope: ContractDefinition,
     target: T,
+    inference: InferType,
     onlyParents = false
 ): T | undefined {
     let finder: (candidate: Resolvable) => boolean;
@@ -47,13 +48,9 @@ export function resolve<T extends Resolvable>(
     if (target instanceof VariableDeclaration) {
         finder = (candidate) => candidate.name === target.name;
     } else {
-        const signatureHash = (target as FunctionLikeResolvable).canonicalSignatureHash(
-            ABIEncoderVersion.V2
-        );
+        const signatureHash = inference.signatureHash(target);
 
-        finder = (candidate) =>
-            signatureHash ===
-            (candidate as FunctionLikeResolvable).canonicalSignatureHash(ABIEncoderVersion.V2);
+        finder = (candidate) => signatureHash === inference.signatureHash(candidate);
     }
 
     for (const base of scope.vLinearizedBaseContracts) {
@@ -91,6 +88,7 @@ export function resolveByName<T extends Resolvable>(
     scope: ContractDefinition,
     constructor: ASTNodeConstructor<T>,
     name: string,
+    inference: InferType,
     onlyParents = false
 ): T[] {
     const result = [];
@@ -113,7 +111,7 @@ export function resolveByName<T extends Resolvable>(
             const resolvableIdentifier =
                 resolvable instanceof VariableDeclaration
                     ? resolvable.name
-                    : resolvable.canonicalSignatureHash(ABIEncoderVersion.V2);
+                    : inference.signatureHash(resolvable);
 
             if (resolvable.name === name && !found.has(resolvableIdentifier)) {
                 result.push(resolvable as T);
@@ -144,13 +142,16 @@ function isExplicitlyBound(call: FunctionCall): boolean {
 export function resolveEvent(
     scope: ContractDefinition,
     statement: EmitStatement,
+    inference: InferType,
     onlyParents = false
 ): EventDefinition | undefined {
     const call = statement.vEventCall;
     const definition = call.vReferencedDeclaration;
 
     if (definition instanceof EventDefinition) {
-        return isExplicitlyBound(call) ? definition : resolve(scope, definition, onlyParents);
+        return isExplicitlyBound(call)
+            ? definition
+            : resolve(scope, definition, inference, onlyParents);
     }
 
     return undefined;
@@ -159,12 +160,10 @@ export function resolveEvent(
 export function resolveCallable(
     scope: ContractDefinition,
     definition: FunctionDefinition | VariableDeclaration,
+    inference: InferType,
     onlyParents = false
 ): FunctionDefinition | VariableDeclaration | undefined {
-    const selector =
-        definition instanceof FunctionDefinition
-            ? definition.canonicalSignatureHash(ABIEncoderVersion.V2)
-            : definition.getterCanonicalSignatureHash(ABIEncoderVersion.V2);
+    const selector = inference.signatureHash(definition);
 
     for (const base of scope.vLinearizedBaseContracts) {
         if (onlyParents && base === scope) {
@@ -172,14 +171,14 @@ export function resolveCallable(
         }
 
         for (const fn of base.vFunctions) {
-            if (fn.canonicalSignatureHash(ABIEncoderVersion.V2) === selector) {
+            if (inference.signatureHash(fn) === selector) {
                 return fn;
             }
         }
 
         for (const v of base.vStateVariables) {
             if (v.visibility === StateVariableVisibility.Public) {
-                if (v.getterCanonicalSignatureHash(ABIEncoderVersion.V2) === selector) {
+                if (inference.signatureHash(v) === selector) {
                     return v;
                 }
             }
