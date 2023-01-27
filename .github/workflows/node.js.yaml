@@ -18,6 +18,7 @@ jobs:
 
         env:
             SOL_AST_COMPILER_CACHE: ${{ github.workspace }}/.compiler_cache
+            NODE_OPTIONS: "--max-old-space-size=2048"
 
         steps:
             - name: Prepare Windows environemnt

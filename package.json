@@ -19,7 +19,7 @@
         "build": "npm run clean && npm run build-file-level-definitions-parser && npm run transpile && chmod u+x dist/bin/compile.js",
         "lint": "eslint src/ test/ --ext=ts",
         "lint:fix": "eslint src/ test/ --ext=ts --fix",
-        "test": "npm run build-type-parser && NODE_OPTIONS='--max-old-space-size=2048' nyc mocha",
+        "test": "npm run build-type-parser && nyc mocha",
         "coverage": "nyc report",
         "docs:render": "typedoc",
         "docs:clear": "rm -rf docs/",
