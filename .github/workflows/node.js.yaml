@@ -45,7 +45,7 @@ jobs:
             - name: Prepare Windows environemnt
               if: runner.os == 'Windows'
               run: |
-                  git config --global core.autocrlf false
+                  git config --global core.autocrlf input
                   git config --global core.eol lf
 
             - name: Install, lint, test and generate coverage report
