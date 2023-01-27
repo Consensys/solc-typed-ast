@@ -27,10 +27,11 @@ jobs:
                   node-version: ${{ matrix.node-version }}
                   cache: "npm"
 
+            # Pre-download compilers from historical builds archive
             # See https://github.com/ethereum/solc-bin
             # See https://binaries.soliditylang.org/
             # Remove list files and one rarely used compiler to still test downloading on-demand
-            - name: Pre-download compilers from historical builds archive
+            - name: Prepare Linux environemnt
               if: runner.os == 'Linux'
               run: |
                   ./docker/download.sh 'linux-amd64' $SOL_AST_COMPILER_CACHE
@@ -40,6 +41,12 @@ jobs:
                   ./docker/download.sh 'wasm' $SOL_AST_COMPILER_CACHE
                   rm -v $SOL_AST_COMPILER_CACHE/wasm/list.json
                   rm -v $SOL_AST_COMPILER_CACHE/wasm/soljson-v0.5.17+commit.d19bba13.js
+
+            - name: Prepare Windows environemnt
+              if: runner.os == 'Windows'
+              run: |
+                  git config --global core.autocrlf false
+                  git config --global core.eol lf
 
             - name: Install, lint, test and generate coverage report
               run: |
