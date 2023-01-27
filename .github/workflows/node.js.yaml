@@ -8,12 +8,13 @@ on:
 
 jobs:
     build:
-        runs-on: ubuntu-latest
+        runs-on: ${{ matrix.os }}
 
         strategy:
             matrix:
                 # See https://nodejs.org/en/about/releases/
                 node-version: [16.x]
+                os: [ubuntu-latest, windows-latest]
 
         env:
             SOL_AST_COMPILER_CACHE: ${{ github.workspace }}/.compiler_cache
