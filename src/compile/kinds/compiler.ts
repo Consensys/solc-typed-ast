@@ -115,8 +115,8 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
         return undefined;
     }
 
-    const md = await getCompilerMDForPlatform(prefix, version);
-    const compilerFileName = md.releases[version];
+    const metaData = await getCompilerMDForPlatform(prefix, version);
+    const compilerFileName = metaData.releases[version];
 
     if (compilerFileName === undefined) {
         return undefined;
@@ -125,7 +125,7 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
     const compilerLocalPath = getCompilerLocalPath(prefix, compilerFileName);
 
     if (!fse.existsSync(compilerLocalPath)) {
-        const build = md.builds.find((b) => b.version === version);
+        const build = metaData.builds.find((b) => b.version === version);
 
         assert(
             build !== undefined,

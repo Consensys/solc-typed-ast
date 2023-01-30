@@ -92,10 +92,10 @@ export async function getCompilerMDForPlatform(
     const cachedListPath = getCachedMDPath(prefix);
 
     if (fse.existsSync(cachedListPath)) {
-        const md = await fse.readJSON(cachedListPath);
+        const metaData = await fse.readJSON(cachedListPath);
 
-        if (version in md.releases) {
-            return md;
+        if (version in metaData.releases) {
+            return metaData;
         }
     }
 

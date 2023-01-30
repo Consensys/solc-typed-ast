@@ -5,6 +5,7 @@
         "**/node_modules/**",
         "**/test/**",
         "**/coverage/**",
+        "**/docker/**",
         "**/docs/**",
         "**/.compiler_cache/**",
         "src/compile/inference/file_level_definitions_parser*.ts"

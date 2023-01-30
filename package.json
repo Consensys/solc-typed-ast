@@ -24,7 +24,8 @@
         "docs:render": "typedoc",
         "docs:clear": "rm -rf docs/",
         "docs:refresh": "npm run docs:clear && npm run docs:render",
-        "prepare": "npm run build"
+        "prepare": "npm run build",
+        "compilers:download": "npx ts-node docker/download.ts"
     },
     "dependencies": {
         "axios": "1.1.3",
