@@ -166,3 +166,20 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
 
     throw new Error(`Unable to detemine compiler constructor for kind "${kind}"`);
 }
+
+export async function* downloadSupportedCompilers(kinds: CompilerKind[]): AsyncGenerator<Compiler> {
+    for (const compilerKind of kinds) {
+        for (const version of CompilerVersions) {
+            const compiler = await getCompilerForVersion(version, compilerKind);
+
+            assert(
+                compiler !== undefined,
+                `Expected {0} compiler v{1} to be defined`,
+                compilerKind,
+                version
+            );
+
+            yield compiler;
+        }
+    }
+}
