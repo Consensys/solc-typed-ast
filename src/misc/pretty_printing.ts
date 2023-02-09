@@ -102,3 +102,30 @@ export function ppMap(
 
     return start + parts.join(separator) + end;
 }
+
+export function fmt(message: string, ...details: PPIsh[]): string {
+    if (details.length) {
+        const nodes: ASTNode[] = [];
+
+        for (let i = 0; i < details.length; i++) {
+            const detail = details[i];
+            const part = pp(detail);
+
+            if (detail instanceof ASTNode) {
+                nodes.push(detail);
+            }
+
+            message = message.replace(new RegExp("\\{" + i + "\\}", "g"), part);
+        }
+
+        if (nodes.length) {
+            if (!message.endsWith(".")) {
+                message += ".";
+            }
+
+            message += "\n\n" + nodes.map((node) => node.print()).join("\n");
+        }
+    }
+
+    return message;
+}

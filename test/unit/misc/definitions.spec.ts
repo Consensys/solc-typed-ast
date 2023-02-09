@@ -18,7 +18,6 @@ import {
     forAll,
     FunctionCall,
     FunctionDefinition,
-    getABIEncoderVersion,
     Identifier,
     IdentifierPath,
     InferType,
@@ -108,10 +107,7 @@ describe("resolveAny() correctly resolves all Identifiers/UserDefinedTypeNames/F
             const sourceUnits = reader.read(result.data, astKind);
 
             for (const unit of sourceUnits) {
-                const inference = new InferType(
-                    compilerVersion,
-                    getABIEncoderVersion(unit, compilerVersion)
-                );
+                const inference = new InferType(compilerVersion);
 
                 for (const node of unit.getChildrenBySelector(
                     (child) =>
@@ -445,12 +441,7 @@ describe("resolveAny() unit tests", () => {
                 for (const [name, expectedIds, testName] of unitTests) {
                     it(testName, () => {
                         const ctxNode = reader.context.locate(ctxId);
-                        const unit = ctxNode.getClosestParentByType(SourceUnit) as SourceUnit;
-
-                        const inference = new InferType(
-                            compilerVersion,
-                            getABIEncoderVersion(unit, compilerVersion)
-                        );
+                        const inference = new InferType(compilerVersion);
 
                         const resolvedNodes = resolveAny(name, ctxNode, inference);
 
@@ -502,7 +493,7 @@ contract Child is Base {
 
         [unit] = reader.read(compResult.data);
 
-        inference = new InferType(compilerVersion, getABIEncoderVersion(unit, compilerVersion));
+        inference = new InferType(compilerVersion);
 
         foo = unit.getChildrenBySelector(
             (nd) => nd instanceof FunctionDefinition && nd.name === "foo"

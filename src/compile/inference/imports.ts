@@ -6,7 +6,7 @@ import {
     AnyFileLevelNode,
     FileLevelNodeKind,
     parseFileLevelDefinitions,
-    SyntaxError
+    PeggySyntaxError
 } from "./file_level_definitions_parser";
 
 /**
@@ -163,7 +163,7 @@ export async function findAllFiles(
         try {
             flds = parseFileLevelDefinitions(content);
         } catch (e: any) {
-            if (e instanceof SyntaxError) {
+            if (e instanceof PeggySyntaxError) {
                 const start = e.location.start.offset;
                 const end = e.location.end.offset;
                 const length = end - start;
