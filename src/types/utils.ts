@@ -252,7 +252,12 @@ export function generalizeType(type: TypeNode): [TypeNode, DataLocation | undefi
     }
 
     if (type instanceof TupleType) {
-        return [new TupleType(type.elements.map((elT) => generalizeType(elT)[0])), undefined];
+        return [
+            new TupleType(
+                type.elements.map((elT) => (elT === null ? null : generalizeType(elT)[0]))
+            ),
+            undefined
+        ];
     }
 
     return [type, undefined];

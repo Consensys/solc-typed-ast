@@ -1,5 +1,5 @@
 import { DataLocation } from "..";
-import { assert } from "../misc";
+import { assert, forAll } from "../misc";
 import {
     AddressType,
     ArrayType,
@@ -49,7 +49,14 @@ export function abiTypeToCanonicalName(t: TypeNode): string {
     }
 
     if (t instanceof TupleType) {
-        return `(${t.elements.map((elementT) => abiTypeToCanonicalName(elementT)).join(",")})`;
+        assert(
+            forAll(t.elements, (el) => el !== null),
+            ``
+        );
+
+        return `(${t.elements
+            .map((elementT) => abiTypeToCanonicalName(elementT as TypeNode))
+            .join(",")})`;
     }
 
     // Locations are skipped in signature canonical names
@@ -90,8 +97,13 @@ export function abiTypeToLibraryCanonicalName(t: TypeNode): string {
     }
 
     if (t instanceof TupleType) {
+        assert(
+            forAll(t.elements, (el) => el !== null),
+            ``
+        );
+
         return `(${t.elements
-            .map((elementT) => abiTypeToLibraryCanonicalName(elementT))
+            .map((elementT) => abiTypeToLibraryCanonicalName(elementT as TypeNode))
             .join(",")})`;
     }
 
