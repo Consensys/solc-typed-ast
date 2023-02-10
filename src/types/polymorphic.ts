@@ -1,4 +1,4 @@
-import { assert, eq, pp } from "../misc";
+import { assert, eq, forAll, pp } from "../misc";
 import {
     ArrayType,
     BuiltinFunctionType,
@@ -101,7 +101,12 @@ export function buildSubstituion(
     }
 
     if (a instanceof TupleType && b instanceof TupleType) {
-        buildSubstitutions(a.elements, b.elements, m, compilerVersion);
+        assert(
+            forAll(a.elements, (el) => el !== null) && forAll(b.elements, (el) => el !== null),
+            ``
+        );
+
+        buildSubstitutions(a.elements as TypeNode[], b.elements as TypeNode[], m, compilerVersion);
         return;
     }
 
@@ -252,7 +257,12 @@ export function applySubstitution(a: TypeNode, m: TypeSubstituion): TypeNode {
     }
 
     if (a instanceof TupleType) {
-        return new TupleType(applySubstitutions(a.elements, m));
+        assert(
+            forAll(a.elements, (el) => el !== null),
+            ``
+        );
+
+        return new TupleType(applySubstitutions(a.elements as TypeNode[], m));
     }
 
     if (a instanceof TypeNameType) {

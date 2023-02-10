@@ -151,7 +151,15 @@ function toSoliditySource(expr: Expression, compilerVersion: string) {
     return writer.write(expr);
 }
 
-function externalParamEq(a: TypeNode, b: TypeNode): boolean {
+function externalParamEq(a: TypeNode | null, b: TypeNode | null): boolean {
+    if (a === null && b === null) {
+        return true;
+    }
+
+    if (a === null || b === null) {
+        return false;
+    }
+
     if (a instanceof PointerType && b instanceof PointerType) {
         if (
             !(
@@ -217,7 +225,9 @@ function exprIsABIDecodeArg(expr: Expression): boolean {
 
 function stripSingleTuples(t: TypeNode): TypeNode {
     while (t instanceof TupleType && t.elements.length === 1) {
-        t = t.elements[0];
+        const elT = t.elements[0];
+        assert(elT !== null, ``);
+        t = elT;
     }
 
     return t;
@@ -493,8 +503,8 @@ function compareTypeNodes(
         for (let i = 0; i < parsedT.elements.length; i++) {
             if (
                 !compareTypeNodes(
-                    generalizeType(inferredT.elements[i])[0],
-                    generalizeType(parsedT.elements[i])[0],
+                    generalizeType(inferredT.elements[i] as TypeNode)[0],
+                    generalizeType(parsedT.elements[i] as TypeNode)[0],
                     expr,
                     version
                 )
