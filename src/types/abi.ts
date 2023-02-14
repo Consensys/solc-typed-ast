@@ -51,7 +51,8 @@ export function abiTypeToCanonicalName(t: TypeNode): string {
     if (t instanceof TupleType) {
         assert(
             forAll(t.elements, (el) => el !== null),
-            ``
+            "Empty tuple elements are disallowed. Got {0}",
+            t
         );
 
         return `(${t.elements
@@ -99,7 +100,8 @@ export function abiTypeToLibraryCanonicalName(t: TypeNode): string {
     if (t instanceof TupleType) {
         assert(
             forAll(t.elements, (el) => el !== null),
-            ``
+            "Empty tuple elements are disallowed. Got {0}",
+            t
         );
 
         return `(${t.elements

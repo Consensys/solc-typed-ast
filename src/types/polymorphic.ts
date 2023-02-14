@@ -103,7 +103,9 @@ export function buildSubstituion(
     if (a instanceof TupleType && b instanceof TupleType) {
         assert(
             forAll(a.elements, (el) => el !== null) && forAll(b.elements, (el) => el !== null),
-            ``
+            `Unexpected tuple with empty elements when building type substitution: {0} or {1}`,
+            a,
+            b
         );
 
         buildSubstitutions(a.elements as TypeNode[], b.elements as TypeNode[], m, compilerVersion);
@@ -259,7 +261,8 @@ export function applySubstitution(a: TypeNode, m: TypeSubstituion): TypeNode {
     if (a instanceof TupleType) {
         assert(
             forAll(a.elements, (el) => el !== null),
-            ``
+            "Unexpected tuple with empty elements when applying type substitution: {0}",
+            a
         );
 
         return new TupleType(applySubstitutions(a.elements as TypeNode[], m));

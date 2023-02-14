@@ -402,12 +402,8 @@ export class InferType {
 
                         commonElT = fittingT;
                     }
-                } else if (aElT === null && bElT !== null) {
-                    commonElT = bElT;
-                } else if (aElT !== null && bElT === null) {
-                    commonElT = aElT;
                 } else {
-                    commonElT = null;
+                    commonElT = aElT ?? bElT;
                 }
 
                 commonElTs.push(commonElT);
@@ -968,6 +964,7 @@ export class InferType {
             assert(rhsT.elements.length > tupleIdx, "Rhs not a tuple of right size in {0}", stmt);
 
             const rhsElT = rhsT.elements[tupleIdx];
+
             return rhsElT !== null ? rhsElT : undefined;
         }
 
@@ -1638,7 +1635,13 @@ export class InferType {
         if (!node.isInlineArray) {
             if (componentTs.length === 1) {
                 const resT = componentTs[0];
-                assert(resT !== null, ``);
+
+                assert(
+                    resT !== null,
+                    "Empty tuple elements are disallowed for inline arrays. Got {0}",
+                    node
+                );
+
                 return resT;
             }
 
@@ -1648,7 +1651,8 @@ export class InferType {
         assert(node.vComponents.length > 0, "Can't have an empty array initializer");
         assert(
             forAll(componentTs, (elT) => elT !== null),
-            ``
+            "Empty tuple elements are disallowed. Got {0}",
+            node
         );
 
         let elT = componentTs.reduce((prev, cur) =>
@@ -2066,18 +2070,10 @@ export class InferType {
     getterFunType(v: VariableDeclaration): FunctionType {
         const [args, ret] = this.getterArgsAndReturn(v);
 
-        let rets: TypeNode[];
-
-        if (ret instanceof TupleType) {
-            rets = ret.elements as TypeNode[];
-        } else {
-            rets = [ret];
-        }
-
         return new FunctionType(
             v.name,
             args,
-            rets,
+            ret instanceof TupleType ? (ret.elements as TypeNode[]) : [ret],
             FunctionVisibility.External,
             FunctionStateMutability.View
         );

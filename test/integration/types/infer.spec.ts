@@ -224,13 +224,17 @@ function exprIsABIDecodeArg(expr: Expression): boolean {
 }
 
 function stripSingleTuples(t: TypeNode): TypeNode {
-    while (t instanceof TupleType && t.elements.length === 1) {
-        const elT = t.elements[0];
-        assert(elT !== null, ``);
-        t = elT;
+    let res = t;
+
+    while (res instanceof TupleType && res.elements.length === 1) {
+        const elT = res.elements[0];
+
+        assert(elT !== null, "Unexpected tuple with single empty element: {0}", t);
+
+        res = elT;
     }
 
-    return t;
+    return res;
 }
 
 /**
