@@ -51,7 +51,7 @@ import {
     VariableDeclarationStatement
 } from "../ast";
 import { DataLocation } from "../ast/constants";
-import { assert, eq, forAny, pp } from "../misc";
+import { assert, eq, forAll, forAny, pp } from "../misc";
 import { ABIEncoderVersion, abiTypeToCanonicalName, abiTypeToLibraryCanonicalName } from "./abi";
 import {
     AddressType,
@@ -244,7 +244,7 @@ export class InferType {
                 node
             );
 
-            const resTs: TypeNode[] = [];
+            const resTs: Array<TypeNode | null> = [];
 
             for (let i = 0; i < comps.length; i++) {
                 const lhsComp = comps[i];
@@ -378,23 +378,32 @@ export class InferType {
             b instanceof TupleType &&
             a.elements.length === b.elements.length
         ) {
-            const commonElTs: TypeNode[] = [];
+            const commonElTs: Array<TypeNode | null> = [];
 
             for (let i = 0; i < a.elements.length; i++) {
-                let commonElT = this.inferCommonType(a.elements[i], b.elements[i]);
+                const aElT = a.elements[i];
+                const bElT = b.elements[i];
 
-                if (commonElT instanceof IntLiteralType && commonElT.literal !== undefined) {
-                    const fittingT = smallestFittingType(commonElT.literal);
+                let commonElT: TypeNode | null;
 
-                    assert(
-                        fittingT !== undefined,
-                        "Can't infer common type for tuple elements {0} between {1} and {2}",
-                        i,
-                        a,
-                        b
-                    );
+                if (aElT !== null && bElT !== null) {
+                    commonElT = this.inferCommonType(aElT, bElT);
 
-                    commonElT = fittingT;
+                    if (commonElT instanceof IntLiteralType && commonElT.literal !== undefined) {
+                        const fittingT = smallestFittingType(commonElT.literal);
+
+                        assert(
+                            fittingT !== undefined,
+                            "Can't infer common type for tuple elements {0} between {1} and {2}",
+                            i,
+                            a,
+                            b
+                        );
+
+                        commonElT = fittingT;
+                    }
+                } else {
+                    commonElT = aElT ?? bElT;
                 }
 
                 commonElTs.push(commonElT);
@@ -954,7 +963,9 @@ export class InferType {
 
             assert(rhsT.elements.length > tupleIdx, "Rhs not a tuple of right size in {0}", stmt);
 
-            return rhsT.elements[tupleIdx];
+            const rhsElT = rhsT.elements[tupleIdx];
+
+            return rhsElT !== null ? rhsElT : undefined;
         }
 
         return rhsT;
@@ -1617,15 +1628,36 @@ export class InferType {
     }
 
     typeOfTupleExpression(node: TupleExpression): TypeNode {
-        const componentTs = node.vComponents.map((cmp) => this.typeOf(cmp));
+        const componentTs = node.vOriginalComponents.map((cmp) =>
+            cmp === null ? cmp : this.typeOf(cmp)
+        );
 
         if (!node.isInlineArray) {
-            return componentTs.length === 1 ? componentTs[0] : new TupleType(componentTs);
+            if (componentTs.length === 1) {
+                const resT = componentTs[0];
+
+                assert(
+                    resT !== null,
+                    "Empty tuple elements are disallowed for inline arrays. Got {0}",
+                    node
+                );
+
+                return resT;
+            }
+
+            return new TupleType(componentTs);
         }
 
         assert(node.vComponents.length > 0, "Can't have an empty array initializer");
+        assert(
+            forAll(componentTs, (elT) => elT !== null),
+            "Empty tuple elements are disallowed. Got {0}",
+            node
+        );
 
-        let elT = componentTs.reduce((prev, cur) => this.inferCommonType(prev, cur));
+        let elT = componentTs.reduce((prev, cur) =>
+            this.inferCommonType(prev as TypeNode, cur as TypeNode)
+        ) as TypeNode;
 
         if (elT instanceof IntLiteralType) {
             const concreteT = elT.smallestFittingType();
@@ -2041,7 +2073,7 @@ export class InferType {
         return new FunctionType(
             v.name,
             args,
-            ret instanceof TupleType ? ret.elements : [ret],
+            ret instanceof TupleType ? (ret.elements as TypeNode[]) : [ret],
             FunctionVisibility.External,
             FunctionStateMutability.View
         );
