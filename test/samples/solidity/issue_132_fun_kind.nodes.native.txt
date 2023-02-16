@@ -17,6 +17,7 @@ SourceUnit #56
     <getter> vUserDefinedValueTypes: Array(0)
     <getter> vUsingForDirectives: Array(0)
     <getter> vExportedSymbols: Map(1) { "FBNoArgs" -> ContractDefinition #55 }
+    <getter> abiEncoderVersion: undefined
     <getter> children: Array(2) [ PragmaDirective #29, ContractDefinition #55 ]
     <getter> type: "SourceUnit"
     <getter> firstChild: PragmaDirective #29

@@ -15,16 +15,15 @@ import {
     eq,
     Expression,
     FunctionTypeName,
+    generalizeType,
     Identifier,
-    ModifierInvocation,
-    PossibleCompilerKinds,
-    VariableDeclaration,
     InferType,
     MappingType,
+    ModifierInvocation,
     PointerType,
+    PossibleCompilerKinds,
     specializeType,
-    generalizeType,
-    getABIEncoderVersion
+    VariableDeclaration
 } from "../../../src";
 import { getNodeType } from "../../utils/typeStrings/typeString_parser";
 
@@ -135,15 +134,12 @@ describe("Round-trip tests for typestring parser/printer", () => {
 
                 const data = result.data;
 
+                const inference = new InferType(compilerVersion);
+
                 const reader = new ASTReader();
                 const sourceUnits = reader.read(data, astKind);
 
                 for (const unit of sourceUnits) {
-                    const inference = new InferType(
-                        compilerVersion,
-                        getABIEncoderVersion(unit, compilerVersion)
-                    );
-
                     for (const node of unit.getChildrenBySelector(
                         (child) =>
                             child instanceof Expression || child instanceof VariableDeclaration

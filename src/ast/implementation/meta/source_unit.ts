@@ -1,3 +1,4 @@
+import { ABIEncoderVersion, ABIEncoderVersions } from "../../../types";
 import { ASTNode, ASTNodeWithChildren } from "../../ast_node";
 import { ContractDefinition } from "../declaration/contract_definition";
 import { EnumDefinition } from "../declaration/enum_definition";
@@ -167,5 +168,38 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
         }
 
         return result;
+    }
+
+    /**
+     * Returns user-defined ABI encoder version for the source unit.
+     * If there is no encoder version defined in the pragma directives,
+     * then returns `undefined`.
+     */
+    get abiEncoderVersion(): ABIEncoderVersion | undefined {
+        for (const directive of this.vPragmaDirectives) {
+            if (directive.vIdentifier === "abicoder") {
+                const raw = directive.literals[1];
+
+                if (raw === "v1") {
+                    return ABIEncoderVersion.V1;
+                }
+
+                if (raw === "v2") {
+                    return ABIEncoderVersion.V2;
+                }
+
+                throw new Error(`Unknown abicoder pragma version ${raw}`);
+            }
+
+            if (
+                directive.vIdentifier === "experimental" &&
+                directive.literals.length === 2 &&
+                ABIEncoderVersions.has(directive.literals[1])
+            ) {
+                return directive.literals[1] as ABIEncoderVersion;
+            }
+        }
+
+        return undefined;
     }
 }

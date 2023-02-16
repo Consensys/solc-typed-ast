@@ -223,11 +223,10 @@ npm install
 npm link
 ```
 
-Prior to running tests the compiler pre-downloading script `docker/download.sh` may be used to setup local compiler cache:
+Prior to running the tests it would be better to setup local compiler cache:
 
 ```bash
-docker/download.sh 'linux-amd64' '.compiler_cache'  # platform-dependent native compiler builds
-docker/download.sh 'wasm' '.compiler_cache'         # cross-platform WASM compiler builds
+sol-ast-compile --download-compilers native wasm
 ```
 
 Supported platforms are listed here: https://github.com/ethereum/solc-bin

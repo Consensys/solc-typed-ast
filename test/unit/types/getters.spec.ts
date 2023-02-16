@@ -14,7 +14,6 @@ import {
     FunctionStateMutability,
     FunctionType,
     FunctionVisibility,
-    getABIEncoderVersion,
     getFQDefName,
     InferType,
     IntType,
@@ -409,10 +408,7 @@ describe("getterFunType()", () => {
 
                     unit = units[0];
 
-                    inference = new InferType(
-                        compilerVersion,
-                        getABIEncoderVersion(unit, compilerVersion)
-                    );
+                    inference = new InferType(compilerVersion);
                 });
 
                 for (const [stateVarName, typing] of mapping) {

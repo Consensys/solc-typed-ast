@@ -46,7 +46,6 @@ import {
     FunctionLikeSetType,
     FunctionType,
     generalizeType,
-    getABIEncoderVersion,
     ImportRefType,
     InferType,
     IntLiteralType,
@@ -63,7 +62,7 @@ import {
     UserDefinedType
 } from "../../../src/types";
 import { ModuleType } from "../../utils/typeStrings/ast/module_type";
-import { parse, SyntaxError } from "../../utils/typeStrings/typeString_parser";
+import { parse, PeggySyntaxError } from "../../utils/typeStrings/typeString_parser";
 
 export const samples: string[] = [
     "./test/samples/solidity/compile_04.sol",
@@ -138,6 +137,8 @@ export const samples: string[] = [
     "test/samples/solidity/builtins_0426.sol",
     "test/samples/solidity/builtins_0426.sol",
     "test/samples/solidity/builtins_0816.sol",
+    "test/samples/solidity/different_abi_encoders/v1_imports_v2/v1.sol",
+    "test/samples/solidity/different_abi_encoders/v2_imports_v1/v2.sol",
     "test/samples/solidity/type_inference/sample00.sol",
     "test/samples/solidity/type_inference/sample01.sol",
     "test/samples/solidity/type_inference/sample02.sol",
@@ -150,7 +151,15 @@ function toSoliditySource(expr: Expression, compilerVersion: string) {
     return writer.write(expr);
 }
 
-function externalParamEq(a: TypeNode, b: TypeNode): boolean {
+function externalParamEq(a: TypeNode | null, b: TypeNode | null): boolean {
+    if (a === null && b === null) {
+        return true;
+    }
+
+    if (a === null || b === null) {
+        return false;
+    }
+
     if (a instanceof PointerType && b instanceof PointerType) {
         if (
             !(
@@ -215,11 +224,17 @@ function exprIsABIDecodeArg(expr: Expression): boolean {
 }
 
 function stripSingleTuples(t: TypeNode): TypeNode {
-    while (t instanceof TupleType && t.elements.length === 1) {
-        t = t.elements[0];
+    let res = t;
+
+    while (res instanceof TupleType && res.elements.length === 1) {
+        const elT = res.elements[0];
+
+        assert(elT !== null, "Unexpected tuple with single empty element: {0}", t);
+
+        res = elT;
     }
 
-    return t;
+    return res;
 }
 
 /**
@@ -492,8 +507,8 @@ function compareTypeNodes(
         for (let i = 0; i < parsedT.elements.length; i++) {
             if (
                 !compareTypeNodes(
-                    generalizeType(inferredT.elements[i])[0],
-                    generalizeType(parsedT.elements[i])[0],
+                    generalizeType(inferredT.elements[i] as TypeNode)[0],
+                    generalizeType(parsedT.elements[i] as TypeNode)[0],
                     expr,
                     version
                 )
@@ -694,15 +709,12 @@ describe("Type inference for expressions", () => {
 
             const astKind = lt(compilerVersion, "0.5.0") ? ASTKind.Legacy : ASTKind.Modern;
 
+            const inference = new InferType(compilerVersion);
+
             const reader = new ASTReader();
             const sourceUnits = reader.read(data, astKind);
 
             for (const unit of sourceUnits) {
-                const inference = new InferType(
-                    compilerVersion,
-                    getABIEncoderVersion(unit, compilerVersion)
-                );
-
                 for (const expr of unit.getChildrenBySelector<Expression>(
                     (child) => child instanceof Expression
                 )) {
@@ -736,7 +748,7 @@ describe("Type inference for expressions", () => {
                             inference
                         });
                     } catch (e) {
-                        if (e instanceof SyntaxError) {
+                        if (e instanceof PeggySyntaxError) {
                             // Failed parsing. Skip
                             continue;
                         }
