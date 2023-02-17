@@ -31,4 +31,4 @@ jobs:
               with:
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
-                  file: /docker/Dockerfile
+                  file: ./Dockerfile

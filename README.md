@@ -39,7 +39,7 @@ npm install --save solc-typed-ast
 Package could be used as a standalone CLI utility via the Docker image. Pull the `latest` or tagged version image via following command:
 
 ```bash
-docker pull consensys/solidity-compilers:latest
+docker pull consensys/solc-typed-ast:latest
 ```
 
 Then run the image on sample file (`test.sol` in the example below):
@@ -173,7 +173,6 @@ The project have following directory structure:
 ├── .compiler_cache             # Cache of downloaded compilers (by default, if not configured by SOL_AST_COMPILER_CACHE).
 ├── coverage                    # Test coverage report, produced by "npm test" command.
 ├── dist                        # Generated JavaScript sources for package distribution (produced by "npm run build" and published by "npm publish" commands).
-├── docker                      # Docker image building instructions and scripts.
 ├── docs                        # Project documentation and API reference, produced by "npm run docs:render" or "npm run docs:refresh" commands.
 ├── src                         # Original TypeScript sources.
 │   ├── ast                     # AST-related definitions and logic:
