@@ -1,6 +1,9 @@
 import { ASTReader, ASTReaderConfiguration } from "../ast_reader";
 import { IdentifierPath } from "../implementation/meta";
-import { UsingForDirective } from "../implementation/meta/using_for_directive";
+import {
+    UsingCustomizedOperator,
+    UsingForDirective
+} from "../implementation/meta/using_for_directive";
 import { TypeName } from "../implementation/type/type_name";
 import { UserDefinedTypeName } from "../implementation/type/user_defined_type_name";
 import { ModernNodeProcessor } from "./node_processor";
@@ -17,11 +20,22 @@ export class ModernUsingForDirectiveProcessor extends ModernNodeProcessor<UsingF
             ? (reader.convert(raw.libraryName, config) as UserDefinedTypeName)
             : undefined;
 
-        const functionList: IdentifierPath[] | undefined = raw.functionList
-            ? raw.functionList.map(
-                  (entry: any) => reader.convert(entry.function, config) as IdentifierPath
-              )
-            : undefined;
+        const functionList: Array<IdentifierPath | UsingCustomizedOperator> | undefined =
+            raw.functionList
+                ? raw.functionList.map((entry: any): IdentifierPath | UsingCustomizedOperator => {
+                      if (entry.definition) {
+                          return {
+                              definition: reader.convert(
+                                  entry.definition,
+                                  config
+                              ) as IdentifierPath,
+                              operator: entry.operator
+                          };
+                      }
+
+                      return reader.convert(entry.function, config) as IdentifierPath;
+                  })
+                : undefined;
 
         const typeName = raw.typeName
             ? (reader.convert(raw.typeName, config) as TypeName)

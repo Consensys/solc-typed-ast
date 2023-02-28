@@ -77,7 +77,7 @@ export interface FLUserValueType extends FileLevelNode<FileLevelNodeKind.UserVal
 
 export interface FLUsingForDirective extends FileLevelNode<FileLevelNodeKind.UsingForDirective> {
     libraryName?: string;
-    functionList?:  string[];
+    functionList?:  Array<string | SymbolDesc>;
     typeName: string;
     isGlobal: boolean;
 }

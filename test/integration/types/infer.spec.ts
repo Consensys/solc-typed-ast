@@ -142,7 +142,8 @@ export const samples: string[] = [
     "test/samples/solidity/type_inference/sample00.sol",
     "test/samples/solidity/type_inference/sample01.sol",
     "test/samples/solidity/type_inference/sample02.sol",
-    "test/samples/solidity/type_inference/sample03.sol"
+    "test/samples/solidity/type_inference/sample03.sol",
+    "test/samples/solidity/user_defined_operators_0819.sol"
 ];
 
 function toSoliditySource(expr: Expression, compilerVersion: string) {

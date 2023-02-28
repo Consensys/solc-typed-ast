@@ -12,10 +12,11 @@ export class ModernBinaryOperationProcessor extends ModernExpressionProcessor<Bi
         const [id, src, typeString] = super.process(reader, config, raw);
 
         const operator: string = raw.operator;
+        const func: number | undefined = raw.function;
 
         const leftExpression = reader.convert(raw.leftExpression, config) as Expression;
         const rightExpression = reader.convert(raw.rightExpression, config) as Expression;
 
-        return [id, src, typeString, operator, leftExpression, rightExpression, raw];
+        return [id, src, typeString, operator, leftExpression, rightExpression, func, raw];
     }
 }

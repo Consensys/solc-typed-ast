@@ -231,6 +231,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.operator,
             node.vLeftExpression,
             node.vRightExpression,
+            node.userFunction,
             node.raw
         ]
     ],
@@ -357,6 +358,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.prefix,
             node.operator,
             node.vSubExpression,
+            node.userFunction,
             node.raw
         ]
     ],
