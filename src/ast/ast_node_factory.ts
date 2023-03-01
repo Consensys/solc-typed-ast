@@ -1130,6 +1130,13 @@ export class ASTNodeFactory {
             node.exportedSymbols = m;
         }
 
+        if (
+            (node instanceof UnaryOperation || node instanceof BinaryOperation) &&
+            node.userFunction
+        ) {
+            node.userFunction = patch(node.userFunction);
+        }
+
         if (node instanceof VariableDeclarationStatement) {
             node.assignments = node.assignments.map((id) => (id === null ? id : patch(id)));
         }
