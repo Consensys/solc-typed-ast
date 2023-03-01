@@ -342,9 +342,11 @@ SourceUnit #146
                             operator: "+"
                             vLeftExpression: Identifier #83
                             vRightExpression: Identifier #84
+                            userFunction: undefined
                             context: ASTContext #1000
                             parent: Assignment #86
                             <getter> children: Array(2) [ Identifier #83, Identifier #84 ]
+                            <getter> vUserFunction: undefined
                             <getter> type: "BinaryOperation"
                             <getter> firstChild: Identifier #83
                             <getter> lastChild: Identifier #84

@@ -30,23 +30,23 @@ const encounters = new Map<string, number>([
     ["ImportDirective", 1],
     ["EnumDefinition", 2],
     ["EnumValue", 6],
-    ["ContractDefinition", 17],
-    ["FunctionDefinition", 33],
-    ["ParameterList", 85],
-    ["VariableDeclaration", 71],
+    ["ContractDefinition", 18],
+    ["FunctionDefinition", 34],
+    ["ParameterList", 87],
+    ["VariableDeclaration", 74],
     ["ElementaryTypeName", 57],
-    ["Block", 49],
+    ["Block", 50],
     ["VariableDeclarationStatement", 16],
     ["Literal", 38],
     ["UncheckedBlock", 4],
-    ["ExpressionStatement", 21],
-    ["UnaryOperation", 5],
-    ["Identifier", 90],
-    ["Return", 14],
+    ["ExpressionStatement", 22],
+    ["UnaryOperation", 6],
+    ["Identifier", 93],
+    ["Return", 15],
     ["InheritanceSpecifier", 1],
-    ["IdentifierPath", 33],
+    ["IdentifierPath", 36],
     ["UsingForDirective", 3],
-    ["UserDefinedTypeName", 24],
+    ["UserDefinedTypeName", 27],
     ["ModifierInvocation", 2],
     ["FunctionCall", 42],
     ["MemberAccess", 38],
@@ -56,7 +56,7 @@ const encounters = new Map<string, number>([
     ["TryStatement", 2],
     ["TryCatchClause", 8],
     ["IfStatement", 3],
-    ["BinaryOperation", 22],
+    ["BinaryOperation", 23],
     ["EventDefinition", 2],
     ["ModifierDefinition", 1],
     ["PlaceholderStatement", 1],
@@ -116,11 +116,11 @@ for (const compilerKind of PossibleCompilerKinds) {
             // console.log(sourceUnit.print());
             // console.log(sourceUnit.getChildren().length);
 
-            expect(sourceUnit.id).toEqual(750);
-            expect(sourceUnit.src).toEqual("0:8713:0");
+            expect(sourceUnit.id).toEqual(771);
+            expect(sourceUnit.src).toEqual("0:8851:0");
             expect(sourceUnit.absolutePath).toEqual(mainSample);
-            expect(sourceUnit.children.length).toEqual(30);
-            expect(sourceUnit.getChildren().length).toEqual(743);
+            expect(sourceUnit.children.length).toEqual(31);
+            expect(sourceUnit.getChildren().length).toEqual(764);
         });
 
         it(`Validate parsed output (${astKind})`, () => {

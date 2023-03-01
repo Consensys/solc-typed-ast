@@ -231,6 +231,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.operator,
             node.vLeftExpression,
             node.vRightExpression,
+            node.userFunction,
             node.raw
         ]
     ],
@@ -357,6 +358,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.prefix,
             node.operator,
             node.vSubExpression,
+            node.userFunction,
             node.raw
         ]
     ],
@@ -1126,6 +1128,13 @@ export class ASTNodeFactory {
             }
 
             node.exportedSymbols = m;
+        }
+
+        if (
+            (node instanceof UnaryOperation || node instanceof BinaryOperation) &&
+            node.userFunction
+        ) {
+            node.userFunction = patch(node.userFunction);
         }
 
         if (node instanceof VariableDeclarationStatement) {

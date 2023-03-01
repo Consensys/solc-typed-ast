@@ -168,8 +168,35 @@ UserValueTypeDef = TYPE __ name: Identifier __ IS __ valueType: NonSemicolonSoup
 
 // ==== Using-for directives
 
-IdentifierPathList =
-    head: IdentifierPath __ tail: (__ COMMA __ IdentifierPath __ )* {
+CustomizableOperator =
+    '&'
+    / '|'
+    / '^'
+    / '~'
+    / '+'
+    / '-'
+    / '*'
+    / '/'
+    / '%'
+    / '=='
+    / '!='
+    / '<'
+    / '<='
+    / '>'
+    / '>=';
+
+UsingEntry =
+    name: (IdentifierPath) operator: (__ AS __ CustomizableOperator)? {
+        if (operator === null) {
+            return name;
+        }
+
+        return { name, operator: operator[3] } as FLCustomizableOperator;
+    }
+
+
+UsingEntryList =
+    head: UsingEntry __ tail: (__ COMMA __ UsingEntry __ )* {
         return tail.reduce(
             (acc: string[], el: string) => {
                 acc.push(el[3]);
@@ -181,7 +208,7 @@ IdentifierPathList =
     }
 
 UsingForDirective =
-    USING __ utils: (IdentifierPath / ("{" __ IdentifierPathList __ "}")) __ FOR __ typeName: IdentifierPath __ isGlobal: (GLOBAL)? SEMICOLON {
+    USING __ utils: (IdentifierPath / ("{" __ UsingEntryList __ "}")) __ FOR __ typeName: IdentifierPath __ isGlobal: (GLOBAL)? SEMICOLON {
         const node: FLUsingForDirective = {
             kind: FileLevelNodeKind.UsingForDirective,
             location: location(),

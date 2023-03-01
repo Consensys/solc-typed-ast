@@ -306,11 +306,30 @@ contract Features_0815 {
         assert(er == 0x399802c9);
     }
 }
+
+contract Features_0819 {
+    function test(LI.Int a, LI.Int b) public pure returns (LI.Int) {
+        -a;
+        return a + b;
+    }
+}
 // ------------------------------------------------------------
 // test/samples/solidity/latest_imports_08.sol
 // ------------------------------------------------------------
 pragma solidity ^0.8.0;
 pragma abicoder v2;
+
+type Int is int;
+
+using { add as +, neg as - } for Int global;
+
+function neg(Int a) pure returns (Int) {
+    return Int.wrap(-Int.unwrap(a));
+}
+
+function add(Int a, Int b) pure returns (Int) {
+    return Int.wrap(Int.unwrap(a) + Int.unwrap(b));
+}
 
 contract SomeContract {
     struct SomeStruct {
