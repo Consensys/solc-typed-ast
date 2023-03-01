@@ -71,7 +71,7 @@ export class BinaryOperation extends Expression {
         );
     }
 
-    set vUserFunction(value: ASTNode | undefined) {
+    set vUserFunction(value: FunctionDefinition | undefined) {
         if (value === undefined) {
             this.userFunction = undefined;
         } else {

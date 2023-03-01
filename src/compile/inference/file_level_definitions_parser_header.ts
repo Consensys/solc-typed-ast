@@ -75,9 +75,14 @@ export interface FLUserValueType extends FileLevelNode<FileLevelNodeKind.UserVal
     valueType: string;
 }
 
+export interface FLCustomizableOperator {
+    name: string;
+    operator: string;
+}
+
 export interface FLUsingForDirective extends FileLevelNode<FileLevelNodeKind.UsingForDirective> {
     libraryName?: string;
-    functionList?:  Array<string | SymbolDesc>;
+    functionList?:  Array<string | FLCustomizableOperator>;
     typeName: string;
     isGlobal: boolean;
 }

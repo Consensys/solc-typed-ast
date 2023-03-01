@@ -562,15 +562,15 @@ is /*3*/ int24/*;*/;`,
                     "op.RedLib.toScore",
                     "op.RedLib.exp",
                     {
-                        alias: "+",
+                        operator: "+",
                         name: "op.addRed"
                     },
                     {
-                        alias: "*",
+                        operator: "*",
                         name: "op.mulRed"
                     },
                     {
-                        alias: "-",
+                        operator: "-",
                         name: "op.unsubRed"
                     }
                 ]

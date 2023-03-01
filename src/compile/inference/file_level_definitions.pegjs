@@ -186,12 +186,12 @@ CustomizableOperator =
     / '>=';
 
 UsingEntry =
-    name: (IdentifierPath) alias: (__ AS __ CustomizableOperator)? {
-        if (alias === null) {
+    name: (IdentifierPath) operator: (__ AS __ CustomizableOperator)? {
+        if (operator === null) {
             return name;
         }
 
-        return { name, alias: alias[3] } as SymbolDesc;
+        return { name, operator: operator[3] } as FLCustomizableOperator;
     }
 
 
