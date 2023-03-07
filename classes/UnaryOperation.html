@@ -22,7 +22,7 @@
 <ul class="tsd-hierarchy">
 <li><span class="target">UnaryOperation</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L4">src/ast/implementation/expression/unary_operation.ts:4</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L5">src/ast/implementation/expression/unary_operation.ts:5</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -42,6 +42,7 @@
 <a href="UnaryOperation.html#raw" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>raw?</span></a>
 <a href="UnaryOperation.html#src" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>src</span></a>
 <a href="UnaryOperation.html#typeString" class="tsd-index-link tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>type<wbr/>String</span></a>
+<a href="UnaryOperation.html#userFunction" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>user<wbr/>Function?</span></a>
 <a href="UnaryOperation.html#vSubExpression" class="tsd-index-link tsd-kind-property tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg><span>v<wbr/>Sub<wbr/>Expression</span></a>
 </div></section>
 <section class="tsd-index-section">
@@ -55,6 +56,7 @@
 <a href="UnaryOperation.html#root" class="tsd-index-link tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg><span>root</span></a>
 <a href="UnaryOperation.html#sourceInfo" class="tsd-index-link tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg><span>source<wbr/>Info</span></a>
 <a href="UnaryOperation.html#type" class="tsd-index-link tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg><span>type</span></a>
+<a href="UnaryOperation.html#vUserFunction" class="tsd-index-link tsd-kind-accessor tsd-parent-kind-class"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg><span>v<wbr/>User<wbr/>Function</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Methods</h3>
@@ -81,7 +83,7 @@
 <section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class"><a id="constructor" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-<li class="tsd-signature tsd-anchor-link" id="constructor.new_UnaryOperation">new <wbr/>Unary<wbr/>Operation<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, src<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, typeString<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, prefix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, operator<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, subExpression<span class="tsd-signature-symbol">: </span><a href="Expression.html" class="tsd-signature-type" data-tsd-kind="Class">Expression</a>, raw<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="UnaryOperation.html" class="tsd-signature-type" data-tsd-kind="Class">UnaryOperation</a><a href="#constructor.new_UnaryOperation" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_UnaryOperation">new <wbr/>Unary<wbr/>Operation<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, src<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, typeString<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, prefix<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, operator<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, subExpression<span class="tsd-signature-symbol">: </span><a href="Expression.html" class="tsd-signature-type" data-tsd-kind="Class">Expression</a>, userFunction<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, raw<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="UnaryOperation.html" class="tsd-signature-type" data-tsd-kind="Class">UnaryOperation</a><a href="#constructor.new_UnaryOperation" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -99,11 +101,13 @@
 <li>
 <h5>subExpression: <a href="Expression.html" class="tsd-signature-type" data-tsd-kind="Class">Expression</a></h5></li>
 <li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> userFunction: <span class="tsd-signature-type">number</span></h5></li>
+<li>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> raw: <span class="tsd-signature-type">any</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="UnaryOperation.html" class="tsd-signature-type" data-tsd-kind="Class">UnaryOperation</a></h4><aside class="tsd-sources">
 <p>Overrides <a href="Expression.html">Expression</a>.<a href="Expression.html#constructor">constructor</a></p>
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L24">src/ast/implementation/expression/unary_operation.ts:24</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L32">src/ast/implementation/expression/unary_operation.ts:32</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a id="context" class="tsd-anchor"></a>
@@ -129,7 +133,7 @@
 <p>Note that <code>delete</code> is also an unary operation.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L16">src/ast/implementation/expression/unary_operation.ts:16</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L17">src/ast/implementation/expression/unary_operation.ts:17</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a id="parent" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>parent</span><a href="#parent" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">parent<span class="tsd-signature-symbol">?:</span> <a href="ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a></div>
@@ -145,7 +149,7 @@
 or suffix <code>x++</code> (<code>false</code>)</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L9">src/ast/implementation/expression/unary_operation.ts:9</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L10">src/ast/implementation/expression/unary_operation.ts:10</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a id="raw" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>raw</span><a href="#raw" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">raw<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">any</span></div>
@@ -179,6 +183,14 @@ that contains the AST node.</li>
 <p>Inherited from <a href="Expression.html">Expression</a>.<a href="Expression.html#typeString">typeString</a></p>
 <ul>
 <li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/expression.ts#L7">src/ast/implementation/expression/expression.ts:7</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="userFunction" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagOptional">Optional</code> <span>user<wbr/>Function</span><a href="#userFunction" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<div class="tsd-signature">user<wbr/>Function<span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">number</span></div>
+<div class="tsd-comment tsd-typography"><p>Custom defintion that is bound to operator and used instead of default logic.</p>
+<p>Available since Solidity 0.8.19.</p>
+</div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L30">src/ast/implementation/expression/unary_operation.ts:30</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class"><a id="vSubExpression" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>v<wbr/>Sub<wbr/>Expression</span><a href="#vSubExpression" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <div class="tsd-signature">v<wbr/>Sub<wbr/>Expression<span class="tsd-signature-symbol">:</span> <a href="Expression.html" class="tsd-signature-type" data-tsd-kind="Class">Expression</a></div>
@@ -186,7 +198,7 @@ that contains the AST node.</li>
 e.g. <code>1</code> for <code>-1</code> or <code>someArray.length</code> for <code>someArray.length--</code>.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L22">src/ast/implementation/expression/unary_operation.ts:22</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L23">src/ast/implementation/expression/unary_operation.ts:23</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Accessors</h2>
 <section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class"><a id="children" class="tsd-anchor"></a>
@@ -199,7 +211,7 @@ e.g. <code>1</code> for <code>-1</code> or <code>someArray.length</code> for <co
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">readonly </span><a href="ASTNode.html" class="tsd-signature-type" data-tsd-kind="Class">ASTNode</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <p>Overrides Expression.children</p>
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L43">src/ast/implementation/expression/unary_operation.ts:43</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L53">src/ast/implementation/expression/unary_operation.ts:53</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a id="firstChild" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>first<wbr/>Child</span><a href="#firstChild" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited">
@@ -295,7 +307,28 @@ in its <code>parent</code>&#39;s children.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <p>Inherited from Expression.type</p>
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L79">src/ast/ast_node.ts:79</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/ast_node.ts#L79">src/ast/ast_node.ts:79</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-kind-accessor tsd-parent-kind-class"><a id="vUserFunction" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>v<wbr/>User<wbr/>Function</span><a href="#vUserFunction" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-kind-accessor tsd-parent-kind-class">
+<li class="tsd-signature" id="vUserFunction.vUserFunction-1"><span class="tsd-signature-symbol">get</span> vUserFunction<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="FunctionDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionDefinition</a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Attribute to access the defintion, bound to the operator.</p>
+<p>Is <code>undefined</code> when there is no definition bound to the operator.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="FunctionDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionDefinition</a></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L62">src/ast/implementation/expression/unary_operation.ts:62</a></li></ul></aside></li>
+<li class="tsd-signature" id="vUserFunction.vUserFunction-2"><span class="tsd-signature-symbol">set</span> vUserFunction<span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="FunctionDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionDefinition</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5>value: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="FunctionDefinition.html" class="tsd-signature-type" data-tsd-kind="Class">FunctionDefinition</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/ast/implementation/expression/unary_operation.ts#L78">src/ast/implementation/expression/unary_operation.ts:78</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a id="acceptChildren" class="tsd-anchor"></a>
@@ -598,6 +631,7 @@ that corresponds to <code>src</code> property value of the current node.</p>
 <li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="UnaryOperation.html#raw" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>raw?</a></li>
 <li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="UnaryOperation.html#src" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>src</a></li>
 <li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="UnaryOperation.html#typeString" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>type<wbr/>String</a></li>
+<li class="tsd-kind-property tsd-parent-kind-class"><a href="UnaryOperation.html#userFunction" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>user<wbr/>Function?</a></li>
 <li class="tsd-kind-property tsd-parent-kind-class"><a href="UnaryOperation.html#vSubExpression" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-1024-path"></use><use href="#icon-1024-text"></use></svg>v<wbr/>Sub<wbr/>Expression</a></li>
 <li class="tsd-kind-accessor tsd-parent-kind-class"><a href="UnaryOperation.html#children" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg>children</a></li>
 <li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="UnaryOperation.html#firstChild" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg>first<wbr/>Child</a></li>
@@ -608,6 +642,7 @@ that corresponds to <code>src</code> property value of the current node.</p>
 <li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="UnaryOperation.html#root" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg>root</a></li>
 <li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="UnaryOperation.html#sourceInfo" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg>source<wbr/>Info</a></li>
 <li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><a href="UnaryOperation.html#type" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg>type</a></li>
+<li class="tsd-kind-accessor tsd-parent-kind-class"><a href="UnaryOperation.html#vUserFunction" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-262144-path"></use><use href="#icon-262144-text"></use></svg>v<wbr/>User<wbr/>Function</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="UnaryOperation.html#acceptChildren" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>accept<wbr/>Children</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="UnaryOperation.html#extractSourceFragment" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>extract<wbr/>Source<wbr/>Fragment</a></li>
 <li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="UnaryOperation.html#getChildren" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg>get<wbr/>Children</a></li>
