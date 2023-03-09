@@ -13,9 +13,10 @@ export class ModernUnaryOperationProcessor extends ModernExpressionProcessor<Una
 
         const prefix: boolean = raw.prefix;
         const operator: string = raw.operator;
+        const func: number | undefined = raw.function;
 
         const subExpression = reader.convert(raw.subExpression, config) as Expression;
 
-        return [id, src, typeString, prefix, operator, subExpression, raw];
+        return [id, src, typeString, prefix, operator, subExpression, func, raw];
     }
 }

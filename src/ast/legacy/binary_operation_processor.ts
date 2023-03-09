@@ -18,6 +18,6 @@ export class LegacyBinaryOperationProcessor extends LegacyExpressionProcessor<Bi
             Expression
         ];
 
-        return [id, src, typeString, operator, leftHandSide, rightHandSide, raw];
+        return [id, src, typeString, operator, leftHandSide, rightHandSide, undefined, raw];
     }
 }

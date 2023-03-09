@@ -353,3 +353,11 @@ contract Features_0815 {
         assert(er == 0x399802c9);
     }
 }
+
+contract Features_0819 {
+    function test(LI.Int a, LI.Int b) pure public returns (LI.Int) {
+        -a;
+
+        return a + b;
+    }
+}

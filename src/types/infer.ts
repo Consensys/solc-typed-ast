@@ -461,10 +461,36 @@ export class InferType {
         throw new SolTypeError(`Cannot infer commmon type for ${pp(a)} and ${pp(b)}`);
     }
 
+    typeOfCustomizableOperation(node: UnaryOperation | BinaryOperation): TypeNode | undefined {
+        const userFunction = node.vUserFunction;
+
+        if (userFunction === undefined) {
+            return undefined;
+        }
+
+        const funType = this.funDefToType(userFunction);
+
+        assert(
+            funType.returns.length === 1,
+            "Expected {0} type of {1} to have a single return value for operation {2}",
+            funType,
+            userFunction,
+            node
+        );
+
+        return funType.returns[0];
+    }
+
     /**
      * Infer the type of the binary op
      */
     typeOfBinaryOperation(node: BinaryOperation): TypeNode {
+        const customType = this.typeOfCustomizableOperation(node);
+
+        if (customType) {
+            return customType;
+        }
+
         if (
             BINARY_OPERATOR_GROUPS.Comparison.includes(node.operator) ||
             BINARY_OPERATOR_GROUPS.Equality.includes(node.operator) ||
@@ -1188,15 +1214,15 @@ export class InferType {
                     }
 
                     if (usingFor.vFunctionList) {
-                        for (const funId of usingFor.vFunctionList) {
-                            if (funId.name === node.memberName) {
-                                const funDef = funId.vReferencedDeclaration;
+                        for (const entry of usingFor.vFunctionList) {
+                            if (entry instanceof IdentifierPath && entry.name === node.memberName) {
+                                const funDef = entry.vReferencedDeclaration;
 
                                 assert(
                                     funDef instanceof FunctionDefinition,
                                     "Unexpected non-function decl {0} for name {1} in using for {2}",
                                     funDef,
-                                    funId.name,
+                                    entry.name,
                                     usingFor
                                 );
 
@@ -1680,6 +1706,12 @@ export class InferType {
     }
 
     typeOfUnaryOperation(node: UnaryOperation): TypeNode {
+        const customType = this.typeOfCustomizableOperation(node);
+
+        if (customType) {
+            return customType;
+        }
+
         if (node.operator === "!") {
             return types.bool;
         }

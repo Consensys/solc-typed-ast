@@ -3,6 +3,11 @@ import { TypeName } from "../type/type_name";
 import { UserDefinedTypeName } from "../type/user_defined_type_name";
 import { IdentifierPath } from "./identifier_path";
 
+export interface UsingCustomizedOperator {
+    definition: IdentifierPath;
+    operator: string;
+}
+
 export class UsingForDirective extends ASTNode {
     /**
      * A library type name or identifier.
@@ -14,7 +19,7 @@ export class UsingForDirective extends ASTNode {
      * Function list for file-level using-for directives.
      * One of vLibraryName or vFunctionList should always be set.
      */
-    vFunctionList?: IdentifierPath[];
+    vFunctionList?: Array<IdentifierPath | UsingCustomizedOperator>;
 
     /**
      * A target type name that the library functions will apply to.
@@ -32,7 +37,7 @@ export class UsingForDirective extends ASTNode {
         src: string,
         isGlobal: boolean,
         libraryName?: UserDefinedTypeName | IdentifierPath,
-        functionList?: IdentifierPath[],
+        functionList?: Array<IdentifierPath | UsingCustomizedOperator>,
         typeName?: TypeName,
         raw?: any
     ) {
@@ -53,6 +58,22 @@ export class UsingForDirective extends ASTNode {
     }
 
     get children(): readonly ASTNode[] {
-        return this.pickNodes(this.vLibraryName, this.vFunctionList, this.vTypeName);
+        const result = [];
+
+        if (this.vLibraryName) {
+            result.push(this.vLibraryName);
+        }
+
+        if (this.vFunctionList) {
+            for (const entry of this.vFunctionList) {
+                result.push(entry instanceof IdentifierPath ? entry : entry.definition);
+            }
+        }
+
+        if (this.vTypeName) {
+            result.push(this.vTypeName);
+        }
+
+        return result;
     }
 }
