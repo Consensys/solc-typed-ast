@@ -365,6 +365,30 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             false
         ],
         [
+            "BinaryOperation (bytes1(0x58) == 'X')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeFunctionCall(
+                        "bytes1",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(bytes1)", "bytes1"),
+                        [
+                            factory.makeLiteral(
+                                "int_const 88",
+                                LiteralKind.Number,
+                                "30783538",
+                                "0x58"
+                            )
+                        ]
+                    ),
+                    factory.makeLiteral('literal_string "X"', LiteralKind.String, "58", "X")
+                ),
+            true,
+            true
+        ],
+        [
             "BinaryOperation (1 < 2)",
             (factory: ASTNodeFactory) =>
                 factory.makeBinaryOperation(
@@ -483,6 +507,18 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                 ),
             true,
             false
+        ],
+        [
+            "BinaryOperation ('Y' >= 'X')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    ">=",
+                    factory.makeLiteral('literal_string "Y"', LiteralKind.String, "59", "Y"),
+                    factory.makeLiteral('literal_string "X"', LiteralKind.String, "58", "X")
+                ),
+            true,
+            undefined
         ],
         [
             "BinaryOperation (1 + 2)",
