@@ -56,7 +56,7 @@ function promoteToDec(v: Value): Decimal {
     }
 
     if (typeof v === "string") {
-        return new Decimal(Buffer.from(v, "utf-8").join(""));
+        return new Decimal(v === "" ? 0 : "0x" + Buffer.from(v, "utf-8").toString("hex"));
     }
 
     throw new Error(`Expected number not ${v}`);
@@ -138,11 +138,11 @@ export function evalLiteralImpl(
         return value === "true";
     }
 
-    if (
-        kind === LiteralKind.String ||
-        kind === LiteralKind.UnicodeString ||
-        kind === LiteralKind.HexString
-    ) {
+    if (kind === LiteralKind.HexString) {
+        return value === "" ? 0n : BigInt("0x" + value);
+    }
+
+    if (kind === LiteralKind.String || kind === LiteralKind.UnicodeString) {
         return value;
     }
 

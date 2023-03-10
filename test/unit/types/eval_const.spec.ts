@@ -62,7 +62,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             (factory: ASTNodeFactory) =>
                 factory.makeLiteral("<missing>", LiteralKind.HexString, "ffcc33", "abcdef"),
             true,
-            "ffcc33"
+            BigInt("0xffcc33")
         ],
         [
             "Literal (uint8)",
@@ -76,7 +76,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             (factory: ASTNodeFactory) =>
                 factory.makeLiteral("<missing>", LiteralKind.Number, "", "0xff_ff"),
             true,
-            65535n
+            BigInt("0xffff")
         ],
         [
             "Literal (uint with subdenomintation)",
@@ -365,6 +365,40 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             false
         ],
         [
+            "BinaryOperation (bytes1(0x00) == '')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeFunctionCall(
+                        "bytes1",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(bytes1)", "bytes1"),
+                        [factory.makeLiteral("int_const 0", LiteralKind.Number, "30783030", "0x00")]
+                    ),
+                    factory.makeLiteral('literal_string ""', LiteralKind.String, "", "")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (bytes1(0x00) == hex'')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeFunctionCall(
+                        "bytes1",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(bytes1)", "bytes1"),
+                        [factory.makeLiteral("int_const 0", LiteralKind.Number, "30783030", "0x00")]
+                    ),
+                    factory.makeLiteral('literal_string ""', LiteralKind.HexString, "", "")
+                ),
+            true,
+            true
+        ],
+        [
             "BinaryOperation (bytes1(0x58) == 'X')",
             (factory: ASTNodeFactory) =>
                 factory.makeBinaryOperation(
@@ -384,6 +418,78 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                         ]
                     ),
                     factory.makeLiteral('literal_string "X"', LiteralKind.String, "58", "X")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (bytes1(0x58) == hex'58')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeFunctionCall(
+                        "bytes1",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(bytes1)", "bytes1"),
+                        [
+                            factory.makeLiteral(
+                                "int_const 88",
+                                LiteralKind.Number,
+                                "30783538",
+                                "0x58"
+                            )
+                        ]
+                    ),
+                    factory.makeLiteral('literal_string "X"', LiteralKind.HexString, "58", "X")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (bytes2(0x5859) == 'XY')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeFunctionCall(
+                        "bytes2",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(bytes2)", "bytes2"),
+                        [
+                            factory.makeLiteral(
+                                "int_const 22617",
+                                LiteralKind.Number,
+                                "307835383539",
+                                "0x5859"
+                            )
+                        ]
+                    ),
+                    factory.makeLiteral('literal_string "XY"', LiteralKind.String, "5859", "XY")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (bytes2(0x5859) == hex'5859')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeFunctionCall(
+                        "bytes2",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(bytes2)", "bytes2"),
+                        [
+                            factory.makeLiteral(
+                                "int_const 22617",
+                                LiteralKind.Number,
+                                "307835383539",
+                                "0x5859"
+                            )
+                        ]
+                    ),
+                    factory.makeLiteral('literal_string "XY"', LiteralKind.HexString, "5859", "XY")
                 ),
             true,
             true
