@@ -47,11 +47,19 @@ function str(value: Value): string {
 }
 
 function promoteToDec(v: Value): Decimal {
-    if (!(typeof v === "bigint" || v instanceof Decimal)) {
-        throw new Error(`Expected number not ${v}`);
+    if (v instanceof Decimal) {
+        return v;
     }
 
-    return v instanceof Decimal ? v : new Decimal(v.toString());
+    if (typeof v === "bigint") {
+        return new Decimal(v.toString());
+    }
+
+    if (typeof v === "string") {
+        return new Decimal(v === "" ? 0 : "0x" + Buffer.from(v, "utf-8").toString("hex"));
+    }
+
+    throw new Error(`Expected number not ${v}`);
 }
 
 function demoteFromDec(d: Decimal): Decimal | bigint {
@@ -130,11 +138,11 @@ export function evalLiteralImpl(
         return value === "true";
     }
 
-    if (
-        kind === LiteralKind.String ||
-        kind === LiteralKind.UnicodeString ||
-        kind === LiteralKind.HexString
-    ) {
+    if (kind === LiteralKind.HexString) {
+        return value === "" ? 0n : BigInt("0x" + value);
+    }
+
+    if (kind === LiteralKind.String || kind === LiteralKind.UnicodeString) {
         return value;
     }
 
@@ -220,7 +228,7 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
     }
 
     if (BINARY_OPERATOR_GROUPS.Equality.includes(operator)) {
-        if (typeof left === "string" || typeof right === "string") {
+        if (typeof left === "string" && typeof right === "string") {
             throw new EvalError(
                 `${operator} not allowed for strings ${str(left)} and ${str(right)}`
             );
@@ -228,10 +236,13 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
 
         let isEqual: boolean;
 
-        if (left instanceof Decimal && right instanceof Decimal) {
-            isEqual = left.equals(right);
-        } else {
+        if (typeof left === "boolean" || typeof right === "boolean") {
             isEqual = left === right;
+        } else {
+            const leftDec = promoteToDec(left);
+            const rightDec = promoteToDec(right);
+
+            isEqual = leftDec.equals(rightDec);
         }
 
         if (operator === "==") {
@@ -246,6 +257,12 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
     }
 
     if (BINARY_OPERATOR_GROUPS.Comparison.includes(operator)) {
+        if (typeof left === "string" && typeof right === "string") {
+            throw new EvalError(
+                `${operator} not allowed for strings ${str(left)} and ${str(right)}`
+            );
+        }
+
         const leftDec = promoteToDec(left);
         const rightDec = promoteToDec(right);
 
@@ -418,8 +435,10 @@ export function evalConstantExpr(node: Expression): Value {
         return evalConstantExpr(node.vArguments[0]);
     }
 
-    /// Note that from the point of view of the type system constant conditionals and
-    /// indexing in constant array literals are not considered constant expressions.
-    /// So for now we don't support them, but we may change that in the future.
+    /**
+     * Note that from the point of view of the type system constant conditionals and
+     * indexing in constant array literals are not considered constant expressions.
+     * So for now we don't support them, but we may change that in the future.
+     */
     throw new EvalError(`Unable to evaluate constant expression ${pp(node)}`, node);
 }
