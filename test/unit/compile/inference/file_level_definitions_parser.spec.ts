@@ -549,6 +549,33 @@ is /*3*/ int24/*;*/;`,
                 functionList: ["a", "b", "L.c"]
             }
         ]
+    ],
+    [
+        "using-for custamizable operators",
+        `using {op.RedLib.toScore, op.RedLib.exp, op.addRed as +, op.mulRed as *, op.unsubRed as -} for Red global;`,
+        [
+            {
+                kind: "usingForDirective",
+                typeName: "Red",
+                isGlobal: true,
+                functionList: [
+                    "op.RedLib.toScore",
+                    "op.RedLib.exp",
+                    {
+                        operator: "+",
+                        name: "op.addRed"
+                    },
+                    {
+                        operator: "*",
+                        name: "op.mulRed"
+                    },
+                    {
+                        operator: "-",
+                        name: "op.unsubRed"
+                    }
+                ]
+            }
+        ]
     ]
 ];
 

@@ -12,3 +12,15 @@ contract SomeContract {
 }
 
 library SomeLib {}
+
+type Int is int;
+
+using {add as +, neg as -} for Int global;
+
+function neg(Int a) pure returns (Int) {
+    return Int.wrap(-Int.unwrap(a));
+}
+
+function add(Int a, Int b) pure returns (Int) {
+    return Int.wrap(Int.unwrap(a) + Int.unwrap(b));
+}

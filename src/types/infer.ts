@@ -51,7 +51,7 @@ import {
     VariableDeclarationStatement
 } from "../ast";
 import { DataLocation } from "../ast/constants";
-import { assert, eq, forAny, pp } from "../misc";
+import { assert, eq, forAll, forAny, pp } from "../misc";
 import { ABIEncoderVersion, abiTypeToCanonicalName, abiTypeToLibraryCanonicalName } from "./abi";
 import {
     AddressType,
@@ -107,6 +107,7 @@ import {
     decimalToRational,
     enumToIntType,
     generalizeType,
+    getABIEncoderVersion,
     getFallbackRecvFuns,
     getFQDefName,
     inferCommonVisiblity,
@@ -192,11 +193,29 @@ function markFirstArgImplicit<T extends FunctionType | FunctionLikeSetType<Funct
     return new FunctionLikeSetType(arg.defs.map(markFirstArgImplicit)) as T;
 }
 
+function isSupportedByEncoderV1(type: TypeNode): boolean {
+    if (type instanceof PointerType) {
+        return isSupportedByEncoderV1(type.to);
+    }
+
+    if (type instanceof UserDefinedType && type.definition instanceof StructDefinition) {
+        return false;
+    }
+
+    if (type instanceof ArrayType) {
+        const [baseT] = generalizeType(type.elementT);
+
+        return (
+            isSupportedByEncoderV1(baseT) ||
+            !(baseT instanceof ArrayType && baseT.size === undefined)
+        );
+    }
+
+    return true;
+}
+
 export class InferType {
-    constructor(
-        public readonly version: string,
-        public readonly encoderVersion: ABIEncoderVersion
-    ) {}
+    constructor(public readonly version: string) {}
 
     /**
      * Infer the type of the assignment `node`. (In solidity assignments are expressions)
@@ -225,7 +244,7 @@ export class InferType {
                 node
             );
 
-            const resTs: TypeNode[] = [];
+            const resTs: Array<TypeNode | null> = [];
 
             for (let i = 0; i < comps.length; i++) {
                 const lhsComp = comps[i];
@@ -359,23 +378,32 @@ export class InferType {
             b instanceof TupleType &&
             a.elements.length === b.elements.length
         ) {
-            const commonElTs: TypeNode[] = [];
+            const commonElTs: Array<TypeNode | null> = [];
 
             for (let i = 0; i < a.elements.length; i++) {
-                let commonElT = this.inferCommonType(a.elements[i], b.elements[i]);
+                const aElT = a.elements[i];
+                const bElT = b.elements[i];
 
-                if (commonElT instanceof IntLiteralType && commonElT.literal !== undefined) {
-                    const fittingT = smallestFittingType(commonElT.literal);
+                let commonElT: TypeNode | null;
 
-                    assert(
-                        fittingT !== undefined,
-                        "Can't infer common type for tuple elements {0} between {1} and {2}",
-                        i,
-                        a,
-                        b
-                    );
+                if (aElT !== null && bElT !== null) {
+                    commonElT = this.inferCommonType(aElT, bElT);
 
-                    commonElT = fittingT;
+                    if (commonElT instanceof IntLiteralType && commonElT.literal !== undefined) {
+                        const fittingT = smallestFittingType(commonElT.literal);
+
+                        assert(
+                            fittingT !== undefined,
+                            "Can't infer common type for tuple elements {0} between {1} and {2}",
+                            i,
+                            a,
+                            b
+                        );
+
+                        commonElT = fittingT;
+                    }
+                } else {
+                    commonElT = aElT ?? bElT;
                 }
 
                 commonElTs.push(commonElT);
@@ -433,10 +461,36 @@ export class InferType {
         throw new SolTypeError(`Cannot infer commmon type for ${pp(a)} and ${pp(b)}`);
     }
 
+    typeOfCustomizableOperation(node: UnaryOperation | BinaryOperation): TypeNode | undefined {
+        const userFunction = node.vUserFunction;
+
+        if (userFunction === undefined) {
+            return undefined;
+        }
+
+        const funType = this.funDefToType(userFunction);
+
+        assert(
+            funType.returns.length === 1,
+            "Expected {0} type of {1} to have a single return value for operation {2}",
+            funType,
+            userFunction,
+            node
+        );
+
+        return funType.returns[0];
+    }
+
     /**
      * Infer the type of the binary op
      */
     typeOfBinaryOperation(node: BinaryOperation): TypeNode {
+        const customType = this.typeOfCustomizableOperation(node);
+
+        if (customType) {
+            return customType;
+        }
+
         if (
             BINARY_OPERATOR_GROUPS.Comparison.includes(node.operator) ||
             BINARY_OPERATOR_GROUPS.Equality.includes(node.operator) ||
@@ -935,7 +989,9 @@ export class InferType {
 
             assert(rhsT.elements.length > tupleIdx, "Rhs not a tuple of right size in {0}", stmt);
 
-            return rhsT.elements[tupleIdx];
+            const rhsElT = rhsT.elements[tupleIdx];
+
+            return rhsElT !== null ? rhsElT : undefined;
         }
 
         return rhsT;
@@ -1158,15 +1214,15 @@ export class InferType {
                     }
 
                     if (usingFor.vFunctionList) {
-                        for (const funId of usingFor.vFunctionList) {
-                            if (funId.name === node.memberName) {
-                                const funDef = funId.vReferencedDeclaration;
+                        for (const entry of usingFor.vFunctionList) {
+                            if (entry instanceof IdentifierPath && entry.name === node.memberName) {
+                                const funDef = entry.vReferencedDeclaration;
 
                                 assert(
                                     funDef instanceof FunctionDefinition,
                                     "Unexpected non-function decl {0} for name {1} in using for {2}",
                                     funDef,
-                                    funId.name,
+                                    entry.name,
                                     usingFor
                                 );
 
@@ -1598,15 +1654,36 @@ export class InferType {
     }
 
     typeOfTupleExpression(node: TupleExpression): TypeNode {
-        const componentTs = node.vComponents.map((cmp) => this.typeOf(cmp));
+        const componentTs = node.vOriginalComponents.map((cmp) =>
+            cmp === null ? cmp : this.typeOf(cmp)
+        );
 
         if (!node.isInlineArray) {
-            return componentTs.length === 1 ? componentTs[0] : new TupleType(componentTs);
+            if (componentTs.length === 1) {
+                const resT = componentTs[0];
+
+                assert(
+                    resT !== null,
+                    "Empty tuple elements are disallowed for inline arrays. Got {0}",
+                    node
+                );
+
+                return resT;
+            }
+
+            return new TupleType(componentTs);
         }
 
         assert(node.vComponents.length > 0, "Can't have an empty array initializer");
+        assert(
+            forAll(componentTs, (elT) => elT !== null),
+            "Empty tuple elements are disallowed. Got {0}",
+            node
+        );
 
-        let elT = componentTs.reduce((prev, cur) => this.inferCommonType(prev, cur));
+        let elT = componentTs.reduce((prev, cur) =>
+            this.inferCommonType(prev as TypeNode, cur as TypeNode)
+        ) as TypeNode;
 
         if (elT instanceof IntLiteralType) {
             const concreteT = elT.smallestFittingType();
@@ -1629,6 +1706,12 @@ export class InferType {
     }
 
     typeOfUnaryOperation(node: UnaryOperation): TypeNode {
+        const customType = this.typeOfCustomizableOperation(node);
+
+        if (customType) {
+            return customType;
+        }
+
         if (node.operator === "!") {
             return types.bool;
         }
@@ -2022,10 +2105,18 @@ export class InferType {
         return new FunctionType(
             v.name,
             args,
-            ret instanceof TupleType ? ret.elements : [ret],
+            ret instanceof TupleType ? (ret.elements as TypeNode[]) : [ret],
             FunctionVisibility.External,
             FunctionStateMutability.View
         );
+    }
+
+    getUnitLevelAbiEncoderVersion(node: ASTNode): ABIEncoderVersion {
+        const root = node.root;
+
+        assert(root instanceof SourceUnit, "Node {0} is not attached to source unit", node);
+
+        return getABIEncoderVersion(root, this.version);
     }
 
     /**
@@ -2042,6 +2133,8 @@ export class InferType {
             "Called getterArgsAndReturn() on variable declaration without type",
             v
         );
+
+        const encoderVersion = this.getUnitLevelAbiEncoderVersion(v);
 
         while (true) {
             if (type instanceof ArrayTypeName) {
@@ -2069,19 +2162,33 @@ export class InferType {
             const elements: TypeNode[] = [];
 
             for (const member of retType.to.definition.vMembers) {
-                const memberT = member.vType;
+                const rawMemberT = member.vType;
 
                 assert(
-                    memberT !== undefined,
+                    rawMemberT !== undefined,
                     "Unexpected untyped struct member",
                     retType.to.definition
                 );
 
-                if (memberT instanceof Mapping || memberT instanceof ArrayTypeName) {
+                if (rawMemberT instanceof Mapping || rawMemberT instanceof ArrayTypeName) {
                     continue;
                 }
 
-                elements.push(this.typeNameToSpecializedTypeNode(memberT, DataLocation.Memory));
+                const memberT = this.typeNameToSpecializedTypeNode(rawMemberT, DataLocation.Memory);
+
+                if (
+                    rawMemberT instanceof UserDefinedTypeName &&
+                    rawMemberT.vReferencedDeclaration instanceof StructDefinition
+                ) {
+                    assert(
+                        encoderVersion !== ABIEncoderVersion.V1 || isSupportedByEncoderV1(memberT),
+                        "Type {0} is not supported by encoder {1}",
+                        memberT,
+                        encoderVersion
+                    );
+                }
+
+                elements.push(memberT);
             }
 
             retType = new TupleType(elements);
@@ -2244,20 +2351,24 @@ export class InferType {
      *
      * @see https://docs.soliditylang.org/en/latest/abi-spec.html
      */
-    toABIEncodedType(type: TypeNode, normalizePointers = false): TypeNode {
+    toABIEncodedType(
+        type: TypeNode,
+        encoderVersion: ABIEncoderVersion,
+        normalizePointers = false
+    ): TypeNode {
         if (type instanceof MappingType) {
             throw new Error("Cannot abi-encode mapping types");
         }
 
         if (type instanceof ArrayType) {
             return new ArrayType(
-                this.toABIEncodedType(type.elementT, normalizePointers),
+                this.toABIEncodedType(type.elementT, encoderVersion, normalizePointers),
                 type.size
             );
         }
 
         if (type instanceof PointerType) {
-            const toT = this.toABIEncodedType(type.to, normalizePointers);
+            const toT = this.toABIEncodedType(type.to, encoderVersion, normalizePointers);
 
             return new PointerType(toT, normalizePointers ? DataLocation.Memory : type.location);
         }
@@ -2276,12 +2387,21 @@ export class InferType {
             }
 
             if (type.definition instanceof StructDefinition) {
+                assert(
+                    encoderVersion !== ABIEncoderVersion.V1 || isSupportedByEncoderV1(type),
+                    "Type {0} is not supported by encoder {1}",
+                    type,
+                    encoderVersion
+                );
+
                 const fieldTs = type.definition.vMembers.map((fieldT) =>
                     this.variableDeclarationToTypeNode(fieldT)
                 );
 
                 return new TupleType(
-                    fieldTs.map((fieldT) => this.toABIEncodedType(fieldT, normalizePointers))
+                    fieldTs.map((fieldT) =>
+                        this.toABIEncodedType(fieldT, encoderVersion, normalizePointers)
+                    )
                 );
             }
         }
@@ -2304,11 +2424,13 @@ export class InferType {
     ): string {
         let args: string[];
 
+        const encoderVersion = this.getUnitLevelAbiEncoderVersion(node);
+
         if (node instanceof VariableDeclaration) {
             const [getterArgs] = this.getterArgsAndReturn(node);
 
             args = getterArgs.map((type) =>
-                abiTypeToCanonicalName(this.toABIEncodedType(type, true))
+                abiTypeToCanonicalName(this.toABIEncodedType(type, encoderVersion, true))
             );
         } else {
             if (node instanceof FunctionDefinition && (node.name === "" || node.isConstructor)) {
@@ -2319,7 +2441,9 @@ export class InferType {
             // whether this is a library function or a contract method
             if (
                 node.vScope instanceof ContractDefinition &&
-                node.vScope.kind === ContractKind.Library
+                (node.vScope.kind === ContractKind.Library ||
+                    (node instanceof FunctionDefinition &&
+                        !isVisiblityExternallyCallable(node.visibility)))
             ) {
                 args = node.vParameters.vParameters.map((arg) => {
                     const type = this.variableDeclarationToTypeNode(arg);
@@ -2329,7 +2453,7 @@ export class InferType {
             } else {
                 args = node.vParameters.vParameters.map((arg) => {
                     const type = this.variableDeclarationToTypeNode(arg);
-                    const abiType = this.toABIEncodedType(type);
+                    const abiType = this.toABIEncodedType(type, encoderVersion);
 
                     return abiTypeToCanonicalName(generalizeType(abiType)[0]);
                 });

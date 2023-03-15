@@ -34,5 +34,6 @@ export const options = [
     "xpath",
     "depth",
     "locate-compiler-cache",
+    "download-compilers",
     "help"
 ];

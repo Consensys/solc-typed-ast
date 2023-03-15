@@ -1,7 +1,6 @@
 import expect from "expect";
 import { lt } from "semver";
 import {
-    ABIEncoderVersion,
     AnyResolvable,
     assert,
     ASTKind,
@@ -24,25 +23,17 @@ import {
     VariableDeclaration
 } from "../../../src";
 
-const samples: Array<[string, string, ABIEncoderVersion]> = [
-    [
-        "test/samples/solidity/getters_08.sol",
-        CompilerVersions08[CompilerVersions08.length - 1],
-        ABIEncoderVersion.V2
-    ],
-    ["test/samples/solidity/getters_07.sol", "0.7.6", ABIEncoderVersion.V2],
-    ["test/samples/solidity/getters_07_abiv1.sol", "0.7.6", ABIEncoderVersion.V1],
-    ["test/samples/solidity/latest_06.sol", "0.6.12", ABIEncoderVersion.V2],
-    ["test/samples/solidity/latest_07.sol", "0.7.6", ABIEncoderVersion.V2],
-    [
-        "test/samples/solidity/latest_08.sol",
-        CompilerVersions08[CompilerVersions08.length - 1],
-        ABIEncoderVersion.V2
-    ],
-    ["test/samples/solidity/compile_04.sol", "0.4.26", ABIEncoderVersion.V1],
-    ["test/samples/solidity/compile_05.sol", "0.5.17", ABIEncoderVersion.V1],
-    ["test/samples/solidity/compile_06.sol", "0.6.12", ABIEncoderVersion.V1],
-    ["test/samples/solidity/signatures.sol", "0.8.7", ABIEncoderVersion.V2]
+const samples: Array<[string, string]> = [
+    ["test/samples/solidity/getters_08.sol", CompilerVersions08[CompilerVersions08.length - 1]],
+    ["test/samples/solidity/getters_07.sol", "0.7.6"],
+    ["test/samples/solidity/getters_07_abiv1.sol", "0.7.6"],
+    ["test/samples/solidity/latest_06.sol", "0.6.12"],
+    ["test/samples/solidity/latest_07.sol", "0.7.6"],
+    ["test/samples/solidity/latest_08.sol", CompilerVersions08[CompilerVersions08.length - 1]],
+    ["test/samples/solidity/compile_04.sol", "0.4.26"],
+    ["test/samples/solidity/compile_05.sol", "0.5.17"],
+    ["test/samples/solidity/compile_06.sol", "0.6.12"],
+    ["test/samples/solidity/signatures.sol", "0.8.7"]
 ];
 
 function resolveOne(
@@ -75,7 +66,7 @@ function resolveOne(
 }
 
 describe("Check canonical signatures are generated correctly", () => {
-    for (const [sample, compilerVersion, encoderVer] of samples) {
+    for (const [sample, compilerVersion] of samples) {
         for (const kind of PossibleCompilerKinds) {
             it(`[${kind}] ${sample}`, async () => {
                 const result = await compileSol(
@@ -99,7 +90,7 @@ describe("Check canonical signatures are generated correctly", () => {
                 const sourceUnits = reader.read(data, ASTKind.Any);
                 const unit = sourceUnits[0];
 
-                const inference = new InferType(compilerVersion, encoderVer);
+                const inference = new InferType(compilerVersion);
 
                 const runTestsHelper = (
                     contractName: string,

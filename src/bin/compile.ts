@@ -19,14 +19,15 @@ import {
     compileSourceString,
     ContractDefinition,
     DefaultASTWriterMapping,
+    downloadSupportedCompilers,
     ErrorDefinition,
     EventDefinition,
     FunctionDefinition,
     FunctionVisibility,
-    getABIEncoderVersion,
     InferType,
     isExact,
     LatestCompilerVersion,
+    PathOptions,
     PossibleCompilerKinds,
     PrettyFormatter,
     SourceUnit,
@@ -34,7 +35,6 @@ import {
     VariableDeclaration,
     XPath
 } from "..";
-import { PathOptions } from "../compile";
 
 enum CompileMode {
     Auto = "auto",
@@ -81,7 +81,7 @@ function error(message: string): never {
         .option("--stdin", "Read input from STDIN instead of files.")
         .option(
             "--mode <mode>",
-            `One of the following input modes: ${CompileMode.Sol} (Solidity source), ${CompileMode.Json} (JSON compiler artifact), ${CompileMode.Auto} (try to detect by file extension)`,
+            `One of the following input modes: "${CompileMode.Sol}" (Solidity source), "${CompileMode.Json}" (JSON compiler artifact), "${CompileMode.Auto}" (try to detect by file extension)`,
             CompileMode.Auto
         )
         .option(
@@ -91,7 +91,7 @@ function error(message: string): never {
         )
         .option(
             "--compiler-kind <compilerKind>",
-            `Type of Solidity compiler to use. Currently supported values are ${CompilerKind.WASM} and ${CompilerKind.Native}.`,
+            `Type of Solidity compiler to use. Currently supported values are "${CompilerKind.WASM}" or "${CompilerKind.Native}".`,
             CompilerKind.WASM
         )
         .option("--path-remapping <pathRemapping>", "Path remapping input for Solc.")
@@ -119,7 +119,11 @@ function error(message: string): never {
         )
         .option(
             "--locate-compiler-cache",
-            "Print location of cache directory, that is used to store downloaded compilers."
+            "Print location of current compiler cache directory (used to store downloaded compilers)."
+        )
+        .option(
+            "--download-compilers <compilerKind...>",
+            `Download specified kind of supported compilers to compiler cache. Supports multiple entries.`
         );
 
     program.parse(process.argv);
@@ -140,6 +144,30 @@ function error(message: string): never {
 
     if (options.locateCompilerCache) {
         terminate(CACHE_DIR);
+    }
+
+    if (options.downloadCompilers) {
+        const compilerKinds = options.downloadCompilers.map((kind: string): CompilerKind => {
+            if (PossibleCompilerKinds.has(kind)) {
+                return kind as CompilerKind;
+            }
+
+            error(
+                `Invalid compiler kind "${kind}". Possible values: ${[
+                    ...PossibleCompilerKinds.values()
+                ].join(", ")}.`
+            );
+        });
+
+        console.log(
+            `Downloading compilers (${compilerKinds.join(", ")}) to current compiler cache:`
+        );
+
+        for await (const compiler of downloadSupportedCompilers(compilerKinds)) {
+            console.log(`${compiler.path} (${compiler.constructor.name} v${compiler.version})`);
+        }
+
+        terminate();
     }
 
     if (options.help || (!args.length && !options.stdin)) {
@@ -315,7 +343,7 @@ function error(message: string): never {
     if (options.tree) {
         const INDENT = "|   ";
 
-        const writer = (unit: SourceUnit, inference: InferType, node: ASTNode) => {
+        const writer = (inference: InferType, node: ASTNode) => {
             const level = node.getParents().length;
             const indent = INDENT.repeat(level);
 
@@ -373,12 +401,10 @@ function error(message: string): never {
         };
 
         const compilerVersion = result.compilerVersion || LatestCompilerVersion;
+        const inference = new InferType(compilerVersion);
 
         for (const unit of units) {
-            const encoderVersion = getABIEncoderVersion(unit, compilerVersion);
-            const inference = new InferType(compilerVersion, encoderVersion);
-
-            unit.walk(writer.bind(undefined, unit, inference));
+            unit.walk(writer.bind(undefined, inference));
 
             console.log();
         }

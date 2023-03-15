@@ -72,7 +72,9 @@ export const CompilerVersions08 = [
     "0.8.14",
     "0.8.15",
     "0.8.16",
-    "0.8.17"
+    "0.8.17",
+    "0.8.18",
+    "0.8.19"
 ];
 
 export const CompilerSeries = [

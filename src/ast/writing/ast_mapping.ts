@@ -1172,7 +1172,13 @@ class UsingForDirectiveWriter extends ASTNodeWriter {
         if (node.vLibraryName) {
             result.push(node.vLibraryName);
         } else if (node.vFunctionList) {
-            result.push("{ ", ...join(node.vFunctionList, ", "), " }");
+            const entries = node.vFunctionList.map((entry) =>
+                entry instanceof IdentifierPath
+                    ? [entry]
+                    : [entry.definition, " as ", entry.operator]
+            );
+
+            result.push("{ ", ...flatJoin(entries, ", "), " }");
         }
 
         result.push(" for ", node.vTypeName ? node.vTypeName : "*");
