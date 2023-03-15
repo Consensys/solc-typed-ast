@@ -317,6 +317,42 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             true
         ],
         [
+            "BinaryOperation (true == true)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true"),
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (false == false)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "false"),
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "false")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (true == false)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true"),
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "false")
+                ),
+            true,
+            false
+        ],
+        [
             "BinaryOperation (1 == 2)",
             (factory: ASTNodeFactory) =>
                 factory.makeBinaryOperation(
@@ -363,6 +399,42 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                 ),
             true,
             false
+        ],
+        [
+            "BinaryOperation (true != true)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "!=",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true"),
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true")
+                ),
+            true,
+            false
+        ],
+        [
+            "BinaryOperation (false != false)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "!=",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "false"),
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "false")
+                ),
+            true,
+            false
+        ],
+        [
+            "BinaryOperation (true != false)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "!=",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true"),
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "false")
+                ),
+            true,
+            true
         ],
         [
             "BinaryOperation (bytes1(0x00) == '')",

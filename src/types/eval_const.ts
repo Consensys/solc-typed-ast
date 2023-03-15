@@ -234,10 +234,16 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
             );
         }
 
-        const leftDec = promoteToDec(left);
-        const rightDec = promoteToDec(right);
+        let isEqual: boolean;
 
-        const isEqual = leftDec.equals(rightDec);
+        if (typeof left === "boolean" || typeof right === "boolean") {
+            isEqual = left === right;
+        } else {
+            const leftDec = promoteToDec(left);
+            const rightDec = promoteToDec(right);
+
+            isEqual = leftDec.equals(rightDec);
+        }
 
         if (operator === "==") {
             return isEqual;
