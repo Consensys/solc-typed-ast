@@ -45,8 +45,19 @@ export function getCompilerVersionsBySpecifiers(
     return supported;
 }
 
+function trimAny(input: string, chars: string[] | string): string {
+    let start = 0;
+    let end = input.length;
+
+    while (start < end && chars.indexOf(input[start]) >= 0) ++start;
+
+    while (end > start && chars.indexOf(input[end - 1]) >= 0) --end;
+
+    return start > 0 || end < input.length ? input.substring(start, end) : input;
+}
+
 export function normalizeSpecifier(specifier: string): string {
-    return specifier
+    return trimAny(specifier, "\"'")
         .replace(rx.space, "")
         .replace(rx.operator, " $1")
         .replace(rx.spaceDash, "$1 ")
