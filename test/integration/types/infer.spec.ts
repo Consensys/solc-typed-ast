@@ -41,6 +41,7 @@ import {
     BuiltinFunctionType,
     BuiltinStructType,
     BuiltinType,
+    castable,
     ErrorType,
     EventType,
     FunctionLikeSetType,
@@ -766,6 +767,37 @@ describe("Type inference for expressions", () => {
                         expr,
                         toSoliditySource(expr, compilerVersion)
                     );
+                }
+            }
+
+            // Test typeOfCallee
+            for (const unit of sourceUnits) {
+                for (const expr of unit.getChildrenBySelector<FunctionCall>(
+                    (child) => child instanceof FunctionCall
+                )) {
+                    if (expr.kind !== FunctionCallKind.FunctionCall) {
+                        continue;
+                    }
+
+                    const calleeT = inference.typeOfCallee(expr);
+
+                    expect(calleeT).toBeDefined();
+                    assert(calleeT !== undefined, ``);
+
+                    const hasImplicitArg =
+                        calleeT instanceof FunctionType && calleeT.implicitFirstArg;
+
+                    const formalArgTs = hasImplicitArg
+                        ? calleeT.parameters.slice(1)
+                        : calleeT.parameters;
+
+                    expect(formalArgTs.length === expr.vArguments.length).toBeTruthy();
+
+                    for (let i = 0; i < formalArgTs.length; i++) {
+                        const actualT = inference.typeOf(expr.vArguments[i]);
+
+                        expect(castable(actualT, formalArgTs[i], compilerVersion)).toBeTruthy();
+                    }
                 }
             }
         });
