@@ -18,7 +18,6 @@ import {
     EventDefinition,
     Expression,
     ExpressionStatement,
-    ExternalReferenceType,
     FunctionCall,
     FunctionCallKind,
     FunctionCallOptions,
@@ -94,12 +93,7 @@ import {
 } from "./builtins";
 import { evalConstantExpr } from "./eval_const";
 import { SolTypeError } from "./misc";
-import {
-    applySubstitution,
-    applySubstitutions,
-    buildSubstitutions,
-    TypeSubstituion
-} from "./polymorphic";
+import { applySubstitution, buildSubstitutions, TypeSubstituion } from "./polymorphic";
 import { types } from "./reserved";
 import {
     BINARY_OPERATOR_GROUPS,
@@ -717,15 +711,21 @@ export class InferType {
 
     private matchArguments(
         funs: Array<FunctionType | BuiltinFunctionType>,
-        args: Expression[],
-        callExp: Expression
+        callsite: FunctionCall
     ): FunctionType | BuiltinFunctionType | undefined {
+        const args = callsite.vArguments;
+        const callExp = callsite.vExpression;
+
         const argTs: TypeNode[] = args.map((arg) => this.typeOf(arg));
 
         const argTsWithImplictArg =
             callExp instanceof MemberAccess ? [this.typeOf(callExp.vExpression), ...argTs] : argTs;
 
-        for (const funT of funs) {
+        for (let funT of funs) {
+            if (funT instanceof BuiltinFunctionType) {
+                funT = this.specializeBuiltinTypeTocall(callsite, funT);
+            }
+
             const actualTs =
                 funT instanceof FunctionType && funT.implicitFirstArg ? argTsWithImplictArg : argTs;
 
@@ -752,6 +752,37 @@ export class InferType {
     }
 
     /**
+     * Given a `BuiltunFunctionType` `calleeT` and an actual
+     * callsite `node` where it is invoked, specialize `calleeT` to the callsite.
+     * Specifically, if `calleeT` is polymorphic (i.e. has a TRest or TVar) substitute
+     * those with the types of the actual arguments.
+     */
+    private specializeBuiltinTypeTocall(
+        node: FunctionCall,
+        calleeT: BuiltinFunctionType
+    ): BuiltinFunctionType {
+        const argTs = node.vArguments.map((arg) => this.typeOf(arg));
+        const m: TypeSubstituion = new Map();
+
+        /**
+         * We can push fixed sized arrays (e.g. uint[1]) to storage arrays of arrays (uint[][]).
+         * Add this implicit cast here
+         */
+        if (
+            calleeT instanceof BuiltinFunctionType &&
+            node.vFunctionName === "push" &&
+            !eq(calleeT.parameters[0], argTs[0]) &&
+            castable(argTs[0], calleeT.parameters[0], this.version)
+        ) {
+            argTs[0] = calleeT.parameters[0];
+        }
+
+        buildSubstitutions(calleeT.parameters, argTs, m, this.version);
+
+        return applySubstitution(calleeT, m) as BuiltinFunctionType;
+    }
+
+    /**
      * Infer the type of the function call
      */
     typeOfFunctionCall(node: FunctionCall): TypeNode {
@@ -767,69 +798,21 @@ export class InferType {
             return this.typeOfNewCall(node);
         }
 
-        let calleeT = this.typeOf(node.vCallee);
+        const resolvedCalleeT = this.typeOfCallee(node);
 
         let rets: TypeNode[];
 
-        if (node.vFunctionCallType === ExternalReferenceType.Builtin) {
-            if (calleeT instanceof FunctionLikeSetType) {
-                calleeT = calleeT.defs.filter((d) => d instanceof BuiltinFunctionType)[0];
-            }
-
-            if (!(calleeT instanceof BuiltinFunctionType || calleeT instanceof FunctionType)) {
-                throw new SolTypeError(
-                    `Unexpected builtin ${pp(node.vCallee)} in function call ${pp(node)}`
-                );
-            }
-
-            const argTs = node.vArguments.map((arg) => this.typeOf(arg));
-            const m: TypeSubstituion = new Map();
-
-            /**
-             * We can push fixed sized arrays (e.g. uint[1]) to storage arrays of arrays (uint[][]).
-             * Add this implicit cast here
-             */
-            if (
-                calleeT instanceof BuiltinFunctionType &&
-                node.vFunctionName === "push" &&
-                !eq(calleeT.parameters[0], argTs[0]) &&
-                castable(argTs[0], calleeT.parameters[0], this.version)
-            ) {
-                argTs[0] = calleeT.parameters[0];
-            }
-
-            buildSubstitutions(calleeT.parameters, argTs, m, this.version);
-
-            rets = applySubstitutions(calleeT.returns, m);
+        if (
+            resolvedCalleeT instanceof FunctionType ||
+            resolvedCalleeT instanceof BuiltinFunctionType
+        ) {
+            rets = resolvedCalleeT.returns;
+        } else if (resolvedCalleeT instanceof EventType || resolvedCalleeT instanceof ErrorType) {
+            rets = [];
         } else {
-            if (calleeT instanceof FunctionType || calleeT instanceof BuiltinFunctionType) {
-                rets = calleeT.returns;
-            } else if (calleeT instanceof EventType || calleeT instanceof ErrorType) {
-                rets = [];
-            } else if (calleeT instanceof FunctionLikeSetType) {
-                if (calleeT.defs[0] instanceof EventDefinition) {
-                    rets = [];
-                } else {
-                    // Match based on args. Needs castable.
-                    const funT = this.matchArguments(
-                        calleeT.defs,
-                        node.vArguments,
-                        node.vExpression
-                    );
-
-                    if (funT === undefined) {
-                        throw new SolTypeError(
-                            `Couldn't resolve function ${node.vFunctionName} in ${pp(node)}`
-                        );
-                    }
-
-                    rets = funT.returns;
-                }
-            } else {
-                throw new SolTypeError(
-                    `Unexpected type ${calleeT.pp()} in function call ${pp(node)}`
-                );
-            }
+            throw new SolTypeError(
+                `Unexpected unresolved calele type in function call ${pp(node)}`
+            );
         }
 
         // No returns - return the empty type ()
@@ -2528,5 +2511,58 @@ export class InferType {
         }
 
         return undefined;
+    }
+
+    /**
+     * Given a particular `FunctionCall` site, resolve the exact callee,
+     * accounting for potential overloading.
+     *
+     * A callsite may come from:
+     * 1. A normal call (FunctionType, BuiltinFunctionType, FunctionLikeSetType)
+     * 2. An emit statement (EventType)
+     * 3. A revert statement (ErrorType).
+     *
+     * In the case that the callee is a `FunctionLikeSetType`, resolve the exact callee
+     * based on the function call arguments. Otherwise return the type of the callee.
+     */
+    typeOfCallee(
+        callsite: FunctionCall
+    ): FunctionType | BuiltinFunctionType | EventType | ErrorType | undefined {
+        assert(
+            callsite.kind === FunctionCallKind.FunctionCall,
+            `typeOfCallee() cannot be called on a call {0} of type {1}`,
+            callsite,
+            callsite.kind
+        );
+
+        const calleeT = this.typeOf(callsite.vExpression);
+
+        assert(
+            calleeT instanceof FunctionType ||
+                calleeT instanceof BuiltinFunctionType ||
+                calleeT instanceof EventType ||
+                calleeT instanceof ErrorType ||
+                calleeT instanceof FunctionLikeSetType,
+            `Unexpected type {0} of callee {1}`,
+            calleeT,
+            callsite.vExpression
+        );
+
+        if (
+            calleeT instanceof FunctionType ||
+            calleeT instanceof EventType ||
+            calleeT instanceof ErrorType
+        ) {
+            return calleeT;
+        }
+
+        if (calleeT instanceof BuiltinFunctionType) {
+            return this.specializeBuiltinTypeTocall(callsite, calleeT);
+        }
+
+        // FunctionLikeSetType - resolve based on call arguments
+        const resolvedCalleeT = this.matchArguments(calleeT.defs, callsite);
+
+        return resolvedCalleeT;
     }
 }
