@@ -41,6 +41,7 @@ import {
     SourceUnit,
     StateVariableVisibility,
     StructDefinition,
+    TryCatchClause,
     TupleExpression,
     TypeName,
     UnaryOperation,
@@ -723,7 +724,7 @@ export class InferType {
 
         for (let funT of funs) {
             if (funT instanceof BuiltinFunctionType) {
-                funT = this.specializeBuiltinTypeTocall(callsite, funT);
+                funT = this.specializeBuiltinTypeToCall(callsite, funT);
             }
 
             const actualTs =
@@ -757,7 +758,7 @@ export class InferType {
      * Specifically, if `calleeT` is polymorphic (i.e. has a TRest or TVar) substitute
      * those with the types of the actual arguments.
      */
-    private specializeBuiltinTypeTocall(
+    private specializeBuiltinTypeToCall(
         node: FunctionCall,
         calleeT: BuiltinFunctionType
     ): BuiltinFunctionType {
@@ -2404,21 +2405,42 @@ export class InferType {
             | ErrorDefinition
             | ModifierDefinition
             | VariableDeclaration
+            | TryCatchClause
     ): string {
+        let name: string;
         let args: string[];
 
         const encoderVersion = this.getUnitLevelAbiEncoderVersion(node);
 
         if (node instanceof VariableDeclaration) {
+            name = node.name;
+
             const [getterArgs] = this.getterArgsAndReturn(node);
 
             args = getterArgs.map((type) =>
                 abiTypeToCanonicalName(this.toABIEncodedType(type, encoderVersion, true))
             );
+        } else if (node instanceof TryCatchClause) {
+            if (node.errorName === "") {
+                return "";
+            }
+
+            name = node.errorName;
+
+            args = node.vParameters
+                ? node.vParameters.vParameters.map((arg) => {
+                      const type = this.variableDeclarationToTypeNode(arg);
+                      const abiType = this.toABIEncodedType(type, encoderVersion);
+
+                      return abiTypeToCanonicalName(generalizeType(abiType)[0]);
+                  })
+                : [];
         } else {
             if (node instanceof FunctionDefinition && (node.name === "" || node.isConstructor)) {
                 return "";
             }
+
+            name = node.name;
 
             // Signatures are computed differently depending on
             // whether this is a library function or a contract method
@@ -2443,7 +2465,7 @@ export class InferType {
             }
         }
 
-        return node.name + "(" + args.join(",") + ")";
+        return name + "(" + args.join(",") + ")";
     }
 
     /**
@@ -2460,8 +2482,9 @@ export class InferType {
             | ErrorDefinition
             | ModifierDefinition
             | VariableDeclaration
+            | TryCatchClause
     ): string {
-        if (node instanceof FunctionDefinition) {
+        if (node instanceof FunctionDefinition || node instanceof TryCatchClause) {
             const signature = this.signature(node);
 
             return signature ? encodeFuncSignature(signature) : "";
@@ -2557,7 +2580,7 @@ export class InferType {
         }
 
         if (calleeT instanceof BuiltinFunctionType) {
-            return this.specializeBuiltinTypeTocall(callsite, calleeT);
+            return this.specializeBuiltinTypeToCall(callsite, calleeT);
         }
 
         // FunctionLikeSetType - resolve based on call arguments
