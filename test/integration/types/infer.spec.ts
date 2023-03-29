@@ -782,7 +782,7 @@ describe("Type inference for expressions", () => {
                     const calleeT = inference.typeOfCallee(expr);
 
                     expect(calleeT).toBeDefined();
-                    assert(calleeT !== undefined, ``);
+                    assert(calleeT !== undefined, "Expected callee type to be defined");
 
                     const hasImplicitArg =
                         calleeT instanceof FunctionType && calleeT.implicitFirstArg;
