@@ -550,6 +550,18 @@ export function smallestFittingType(...literals: bigint[]): IntType | undefined 
     return undefined;
 }
 
+/**
+ * Helper to cast the bigint `val` to the `IntType` `type`.
+ */
+export function clampIntToType(val: bigint, type: IntType): bigint {
+    const min = type.min();
+    const max = type.max();
+
+    const size = max - min + 1n;
+
+    return val < min ? ((val - max) % size) + max : ((val - min) % size) + min;
+}
+
 export function decimalToRational(d: Decimal): Rational {
     if (!d.isFinite()) {
         throw new Error(`Unexpected infinite rational ${d.toString()} in decimalToRational`);

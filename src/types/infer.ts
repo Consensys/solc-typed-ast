@@ -498,7 +498,7 @@ export class InferType {
         const b = this.typeOf(node.vRightExpression);
 
         if (a instanceof NumericLiteralType && b instanceof NumericLiteralType) {
-            const res = evalConstantExpr(node);
+            const res = evalConstantExpr(node, this);
 
             assert(
                 res instanceof Decimal || typeof res === "bigint",
@@ -1711,7 +1711,7 @@ export class InferType {
         }
 
         if (innerT instanceof NumericLiteralType) {
-            const res = evalConstantExpr(node);
+            const res = evalConstantExpr(node, this);
 
             assert(
                 res instanceof Decimal || typeof res === "bigint",
@@ -1730,7 +1730,7 @@ export class InferType {
         throw new Error(`NYI unary operator ${node.operator} in ${pp(node)}`);
     }
 
-    typeOfElementaryTypeNameExpression(node: ElementaryTypeNameExpression): TypeNode {
+    typeOfElementaryTypeNameExpression(node: ElementaryTypeNameExpression): TypeNameType {
         let innerT: TypeNode;
 
         if (node.typeName instanceof TypeName) {
@@ -2261,7 +2261,7 @@ export class InferType {
             let size: bigint | undefined;
 
             if (node.vLength) {
-                const result = evalConstantExpr(node.vLength);
+                const result = evalConstantExpr(node.vLength, this);
 
                 assert(
                     typeof result === "bigint",
