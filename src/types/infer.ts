@@ -1736,7 +1736,7 @@ export class InferType {
         if (node.typeName instanceof TypeName) {
             innerT = this.typeNameToTypeNode(node.typeName);
         } else {
-            const elementaryT = this.elementaryTypeNameStringToTypeNode(node.typeName);
+            const elementaryT = InferType.elementaryTypeNameStringToTypeNode(node.typeName);
 
             assert(
                 elementaryT !== undefined,
@@ -2187,7 +2187,7 @@ export class InferType {
      *
      * @todo Consider fixes due to https://github.com/ConsenSys/solc-typed-ast/issues/160
      */
-    elementaryTypeNameStringToTypeNode(name: string): TypeNode | undefined {
+    static elementaryTypeNameStringToTypeNode(name: string): TypeNode | undefined {
         name = name.trim();
 
         if (name === "bool") {
@@ -2240,7 +2240,7 @@ export class InferType {
      */
     typeNameToTypeNode(node: TypeName): TypeNode {
         if (node instanceof ElementaryTypeName) {
-            const type = this.elementaryTypeNameStringToTypeNode(node.name);
+            const type = InferType.elementaryTypeNameStringToTypeNode(node.name);
 
             assert(type !== undefined, 'NYI converting elementary type name "{0}"', node.name);
 
