@@ -1127,6 +1127,102 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             },
             false,
             undefined
+        ],
+        [
+            "FunctionCall (unsigned typeConversion 1)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "uint8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "uint8"),
+                    [factory.makeLiteral("uint16", LiteralKind.Number, "", "255")]
+                ),
+            true,
+            255n
+        ],
+        [
+            "FunctionCall (unsigned typeConversion 2)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "uint8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "uint8"),
+                    [factory.makeLiteral("uint16", LiteralKind.Number, "", "256")]
+                ),
+            true,
+            0n
+        ],
+        [
+            "FunctionCall (unsigned->signed typeConversion 1)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "int8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "int8"),
+                    [factory.makeLiteral("uint16", LiteralKind.Number, "", "128")]
+                ),
+            true,
+            -128n
+        ],
+        [
+            "FunctionCall (unsigned->signed typeConversion 2)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "int8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "int8"),
+                    [factory.makeLiteral("uint16", LiteralKind.Number, "", "127")]
+                ),
+            true,
+            127n
+        ],
+        [
+            "FunctionCall (nsigned->signed typeConversion 1)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "int8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "int8"),
+                    [factory.makeLiteral("int16", LiteralKind.Number, "", "-128")]
+                ),
+            true,
+            -128n
+        ],
+        [
+            "FunctionCall (nsigned->signed typeConversion 2)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "int8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "int8"),
+                    [factory.makeLiteral("int16", LiteralKind.Number, "", "-129")]
+                ),
+            true,
+            127n
+        ],
+        [
+            "FunctionCall (nsigned->signed typeConversion 3)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "int8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "int8"),
+                    [factory.makeLiteral("int16", LiteralKind.Number, "", "-256")]
+                ),
+            true,
+            0n
+        ],
+        [
+            "FunctionCall (nsigned->signed typeConversion 3)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "int8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "int8"),
+                    [factory.makeLiteral("int16", LiteralKind.Number, "", "-255")]
+                ),
+            true,
+            1n
         ]
     ];
 

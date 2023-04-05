@@ -2,6 +2,7 @@ import Decimal from "decimal.js";
 import {
     BinaryOperation,
     Conditional,
+    ElementaryTypeNameExpression,
     EtherUnit,
     Expression,
     FunctionCall,
@@ -14,8 +15,10 @@ import {
     UnaryOperation,
     VariableDeclaration
 } from "../ast";
-import { pp } from "../misc";
+import { assert, pp } from "../misc";
 import { BINARY_OPERATOR_GROUPS, SUBDENOMINATION_MULTIPLIERS } from "./utils";
+import { InferType } from "./infer";
+import { IntType } from "./ast";
 /**
  * Tune up precision of decimal values to follow Solidity behavior.
  * Be careful with precision - setting it to large values causes NodeJS to crash.
@@ -428,11 +431,27 @@ export function evalConstantExpr(node: Expression): Value {
     }
 
     if (node instanceof FunctionCall) {
-        /**
-         * @todo Implement properly, as Solidity permits overflow and underflow
-         * during constant evaluation when performing type conversions.
-         */
-        return evalConstantExpr(node.vArguments[0]);
+        assert(
+            node.kind === FunctionCallKind.TypeConversion,
+            `Expected constant call to be a type conversion not {0}`,
+            node.kind
+        );
+
+        const val = evalConstantExpr(node.vArguments[0]);
+
+        if (
+            typeof val === "bigint" &&
+            node.vExpression instanceof ElementaryTypeNameExpression &&
+            typeof node.vExpression.typeName == "string"
+        ) {
+            const castT = InferType.elementaryTypeNameStringToTypeNode(node.vExpression.typeName);
+
+            if (castT instanceof IntType) {
+                return clampIntToType(val, castT);
+            }
+        }
+
+        return val;
     }
 
     /**
@@ -441,4 +460,15 @@ export function evalConstantExpr(node: Expression): Value {
      * So for now we don't support them, but we may change that in the future.
      */
     throw new EvalError(`Unable to evaluate constant expression ${pp(node)}`, node);
+}
+
+/**
+ * Helper to cast the bigint `val` to the `IntType` `type`.
+ */
+function clampIntToType(val: bigint, type: IntType): bigint {
+    const min = type.min();
+    const max = type.max();
+    const size = max - min + 1n;
+
+    return val < min ? ((val - max) % size) + max : ((val - min) % size) + min;
 }
