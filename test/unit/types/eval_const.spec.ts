@@ -722,7 +722,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "2")
                 ),
             true,
-            -1n
+            255n
         ],
         [
             "BinaryOperation (2 * 2)",
@@ -809,7 +809,12 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                     factory.makeLiteral("<missing>", LiteralKind.Number, "", "256")
                 ),
             true,
-            115792089237316195423570985008687907853269984665640564039457584007913129639936n
+            /**
+             * Note that actual result is
+             * 115792089237316195423570985008687907853269984665640564039457584007913129639936n
+             * but it gets clamped to 0 to respect uint256 type boundaries.
+             */
+            0n
         ],
         [
             "BinaryOperation (2 << 5)",

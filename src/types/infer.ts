@@ -497,19 +497,6 @@ export class InferType {
         const a = this.typeOf(node.vLeftExpression);
         const b = this.typeOf(node.vRightExpression);
 
-        if (a instanceof NumericLiteralType && b instanceof NumericLiteralType) {
-            const res = evalConstantExpr(node, this);
-
-            assert(
-                res instanceof Decimal || typeof res === "bigint",
-                "Unexpected result of const binary op"
-            );
-
-            return typeof res === "bigint"
-                ? new IntLiteralType(res)
-                : new RationalLiteralType(decimalToRational(res));
-        }
-
         // After 0.6.0 the type of ** is just the type of the lhs
         // Between 0.6.0 and 0.7.0 if the lhs is an int literal type it
         // took the type of the rhs if it wasn't a literal type. After 0.7.0 it
@@ -557,6 +544,19 @@ export class InferType {
             // For all other bitwise operators infer a common type. In earlier versions it wa allowed
             // to have bitwise ops between differing sizes
             return this.inferCommonType(a, b);
+        }
+
+        if (a instanceof NumericLiteralType && b instanceof NumericLiteralType) {
+            const res = evalConstantExpr(node, this);
+
+            assert(
+                res instanceof Decimal || typeof res === "bigint",
+                "Unexpected result of const binary op"
+            );
+
+            return typeof res === "bigint"
+                ? new IntLiteralType(res)
+                : new RationalLiteralType(decimalToRational(res));
         }
 
         throw new Error(`NYI Binary op ${node.operator}`);

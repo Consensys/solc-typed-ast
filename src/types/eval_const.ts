@@ -381,11 +381,18 @@ export function evalUnary(node: UnaryOperation, inference: InferType): Value {
 
 export function evalBinary(node: BinaryOperation, inference: InferType): Value {
     try {
-        return evalBinaryImpl(
+        const opT = inference.typeOfBinaryOperation(node);
+        const val = evalBinaryImpl(
             node.operator,
             evalConstantExpr(node.vLeftExpression, inference),
             evalConstantExpr(node.vRightExpression, inference)
         );
+
+        if (opT instanceof IntType && typeof val === "bigint") {
+            return clampIntToType(val, opT);
+        }
+
+        return val;
     } catch (e: unknown) {
         if (e instanceof EvalError && e.expr === undefined) {
             e.expr = node;
