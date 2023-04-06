@@ -542,7 +542,8 @@ function compareTypeNodes(
     if (
         inferredT instanceof FunctionType &&
         parsedT instanceof FunctionType &&
-        inferredT.visibility === FunctionVisibility.External &&
+        (inferredT.visibility === FunctionVisibility.External ||
+            parsedT.visibility === FunctionVisibility.External) &&
         inferredT.parameters.length === parsedT.parameters.length &&
         inferredT.parameters.length === parsedT.parameters.length
     ) {
