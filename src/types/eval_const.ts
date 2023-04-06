@@ -16,9 +16,9 @@ import {
     VariableDeclaration
 } from "../ast";
 import { assert, pp } from "../misc";
-import { BINARY_OPERATOR_GROUPS, SUBDENOMINATION_MULTIPLIERS } from "./utils";
-import { InferType } from "./infer";
 import { IntType } from "./ast";
+import { InferType } from "./infer";
+import { BINARY_OPERATOR_GROUPS, SUBDENOMINATION_MULTIPLIERS, clampIntToType } from "./utils";
 /**
  * Tune up precision of decimal values to follow Solidity behavior.
  * Be careful with precision - setting it to large values causes NodeJS to crash.
@@ -360,9 +360,9 @@ export function evalLiteral(node: Literal): Value {
     }
 }
 
-export function evalUnary(node: UnaryOperation): Value {
+export function evalUnary(node: UnaryOperation, inference: InferType): Value {
     try {
-        return evalUnaryImpl(node.operator, evalConstantExpr(node.vSubExpression));
+        return evalUnaryImpl(node.operator, evalConstantExpr(node.vSubExpression, inference));
     } catch (e: unknown) {
         if (e instanceof EvalError && e.expr === undefined) {
             e.expr = node;
@@ -372,12 +372,12 @@ export function evalUnary(node: UnaryOperation): Value {
     }
 }
 
-export function evalBinary(node: BinaryOperation): Value {
+export function evalBinary(node: BinaryOperation, inference: InferType): Value {
     try {
         return evalBinaryImpl(
             node.operator,
-            evalConstantExpr(node.vLeftExpression),
-            evalConstantExpr(node.vRightExpression)
+            evalConstantExpr(node.vLeftExpression, inference),
+            evalConstantExpr(node.vRightExpression, inference)
         );
     } catch (e: unknown) {
         if (e instanceof EvalError && e.expr === undefined) {
@@ -388,14 +388,36 @@ export function evalBinary(node: BinaryOperation): Value {
     }
 }
 
+export function evalFunctionCall(node: FunctionCall, inference: InferType): Value {
+    assert(
+        node.kind === FunctionCallKind.TypeConversion,
+        `Expected constant call to be a "{0}", but got "{1}" instead`,
+        FunctionCallKind.TypeConversion,
+        node.kind
+    );
+
+    const val = evalConstantExpr(node.vArguments[0], inference);
+
+    if (typeof val === "bigint" && node.vExpression instanceof ElementaryTypeNameExpression) {
+        const castExprT = inference.typeOfElementaryTypeNameExpression(node.vExpression);
+        const castT = castExprT.type;
+
+        if (castT instanceof IntType) {
+            return clampIntToType(val, castT);
+        }
+    }
+
+    return val;
+}
+
 /**
  * Given a constant expression `expr` evaluate it to a concrete `Value`.
  * If `expr` is not constant throw `NonConstantExpressionError`.
  *
- * TODO: The order of some operations changed in some version.
- * So perhaps to be fully precise here we will need a compiler version too?
+ * @todo The order of some operations changed in some version.
+ * Current implementation does not yet take it into an account.
  */
-export function evalConstantExpr(node: Expression): Value {
+export function evalConstantExpr(node: Expression, inference: InferType): Value {
     if (!isConstant(node)) {
         throw new NonConstantExpressionError(node);
     }
@@ -405,53 +427,33 @@ export function evalConstantExpr(node: Expression): Value {
     }
 
     if (node instanceof UnaryOperation) {
-        return evalUnary(node);
+        return evalUnary(node, inference);
     }
 
     if (node instanceof BinaryOperation) {
-        return evalBinary(node);
+        return evalBinary(node, inference);
     }
 
     if (node instanceof TupleExpression) {
-        return evalConstantExpr(node.vOriginalComponents[0] as Expression);
+        return evalConstantExpr(node.vOriginalComponents[0] as Expression, inference);
     }
 
     if (node instanceof Conditional) {
-        return evalConstantExpr(node.vCondition)
-            ? evalConstantExpr(node.vTrueExpression)
-            : evalConstantExpr(node.vFalseExpression);
+        return evalConstantExpr(node.vCondition, inference)
+            ? evalConstantExpr(node.vTrueExpression, inference)
+            : evalConstantExpr(node.vFalseExpression, inference);
     }
 
     if (node instanceof Identifier) {
         const decl = node.vReferencedDeclaration;
 
         if (decl instanceof VariableDeclaration) {
-            return evalConstantExpr(decl.vValue as Expression);
+            return evalConstantExpr(decl.vValue as Expression, inference);
         }
     }
 
     if (node instanceof FunctionCall) {
-        assert(
-            node.kind === FunctionCallKind.TypeConversion,
-            `Expected constant call to be a type conversion not {0}`,
-            node.kind
-        );
-
-        const val = evalConstantExpr(node.vArguments[0]);
-
-        if (
-            typeof val === "bigint" &&
-            node.vExpression instanceof ElementaryTypeNameExpression &&
-            typeof node.vExpression.typeName == "string"
-        ) {
-            const castT = InferType.elementaryTypeNameStringToTypeNode(node.vExpression.typeName);
-
-            if (castT instanceof IntType) {
-                return clampIntToType(val, castT);
-            }
-        }
-
-        return val;
+        return evalFunctionCall(node, inference);
     }
 
     /**
@@ -460,15 +462,4 @@ export function evalConstantExpr(node: Expression): Value {
      * So for now we don't support them, but we may change that in the future.
      */
     throw new EvalError(`Unable to evaluate constant expression ${pp(node)}`, node);
-}
-
-/**
- * Helper to cast the bigint `val` to the `IntType` `type`.
- */
-function clampIntToType(val: bigint, type: IntType): bigint {
-    const min = type.min();
-    const max = type.max();
-    const size = max - min + 1n;
-
-    return val < min ? ((val - max) % size) + max : ((val - min) % size) + min;
 }

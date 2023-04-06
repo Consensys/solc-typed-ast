@@ -7,7 +7,9 @@ import {
     evalConstantExpr,
     Expression,
     FunctionCallKind,
+    InferType,
     isConstant,
+    LatestCompilerVersion,
     LiteralKind,
     Mutability,
     StateVariableVisibility,
@@ -1228,9 +1230,11 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
 
 describe("Constant expression evaluator unit test (isConstant() + evalConstantExpr())", () => {
     let factory: ASTNodeFactory;
+    let inference: InferType;
 
     before(() => {
         factory = new ASTNodeFactory();
+        inference = new InferType(LatestCompilerVersion);
     });
 
     for (const [name, exprBuilder, isConst, value] of cases) {
@@ -1240,9 +1244,9 @@ describe("Constant expression evaluator unit test (isConstant() + evalConstantEx
             expect(isConstant(expr)).toEqual(isConst);
 
             if (value === undefined) {
-                expect(() => evalConstantExpr(expr)).toThrow();
+                expect(() => evalConstantExpr(expr, inference)).toThrow();
             } else {
-                expect(evalConstantExpr(expr)).toEqual(value);
+                expect(evalConstantExpr(expr, inference)).toEqual(value);
             }
         });
     }
