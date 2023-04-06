@@ -1227,7 +1227,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             1n
         ],
         [
-            "FunctionCall (typeConversion, uint256(~uint8(1))",
+            "Edge-case: uint256(~uint8(1))",
             (factory: ASTNodeFactory) =>
                 factory.makeFunctionCall(
                     "uint256",
@@ -1249,6 +1249,57 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                 ),
             true,
             254n
+        ],
+        [
+            "Edge-case <0.8.0: -uint8(1)",
+            (factory: ASTNodeFactory) =>
+                factory.makeUnaryOperation(
+                    "<missing>",
+                    true,
+                    "-",
+                    factory.makeFunctionCall(
+                        "uint8",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(uint8)", "uint8"),
+                        [factory.makeLiteral("int_const 1", LiteralKind.Number, "31", "1")]
+                    )
+                ),
+            true,
+            255n
+        ],
+        [
+            "Edge-case <0.8.0: uint8(255) + 1",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "+",
+                    factory.makeFunctionCall(
+                        "uint8",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(uint8)", "uint8"),
+                        [factory.makeLiteral("int_const 255", LiteralKind.Number, "", "255")]
+                    ),
+                    factory.makeLiteral("int_const 1", LiteralKind.Number, "31", "1")
+                ),
+            true,
+            0n
+        ],
+        [
+            "Edge-case <0.8.0: 1 + uint8(255)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "+",
+                    factory.makeLiteral("int_const 1", LiteralKind.Number, "31", "1"),
+                    factory.makeFunctionCall(
+                        "uint8",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(uint8)", "uint8"),
+                        [factory.makeLiteral("int_const 255", LiteralKind.Number, "", "255")]
+                    )
+                ),
+            true,
+            0n
         ]
     ];
 
