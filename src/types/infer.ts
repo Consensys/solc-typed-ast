@@ -1684,6 +1684,10 @@ export class InferType {
             return innerT;
         }
 
+        if (node.operator === "-" || node.operator === "+" || node.operator === "~") {
+            return innerT;
+        }
+
         if (innerT instanceof NumericLiteralType) {
             const res = evalConstantExpr(node, this);
 
@@ -1695,10 +1699,6 @@ export class InferType {
             return typeof res === "bigint"
                 ? new IntLiteralType(res)
                 : new RationalLiteralType(decimalToRational(res));
-        }
-
-        if (node.operator === "-" || node.operator === "+" || node.operator === "~") {
-            return innerT;
         }
 
         throw new Error(`NYI unary operator ${node.operator} in ${pp(node)}`);
