@@ -16,7 +16,7 @@ import {
     VariableDeclaration
 } from "../ast";
 import { assert, pp } from "../misc";
-import { IntType } from "./ast";
+import { IntType, NumericLiteralType } from "./ast";
 import { InferType } from "./infer";
 import { BINARY_OPERATOR_GROUPS, SUBDENOMINATION_MULTIPLIERS, clampIntToType } from "./utils";
 /**
@@ -362,7 +362,14 @@ export function evalLiteral(node: Literal): Value {
 
 export function evalUnary(node: UnaryOperation, inference: InferType): Value {
     try {
-        return evalUnaryImpl(node.operator, evalConstantExpr(node.vSubExpression, inference));
+        const subT = inference.typeOf(node.vSubExpression);
+        const res = evalUnaryImpl(node.operator, evalConstantExpr(node.vSubExpression, inference));
+
+        if (subT instanceof IntType && typeof res === "bigint") {
+            return clampIntToType(res, subT);
+        }
+
+        return res;
     } catch (e: unknown) {
         if (e instanceof EvalError && e.expr === undefined) {
             e.expr = node;
@@ -374,11 +381,24 @@ export function evalUnary(node: UnaryOperation, inference: InferType): Value {
 
 export function evalBinary(node: BinaryOperation, inference: InferType): Value {
     try {
-        return evalBinaryImpl(
+        const leftT = inference.typeOf(node.vLeftExpression);
+        const rightT = inference.typeOf(node.vRightExpression);
+
+        const res = evalBinaryImpl(
             node.operator,
             evalConstantExpr(node.vLeftExpression, inference),
             evalConstantExpr(node.vRightExpression, inference)
         );
+
+        if (!(leftT instanceof NumericLiteralType && rightT instanceof NumericLiteralType)) {
+            const resT = inference.typeOfBinaryOperation(node);
+
+            if (resT instanceof IntType && typeof res === "bigint") {
+                return clampIntToType(res, resT);
+            }
+        }
+
+        return res;
     } catch (e: unknown) {
         if (e instanceof EvalError && e.expr === undefined) {
             e.expr = node;
@@ -391,7 +411,7 @@ export function evalBinary(node: BinaryOperation, inference: InferType): Value {
 export function evalFunctionCall(node: FunctionCall, inference: InferType): Value {
     assert(
         node.kind === FunctionCallKind.TypeConversion,
-        `Expected constant call to be a "{0}", but got "{1}" instead`,
+        'Expected constant call to be a "{0}", but got "{1}" instead',
         FunctionCallKind.TypeConversion,
         node.kind
     );
@@ -399,11 +419,11 @@ export function evalFunctionCall(node: FunctionCall, inference: InferType): Valu
     const val = evalConstantExpr(node.vArguments[0], inference);
 
     if (typeof val === "bigint" && node.vExpression instanceof ElementaryTypeNameExpression) {
-        const castExprT = inference.typeOfElementaryTypeNameExpression(node.vExpression);
-        const castT = castExprT.type;
+        const castT = inference.typeOfElementaryTypeNameExpression(node.vExpression);
+        const toT = castT.type;
 
-        if (castT instanceof IntType) {
-            return clampIntToType(val, castT);
+        if (toT instanceof IntType) {
+            return clampIntToType(val, toT);
         }
     }
 
