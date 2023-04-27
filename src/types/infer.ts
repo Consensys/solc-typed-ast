@@ -2315,7 +2315,7 @@ export class InferType {
      * 1. Check again that its not possible for tuples in internal calls to somehow get encoded on the stack
      * 2. What happens with return tuples? Are they always in memory?
      */
-    isTypeEncodingDynamic(typ: TypeNode): boolean {
+    isABITypeEncodingDynamic(typ: TypeNode): boolean {
         if (
             typ instanceof PointerType ||
             typ instanceof ArrayType ||
@@ -2330,7 +2330,7 @@ export class InferType {
             for (const elT of typ.elements) {
                 assert(elT !== null, `Unexpected empty tuple element in {0}`, typ);
 
-                if (this.isTypeEncodingDynamic(elT)) {
+                if (this.isABITypeEncodingDynamic(elT)) {
                     return true;
                 }
             }
@@ -2382,7 +2382,7 @@ export class InferType {
         if (type instanceof PointerType) {
             const toT = this.toABIEncodedType(type.to, encoderVersion, normalizePointers);
 
-            return this.isTypeEncodingDynamic(toT)
+            return this.isABITypeEncodingDynamic(toT)
                 ? new PointerType(toT, normalizePointers ? DataLocation.Memory : type.location)
                 : toT;
         }
