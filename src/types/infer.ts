@@ -2299,13 +2299,58 @@ export class InferType {
     }
 
     /**
+     * Determine if the specified type `typ` is dynamic or not. Dynamic means
+     * that if we are trying to read `typ` at location `loc`, in `loc` there should be just a
+     * uint256 offset into memory/storage/calldata, where the actual data lives. Otherwise
+     * (if the type is "static"), the direct encoding of the data will start at `loc`.
+     *
+     * Usually "static" types are just the value types - i.e. anything of statically
+     * known size that fits in a uint256. As per https://docs.soliditylang.org/en/latest/abi-spec.html#formal-specification-of-the-encoding
+     * there are several exceptions to the rule when encoding types in calldata:
+     *
+     * 1. Fixed size arrays with fixed-sized element types
+     * 2. Tuples where all the tuple elements are fixed-size
+     *
+     * @todo (Dimo):
+     * 1. Check again that its not possible for tuples in internal calls to somehow get encoded on the stack
+     * 2. What happens with return tuples? Are they always in memory?
+     */
+    isABITypeEncodingDynamic(typ: TypeNode): boolean {
+        if (
+            typ instanceof PointerType ||
+            typ instanceof ArrayType ||
+            typ instanceof StringType ||
+            typ instanceof BytesType
+        ) {
+            return true;
+        }
+
+        // Tuples in calldata with static elements
+        if (typ instanceof TupleType) {
+            for (const elT of typ.elements) {
+                assert(elT !== null, `Unexpected empty tuple element in {0}`, typ);
+
+                if (this.isABITypeEncodingDynamic(elT)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
      * Convert an internal TypeNode to the external TypeNode that would correspond to it
-     * after ABI-encoding with encoder version. Follows the following rules:
+     * after ABI-encoding with encoder version `encoderVersion`. Follows the following rules:
      *
      * 1. Contract definitions turned to address.
      * 2. Enum definitions turned to uint of minimal fitting size.
-     * 3. Any storage pointer types are converted to memory pointer types.
+     * 3. Storage pointer types are converted to memory pointer types when `normalizePointers` is set to `true`.
      * 4. Throw an error on any nested mapping types.
+     * 5. Fixed-size arrays with fixed-sized element types are encoded as inlined tuples
+     * 6. Structs with fixed-sized elements are encoded as inlined tuples
      *
      * @see https://docs.soliditylang.org/en/latest/abi-spec.html
      */
@@ -2319,16 +2364,27 @@ export class InferType {
         }
 
         if (type instanceof ArrayType) {
-            return new ArrayType(
-                this.toABIEncodedType(type.elementT, encoderVersion, normalizePointers),
-                type.size
-            );
+            const elT = this.toABIEncodedType(type.elementT, encoderVersion);
+
+            if (type.size !== undefined) {
+                const elements = [];
+
+                for (let i = 0; i < type.size; i++) {
+                    elements.push(elT);
+                }
+
+                return new TupleType(elements);
+            }
+
+            return new ArrayType(elT, type.size);
         }
 
         if (type instanceof PointerType) {
             const toT = this.toABIEncodedType(type.to, encoderVersion, normalizePointers);
 
-            return new PointerType(toT, normalizePointers ? DataLocation.Memory : type.location);
+            return this.isABITypeEncodingDynamic(toT)
+                ? new PointerType(toT, normalizePointers ? DataLocation.Memory : type.location)
+                : toT;
         }
 
         if (type instanceof UserDefinedType) {
