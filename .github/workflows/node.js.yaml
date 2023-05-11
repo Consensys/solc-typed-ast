@@ -62,6 +62,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
     steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - id: non_merge_commit_message
+        run: echo "commit_message=$(git log --pretty=format:'%s' --no-merges -n 1)" >> $GITHUB_OUTPUT
+        shell: bash
       - name: Send slack Notification
         uses: slackapi/slack-github-action@v1.23.0
         with:
