@@ -3,8 +3,32 @@ pragma abicoder v2;
 
 import "./latest_imports_08.sol" as LI;
 
+/**
+ * Struct
+ * Doc
+ */
+struct Some {
+    uint x;
+
+    /**
+     * Struct
+     *  Dangling
+     *   Doc
+     */
+}
+
+/**
+ * Enum
+ * Doc
+ */
 enum EnumABC {
     A, B, C
+
+    /**
+     * Enum
+     *  Dangling
+     *   Doc
+     */
 }
 
 contract UncheckedMathExample {

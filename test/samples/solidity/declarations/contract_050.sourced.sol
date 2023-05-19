@@ -14,7 +14,11 @@ interface B {
 contract C is B {
     using A for uint;
 
-    enum En { A, B, C }
+    enum En {
+        A,
+        B,
+        C
+    }
 
     event Ev(address indexed addr);
 

@@ -5,7 +5,11 @@ pragma solidity ^0.6.0;
 pragma experimental ABIEncoderV2;
 pragma experimental SMTChecker;
 
-enum GlobalEnum { A, B, C }
+enum GlobalEnum {
+    A,
+    B,
+    C
+}
 
 struct GlobalStruct {
     int a;

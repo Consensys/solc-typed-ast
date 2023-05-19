@@ -54,6 +54,7 @@ SourceUnit #56
         fullyImplemented: true
         linearizedBaseContracts: Array(1) [ 55 ]
         usedErrors: Array(0)
+        usedEvents: Array(0)
         docString: undefined
         nameLocation: undefined
         context: ASTContext #1000
@@ -63,6 +64,7 @@ SourceUnit #56
         <getter> vScope: SourceUnit #56
         <getter> vLinearizedBaseContracts: Array(1) [ ContractDefinition #55 ]
         <getter> vUsedErrors: Array(0)
+        <getter> vUsedEvents: Array(0)
         <getter> vInheritanceSpecifiers: Array(0)
         <getter> vStateVariables: Array(1) [ VariableDeclaration #32 ]
         <getter> vModifiers: Array(0)

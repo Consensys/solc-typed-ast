@@ -22,6 +22,7 @@ describe("ASTNodeFactory.makeIdentifierFor()", () => {
             false,
             true,
             [],
+            [],
             []
         );
 
