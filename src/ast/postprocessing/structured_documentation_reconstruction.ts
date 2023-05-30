@@ -254,8 +254,9 @@ export class StructuredDocumentationReconstructingPostprocessor
         }
 
         /**
-         * Dangling structured documentation can only be located in statements,
-         * that may have nested children (`StatementWithChildren`, `ContractDefinition`, `EnumDefinition`).
+	 * Dangling structured documentation can currently be added to
+	 * Statements, ContractDefinitions, EnumDefinitions and
+	 * StructDefinitions
          */
         if (
             node instanceof StatementWithChildren ||
