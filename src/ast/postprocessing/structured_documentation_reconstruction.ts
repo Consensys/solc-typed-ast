@@ -254,9 +254,9 @@ export class StructuredDocumentationReconstructingPostprocessor
         }
 
         /**
-	 * Dangling structured documentation can currently be added to
-	 * Statements, ContractDefinitions, EnumDefinitions and
-	 * StructDefinitions
+         * Dangling structured documentation can currently be added to
+         * Statements, ContractDefinitions, EnumDefinitions and
+         * StructDefinitions
          */
         if (
             node instanceof StatementWithChildren ||
