@@ -1,18 +1,16 @@
 import { Decimal } from "decimal.js";
 import { gte, lt } from "semver";
 import {
+    ASTNode,
     AnyResolvable,
     ArrayTypeName,
     Assignment,
-    ASTNode,
     BinaryOperation,
     Conditional,
     ContractDefinition,
     ContractKind,
     ElementaryTypeName,
     ElementaryTypeNameExpression,
-    encodeEventSignature,
-    encodeFuncSignature,
     EnumDefinition,
     ErrorDefinition,
     EventDefinition,
@@ -37,7 +35,6 @@ import {
     ModifierDefinition,
     NewExpression,
     ParameterList,
-    resolveAny,
     SourceUnit,
     StateVariableVisibility,
     StructDefinition,
@@ -48,7 +45,10 @@ import {
     UserDefinedTypeName,
     UserDefinedValueTypeDefinition,
     VariableDeclaration,
-    VariableDeclarationStatement
+    VariableDeclarationStatement,
+    encodeEventSignature,
+    encodeFuncSignature,
+    resolveAny
 } from "../ast";
 import { DataLocation } from "../ast/constants";
 import { assert, eq, forAll, forAny, pp } from "../misc";
@@ -77,6 +77,8 @@ import {
     StringLiteralType,
     StringType,
     SuperType,
+    TRest,
+    TVar,
     TupleType,
     TypeNameType,
     TypeNode,
@@ -94,25 +96,25 @@ import {
 } from "./builtins";
 import { evalConstantExpr } from "./eval_const";
 import { SolTypeError } from "./misc";
-import { applySubstitution, buildSubstitutions, TypeSubstituion } from "./polymorphic";
+import { TypeSubstituion, applySubstitution, buildSubstitutions } from "./polymorphic";
 import { types } from "./reserved";
 import {
     BINARY_OPERATOR_GROUPS,
+    SUBDENOMINATION_MULTIPLIERS,
     castable,
     decimalToRational,
     enumToIntType,
     generalizeType,
     getABIEncoderVersion,
-    getFallbackRecvFuns,
     getFQDefName,
+    getFallbackRecvFuns,
     inferCommonVisiblity,
     isReferenceType,
     isVisiblityExternallyCallable,
     mergeFunTypes,
     smallestFittingType,
     specializeType,
-    stripSingletonParens,
-    SUBDENOMINATION_MULTIPLIERS
+    stripSingletonParens
 } from "./utils";
 
 const unaryImpureOperators = ["++", "--"];
@@ -201,7 +203,7 @@ function isSupportedByEncoderV1(type: TypeNode): boolean {
         const [baseT] = generalizeType(type.elementT);
 
         return (
-            isSupportedByEncoderV1(baseT) ||
+            isSupportedByEncoderV1(baseT) &&
             !(baseT instanceof ArrayType && baseT.size === undefined)
         );
     }
@@ -2341,6 +2343,48 @@ export class InferType {
         return false;
     }
 
+    isABIEncodable(type: TypeNode, encoderVersion: ABIEncoderVersion): boolean {
+        if (
+            type instanceof MappingType ||
+            type instanceof TupleType ||
+            (type instanceof FunctionType &&
+                type.visibility !== FunctionVisibility.External &&
+                type.visibility !== FunctionVisibility.Public) ||
+            type instanceof ErrorType ||
+            type instanceof EventType ||
+            type instanceof BuiltinFunctionType ||
+            type instanceof TypeNameType ||
+            type instanceof RationalLiteralType ||
+            type instanceof ImportRefType ||
+            type instanceof SuperType ||
+            type instanceof FunctionLikeSetType ||
+            type instanceof TVar ||
+            type instanceof TRest
+        ) {
+            return false;
+        }
+
+        if (encoderVersion === ABIEncoderVersion.V1 && !isSupportedByEncoderV1(type)) {
+            return false;
+        }
+
+        if (type instanceof PointerType) {
+            return this.isABIEncodable(type.to, encoderVersion);
+        }
+
+        if (type instanceof ArrayType) {
+            return this.isABIEncodable(type.elementT, encoderVersion);
+        }
+
+        if (type instanceof UserDefinedType && type.definition instanceof StructDefinition) {
+            return type.definition.vMembers.every((field) =>
+                this.isABIEncodable(this.variableDeclarationToTypeNode(field), encoderVersion)
+            );
+        }
+
+        return true;
+    }
+
     /**
      * Convert an internal TypeNode to the external TypeNode that would correspond to it
      * after ABI-encoding with encoder version `encoderVersion`. Follows the following rules:
@@ -2359,9 +2403,12 @@ export class InferType {
         encoderVersion: ABIEncoderVersion,
         normalizePointers = false
     ): TypeNode {
-        if (type instanceof MappingType) {
-            throw new Error("Cannot abi-encode mapping types");
-        }
+        assert(
+            this.isABIEncodable(type, encoderVersion),
+            'Can not ABI-encode type "{0}" with encoder "{1}"',
+            type,
+            encoderVersion
+        );
 
         if (type instanceof ArrayType) {
             const elT = this.toABIEncodedType(type.elementT, encoderVersion);
@@ -2401,13 +2448,6 @@ export class InferType {
             }
 
             if (type.definition instanceof StructDefinition) {
-                assert(
-                    encoderVersion !== ABIEncoderVersion.V1 || isSupportedByEncoderV1(type),
-                    "Type {0} is not supported by encoder {1}",
-                    type,
-                    encoderVersion
-                );
-
                 const fieldTs = type.definition.vMembers.map((fieldT) =>
                     this.variableDeclarationToTypeNode(fieldT)
                 );

@@ -257,7 +257,7 @@ describe("Type casting unit test (castable())", () => {
         const fromT = from instanceof TypeNode ? from : from(factory);
         const toT = to instanceof TypeNode ? to : to(factory);
 
-        it(`${fromT.pp()} -> ${toT.pp()}" expected to be ${expectation} (in ${compilerVersion})`, () => {
+        it(`"${fromT.pp()} -> ${toT.pp()}" expected to be ${expectation} (in ${compilerVersion})`, () => {
             expect(castable(fromT, toT, compilerVersion)).toEqual(expectation);
         });
     }
