@@ -14,7 +14,8 @@ export class ImportRefType extends TypeNode {
 
         assert(
             importStmt.vSymbolAliases.length === 0 && importStmt.unitAlias !== "",
-            `ImportRefTypes only applicable to unit alias imports, not ${importStmt.print()}`
+            "ImportRefTypes only applicable to unit alias imports, not {0}",
+            importStmt
         );
 
         this.importStmt = importStmt;
