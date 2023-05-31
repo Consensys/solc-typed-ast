@@ -132,6 +132,7 @@ const cases: Array<
                 false,
                 true,
                 [],
+                [],
                 []
             );
 
@@ -292,6 +293,7 @@ const cases: Array<
                 ContractKind.Contract,
                 false,
                 true,
+                [],
                 [],
                 []
             );
