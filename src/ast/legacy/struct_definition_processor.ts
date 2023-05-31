@@ -17,6 +17,6 @@ export class LegacyStructDefinitionProcessor extends LegacyNodeProcessor<StructD
         const scope: number = attributes.scope;
         const visibility: string = attributes.visibility;
 
-        return [id, src, name, scope, visibility, members, undefined, raw];
+        return [id, src, name, scope, visibility, members, undefined, undefined, raw];
     }
 }

@@ -1,7 +1,11 @@
 // ------------------------------------------------------------
 // test/samples/solidity/meta/complex_imports/a.sol
 // ------------------------------------------------------------
-enum SomeEnum { A, B, C }
+enum SomeEnum {
+    A,
+    B,
+    C
+}
 
 struct SomeStruct {
     uint x;

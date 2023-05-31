@@ -28,13 +28,15 @@ const encounters = new Map<string, number>([
     ["SourceUnit", 1],
     ["PragmaDirective", 2],
     ["ImportDirective", 1],
+    ["StructDefinition", 1],
+    ["StructuredDocumentation", 5],
+    ["VariableDeclaration", 75],
+    ["ElementaryTypeName", 58],
     ["EnumDefinition", 2],
     ["EnumValue", 6],
     ["ContractDefinition", 18],
     ["FunctionDefinition", 34],
     ["ParameterList", 87],
-    ["VariableDeclaration", 74],
-    ["ElementaryTypeName", 57],
     ["Block", 50],
     ["VariableDeclarationStatement", 16],
     ["Literal", 38],
@@ -69,7 +71,6 @@ const encounters = new Map<string, number>([
     ["ForStatement", 1],
     ["InlineAssembly", 6],
     ["ErrorDefinition", 4],
-    ["StructuredDocumentation", 3],
     ["RevertStatement", 3],
     ["UserDefinedValueTypeDefinition", 5],
     ["FunctionTypeName", 4],
@@ -116,11 +117,11 @@ for (const compilerKind of PossibleCompilerKinds) {
             // console.log(sourceUnit.print());
             // console.log(sourceUnit.getChildren().length);
 
-            expect(sourceUnit.id).toEqual(771);
-            expect(sourceUnit.src).toEqual("0:8851:0");
+            expect(sourceUnit.id).toEqual(776);
+            expect(sourceUnit.src).toEqual("0:9048:0");
             expect(sourceUnit.absolutePath).toEqual(mainSample);
-            expect(sourceUnit.children.length).toEqual(31);
-            expect(sourceUnit.getChildren().length).toEqual(764);
+            expect(sourceUnit.children.length).toEqual(32);
+            expect(sourceUnit.getChildren().length).toEqual(769);
         });
 
         it(`Validate parsed output (${astKind})`, () => {

@@ -92,6 +92,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.fullyImplemented,
             node.linearizedBaseContracts,
             node.usedErrors,
+            node.usedEvents,
             node.documentation,
             node.children,
             node.nameLocation,
@@ -103,6 +104,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
         (node: EnumDefinition): Specific<ConstructorParameters<typeof EnumDefinition>> => [
             node.name,
             node.vMembers,
+            node.documentation,
             node.nameLocation,
             node.raw
         ]
@@ -177,6 +179,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.scope,
             node.visibility,
             node.vMembers,
+            node.documentation,
             node.nameLocation,
             node.raw
         ]

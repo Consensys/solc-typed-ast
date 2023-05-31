@@ -41,6 +41,7 @@ export class LegacyContractDefinitionProcessor extends LegacyNodeProcessor<Contr
             fullyImplemented,
             linearizedBaseContracts,
             [],
+            [],
             documentation,
             children,
             undefined,

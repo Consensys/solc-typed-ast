@@ -37,19 +37,27 @@ describe("ASTNodeFactory.copy()", () => {
         const factory = new ASTNodeFactory();
 
         const value = factory.makeEnumValue("MyValue");
-        const definition = factory.makeEnumDefinition("MyEnum", [value]);
+        const docs = factory.makeStructuredDocumentation("Doc string");
+        const definition = factory.makeEnumDefinition("MyEnum", [value], docs);
 
         const defCopy = factory.copy(definition);
         const valCopy = defCopy.vMembers[0];
+        const docsCopy = defCopy.documentation;
 
-        expect(defCopy === value).toBeFalsy();
+        expect(defCopy === definition).toBeFalsy();
         expect(valCopy === value).toBeFalsy();
+        expect(docsCopy === docs).toBeFalsy();
+
+        assert(
+            docsCopy instanceof StructuredDocumentation,
+            "Expected StructuredDocumentation instance"
+        );
 
         verify(defCopy, EnumDefinition, {
-            id: 4,
+            id: 6,
             type: "EnumDefinition",
             src: "0:0:0",
-            children: [valCopy],
+            children: [docsCopy, valCopy],
             raw: undefined,
 
             name: "MyEnum",
@@ -60,13 +68,23 @@ describe("ASTNodeFactory.copy()", () => {
         });
 
         verify(valCopy, EnumValue, {
-            id: 3,
+            id: 4,
             type: "EnumValue",
             src: "0:0:0",
             children: [],
             raw: undefined,
 
             name: "MyValue"
+        });
+
+        verify(docsCopy, StructuredDocumentation, {
+            id: 5,
+            type: "StructuredDocumentation",
+            src: "0:0:0",
+            children: [],
+            raw: undefined,
+
+            text: "Doc string"
         });
     });
 
@@ -124,6 +142,7 @@ describe("ASTNodeFactory.copy()", () => {
             ContractKind.Contract,
             false,
             true,
+            [],
             [],
             [],
             "doc string"
@@ -266,14 +285,17 @@ describe("ASTNodeFactory.copy()", () => {
             true,
             [],
             [],
+            [],
             "doc string"
         );
 
+        const docs = factory.makeStructuredDocumentation("Struct doc string");
         const struct = factory.makeStructDefinition(
             "MyStruct",
             contract.id,
             FunctionVisibility.Internal,
-            []
+            [],
+            docs
         );
 
         const memberType = factory.makeElementaryTypeName("uint8", "uint8");
@@ -291,10 +313,10 @@ describe("ASTNodeFactory.copy()", () => {
             memberType
         );
 
-        struct.vMembers.push(member);
-        struct.acceptChildren();
+        struct.appendChild(member);
 
         const structClone = factory.copy(struct);
+        const docsClone = structClone.documentation;
         const memberClone = structClone.vMembers[0];
         const memberTypeClone = memberClone.vType;
 
@@ -303,15 +325,21 @@ describe("ASTNodeFactory.copy()", () => {
             "Expected ElementaryTypeName instance"
         );
 
+        assert(
+            docsClone instanceof StructuredDocumentation,
+            "Expected StructuredDocumentation instance"
+        );
+
         expect(structClone === struct).toBeFalsy();
+        expect(docsClone === docs).toBeFalsy();
         expect(memberClone === member).toBeFalsy();
         expect(memberTypeClone === memberType).toBeFalsy();
 
         verify(structClone, StructDefinition, {
-            id: 8,
+            id: 10,
             type: "StructDefinition",
             src: "0:0:0",
-            children: [memberClone],
+            children: [docsClone, memberClone],
             raw: undefined,
 
             name: "MyStruct",
@@ -321,8 +349,18 @@ describe("ASTNodeFactory.copy()", () => {
             vScope: contract
         });
 
+        verify(docsClone, StructuredDocumentation, {
+            id: 9,
+            type: "StructuredDocumentation",
+            src: "0:0:0",
+            children: [],
+            raw: undefined,
+
+            text: "Struct doc string"
+        });
+
         verify(memberClone, VariableDeclaration, {
-            id: 7,
+            id: 8,
             type: "VariableDeclaration",
             src: "0:0:0",
             children: [memberTypeClone],
@@ -341,7 +379,7 @@ describe("ASTNodeFactory.copy()", () => {
         });
 
         verify(memberTypeClone, ElementaryTypeName, {
-            id: 6,
+            id: 7,
             type: "ElementaryTypeName",
             src: "0:0:0",
             children: [],

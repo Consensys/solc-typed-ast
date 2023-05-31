@@ -4,7 +4,11 @@
 pragma solidity ^0.5.0;
 
 contract Simple {
-    enum TestEnum { A, B, C }
+    enum TestEnum {
+        A,
+        B,
+        C
+    }
 
     struct TestStructA {
         string memberX;

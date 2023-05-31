@@ -77,6 +77,7 @@ const cases: Array<
                 false,
                 true,
                 [],
+                [],
                 []
             );
 
@@ -97,6 +98,7 @@ const cases: Array<
                 false,
                 true,
                 [],
+                [],
                 []
             );
 
@@ -116,6 +118,7 @@ const cases: Array<
                 ContractKind.Contract,
                 false,
                 true,
+                [],
                 [],
                 [],
                 undefined,
@@ -153,6 +156,7 @@ const cases: Array<
                 true,
                 [],
                 [],
+                [],
                 undefined,
                 [
                     factory.makeFunctionDefinition(
@@ -187,6 +191,7 @@ const cases: Array<
                 false,
                 true,
                 [factory.context.lastId],
+                [],
                 []
             );
 
@@ -202,6 +207,7 @@ const cases: Array<
                 ContractKind.Contract,
                 false,
                 true,
+                [],
                 [],
                 []
             );
@@ -223,6 +229,7 @@ const cases: Array<
                 false,
                 true,
                 [],
+                [],
                 []
             );
 
@@ -237,6 +244,7 @@ const cases: Array<
                 ContractKind.Contract,
                 false,
                 true,
+                [],
                 [],
                 []
             );
