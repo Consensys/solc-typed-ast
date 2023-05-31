@@ -77,8 +77,6 @@ import {
     StringLiteralType,
     StringType,
     SuperType,
-    TRest,
-    TVar,
     TupleType,
     TypeNameType,
     TypeNode,
@@ -2345,44 +2343,50 @@ export class InferType {
 
     isABIEncodable(type: TypeNode, encoderVersion: ABIEncoderVersion): boolean {
         if (
-            type instanceof MappingType ||
-            type instanceof TupleType ||
+            type instanceof AddressType ||
+            type instanceof BoolType ||
+            type instanceof BytesType ||
+            type instanceof FixedBytesType ||
             (type instanceof FunctionType &&
-                type.visibility !== FunctionVisibility.External &&
-                type.visibility !== FunctionVisibility.Public) ||
-            type instanceof ErrorType ||
-            type instanceof EventType ||
-            type instanceof BuiltinFunctionType ||
-            type instanceof TypeNameType ||
-            type instanceof RationalLiteralType ||
-            type instanceof ImportRefType ||
-            type instanceof SuperType ||
-            type instanceof FunctionLikeSetType ||
-            type instanceof TVar ||
-            type instanceof TRest
+                (type.visibility === FunctionVisibility.External ||
+                    type.visibility === FunctionVisibility.Public)) ||
+            type instanceof IntType ||
+            type instanceof IntLiteralType ||
+            type instanceof StringLiteralType ||
+            type instanceof StringType
         ) {
-            return false;
-        }
-
-        if (encoderVersion === ABIEncoderVersion.V1 && !isSupportedByEncoderV1(type)) {
-            return false;
+            return true;
         }
 
         if (type instanceof PointerType) {
             return this.isABIEncodable(type.to, encoderVersion);
         }
 
+        if (encoderVersion === ABIEncoderVersion.V1 && !isSupportedByEncoderV1(type)) {
+            return false;
+        }
+
         if (type instanceof ArrayType) {
             return this.isABIEncodable(type.elementT, encoderVersion);
         }
 
-        if (type instanceof UserDefinedType && type.definition instanceof StructDefinition) {
-            return type.definition.vMembers.every((field) =>
-                this.isABIEncodable(this.variableDeclarationToTypeNode(field), encoderVersion)
-            );
+        if (type instanceof UserDefinedType) {
+            if (
+                type.definition instanceof ContractDefinition ||
+                type.definition instanceof EnumDefinition ||
+                type.definition instanceof UserDefinedValueTypeDefinition
+            ) {
+                return true;
+            }
+
+            if (type.definition instanceof StructDefinition) {
+                return type.definition.vMembers.every((field) =>
+                    this.isABIEncodable(this.variableDeclarationToTypeNode(field), encoderVersion)
+                );
+            }
         }
 
-        return true;
+        return false;
     }
 
     /**
