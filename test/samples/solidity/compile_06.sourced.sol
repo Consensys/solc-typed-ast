@@ -3,7 +3,11 @@
 // ------------------------------------------------------------
 pragma solidity ^0.6.0;
 
-enum GlobalEnum { A, B, C }
+enum GlobalEnum {
+    A,
+    B,
+    C
+}
 
 struct GlobalStruct {
     int a;

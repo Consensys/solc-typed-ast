@@ -77,6 +77,7 @@ SourceUnit #21
         fullyImplemented: true
         linearizedBaseContracts: Array(2) [ 20, 14 ]
         usedErrors: Array(0)
+        usedEvents: Array(0)
         docString: undefined
         nameLocation: "50:1:0"
         context: ASTContext #1000
@@ -86,6 +87,7 @@ SourceUnit #21
         <getter> vScope: SourceUnit #21
         <getter> vLinearizedBaseContracts: Array(2) [ ContractDefinition #20, ContractDefinition #14 ]
         <getter> vUsedErrors: Array(0)
+        <getter> vUsedEvents: Array(0)
         <getter> vInheritanceSpecifiers: Array(1) [ InheritanceSpecifier #19 ]
         <getter> vStateVariables: Array(0)
         <getter> vModifiers: Array(0)
@@ -195,6 +197,7 @@ SourceUnit #30
         fullyImplemented: true
         linearizedBaseContracts: Array(1) [ 29 ]
         usedErrors: Array(0)
+        usedEvents: Array(0)
         docString: undefined
         nameLocation: "30:1:1"
         context: ASTContext #1000
@@ -204,6 +207,7 @@ SourceUnit #30
         <getter> vScope: SourceUnit #30
         <getter> vLinearizedBaseContracts: Array(1) [ ContractDefinition #29 ]
         <getter> vUsedErrors: Array(0)
+        <getter> vUsedEvents: Array(0)
         <getter> vInheritanceSpecifiers: Array(0)
         <getter> vStateVariables: Array(1) [ VariableDeclaration #28 ]
         <getter> vModifiers: Array(0)
@@ -230,10 +234,13 @@ SourceUnit #30
             name: "S"
             scope: 29
             visibility: "public"
+            docString: undefined
             nameLocation: "42:1:1"
             context: ASTContext #1000
             parent: ContractDefinition #29
             <getter> canonicalName: "B.S"
+            <getter> documentation: undefined
+            <getter> danglingDocumentation: undefined
             <getter> vMembers: Array(1) [ VariableDeclaration #24 ]
             <getter> vScope: ContractDefinition #29
             <getter> children: Array(1) [ VariableDeclaration #24 ]

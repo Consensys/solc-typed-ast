@@ -1,10 +1,20 @@
-import { getFQDefName } from "../../..";
+import {
+    getDanglingDocumentation,
+    getDocumentation,
+    getFQDefName,
+    setDanglingDocumentation,
+    setDocumentation
+} from "../../..";
 import { ASTNodeWithChildren } from "../../ast_node";
 import { SourceUnit } from "../meta/source_unit";
+import { StructuredDocumentation } from "../meta/structured_documentation";
 import { ContractDefinition } from "./contract_definition";
 import { VariableDeclaration } from "./variable_declaration";
 
 export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
+    docString?: string;
+    danglingDocString?: string;
+
     /**
      * The name of the struct
      */
@@ -32,6 +42,7 @@ export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
         scope: number,
         visibility: string,
         members: Iterable<VariableDeclaration>,
+        documentation?: string | StructuredDocumentation,
         nameLocation?: string,
         raw?: any
     ) {
@@ -40,6 +51,7 @@ export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
         this.name = name;
         this.scope = scope;
         this.visibility = visibility;
+        this.documentation = documentation;
         this.nameLocation = nameLocation;
 
         for (const member of members) {
@@ -55,10 +67,42 @@ export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
     }
 
     /**
+     * Optional documentation appearing above the contract definition:
+     * - Is `undefined` when not specified.
+     * - Is type of `string` when specified and compiler version is older than `0.6.3`.
+     * - Is instance of `StructuredDocumentation` when specified and compiler version is `0.6.3` or newer.
+     */
+    get documentation(): string | StructuredDocumentation | undefined {
+        return getDocumentation(this);
+    }
+
+    set documentation(value: string | StructuredDocumentation | undefined) {
+        setDocumentation(this, value);
+    }
+
+    /**
+     * Optional documentation that is dangling in the source fragment,
+     * that is after end of last child and before the end of the current node.
+     *
+     * It is:
+     * - Is `undefined` when not detected.
+     * - Is type of `string` for compatibility reasons.
+     */
+    get danglingDocumentation(): string | StructuredDocumentation | undefined {
+        return getDanglingDocumentation(this);
+    }
+
+    set danglingDocumentation(value: string | StructuredDocumentation | undefined) {
+        setDanglingDocumentation(this, value);
+    }
+
+    /**
      * Members of the struct
      */
-    get vMembers(): VariableDeclaration[] {
-        return this.ownChildren as VariableDeclaration[];
+    get vMembers(): readonly VariableDeclaration[] {
+        return this.ownChildren.filter(
+            (node): node is VariableDeclaration => node instanceof VariableDeclaration
+        );
     }
 
     /**

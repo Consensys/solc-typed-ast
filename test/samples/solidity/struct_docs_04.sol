@@ -3,8 +3,26 @@ pragma solidity 0.4.24;
 contract StmtDocs04 {
     event Ev(uint a);
 
+    /// Struct
+        /// Docstring
+    struct StructABC {
+        uint a;
+
+        /// Struct
+
+        /// Dangling
+        /// Docstring
+    }
+
+    /// Enum
+        /// Docstring
     enum EnumXYZ {
         X, Y, Z
+
+        /// Enum
+
+        /// Dangling
+        /// Docstring
     }
 
     modifier modStructDocs() {

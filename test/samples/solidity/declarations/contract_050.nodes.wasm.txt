@@ -37,6 +37,7 @@ SourceUnit #146
         fullyImplemented: true
         linearizedBaseContracts: Array(1) [ 90 ]
         usedErrors: Array(0)
+        usedEvents: Array(0)
         docString: undefined
         nameLocation: undefined
         context: ASTContext #1000
@@ -46,6 +47,7 @@ SourceUnit #146
         <getter> vScope: SourceUnit #146
         <getter> vLinearizedBaseContracts: Array(1) [ ContractDefinition #90 ]
         <getter> vUsedErrors: Array(0)
+        <getter> vUsedEvents: Array(0)
         <getter> vInheritanceSpecifiers: Array(0)
         <getter> vStateVariables: Array(0)
         <getter> vModifiers: Array(0)
@@ -403,6 +405,7 @@ SourceUnit #146
         fullyImplemented: false
         linearizedBaseContracts: Array(1) [ 100 ]
         usedErrors: Array(0)
+        usedEvents: Array(0)
         docString: undefined
         nameLocation: undefined
         context: ASTContext #1000
@@ -412,6 +415,7 @@ SourceUnit #146
         <getter> vScope: SourceUnit #146
         <getter> vLinearizedBaseContracts: Array(1) [ ContractDefinition #100 ]
         <getter> vUsedErrors: Array(0)
+        <getter> vUsedEvents: Array(0)
         <getter> vInheritanceSpecifiers: Array(0)
         <getter> vStateVariables: Array(0)
         <getter> vModifiers: Array(0)
@@ -640,6 +644,7 @@ SourceUnit #146
         fullyImplemented: true
         linearizedBaseContracts: Array(2) [ 145, 100 ]
         usedErrors: Array(0)
+        usedEvents: Array(0)
         docString: undefined
         nameLocation: undefined
         context: ASTContext #1000
@@ -649,6 +654,7 @@ SourceUnit #146
         <getter> vScope: SourceUnit #146
         <getter> vLinearizedBaseContracts: Array(2) [ ContractDefinition #145, ContractDefinition #100 ]
         <getter> vUsedErrors: Array(0)
+        <getter> vUsedEvents: Array(0)
         <getter> vInheritanceSpecifiers: Array(1) [ InheritanceSpecifier #102 ]
         <getter> vStateVariables: Array(1) [ VariableDeclaration #118 ]
         <getter> vModifiers: Array(0)
@@ -791,10 +797,13 @@ SourceUnit #146
             name: "St"
             scope: 145
             visibility: "public"
+            docString: undefined
             nameLocation: undefined
             context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> canonicalName: "C.St"
+            <getter> documentation: undefined
+            <getter> danglingDocumentation: undefined
             <getter> vMembers: Array(1) [ VariableDeclaration #108 ]
             <getter> vScope: ContractDefinition #145
             <getter> children: Array(1) [ VariableDeclaration #108 ]
@@ -856,10 +865,13 @@ SourceUnit #146
             id: 113
             src: "0:0:0"
             name: "En"
+            docString: undefined
             nameLocation: undefined
             context: ASTContext #1000
             parent: ContractDefinition #145
             <getter> canonicalName: "C.En"
+            <getter> documentation: undefined
+            <getter> danglingDocumentation: undefined
             <getter> vMembers: Array(3) [ EnumValue #110, EnumValue #111, EnumValue #112 ]
             <getter> vScope: ContractDefinition #145
             <getter> children: Array(3) [ EnumValue #110, EnumValue #111, EnumValue #112 ]
