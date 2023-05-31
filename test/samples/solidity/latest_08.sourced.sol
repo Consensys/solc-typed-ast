@@ -6,13 +6,31 @@ pragma abicoder v2;
 
 import "./latest_imports_08.sol" as LI;
 
-enum EnumABC { A, B, C }
+///  Enum
+///  Doc
+enum EnumABC {
+    A,
+    B,
+    C
+    /// Enum
+    ///  Dangling
+    ///   Doc
+}
 
 type Price is uint128;
 
 type Quantity is uint128;
 
 type RestrictedNumber_0813 is int256;
+
+///  Struct
+///  Doc
+struct Some {
+    uint x;
+    /// Struct
+    ///  Dangling
+    ///   Doc
+}
 
 using A_0813 for RestrictedNumber_0813;
 using { plusOne, minusOne, A_0813.add } for RestrictedNumber_0813 global;
@@ -86,7 +104,11 @@ contract CatchPanic {
 }
 
 contract Features082 {
-    enum EnumXYZ { X, Y, Z }
+    enum EnumXYZ {
+        X,
+        Y,
+        Z
+    }
 
     event Ev(uint a);
 
@@ -306,11 +328,30 @@ contract Features_0815 {
         assert(er == 0x399802c9);
     }
 }
+
+contract Features_0819 {
+    function test(LI.Int a, LI.Int b) public pure returns (LI.Int) {
+        -a;
+        return a + b;
+    }
+}
 // ------------------------------------------------------------
 // test/samples/solidity/latest_imports_08.sol
 // ------------------------------------------------------------
 pragma solidity ^0.8.0;
 pragma abicoder v2;
+
+type Int is int;
+
+using { add as +, neg as - } for Int global;
+
+function neg(Int a) pure returns (Int) {
+    return Int.wrap(-Int.unwrap(a));
+}
+
+function add(Int a, Int b) pure returns (Int) {
+    return Int.wrap(Int.unwrap(a) + Int.unwrap(b));
+}
 
 contract SomeContract {
     struct SomeStruct {

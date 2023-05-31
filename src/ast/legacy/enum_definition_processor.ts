@@ -1,6 +1,6 @@
 import { ASTReader, ASTReaderConfiguration } from "../ast_reader";
-import { EnumValue } from "../implementation/declaration/enum_value";
 import { EnumDefinition } from "../implementation/declaration/enum_definition";
+import { EnumValue } from "../implementation/declaration/enum_value";
 import { LegacyNodeProcessor } from "./node_processor";
 
 export class LegacyEnumDefinitionProcessor extends LegacyNodeProcessor<EnumDefinition> {
@@ -15,6 +15,6 @@ export class LegacyEnumDefinitionProcessor extends LegacyNodeProcessor<EnumDefin
 
         const name: string = attributes.name;
 
-        return [id, src, name, members, undefined, raw];
+        return [id, src, name, members, undefined, undefined, raw];
     }
 }

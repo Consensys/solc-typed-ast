@@ -39,6 +39,7 @@ const contractDef = factory.makeContractDefinition(
     false,
     true,
     [],
+    [],
     []
 );
 

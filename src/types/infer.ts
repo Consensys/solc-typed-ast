@@ -1,24 +1,21 @@
 import { Decimal } from "decimal.js";
 import { gte, lt } from "semver";
 import {
+    ASTNode,
     AnyResolvable,
     ArrayTypeName,
     Assignment,
-    ASTNode,
     BinaryOperation,
     Conditional,
     ContractDefinition,
     ContractKind,
     ElementaryTypeName,
     ElementaryTypeNameExpression,
-    encodeEventSignature,
-    encodeFuncSignature,
     EnumDefinition,
     ErrorDefinition,
     EventDefinition,
     Expression,
     ExpressionStatement,
-    ExternalReferenceType,
     FunctionCall,
     FunctionCallKind,
     FunctionCallOptions,
@@ -38,17 +35,20 @@ import {
     ModifierDefinition,
     NewExpression,
     ParameterList,
-    resolveAny,
     SourceUnit,
     StateVariableVisibility,
     StructDefinition,
+    TryCatchClause,
     TupleExpression,
     TypeName,
     UnaryOperation,
     UserDefinedTypeName,
     UserDefinedValueTypeDefinition,
     VariableDeclaration,
-    VariableDeclarationStatement
+    VariableDeclarationStatement,
+    encodeEventSignature,
+    encodeFuncSignature,
+    resolveAny
 } from "../ast";
 import { DataLocation } from "../ast/constants";
 import { assert, eq, forAll, forAny, pp } from "../misc";
@@ -94,30 +94,25 @@ import {
 } from "./builtins";
 import { evalConstantExpr } from "./eval_const";
 import { SolTypeError } from "./misc";
-import {
-    applySubstitution,
-    applySubstitutions,
-    buildSubstitutions,
-    TypeSubstituion
-} from "./polymorphic";
+import { TypeSubstituion, applySubstitution, buildSubstitutions } from "./polymorphic";
 import { types } from "./reserved";
 import {
     BINARY_OPERATOR_GROUPS,
+    SUBDENOMINATION_MULTIPLIERS,
     castable,
     decimalToRational,
     enumToIntType,
     generalizeType,
     getABIEncoderVersion,
-    getFallbackRecvFuns,
     getFQDefName,
+    getFallbackRecvFuns,
     inferCommonVisiblity,
     isReferenceType,
     isVisiblityExternallyCallable,
     mergeFunTypes,
     smallestFittingType,
     specializeType,
-    stripSingletonParens,
-    SUBDENOMINATION_MULTIPLIERS
+    stripSingletonParens
 } from "./utils";
 
 const unaryImpureOperators = ["++", "--"];
@@ -206,7 +201,7 @@ function isSupportedByEncoderV1(type: TypeNode): boolean {
         const [baseT] = generalizeType(type.elementT);
 
         return (
-            isSupportedByEncoderV1(baseT) ||
+            isSupportedByEncoderV1(baseT) &&
             !(baseT instanceof ArrayType && baseT.size === undefined)
         );
     }
@@ -461,10 +456,36 @@ export class InferType {
         throw new SolTypeError(`Cannot infer commmon type for ${pp(a)} and ${pp(b)}`);
     }
 
+    typeOfCustomizableOperation(node: UnaryOperation | BinaryOperation): TypeNode | undefined {
+        const userFunction = node.vUserFunction;
+
+        if (userFunction === undefined) {
+            return undefined;
+        }
+
+        const funType = this.funDefToType(userFunction);
+
+        assert(
+            funType.returns.length === 1,
+            "Expected {0} type of {1} to have a single return value for operation {2}",
+            funType,
+            userFunction,
+            node
+        );
+
+        return funType.returns[0];
+    }
+
     /**
      * Infer the type of the binary op
      */
     typeOfBinaryOperation(node: BinaryOperation): TypeNode {
+        const customType = this.typeOfCustomizableOperation(node);
+
+        if (customType) {
+            return customType;
+        }
+
         if (
             BINARY_OPERATOR_GROUPS.Comparison.includes(node.operator) ||
             BINARY_OPERATOR_GROUPS.Equality.includes(node.operator) ||
@@ -477,7 +498,7 @@ export class InferType {
         const b = this.typeOf(node.vRightExpression);
 
         if (a instanceof NumericLiteralType && b instanceof NumericLiteralType) {
-            const res = evalConstantExpr(node);
+            const res = evalConstantExpr(node, this);
 
             assert(
                 res instanceof Decimal || typeof res === "bigint",
@@ -691,15 +712,21 @@ export class InferType {
 
     private matchArguments(
         funs: Array<FunctionType | BuiltinFunctionType>,
-        args: Expression[],
-        callExp: Expression
+        callsite: FunctionCall
     ): FunctionType | BuiltinFunctionType | undefined {
+        const args = callsite.vArguments;
+        const callExp = callsite.vExpression;
+
         const argTs: TypeNode[] = args.map((arg) => this.typeOf(arg));
 
         const argTsWithImplictArg =
             callExp instanceof MemberAccess ? [this.typeOf(callExp.vExpression), ...argTs] : argTs;
 
-        for (const funT of funs) {
+        for (let funT of funs) {
+            if (funT instanceof BuiltinFunctionType) {
+                funT = this.specializeBuiltinTypeToCall(callsite, funT);
+            }
+
             const actualTs =
                 funT instanceof FunctionType && funT.implicitFirstArg ? argTsWithImplictArg : argTs;
 
@@ -726,6 +753,37 @@ export class InferType {
     }
 
     /**
+     * Given a `BuiltunFunctionType` `calleeT` and an actual
+     * callsite `node` where it is invoked, specialize `calleeT` to the callsite.
+     * Specifically, if `calleeT` is polymorphic (i.e. has a TRest or TVar) substitute
+     * those with the types of the actual arguments.
+     */
+    private specializeBuiltinTypeToCall(
+        node: FunctionCall,
+        calleeT: BuiltinFunctionType
+    ): BuiltinFunctionType {
+        const argTs = node.vArguments.map((arg) => this.typeOf(arg));
+        const m: TypeSubstituion = new Map();
+
+        /**
+         * We can push fixed sized arrays (e.g. uint[1]) to storage arrays of arrays (uint[][]).
+         * Add this implicit cast here
+         */
+        if (
+            calleeT instanceof BuiltinFunctionType &&
+            node.vFunctionName === "push" &&
+            !eq(calleeT.parameters[0], argTs[0]) &&
+            castable(argTs[0], calleeT.parameters[0], this.version)
+        ) {
+            argTs[0] = calleeT.parameters[0];
+        }
+
+        buildSubstitutions(calleeT.parameters, argTs, m, this.version);
+
+        return applySubstitution(calleeT, m) as BuiltinFunctionType;
+    }
+
+    /**
      * Infer the type of the function call
      */
     typeOfFunctionCall(node: FunctionCall): TypeNode {
@@ -741,69 +799,29 @@ export class InferType {
             return this.typeOfNewCall(node);
         }
 
-        let calleeT = this.typeOf(node.vCallee);
+        const resolvedCalleeT = this.typeOfCallee(node);
 
         let rets: TypeNode[];
 
-        if (node.vFunctionCallType === ExternalReferenceType.Builtin) {
-            if (calleeT instanceof FunctionLikeSetType) {
-                calleeT = calleeT.defs.filter((d) => d instanceof BuiltinFunctionType)[0];
-            }
+        if (resolvedCalleeT instanceof FunctionType) {
+            rets = resolvedCalleeT.returns;
 
-            if (!(calleeT instanceof BuiltinFunctionType || calleeT instanceof FunctionType)) {
-                throw new SolTypeError(
-                    `Unexpected builtin ${pp(node.vCallee)} in function call ${pp(node)}`
+            // Convert any calldata pointers back to memory for external calls
+            if (node.vExpression instanceof MemberAccess) {
+                rets = rets.map((retT) =>
+                    retT instanceof PointerType && retT.location === DataLocation.CallData
+                        ? specializeType(generalizeType(retT)[0], DataLocation.Memory)
+                        : retT
                 );
             }
-
-            const argTs = node.vArguments.map((arg) => this.typeOf(arg));
-            const m: TypeSubstituion = new Map();
-
-            /**
-             * We can push fixed sized arrays (e.g. uint[1]) to storage arrays of arrays (uint[][]).
-             * Add this implicit cast here
-             */
-            if (
-                calleeT instanceof BuiltinFunctionType &&
-                node.vFunctionName === "push" &&
-                !eq(calleeT.parameters[0], argTs[0]) &&
-                castable(argTs[0], calleeT.parameters[0], this.version)
-            ) {
-                argTs[0] = calleeT.parameters[0];
-            }
-
-            buildSubstitutions(calleeT.parameters, argTs, m, this.version);
-
-            rets = applySubstitutions(calleeT.returns, m);
+        } else if (resolvedCalleeT instanceof BuiltinFunctionType) {
+            rets = resolvedCalleeT.returns;
+        } else if (resolvedCalleeT instanceof EventType || resolvedCalleeT instanceof ErrorType) {
+            rets = [];
         } else {
-            if (calleeT instanceof FunctionType || calleeT instanceof BuiltinFunctionType) {
-                rets = calleeT.returns;
-            } else if (calleeT instanceof EventType || calleeT instanceof ErrorType) {
-                rets = [];
-            } else if (calleeT instanceof FunctionLikeSetType) {
-                if (calleeT.defs[0] instanceof EventDefinition) {
-                    rets = [];
-                } else {
-                    // Match based on args. Needs castable.
-                    const funT = this.matchArguments(
-                        calleeT.defs,
-                        node.vArguments,
-                        node.vExpression
-                    );
-
-                    if (funT === undefined) {
-                        throw new SolTypeError(
-                            `Couldn't resolve function ${node.vFunctionName} in ${pp(node)}`
-                        );
-                    }
-
-                    rets = funT.returns;
-                }
-            } else {
-                throw new SolTypeError(
-                    `Unexpected type ${calleeT.pp()} in function call ${pp(node)}`
-                );
-            }
+            throw new SolTypeError(
+                `Unexpected unresolved calele type in function call ${pp(node)}`
+            );
         }
 
         // No returns - return the empty type ()
@@ -1188,15 +1206,15 @@ export class InferType {
                     }
 
                     if (usingFor.vFunctionList) {
-                        for (const funId of usingFor.vFunctionList) {
-                            if (funId.name === node.memberName) {
-                                const funDef = funId.vReferencedDeclaration;
+                        for (const entry of usingFor.vFunctionList) {
+                            if (entry instanceof IdentifierPath && entry.name === node.memberName) {
+                                const funDef = entry.vReferencedDeclaration;
 
                                 assert(
                                     funDef instanceof FunctionDefinition,
                                     "Unexpected non-function decl {0} for name {1} in using for {2}",
                                     funDef,
-                                    funId.name,
+                                    entry.name,
                                     usingFor
                                 );
 
@@ -1288,43 +1306,11 @@ export class InferType {
         return normalT;
     }
 
-    private changeLocToMemory(
-        typ: FunctionType | FunctionLikeSetType<FunctionType>
-    ): FunctionType | FunctionLikeSetType<FunctionType> {
-        if (typ instanceof FunctionLikeSetType) {
-            const funTs = typ.defs.map((funT) => this.changeLocToMemory(funT) as FunctionType);
-
-            return new FunctionLikeSetType(funTs);
-        }
-
-        const params = typ.parameters.map((paramT) =>
-            paramT instanceof PointerType && paramT.location === DataLocation.CallData
-                ? specializeType(generalizeType(paramT)[0], DataLocation.Memory)
-                : paramT
-        );
-
-        const rets = typ.returns.map((retT) =>
-            retT instanceof PointerType && retT.location === DataLocation.CallData
-                ? specializeType(generalizeType(retT)[0], DataLocation.Memory)
-                : retT
-        );
-
-        return new FunctionType(
-            typ.name,
-            params,
-            rets,
-            typ.visibility,
-            typ.mutability,
-            typ.implicitFirstArg,
-            typ.src
-        );
-    }
-
     private typeOfMemberAccessImpl(node: MemberAccess, baseT: TypeNode): TypeNode | undefined {
         if (baseT instanceof UserDefinedType && baseT.definition instanceof ContractDefinition) {
             const contract = baseT.definition;
 
-            let fieldT = this.typeOfResolved(node.memberName, contract, true);
+            const fieldT = this.typeOfResolved(node.memberName, contract, true);
 
             assert(
                 fieldT === undefined ||
@@ -1343,8 +1329,6 @@ export class InferType {
             }
 
             if (fieldT) {
-                fieldT = this.changeLocToMemory(fieldT);
-
                 if (builtinT instanceof BuiltinFunctionType) {
                     return mergeFunTypes(
                         fieldT as FunctionType | FunctionLikeSetType<FunctionType>,
@@ -1680,6 +1664,12 @@ export class InferType {
     }
 
     typeOfUnaryOperation(node: UnaryOperation): TypeNode {
+        const customType = this.typeOfCustomizableOperation(node);
+
+        if (customType) {
+            return customType;
+        }
+
         if (node.operator === "!") {
             return types.bool;
         }
@@ -1695,7 +1685,7 @@ export class InferType {
         }
 
         if (innerT instanceof NumericLiteralType) {
-            const res = evalConstantExpr(node);
+            const res = evalConstantExpr(node, this);
 
             assert(
                 res instanceof Decimal || typeof res === "bigint",
@@ -1714,13 +1704,13 @@ export class InferType {
         throw new Error(`NYI unary operator ${node.operator} in ${pp(node)}`);
     }
 
-    typeOfElementaryTypeNameExpression(node: ElementaryTypeNameExpression): TypeNode {
+    typeOfElementaryTypeNameExpression(node: ElementaryTypeNameExpression): TypeNameType {
         let innerT: TypeNode;
 
         if (node.typeName instanceof TypeName) {
             innerT = this.typeNameToTypeNode(node.typeName);
         } else {
-            const elementaryT = this.elementaryTypeNameStringToTypeNode(node.typeName);
+            const elementaryT = InferType.elementaryTypeNameStringToTypeNode(node.typeName);
 
             assert(
                 elementaryT !== undefined,
@@ -2171,7 +2161,7 @@ export class InferType {
      *
      * @todo Consider fixes due to https://github.com/ConsenSys/solc-typed-ast/issues/160
      */
-    elementaryTypeNameStringToTypeNode(name: string): TypeNode | undefined {
+    static elementaryTypeNameStringToTypeNode(name: string): TypeNode | undefined {
         name = name.trim();
 
         if (name === "bool") {
@@ -2224,7 +2214,7 @@ export class InferType {
      */
     typeNameToTypeNode(node: TypeName): TypeNode {
         if (node instanceof ElementaryTypeName) {
-            const type = this.elementaryTypeNameStringToTypeNode(node.name);
+            const type = InferType.elementaryTypeNameStringToTypeNode(node.name);
 
             assert(type !== undefined, 'NYI converting elementary type name "{0}"', node.name);
 
@@ -2245,7 +2235,7 @@ export class InferType {
             let size: bigint | undefined;
 
             if (node.vLength) {
-                const result = evalConstantExpr(node.vLength);
+                const result = evalConstantExpr(node.vLength, this);
 
                 assert(
                     typeof result === "bigint",
@@ -2309,13 +2299,106 @@ export class InferType {
     }
 
     /**
+     * Determine if the specified type `typ` is dynamic or not. Dynamic means
+     * that if we are trying to read `typ` at location `loc`, in `loc` there should be just a
+     * uint256 offset into memory/storage/calldata, where the actual data lives. Otherwise
+     * (if the type is "static"), the direct encoding of the data will start at `loc`.
+     *
+     * Usually "static" types are just the value types - i.e. anything of statically
+     * known size that fits in a uint256. As per https://docs.soliditylang.org/en/latest/abi-spec.html#formal-specification-of-the-encoding
+     * there are several exceptions to the rule when encoding types in calldata:
+     *
+     * 1. Fixed size arrays with fixed-sized element types
+     * 2. Tuples where all the tuple elements are fixed-size
+     *
+     * @todo (Dimo):
+     * 1. Check again that its not possible for tuples in internal calls to somehow get encoded on the stack
+     * 2. What happens with return tuples? Are they always in memory?
+     */
+    isABITypeEncodingDynamic(typ: TypeNode): boolean {
+        if (
+            typ instanceof PointerType ||
+            typ instanceof ArrayType ||
+            typ instanceof StringType ||
+            typ instanceof BytesType
+        ) {
+            return true;
+        }
+
+        // Tuples in calldata with static elements
+        if (typ instanceof TupleType) {
+            for (const elT of typ.elements) {
+                assert(elT !== null, `Unexpected empty tuple element in {0}`, typ);
+
+                if (this.isABITypeEncodingDynamic(elT)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    isABIEncodable(type: TypeNode, encoderVersion: ABIEncoderVersion): boolean {
+        if (
+            type instanceof AddressType ||
+            type instanceof BoolType ||
+            type instanceof BytesType ||
+            type instanceof FixedBytesType ||
+            (type instanceof FunctionType &&
+                (type.visibility === FunctionVisibility.External ||
+                    type.visibility === FunctionVisibility.Public)) ||
+            type instanceof IntType ||
+            type instanceof IntLiteralType ||
+            type instanceof StringLiteralType ||
+            type instanceof StringType
+        ) {
+            return true;
+        }
+
+        if (type instanceof PointerType) {
+            return this.isABIEncodable(type.to, encoderVersion);
+        }
+
+        if (encoderVersion === ABIEncoderVersion.V1 && !isSupportedByEncoderV1(type)) {
+            return false;
+        }
+
+        if (type instanceof ArrayType) {
+            return this.isABIEncodable(type.elementT, encoderVersion);
+        }
+
+        if (type instanceof UserDefinedType) {
+            if (
+                type.definition instanceof ContractDefinition ||
+                type.definition instanceof EnumDefinition ||
+                type.definition instanceof UserDefinedValueTypeDefinition
+            ) {
+                return true;
+            }
+
+            if (type.definition instanceof StructDefinition) {
+                return type.definition.vMembers.every((field) =>
+                    this.isABIEncodable(this.variableDeclarationToTypeNode(field), encoderVersion)
+                );
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Convert an internal TypeNode to the external TypeNode that would correspond to it
-     * after ABI-encoding with encoder version. Follows the following rules:
+     * after ABI-encoding with encoder version `encoderVersion`. Follows the following rules:
      *
      * 1. Contract definitions turned to address.
      * 2. Enum definitions turned to uint of minimal fitting size.
-     * 3. Any storage pointer types are converted to memory pointer types.
+     * 3. Storage pointer types are converted to memory pointer types when `normalizePointers` is set to `true`.
      * 4. Throw an error on any nested mapping types.
+     * 5. Fixed-size arrays with fixed-sized element types are encoded as inlined tuples
+     * 6. Structs with fixed-sized elements are encoded as inlined tuples
      *
      * @see https://docs.soliditylang.org/en/latest/abi-spec.html
      */
@@ -2324,21 +2407,35 @@ export class InferType {
         encoderVersion: ABIEncoderVersion,
         normalizePointers = false
     ): TypeNode {
-        if (type instanceof MappingType) {
-            throw new Error("Cannot abi-encode mapping types");
-        }
+        assert(
+            this.isABIEncodable(type, encoderVersion),
+            'Can not ABI-encode type "{0}" with encoder "{1}"',
+            type,
+            encoderVersion
+        );
 
         if (type instanceof ArrayType) {
-            return new ArrayType(
-                this.toABIEncodedType(type.elementT, encoderVersion, normalizePointers),
-                type.size
-            );
+            const elT = this.toABIEncodedType(type.elementT, encoderVersion);
+
+            if (type.size !== undefined) {
+                const elements = [];
+
+                for (let i = 0; i < type.size; i++) {
+                    elements.push(elT);
+                }
+
+                return new TupleType(elements);
+            }
+
+            return new ArrayType(elT, type.size);
         }
 
         if (type instanceof PointerType) {
             const toT = this.toABIEncodedType(type.to, encoderVersion, normalizePointers);
 
-            return new PointerType(toT, normalizePointers ? DataLocation.Memory : type.location);
+            return this.isABITypeEncodingDynamic(toT)
+                ? new PointerType(toT, normalizePointers ? DataLocation.Memory : type.location)
+                : toT;
         }
 
         if (type instanceof UserDefinedType) {
@@ -2355,13 +2452,6 @@ export class InferType {
             }
 
             if (type.definition instanceof StructDefinition) {
-                assert(
-                    encoderVersion !== ABIEncoderVersion.V1 || isSupportedByEncoderV1(type),
-                    "Type {0} is not supported by encoder {1}",
-                    type,
-                    encoderVersion
-                );
-
                 const fieldTs = type.definition.vMembers.map((fieldT) =>
                     this.variableDeclarationToTypeNode(fieldT)
                 );
@@ -2389,21 +2479,42 @@ export class InferType {
             | ErrorDefinition
             | ModifierDefinition
             | VariableDeclaration
+            | TryCatchClause
     ): string {
+        let name: string;
         let args: string[];
 
         const encoderVersion = this.getUnitLevelAbiEncoderVersion(node);
 
         if (node instanceof VariableDeclaration) {
+            name = node.name;
+
             const [getterArgs] = this.getterArgsAndReturn(node);
 
             args = getterArgs.map((type) =>
                 abiTypeToCanonicalName(this.toABIEncodedType(type, encoderVersion, true))
             );
+        } else if (node instanceof TryCatchClause) {
+            if (node.errorName === "") {
+                return "";
+            }
+
+            name = node.errorName;
+
+            args = node.vParameters
+                ? node.vParameters.vParameters.map((arg) => {
+                      const type = this.variableDeclarationToTypeNode(arg);
+                      const abiType = this.toABIEncodedType(type, encoderVersion);
+
+                      return abiTypeToCanonicalName(generalizeType(abiType)[0]);
+                  })
+                : [];
         } else {
             if (node instanceof FunctionDefinition && (node.name === "" || node.isConstructor)) {
                 return "";
             }
+
+            name = node.name;
 
             // Signatures are computed differently depending on
             // whether this is a library function or a contract method
@@ -2428,7 +2539,7 @@ export class InferType {
             }
         }
 
-        return node.name + "(" + args.join(",") + ")";
+        return name + "(" + args.join(",") + ")";
     }
 
     /**
@@ -2445,8 +2556,9 @@ export class InferType {
             | ErrorDefinition
             | ModifierDefinition
             | VariableDeclaration
+            | TryCatchClause
     ): string {
-        if (node instanceof FunctionDefinition) {
+        if (node instanceof FunctionDefinition || node instanceof TryCatchClause) {
             const signature = this.signature(node);
 
             return signature ? encodeFuncSignature(signature) : "";
@@ -2496,5 +2608,58 @@ export class InferType {
         }
 
         return undefined;
+    }
+
+    /**
+     * Given a particular `FunctionCall` site, resolve the exact callee,
+     * accounting for potential overloading.
+     *
+     * A callsite may come from:
+     * 1. A normal call (FunctionType, BuiltinFunctionType, FunctionLikeSetType)
+     * 2. An emit statement (EventType)
+     * 3. A revert statement (ErrorType).
+     *
+     * In the case that the callee is a `FunctionLikeSetType`, resolve the exact callee
+     * based on the function call arguments. Otherwise return the type of the callee.
+     */
+    typeOfCallee(
+        callsite: FunctionCall
+    ): FunctionType | BuiltinFunctionType | EventType | ErrorType | undefined {
+        assert(
+            callsite.kind === FunctionCallKind.FunctionCall,
+            `typeOfCallee() cannot be called on a call {0} of type {1}`,
+            callsite,
+            callsite.kind
+        );
+
+        const calleeT = this.typeOf(callsite.vExpression);
+
+        assert(
+            calleeT instanceof FunctionType ||
+                calleeT instanceof BuiltinFunctionType ||
+                calleeT instanceof EventType ||
+                calleeT instanceof ErrorType ||
+                calleeT instanceof FunctionLikeSetType,
+            `Unexpected type {0} of callee {1}`,
+            calleeT,
+            callsite.vExpression
+        );
+
+        if (
+            calleeT instanceof FunctionType ||
+            calleeT instanceof EventType ||
+            calleeT instanceof ErrorType
+        ) {
+            return calleeT;
+        }
+
+        if (calleeT instanceof BuiltinFunctionType) {
+            return this.specializeBuiltinTypeToCall(callsite, calleeT);
+        }
+
+        // FunctionLikeSetType - resolve based on call arguments
+        const resolvedCalleeT = this.matchArguments(calleeT.defs, callsite);
+
+        return resolvedCalleeT;
     }
 }

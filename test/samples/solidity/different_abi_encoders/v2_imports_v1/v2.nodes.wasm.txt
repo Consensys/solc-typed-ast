@@ -54,6 +54,7 @@ SourceUnit #34
         fullyImplemented: true
         linearizedBaseContracts: Array(1) [ 33 ]
         usedErrors: Array(0)
+        usedEvents: Array(0)
         docString: undefined
         nameLocation: "30:1:0"
         context: ASTContext #1000
@@ -63,6 +64,7 @@ SourceUnit #34
         <getter> vScope: SourceUnit #34
         <getter> vLinearizedBaseContracts: Array(1) [ ContractDefinition #33 ]
         <getter> vUsedErrors: Array(0)
+        <getter> vUsedEvents: Array(0)
         <getter> vInheritanceSpecifiers: Array(0)
         <getter> vStateVariables: Array(1) [ VariableDeclaration #32 ]
         <getter> vModifiers: Array(0)
@@ -89,10 +91,13 @@ SourceUnit #34
             name: "Sb"
             scope: 33
             visibility: "public"
+            docString: undefined
             nameLocation: "42:2:0"
             context: ASTContext #1000
             parent: ContractDefinition #33
             <getter> canonicalName: "B.Sb"
+            <getter> documentation: undefined
+            <getter> danglingDocumentation: undefined
             <getter> vMembers: Array(2) [ VariableDeclaration #26, VariableDeclaration #28 ]
             <getter> vScope: ContractDefinition #33
             <getter> children: Array(2) [ VariableDeclaration #26, VariableDeclaration #28 ]
@@ -340,6 +345,7 @@ SourceUnit #46
         fullyImplemented: true
         linearizedBaseContracts: Array(2) [ 45, 10 ]
         usedErrors: Array(0)
+        usedEvents: Array(0)
         docString: undefined
         nameLocation: "50:1:1"
         context: ASTContext #1000
@@ -349,6 +355,7 @@ SourceUnit #46
         <getter> vScope: SourceUnit #46
         <getter> vLinearizedBaseContracts: Array(2) [ ContractDefinition #45, ContractDefinition #10 ]
         <getter> vUsedErrors: Array(0)
+        <getter> vUsedEvents: Array(0)
         <getter> vInheritanceSpecifiers: Array(1) [ InheritanceSpecifier #38 ]
         <getter> vStateVariables: Array(1) [ VariableDeclaration #44 ]
         <getter> vModifiers: Array(0)
@@ -408,10 +415,13 @@ SourceUnit #46
             name: "Sa"
             scope: 45
             visibility: "public"
+            docString: undefined
             nameLocation: "67:2:1"
             context: ASTContext #1000
             parent: ContractDefinition #45
             <getter> canonicalName: "A.Sa"
+            <getter> documentation: undefined
+            <getter> danglingDocumentation: undefined
             <getter> vMembers: Array(1) [ VariableDeclaration #40 ]
             <getter> vScope: ContractDefinition #45
             <getter> children: Array(1) [ VariableDeclaration #40 ]

@@ -41,6 +41,7 @@ import {
     BuiltinFunctionType,
     BuiltinStructType,
     BuiltinType,
+    castable,
     ErrorType,
     EventType,
     FunctionLikeSetType,
@@ -142,7 +143,8 @@ export const samples: string[] = [
     "test/samples/solidity/type_inference/sample00.sol",
     "test/samples/solidity/type_inference/sample01.sol",
     "test/samples/solidity/type_inference/sample02.sol",
-    "test/samples/solidity/type_inference/sample03.sol"
+    "test/samples/solidity/type_inference/sample03.sol",
+    "test/samples/solidity/user_defined_operators_0819.sol"
 ];
 
 function toSoliditySource(expr: Expression, compilerVersion: string) {
@@ -540,7 +542,8 @@ function compareTypeNodes(
     if (
         inferredT instanceof FunctionType &&
         parsedT instanceof FunctionType &&
-        inferredT.visibility === FunctionVisibility.External &&
+        (inferredT.visibility === FunctionVisibility.External ||
+            parsedT.visibility === FunctionVisibility.External) &&
         inferredT.parameters.length === parsedT.parameters.length &&
         inferredT.parameters.length === parsedT.parameters.length
     ) {
@@ -765,6 +768,37 @@ describe("Type inference for expressions", () => {
                         expr,
                         toSoliditySource(expr, compilerVersion)
                     );
+                }
+            }
+
+            // Test typeOfCallee
+            for (const unit of sourceUnits) {
+                for (const expr of unit.getChildrenBySelector<FunctionCall>(
+                    (child) => child instanceof FunctionCall
+                )) {
+                    if (expr.kind !== FunctionCallKind.FunctionCall) {
+                        continue;
+                    }
+
+                    const calleeT = inference.typeOfCallee(expr);
+
+                    expect(calleeT).toBeDefined();
+                    assert(calleeT !== undefined, "Expected callee type to be defined");
+
+                    const hasImplicitArg =
+                        calleeT instanceof FunctionType && calleeT.implicitFirstArg;
+
+                    const formalArgTs = hasImplicitArg
+                        ? calleeT.parameters.slice(1)
+                        : calleeT.parameters;
+
+                    expect(formalArgTs.length === expr.vArguments.length).toBeTruthy();
+
+                    for (let i = 0; i < formalArgTs.length; i++) {
+                        const actualT = inference.typeOf(expr.vArguments[i]);
+
+                        expect(castable(actualT, formalArgTs[i], compilerVersion)).toBeTruthy();
+                    }
                 }
             }
         });

@@ -17,6 +17,6 @@ export class LegacyUnaryOperationProcessor extends LegacyExpressionProcessor<Una
 
         const [subExpression] = reader.convertArray(raw.children, config) as [Expression];
 
-        return [id, src, typeString, prefix, operator, subExpression, raw];
+        return [id, src, typeString, prefix, operator, subExpression, undefined, raw];
     }
 }

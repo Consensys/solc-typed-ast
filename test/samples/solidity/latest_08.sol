@@ -3,8 +3,32 @@ pragma abicoder v2;
 
 import "./latest_imports_08.sol" as LI;
 
+/**
+ * Struct
+ * Doc
+ */
+struct Some {
+    uint x;
+
+    /**
+     * Struct
+     *  Dangling
+     *   Doc
+     */
+}
+
+/**
+ * Enum
+ * Doc
+ */
 enum EnumABC {
     A, B, C
+
+    /**
+     * Enum
+     *  Dangling
+     *   Doc
+     */
 }
 
 contract UncheckedMathExample {
@@ -351,5 +375,13 @@ contract Features_0815 {
 
         assert(ev == 0xdde371250dcd21c331edbb965b9163f4898566e8c60e28868533281edf66ab03);
         assert(er == 0x399802c9);
+    }
+}
+
+contract Features_0819 {
+    function test(LI.Int a, LI.Int b) pure public returns (LI.Int) {
+        -a;
+
+        return a + b;
     }
 }

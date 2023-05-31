@@ -7,7 +7,9 @@ import {
     evalConstantExpr,
     Expression,
     FunctionCallKind,
+    InferType,
     isConstant,
+    LatestCompilerVersion,
     LiteralKind,
     Mutability,
     StateVariableVisibility,
@@ -62,7 +64,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             (factory: ASTNodeFactory) =>
                 factory.makeLiteral("<missing>", LiteralKind.HexString, "ffcc33", "abcdef"),
             true,
-            "ffcc33"
+            BigInt("0xffcc33")
         ],
         [
             "Literal (uint8)",
@@ -76,7 +78,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             (factory: ASTNodeFactory) =>
                 factory.makeLiteral("<missing>", LiteralKind.Number, "", "0xff_ff"),
             true,
-            65535n
+            BigInt("0xffff")
         ],
         [
             "Literal (uint with subdenomintation)",
@@ -317,6 +319,42 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             true
         ],
         [
+            "BinaryOperation (true == true)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true"),
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (false == false)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "false"),
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "false")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (true == false)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true"),
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "false")
+                ),
+            true,
+            false
+        ],
+        [
             "BinaryOperation (1 == 2)",
             (factory: ASTNodeFactory) =>
                 factory.makeBinaryOperation(
@@ -363,6 +401,172 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                 ),
             true,
             false
+        ],
+        [
+            "BinaryOperation (true != true)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "!=",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true"),
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true")
+                ),
+            true,
+            false
+        ],
+        [
+            "BinaryOperation (false != false)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "!=",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "false"),
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "false")
+                ),
+            true,
+            false
+        ],
+        [
+            "BinaryOperation (true != false)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "!=",
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "true"),
+                    factory.makeLiteral("<missing>", LiteralKind.Bool, "", "false")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (bytes1(0x00) == '')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeFunctionCall(
+                        "bytes1",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(bytes1)", "bytes1"),
+                        [factory.makeLiteral("int_const 0", LiteralKind.Number, "30783030", "0x00")]
+                    ),
+                    factory.makeLiteral('literal_string ""', LiteralKind.String, "", "")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (bytes1(0x00) == hex'')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeFunctionCall(
+                        "bytes1",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(bytes1)", "bytes1"),
+                        [factory.makeLiteral("int_const 0", LiteralKind.Number, "30783030", "0x00")]
+                    ),
+                    factory.makeLiteral('literal_string ""', LiteralKind.HexString, "", "")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (bytes1(0x58) == 'X')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeFunctionCall(
+                        "bytes1",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(bytes1)", "bytes1"),
+                        [
+                            factory.makeLiteral(
+                                "int_const 88",
+                                LiteralKind.Number,
+                                "30783538",
+                                "0x58"
+                            )
+                        ]
+                    ),
+                    factory.makeLiteral('literal_string "X"', LiteralKind.String, "58", "X")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (bytes1(0x58) == hex'58')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeFunctionCall(
+                        "bytes1",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(bytes1)", "bytes1"),
+                        [
+                            factory.makeLiteral(
+                                "int_const 88",
+                                LiteralKind.Number,
+                                "30783538",
+                                "0x58"
+                            )
+                        ]
+                    ),
+                    factory.makeLiteral('literal_string "X"', LiteralKind.HexString, "58", "X")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (bytes2(0x5859) == 'XY')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeFunctionCall(
+                        "bytes2",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(bytes2)", "bytes2"),
+                        [
+                            factory.makeLiteral(
+                                "int_const 22617",
+                                LiteralKind.Number,
+                                "307835383539",
+                                "0x5859"
+                            )
+                        ]
+                    ),
+                    factory.makeLiteral('literal_string "XY"', LiteralKind.String, "5859", "XY")
+                ),
+            true,
+            true
+        ],
+        [
+            "BinaryOperation (bytes2(0x5859) == hex'5859')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeFunctionCall(
+                        "bytes2",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(bytes2)", "bytes2"),
+                        [
+                            factory.makeLiteral(
+                                "int_const 22617",
+                                LiteralKind.Number,
+                                "307835383539",
+                                "0x5859"
+                            )
+                        ]
+                    ),
+                    factory.makeLiteral('literal_string "XY"', LiteralKind.HexString, "5859", "XY")
+                ),
+            true,
+            true
         ],
         [
             "BinaryOperation (1 < 2)",
@@ -483,6 +687,18 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                 ),
             true,
             false
+        ],
+        [
+            "BinaryOperation ('Y' >= 'X')",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    ">=",
+                    factory.makeLiteral('literal_string "Y"', LiteralKind.String, "59", "Y"),
+                    factory.makeLiteral('literal_string "X"', LiteralKind.String, "58", "X")
+                ),
+            true,
+            undefined
         ],
         [
             "BinaryOperation (1 + 2)",
@@ -913,14 +1129,187 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             },
             false,
             undefined
+        ],
+        [
+            "FunctionCall (unsigned typeConversion 1)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "uint8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "uint8"),
+                    [factory.makeLiteral("uint16", LiteralKind.Number, "", "255")]
+                ),
+            true,
+            255n
+        ],
+        [
+            "FunctionCall (unsigned typeConversion 2)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "uint8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "uint8"),
+                    [factory.makeLiteral("uint16", LiteralKind.Number, "", "256")]
+                ),
+            true,
+            0n
+        ],
+        [
+            "FunctionCall (unsigned->signed typeConversion 1)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "int8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "int8"),
+                    [factory.makeLiteral("uint16", LiteralKind.Number, "", "128")]
+                ),
+            true,
+            -128n
+        ],
+        [
+            "FunctionCall (unsigned->signed typeConversion 2)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "int8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "int8"),
+                    [factory.makeLiteral("uint16", LiteralKind.Number, "", "127")]
+                ),
+            true,
+            127n
+        ],
+        [
+            "FunctionCall (unsigned->signed typeConversion 1)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "int8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "int8"),
+                    [factory.makeLiteral("int16", LiteralKind.Number, "", "-128")]
+                ),
+            true,
+            -128n
+        ],
+        [
+            "FunctionCall (unsigned->signed typeConversion 2)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "int8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "int8"),
+                    [factory.makeLiteral("int16", LiteralKind.Number, "", "-129")]
+                ),
+            true,
+            127n
+        ],
+        [
+            "FunctionCall (unsigned->signed typeConversion 3)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "int8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "int8"),
+                    [factory.makeLiteral("int16", LiteralKind.Number, "", "-256")]
+                ),
+            true,
+            0n
+        ],
+        [
+            "FunctionCall (unsigned->signed typeConversion 3)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "int8",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("uint8", "int8"),
+                    [factory.makeLiteral("int16", LiteralKind.Number, "", "-255")]
+                ),
+            true,
+            1n
+        ],
+        [
+            "Edge-case: uint256(~uint8(1))",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "uint256",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("type(uint256)", "uint256"),
+                    [
+                        factory.makeUnaryOperation(
+                            "uint8",
+                            true,
+                            "~",
+                            factory.makeFunctionCall(
+                                "uint8",
+                                FunctionCallKind.TypeConversion,
+                                factory.makeElementaryTypeNameExpression("type(uint8)", "uint8"),
+                                [factory.makeLiteral("int_const 1", LiteralKind.Number, "31", "1")]
+                            )
+                        )
+                    ]
+                ),
+            true,
+            254n
+        ],
+        [
+            "Edge-case <0.8.0: -uint8(1)",
+            (factory: ASTNodeFactory) =>
+                factory.makeUnaryOperation(
+                    "<missing>",
+                    true,
+                    "-",
+                    factory.makeFunctionCall(
+                        "uint8",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(uint8)", "uint8"),
+                        [factory.makeLiteral("int_const 1", LiteralKind.Number, "31", "1")]
+                    )
+                ),
+            true,
+            255n
+        ],
+        [
+            "Edge-case <0.8.0: uint8(255) + 1",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "+",
+                    factory.makeFunctionCall(
+                        "uint8",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(uint8)", "uint8"),
+                        [factory.makeLiteral("int_const 255", LiteralKind.Number, "", "255")]
+                    ),
+                    factory.makeLiteral("int_const 1", LiteralKind.Number, "31", "1")
+                ),
+            true,
+            0n
+        ],
+        [
+            "Edge-case <0.8.0: 1 + uint8(255)",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "+",
+                    factory.makeLiteral("int_const 1", LiteralKind.Number, "31", "1"),
+                    factory.makeFunctionCall(
+                        "uint8",
+                        FunctionCallKind.TypeConversion,
+                        factory.makeElementaryTypeNameExpression("type(uint8)", "uint8"),
+                        [factory.makeLiteral("int_const 255", LiteralKind.Number, "", "255")]
+                    )
+                ),
+            true,
+            0n
         ]
     ];
 
 describe("Constant expression evaluator unit test (isConstant() + evalConstantExpr())", () => {
     let factory: ASTNodeFactory;
+    let inference: InferType;
 
     before(() => {
         factory = new ASTNodeFactory();
+        inference = new InferType(LatestCompilerVersion);
     });
 
     for (const [name, exprBuilder, isConst, value] of cases) {
@@ -930,9 +1319,9 @@ describe("Constant expression evaluator unit test (isConstant() + evalConstantEx
             expect(isConstant(expr)).toEqual(isConst);
 
             if (value === undefined) {
-                expect(() => evalConstantExpr(expr)).toThrow();
+                expect(() => evalConstantExpr(expr, inference)).toThrow();
             } else {
-                expect(evalConstantExpr(expr)).toEqual(value);
+                expect(evalConstantExpr(expr, inference)).toEqual(value);
             }
         });
     }

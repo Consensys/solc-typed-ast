@@ -2,6 +2,7 @@ import Decimal from "decimal.js";
 import {
     BinaryOperation,
     Conditional,
+    ElementaryTypeNameExpression,
     EtherUnit,
     Expression,
     FunctionCall,
@@ -14,8 +15,10 @@ import {
     UnaryOperation,
     VariableDeclaration
 } from "../ast";
-import { pp } from "../misc";
-import { BINARY_OPERATOR_GROUPS, SUBDENOMINATION_MULTIPLIERS } from "./utils";
+import { assert, pp } from "../misc";
+import { IntType, NumericLiteralType } from "./ast";
+import { InferType } from "./infer";
+import { BINARY_OPERATOR_GROUPS, SUBDENOMINATION_MULTIPLIERS, clampIntToType } from "./utils";
 /**
  * Tune up precision of decimal values to follow Solidity behavior.
  * Be careful with precision - setting it to large values causes NodeJS to crash.
@@ -47,11 +50,19 @@ function str(value: Value): string {
 }
 
 function promoteToDec(v: Value): Decimal {
-    if (!(typeof v === "bigint" || v instanceof Decimal)) {
-        throw new Error(`Expected number not ${v}`);
+    if (v instanceof Decimal) {
+        return v;
     }
 
-    return v instanceof Decimal ? v : new Decimal(v.toString());
+    if (typeof v === "bigint") {
+        return new Decimal(v.toString());
+    }
+
+    if (typeof v === "string") {
+        return new Decimal(v === "" ? 0 : "0x" + Buffer.from(v, "utf-8").toString("hex"));
+    }
+
+    throw new Error(`Expected number not ${v}`);
 }
 
 function demoteFromDec(d: Decimal): Decimal | bigint {
@@ -130,11 +141,11 @@ export function evalLiteralImpl(
         return value === "true";
     }
 
-    if (
-        kind === LiteralKind.String ||
-        kind === LiteralKind.UnicodeString ||
-        kind === LiteralKind.HexString
-    ) {
+    if (kind === LiteralKind.HexString) {
+        return value === "" ? 0n : BigInt("0x" + value);
+    }
+
+    if (kind === LiteralKind.String || kind === LiteralKind.UnicodeString) {
         return value;
     }
 
@@ -220,7 +231,7 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
     }
 
     if (BINARY_OPERATOR_GROUPS.Equality.includes(operator)) {
-        if (typeof left === "string" || typeof right === "string") {
+        if (typeof left === "string" && typeof right === "string") {
             throw new EvalError(
                 `${operator} not allowed for strings ${str(left)} and ${str(right)}`
             );
@@ -228,10 +239,13 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
 
         let isEqual: boolean;
 
-        if (left instanceof Decimal && right instanceof Decimal) {
-            isEqual = left.equals(right);
-        } else {
+        if (typeof left === "boolean" || typeof right === "boolean") {
             isEqual = left === right;
+        } else {
+            const leftDec = promoteToDec(left);
+            const rightDec = promoteToDec(right);
+
+            isEqual = leftDec.equals(rightDec);
         }
 
         if (operator === "==") {
@@ -246,6 +260,12 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
     }
 
     if (BINARY_OPERATOR_GROUPS.Comparison.includes(operator)) {
+        if (typeof left === "string" && typeof right === "string") {
+            throw new EvalError(
+                `${operator} not allowed for strings ${str(left)} and ${str(right)}`
+            );
+        }
+
         const leftDec = promoteToDec(left);
         const rightDec = promoteToDec(right);
 
@@ -340,9 +360,16 @@ export function evalLiteral(node: Literal): Value {
     }
 }
 
-export function evalUnary(node: UnaryOperation): Value {
+export function evalUnary(node: UnaryOperation, inference: InferType): Value {
     try {
-        return evalUnaryImpl(node.operator, evalConstantExpr(node.vSubExpression));
+        const subT = inference.typeOf(node.vSubExpression);
+        const res = evalUnaryImpl(node.operator, evalConstantExpr(node.vSubExpression, inference));
+
+        if (subT instanceof IntType && typeof res === "bigint") {
+            return clampIntToType(res, subT);
+        }
+
+        return res;
     } catch (e: unknown) {
         if (e instanceof EvalError && e.expr === undefined) {
             e.expr = node;
@@ -352,13 +379,26 @@ export function evalUnary(node: UnaryOperation): Value {
     }
 }
 
-export function evalBinary(node: BinaryOperation): Value {
+export function evalBinary(node: BinaryOperation, inference: InferType): Value {
     try {
-        return evalBinaryImpl(
+        const leftT = inference.typeOf(node.vLeftExpression);
+        const rightT = inference.typeOf(node.vRightExpression);
+
+        const res = evalBinaryImpl(
             node.operator,
-            evalConstantExpr(node.vLeftExpression),
-            evalConstantExpr(node.vRightExpression)
+            evalConstantExpr(node.vLeftExpression, inference),
+            evalConstantExpr(node.vRightExpression, inference)
         );
+
+        if (!(leftT instanceof NumericLiteralType && rightT instanceof NumericLiteralType)) {
+            const resT = inference.typeOfBinaryOperation(node);
+
+            if (resT instanceof IntType && typeof res === "bigint") {
+                return clampIntToType(res, resT);
+            }
+        }
+
+        return res;
     } catch (e: unknown) {
         if (e instanceof EvalError && e.expr === undefined) {
             e.expr = node;
@@ -366,16 +406,38 @@ export function evalBinary(node: BinaryOperation): Value {
 
         throw e;
     }
+}
+
+export function evalFunctionCall(node: FunctionCall, inference: InferType): Value {
+    assert(
+        node.kind === FunctionCallKind.TypeConversion,
+        'Expected constant call to be a "{0}", but got "{1}" instead',
+        FunctionCallKind.TypeConversion,
+        node.kind
+    );
+
+    const val = evalConstantExpr(node.vArguments[0], inference);
+
+    if (typeof val === "bigint" && node.vExpression instanceof ElementaryTypeNameExpression) {
+        const castT = inference.typeOfElementaryTypeNameExpression(node.vExpression);
+        const toT = castT.type;
+
+        if (toT instanceof IntType) {
+            return clampIntToType(val, toT);
+        }
+    }
+
+    return val;
 }
 
 /**
  * Given a constant expression `expr` evaluate it to a concrete `Value`.
  * If `expr` is not constant throw `NonConstantExpressionError`.
  *
- * TODO: The order of some operations changed in some version.
- * So perhaps to be fully precise here we will need a compiler version too?
+ * @todo The order of some operations changed in some version.
+ * Current implementation does not yet take it into an account.
  */
-export function evalConstantExpr(node: Expression): Value {
+export function evalConstantExpr(node: Expression, inference: InferType): Value {
     if (!isConstant(node)) {
         throw new NonConstantExpressionError(node);
     }
@@ -385,41 +447,39 @@ export function evalConstantExpr(node: Expression): Value {
     }
 
     if (node instanceof UnaryOperation) {
-        return evalUnary(node);
+        return evalUnary(node, inference);
     }
 
     if (node instanceof BinaryOperation) {
-        return evalBinary(node);
+        return evalBinary(node, inference);
     }
 
     if (node instanceof TupleExpression) {
-        return evalConstantExpr(node.vOriginalComponents[0] as Expression);
+        return evalConstantExpr(node.vOriginalComponents[0] as Expression, inference);
     }
 
     if (node instanceof Conditional) {
-        return evalConstantExpr(node.vCondition)
-            ? evalConstantExpr(node.vTrueExpression)
-            : evalConstantExpr(node.vFalseExpression);
+        return evalConstantExpr(node.vCondition, inference)
+            ? evalConstantExpr(node.vTrueExpression, inference)
+            : evalConstantExpr(node.vFalseExpression, inference);
     }
 
     if (node instanceof Identifier) {
         const decl = node.vReferencedDeclaration;
 
         if (decl instanceof VariableDeclaration) {
-            return evalConstantExpr(decl.vValue as Expression);
+            return evalConstantExpr(decl.vValue as Expression, inference);
         }
     }
 
     if (node instanceof FunctionCall) {
-        /**
-         * @todo Implement properly, as Solidity permits overflow and underflow
-         * during constant evaluation when performing type conversions.
-         */
-        return evalConstantExpr(node.vArguments[0]);
+        return evalFunctionCall(node, inference);
     }
 
-    /// Note that from the point of view of the type system constant conditionals and
-    /// indexing in constant array literals are not considered constant expressions.
-    /// So for now we don't support them, but we may change that in the future.
+    /**
+     * Note that from the point of view of the type system constant conditionals and
+     * indexing in constant array literals are not considered constant expressions.
+     * So for now we don't support them, but we may change that in the future.
+     */
     throw new EvalError(`Unable to evaluate constant expression ${pp(node)}`, node);
 }

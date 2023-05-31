@@ -2,10 +2,12 @@ import { ASTNode } from "../ast_node";
 import { ASTContext, ASTNodePostprocessor } from "../ast_reader";
 import {
     ContractDefinition,
+    EnumDefinition,
     ErrorDefinition,
     EventDefinition,
     FunctionDefinition,
     ModifierDefinition,
+    StructDefinition,
     VariableDeclaration
 } from "../implementation/declaration";
 import { SourceUnit } from "../implementation/meta/source_unit";
@@ -209,6 +211,8 @@ type SupportedNode =
     | VariableDeclaration
     | ErrorDefinition
     | EventDefinition
+    | EnumDefinition
+    | StructDefinition
     | ModifierDefinition
     | Statement
     | StatementWithChildren<any>;
@@ -250,10 +254,16 @@ export class StructuredDocumentationReconstructingPostprocessor
         }
 
         /**
-         * Dangling structured documentation can only be located in statements,
-         * that may have nested children (`StatementWithChildren` or `ContractDefinition`).
+         * Dangling structured documentation can currently be added to
+         * Statements, ContractDefinitions, EnumDefinitions and
+         * StructDefinitions
          */
-        if (node instanceof StatementWithChildren || node instanceof ContractDefinition) {
+        if (
+            node instanceof StatementWithChildren ||
+            node instanceof ContractDefinition ||
+            node instanceof EnumDefinition ||
+            node instanceof StructDefinition
+        ) {
             const danglingGap = this.reconstructor.getDanglingGapCoordinates(node);
             const dangling = this.reconstructor.fragmentCoordsToStructDoc(danglingGap, source);
 
@@ -273,11 +283,15 @@ export class StructuredDocumentationReconstructingPostprocessor
         return (
             node instanceof FunctionDefinition ||
             node instanceof ContractDefinition ||
+            node instanceof EnumDefinition ||
+            node instanceof StructDefinition ||
             node instanceof ErrorDefinition ||
             node instanceof EventDefinition ||
             node instanceof ModifierDefinition ||
             (node instanceof VariableDeclaration &&
-                (node.parent instanceof ContractDefinition || node.parent instanceof SourceUnit)) ||
+                (node.parent instanceof ContractDefinition ||
+                    node.parent instanceof SourceUnit ||
+                    node.parent instanceof StructDefinition)) ||
             node instanceof Statement ||
             node instanceof StatementWithChildren
         );
