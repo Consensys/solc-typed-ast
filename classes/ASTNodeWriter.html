@@ -78,14 +78,14 @@ Usually <code>writeWhole</code> is responsible for adding semicolons and documen
 since these are not generally part of source mappings.</p>
 <p>For example given this source:</p>
 <pre><code><span class="hl-3">a</span><span class="hl-0"> = </span><span class="hl-9">1</span><span class="hl-0">;</span>
-</code></pre>
+</code><button>Copy</button></pre>
 <p><code>ExpressionStatement.writeInner</code> would return the following desc:</p>
 <pre><code><span class="hl-0">[[</span><span class="hl-3">Assignment</span><span class="hl-0">#</span><span class="hl-9">3</span><span class="hl-0">, [[</span><span class="hl-3">Identifier</span><span class="hl-0">#</span><span class="hl-9">1</span><span class="hl-0">, [</span><span class="hl-1">&quot;a&quot;</span><span class="hl-0">]], </span><span class="hl-1">&quot; = &quot;</span><span class="hl-0">, [</span><span class="hl-3">Literal</span><span class="hl-0">#</span><span class="hl-9">2</span><span class="hl-0">, [</span><span class="hl-1">&quot;1&quot;</span><span class="hl-0">]] ]]]</span>
-</code></pre>
+</code><button>Copy</button></pre>
 <p>Then <code>ExpressionStatement.writeWhole</code> would add in
 the <code>ExpressionStatement</code> node and the semicolon to return:</p>
 <pre><code><span class="hl-0">[[</span><span class="hl-3">ExpressionStatement</span><span class="hl-0">#</span><span class="hl-9">4</span><span class="hl-0">, [[</span><span class="hl-3">Assignment</span><span class="hl-0">#</span><span class="hl-9">3</span><span class="hl-0">, [[</span><span class="hl-3">Identifier</span><span class="hl-0">#</span><span class="hl-9">1</span><span class="hl-0">, [</span><span class="hl-1">&quot;a&quot;</span><span class="hl-0">]], </span><span class="hl-1">&quot; = &quot;</span><span class="hl-0">, [</span><span class="hl-3">Literal</span><span class="hl-0">#</span><span class="hl-9">2</span><span class="hl-0">, [</span><span class="hl-1">&quot;1&quot;</span><span class="hl-0">]] ]]]], </span><span class="hl-1">&quot;;&quot;</span><span class="hl-0">]</span>
-</code></pre>
+</code><button>Copy</button></pre>
 </div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>

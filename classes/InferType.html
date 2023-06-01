@@ -46,6 +46,7 @@
 <a href="InferType.html#inferCommonType" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>infer<wbr/>Common<wbr/>Type</span></a>
 <a href="InferType.html#inferVariableDeclLocation" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>infer<wbr/>Variable<wbr/>Decl<wbr/>Location</span></a>
 <a href="InferType.html#interfaceId" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>interface<wbr/>Id</span></a>
+<a href="InferType.html#isABIEncodable" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>isABIEncodable</span></a>
 <a href="InferType.html#isABITypeEncodingDynamic" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>isABIType<wbr/>Encoding<wbr/>Dynamic</span></a>
 <a href="InferType.html#signature" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>signature</span></a>
 <a href="InferType.html#signatureHash" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>signature<wbr/>Hash</span></a>
@@ -254,7 +255,22 @@ For local vars with solidity &lt;=0.4.26 we infer the location from the RHS.</p>
 <h5><span class="tsd-kind-parameter">contract</span>: <a href="ContractDefinition.html" class="tsd-signature-type tsd-kind-class">ContractDefinition</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2538">src/types/infer.ts:2538</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2582">src/types/infer.ts:2582</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="isABIEncodable" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>isABIEncodable</span><a href="#isABIEncodable" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="isABIEncodable.isABIEncodable-1"><span class="tsd-kind-call-signature">isABIEncodable</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">type</span>, <span class="tsd-kind-parameter">encoderVersion</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#isABIEncodable.isABIEncodable-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">type</span>: <a href="TypeNode.html" class="tsd-signature-type tsd-kind-class">TypeNode</a></h5></li>
+<li>
+<h5><span class="tsd-kind-parameter">encoderVersion</span>: <a href="../enums/ABIEncoderVersion.html" class="tsd-signature-type tsd-kind-enum">ABIEncoderVersion</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2344">src/types/infer.ts:2344</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="isABITypeEncodingDynamic" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>isABIType<wbr/>Encoding<wbr/>Dynamic</span><a href="#isABITypeEncodingDynamic" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -301,7 +317,7 @@ there are several exceptions to the rule when encoding types in calldata:</p>
 <h5><span class="tsd-kind-parameter">node</span>: <a href="FunctionDefinition.html" class="tsd-signature-type tsd-kind-class">FunctionDefinition</a><span class="tsd-signature-symbol"> | </span><a href="ErrorDefinition.html" class="tsd-signature-type tsd-kind-class">ErrorDefinition</a><span class="tsd-signature-symbol"> | </span><a href="EventDefinition.html" class="tsd-signature-type tsd-kind-class">EventDefinition</a><span class="tsd-signature-symbol"> | </span><a href="VariableDeclaration.html" class="tsd-signature-type tsd-kind-class">VariableDeclaration</a><span class="tsd-signature-symbol"> | </span><a href="ModifierDefinition.html" class="tsd-signature-type tsd-kind-class">ModifierDefinition</a><span class="tsd-signature-symbol"> | </span><a href="TryCatchClause.html" class="tsd-signature-type tsd-kind-class">TryCatchClause</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2431">src/types/infer.ts:2431</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2475">src/types/infer.ts:2475</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="signatureHash" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>signature<wbr/>Hash</span><a href="#signatureHash" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -319,7 +335,7 @@ function / event / error / modifier or public state variable getter signature.</
 <h5><span class="tsd-kind-parameter">node</span>: <a href="FunctionDefinition.html" class="tsd-signature-type tsd-kind-class">FunctionDefinition</a><span class="tsd-signature-symbol"> | </span><a href="ErrorDefinition.html" class="tsd-signature-type tsd-kind-class">ErrorDefinition</a><span class="tsd-signature-symbol"> | </span><a href="EventDefinition.html" class="tsd-signature-type tsd-kind-class">EventDefinition</a><span class="tsd-signature-symbol"> | </span><a href="VariableDeclaration.html" class="tsd-signature-type tsd-kind-class">VariableDeclaration</a><span class="tsd-signature-symbol"> | </span><a href="ModifierDefinition.html" class="tsd-signature-type tsd-kind-class">ModifierDefinition</a><span class="tsd-signature-symbol"> | </span><a href="TryCatchClause.html" class="tsd-signature-type tsd-kind-class">TryCatchClause</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2508">src/types/infer.ts:2508</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2552">src/types/infer.ts:2552</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="toABIEncodedType" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>toABIEncoded<wbr/>Type</span><a href="#toABIEncodedType" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -349,7 +365,7 @@ after ABI-encoding with encoder version <code>encoderVersion</code>. Follows the
 <h5><span class="tsd-kind-parameter">normalizePointers</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="TypeNode.html" class="tsd-signature-type tsd-kind-class">TypeNode</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2357">src/types/infer.ts:2357</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2405">src/types/infer.ts:2405</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="typeNameToSpecializedTypeNode" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Name<wbr/>To<wbr/>Specialized<wbr/>Type<wbr/>Node</span><a href="#typeNameToSpecializedTypeNode" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -486,7 +502,7 @@ based on the function call arguments. Otherwise return the type of the callee.</
 <h5><span class="tsd-kind-parameter">callsite</span>: <a href="FunctionCall.html" class="tsd-signature-type tsd-kind-class">FunctionCall</a></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><a href="BuiltinFunctionType.html" class="tsd-signature-type tsd-kind-class">BuiltinFunctionType</a><span class="tsd-signature-symbol"> | </span><a href="FunctionType.html" class="tsd-signature-type tsd-kind-class">FunctionType</a><span class="tsd-signature-symbol"> | </span><a href="EventType.html" class="tsd-signature-type tsd-kind-class">EventType</a><span class="tsd-signature-symbol"> | </span><a href="ErrorType.html" class="tsd-signature-type tsd-kind-class">ErrorType</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2581">src/types/infer.ts:2581</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/ConsenSys/solc-typed-ast/blob/master/src/types/infer.ts#L2625">src/types/infer.ts:2625</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="typeOfConditional" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>type<wbr/>Of<wbr/>Conditional</span><a href="#typeOfConditional" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -787,6 +803,7 @@ returns corresponding type node.</p>
 <li><a href="#inferCommonType" class=""><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>infer<wbr/>Common<wbr/>Type</span></a></li>
 <li><a href="#inferVariableDeclLocation" class=""><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>infer<wbr/>Variable<wbr/>Decl<wbr/>Location</span></a></li>
 <li><a href="#interfaceId" class=""><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>interface<wbr/>Id</span></a></li>
+<li><a href="#isABIEncodable" class=""><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>isABIEncodable</span></a></li>
 <li><a href="#isABITypeEncodingDynamic" class=""><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>isABIType<wbr/>Encoding<wbr/>Dynamic</span></a></li>
 <li><a href="#signature" class=""><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>signature</span></a></li>
 <li><a href="#signatureHash" class=""><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>signature<wbr/>Hash</span></a></li>

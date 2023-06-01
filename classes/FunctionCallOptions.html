@@ -167,7 +167,7 @@ that contains the AST node.</li>
 <div class="tsd-signature"><span class="tsd-kind-property">v<wbr/>Expression</span><span class="tsd-signature-symbol">:</span> <a href="Expression.html" class="tsd-signature-type tsd-kind-class">Expression</a></div>
 <div class="tsd-comment tsd-typography"><p>Function expression. For following example:</p>
 <pre><code><span class="hl-3">foreign</span><span class="hl-0">.</span><span class="hl-3">buy</span><span class="hl-0">{</span><span class="hl-10">gas</span><span class="hl-0">: </span><span class="hl-9">2000</span><span class="hl-0">, </span><span class="hl-10">value</span><span class="hl-0">: </span><span class="hl-9">1</span><span class="hl-0"> </span><span class="hl-3">gwei</span><span class="hl-0">}(</span><span class="hl-9">1000</span><span class="hl-0">);</span>
-</code></pre>
+</code><button>Copy</button></pre>
 <p>Will contain <code>foreign.buy</code> member access.</p>
 </div><aside class="tsd-sources">
 <ul>
@@ -223,7 +223,7 @@ or <code>undefined</code> if the node has no children.</p>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Specified option names, respecting order. For following example:</p>
 <pre><code><span class="hl-3">foreign</span><span class="hl-0">.</span><span class="hl-3">buy</span><span class="hl-0">{</span><span class="hl-10">gas</span><span class="hl-0">: </span><span class="hl-9">2000</span><span class="hl-0">, </span><span class="hl-10">value</span><span class="hl-0">: </span><span class="hl-9">1</span><span class="hl-0"> </span><span class="hl-3">gwei</span><span class="hl-0">}(</span><span class="hl-9">1000</span><span class="hl-0">);</span>
-</code></pre>
+</code><button>Copy</button></pre>
 <p>Will contain <code>[&quot;gas&quot;, &quot;value&quot;]</code>.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Iterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
@@ -308,7 +308,7 @@ in its <code>parent</code>&#39;s children.</p>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Specified option values, respecting order. For following example:</p>
 <pre><code><span class="hl-3">foreign</span><span class="hl-0">.</span><span class="hl-3">buy</span><span class="hl-0">{</span><span class="hl-10">gas</span><span class="hl-0">: </span><span class="hl-9">2000</span><span class="hl-0">, </span><span class="hl-10">value</span><span class="hl-0">: </span><span class="hl-9">1</span><span class="hl-0"> </span><span class="hl-3">gwei</span><span class="hl-0">}(</span><span class="hl-9">1000</span><span class="hl-0">);</span>
-</code></pre>
+</code><button>Copy</button></pre>
 <p>Will contain <code>[2000, 1 gwei]</code> literal expressions.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="Expression.html" class="tsd-signature-type tsd-kind-class">Expression</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
@@ -364,9 +364,9 @@ that corresponds to <code>src</code> property value of the current node.</p>
 <ul class="tsd-signatures tsd-is-inherited">
 <li class="tsd-signature tsd-anchor-link" id="getChildrenBySelector.getChildrenBySelector-1"><span class="tsd-kind-call-signature">get<wbr/>Children<wbr/>By<wbr/>Selector</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selector</span>, <span class="tsd-kind-parameter">inclusive</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">[]</span><a href="#getChildrenBySelector.getChildrenBySelector-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<section class="tsd-panel tsd-type-parameters">
+<section class="tsd-panel">
 <h4>Type Parameters</h4>
-<ul class="tsd-type-parameters">
+<ul class="tsd-type-parameter-list">
 <li>
 <h4><span class="tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol"> extends </span><a href="ASTNode.html" class="tsd-signature-type tsd-kind-class">ASTNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <div class="tsd-parameters">
@@ -385,9 +385,9 @@ that corresponds to <code>src</code> property value of the current node.</p>
 <ul class="tsd-signatures tsd-is-inherited">
 <li class="tsd-signature tsd-anchor-link" id="getChildrenByType.getChildrenByType-1"><span class="tsd-kind-call-signature">get<wbr/>Children<wbr/>By<wbr/>Type</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">type</span>, <span class="tsd-kind-parameter">inclusive</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">[]</span><a href="#getChildrenByType.getChildrenByType-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<section class="tsd-panel tsd-type-parameters">
+<section class="tsd-panel">
 <h4>Type Parameters</h4>
-<ul class="tsd-type-parameters">
+<ul class="tsd-type-parameter-list">
 <li>
 <h4><span class="tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol"> extends </span><a href="ASTNode.html" class="tsd-signature-type tsd-kind-class">ASTNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <div class="tsd-parameters">
@@ -406,9 +406,9 @@ that corresponds to <code>src</code> property value of the current node.</p>
 <ul class="tsd-signatures tsd-is-inherited">
 <li class="tsd-signature tsd-anchor-link" id="getChildrenByTypeString.getChildrenByTypeString-1"><span class="tsd-kind-call-signature">get<wbr/>Children<wbr/>By<wbr/>Type<wbr/>String</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">typeString</span>, <span class="tsd-kind-parameter">inclusive</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">[]</span><a href="#getChildrenByTypeString.getChildrenByTypeString-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<section class="tsd-panel tsd-type-parameters">
+<section class="tsd-panel">
 <h4>Type Parameters</h4>
-<ul class="tsd-type-parameters">
+<ul class="tsd-type-parameter-list">
 <li>
 <h4><span class="tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol"> extends </span><a href="ASTNode.html" class="tsd-signature-type tsd-kind-class">ASTNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <div class="tsd-parameters">
@@ -427,9 +427,9 @@ that corresponds to <code>src</code> property value of the current node.</p>
 <ul class="tsd-signatures tsd-is-inherited">
 <li class="tsd-signature tsd-anchor-link" id="getClosestParentBySelector.getClosestParentBySelector-1"><span class="tsd-kind-call-signature">get<wbr/>Closest<wbr/>Parent<wbr/>By<wbr/>Selector</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selector</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><a href="#getClosestParentBySelector.getClosestParentBySelector-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<section class="tsd-panel tsd-type-parameters">
+<section class="tsd-panel">
 <h4>Type Parameters</h4>
-<ul class="tsd-type-parameters">
+<ul class="tsd-type-parameter-list">
 <li>
 <h4><span class="tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol"> extends </span><a href="ASTNode.html" class="tsd-signature-type tsd-kind-class">ASTNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <div class="tsd-parameters">
@@ -446,9 +446,9 @@ that corresponds to <code>src</code> property value of the current node.</p>
 <ul class="tsd-signatures tsd-is-inherited">
 <li class="tsd-signature tsd-anchor-link" id="getClosestParentByType.getClosestParentByType-1"><span class="tsd-kind-call-signature">get<wbr/>Closest<wbr/>Parent<wbr/>By<wbr/>Type</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><a href="#getClosestParentByType.getClosestParentByType-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<section class="tsd-panel tsd-type-parameters">
+<section class="tsd-panel">
 <h4>Type Parameters</h4>
-<ul class="tsd-type-parameters">
+<ul class="tsd-type-parameter-list">
 <li>
 <h4><span class="tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol"> extends </span><a href="ASTNode.html" class="tsd-signature-type tsd-kind-class">ASTNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <div class="tsd-parameters">
@@ -465,9 +465,9 @@ that corresponds to <code>src</code> property value of the current node.</p>
 <ul class="tsd-signatures tsd-is-inherited">
 <li class="tsd-signature tsd-anchor-link" id="getClosestParentByTypeString.getClosestParentByTypeString-1"><span class="tsd-kind-call-signature">get<wbr/>Closest<wbr/>Parent<wbr/>By<wbr/>Type<wbr/>String</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">typeString</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><a href="#getClosestParentByTypeString.getClosestParentByTypeString-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<section class="tsd-panel tsd-type-parameters">
+<section class="tsd-panel">
 <h4>Type Parameters</h4>
-<ul class="tsd-type-parameters">
+<ul class="tsd-type-parameter-list">
 <li>
 <h4><span class="tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol"> extends </span><a href="ASTNode.html" class="tsd-signature-type tsd-kind-class">ASTNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <div class="tsd-parameters">
@@ -511,9 +511,9 @@ that corresponds to <code>src</code> property value of the current node.</p>
 <ul class="tsd-signatures tsd-is-inherited">
 <li class="tsd-signature tsd-anchor-link" id="getParentsBySelector.getParentsBySelector-1"><span class="tsd-kind-call-signature">get<wbr/>Parents<wbr/>By<wbr/>Selector</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selector</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">[]</span><a href="#getParentsBySelector.getParentsBySelector-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<section class="tsd-panel tsd-type-parameters">
+<section class="tsd-panel">
 <h4>Type Parameters</h4>
-<ul class="tsd-type-parameters">
+<ul class="tsd-type-parameter-list">
 <li>
 <h4><span class="tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol"> extends </span><a href="ASTNode.html" class="tsd-signature-type tsd-kind-class">ASTNode</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">T</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
 <div class="tsd-parameters">
