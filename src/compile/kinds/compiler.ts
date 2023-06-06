@@ -133,7 +133,7 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
         );
 
         const response = await axios.get<Buffer>(`${BINARIES_URL}/${prefix}/${compilerFileName}`, {
-            responseType: "arraybuffer"
+            responseType: "string"
         });
 
         const hash = crypto.createHash("sha256");
