@@ -337,7 +337,7 @@ export function isFunctionCallExternal(call: FunctionCall, inference: InferType)
         }
 
         if (exprT.visibility === FunctionVisibility.Public) {
-            return call.getChildrenByType(MemberAccess).length > 0;
+            return call.vExpression.getChildrenByType(MemberAccess, true).length > 0;
         }
     }
 
