@@ -78,8 +78,7 @@ contract Main {
 
         this.v();
     }
-}       
-`,
+}`,
         [
             "this.c",
             "f.a",
