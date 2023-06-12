@@ -126,20 +126,10 @@ describe("isFunctionCallExternal()", () => {
             );
 
             const actual = units[0]
-                .getChildrenBySelector<FunctionCall>((node): node is FunctionCall => {
-                    /**
-                     * This function is expanded for debug purposes.
-                     *
-                     * Collapsing this code to a single return forces regular rewriting.
-                     */
-                    if (node instanceof FunctionCall) {
-                        if (isFunctionCallExternal(node, inference)) {
-                            return true;
-                        }
-                    }
-
-                    return false;
-                })
+                .getChildrenBySelector<FunctionCall>(
+                    (node): node is FunctionCall => node instanceof FunctionCall
+                )
+                .filter((node) => isFunctionCallExternal(node, inference))
                 .map((node) => writer.write(node.vExpression));
 
             expect(actual).toEqual(expected);
