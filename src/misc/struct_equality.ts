@@ -9,11 +9,6 @@ export function isPrimitive(a: any): boolean {
     );
 }
 
-// Hack to recognize big ints
-export function isBigInt(a: any): boolean {
-    return typeof a === "number" || typeof a === "bigint";
-}
-
 export function hasKeysOf(a: Record<string, any>, b: Record<string, any>): boolean {
     const hasProperty = Object.prototype.hasOwnProperty;
 
@@ -48,6 +43,10 @@ export function eq(a: any, b: any, visited?: Map<any, any>): boolean {
         return true;
     }
 
+    if (isPrimitive(a) || isPrimitive(b)) {
+        return a === b;
+    }
+
     if (visited === undefined) {
         visited = new Map<any, any>();
     }
@@ -60,14 +59,6 @@ export function eq(a: any, b: any, visited?: Map<any, any>): boolean {
     }
 
     visited.set(a, b);
-
-    if (isPrimitive(a) || isPrimitive(b)) {
-        return a === b;
-    }
-
-    if (isBigInt(a) && isBigInt(b)) {
-        return a === b;
-    }
 
     if (a instanceof Array && b instanceof Array) {
         if (a.length !== b.length) {

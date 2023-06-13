@@ -102,6 +102,16 @@ function descTrimRight(desc: SrcDesc): void {
     }
 }
 
+function isSpdxLicence(desc: SrcDesc): boolean {
+    const first = desc[0];
+
+    if (typeof first === "string") {
+        return first.includes("SPDX-License-Identifier");
+    }
+
+    return isSpdxLicence(first[1]);
+}
+
 /**
  * A small hack to handle semicolons in the last statement of compound statements like if and while. Given:
  *
@@ -1463,6 +1473,15 @@ class SourceUnitWriter extends ASTNodeWriter {
         }
 
         descTrimRight(result);
+
+        if (node.license && !isSpdxLicence(result)) {
+            result.unshift(
+                StructuredDocumentationWriter.render(
+                    "SPDX-License-Identifier: " + node.license,
+                    writer.formatter
+                ) + wrap
+            );
+        }
 
         return result;
     }

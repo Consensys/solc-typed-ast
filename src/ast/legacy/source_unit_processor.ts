@@ -23,6 +23,16 @@ export class LegacySourceUnitProcessor extends LegacyNodeProcessor<SourceUnit> {
             symbols.set(name, exportedSymbols[name][0]);
         }
 
-        return [id, src, sourceEntryKey, sourceListIndex, absolutePath, symbols, children, raw];
+        return [
+            id,
+            src,
+            sourceEntryKey,
+            sourceListIndex,
+            absolutePath,
+            symbols,
+            children,
+            undefined,
+            raw
+        ];
     }
 }

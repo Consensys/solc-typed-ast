@@ -5,6 +5,7 @@ SourceUnit #1614
     sourceListIndex: 0
     absolutePath: "./test/samples/solidity/latest_08.sol"
     exportedSymbols: Map(28) { "A_0813" -> 1530, "Builtins_0811" -> 1356, "CatchPanic" -> 987, "EmitsIdentifierPath" -> 909, "EnumABC" -> 856, "EnumTypeMinMax_088" -> 1286, "ExternalFnSelectorAndAddress_0810" -> 1317, "Features082" -> 1072, "Features084" -> 1141, "Features087" -> 1158, "Features_0812" -> 1419, "Features_0813" -> 1537, "Features_0815" -> 1592, "Features_0819" -> 1613, "InterfaceWithUDTV_088" -> 1261, "LI" -> 847, "LibErrors084" -> 1083, "LibWithUDVT_088" -> 1250, "Price" -> 1160, "Quantity" -> 1162, "RestrictedNumber_0813" -> 1421, "Some" -> 851, "UncheckedMathExample" -> 873, "UnitLevelError084" -> 1077, "UsesNewAddressMembers" -> 930, "createRestrictedNumber_0813" -> 1501, "minusOne" -> 1473, "plusOne" -> 1452 }
+    license: undefined
     context: ASTContext #1000
     <getter> vPragmaDirectives: Array(2) [ PragmaDirective #845, PragmaDirective #846 ]
     <getter> vImportDirectives: Array(1) [ ImportDirective #847 ]
@@ -15665,6 +15666,7 @@ SourceUnit #1682
     sourceListIndex: 1
     absolutePath: "./test/samples/solidity/latest_imports_08.sol"
     exportedSymbols: Map(5) { "Int" -> 1631, "SomeContract" -> 1628, "SomeLib" -> 1629, "add" -> 1681, "neg" -> 1655 }
+    license: undefined
     context: ASTContext #1000
     <getter> vPragmaDirectives: Array(2) [ PragmaDirective #1615, PragmaDirective #1616 ]
     <getter> vImportDirectives: Array(0)

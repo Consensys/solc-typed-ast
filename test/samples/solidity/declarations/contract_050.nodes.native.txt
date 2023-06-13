@@ -5,6 +5,7 @@ SourceUnit #146
     sourceListIndex: 0
     absolutePath: "./test/samples/solidity/declarations/contract_050.sol"
     exportedSymbols: Map(3) { "A" -> 90, "B" -> 100, "C" -> 145 }
+    license: undefined
     context: ASTContext #1000
     <getter> vPragmaDirectives: Array(0)
     <getter> vImportDirectives: Array(0)
