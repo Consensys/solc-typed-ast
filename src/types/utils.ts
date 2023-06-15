@@ -14,6 +14,7 @@ import {
     FunctionKind,
     FunctionStateMutability,
     FunctionVisibility,
+    MemberAccess,
     ModifierDefinition,
     SourceUnit,
     StructDefinition,
@@ -21,7 +22,7 @@ import {
     VariableDeclaration
 } from "../ast";
 import { assert, eq, forAll, forAny } from "../misc";
-import { types } from "../types";
+import { InferType, types } from "../types";
 import { ABIEncoderVersion } from "./abi";
 import {
     AddressType,
@@ -316,7 +317,7 @@ export function getABIEncoderVersion(unit: SourceUnit, compilerVersion: string):
     return lt(compilerVersion, "0.8.0") ? ABIEncoderVersion.V1 : ABIEncoderVersion.V2;
 }
 
-export function isFunctionCallExternal(call: FunctionCall): boolean {
+export function isFunctionCallExternal(call: FunctionCall, inference: InferType): boolean {
     if (call.kind !== FunctionCallKind.FunctionCall) {
         return false;
     }
@@ -328,8 +329,32 @@ export function isFunctionCallExternal(call: FunctionCall): boolean {
         return true;
     }
 
-    if (call.vExpression.typeString.includes(FunctionVisibility.External)) {
-        return true;
+    const exprT = inference.typeOf(call.vExpression);
+
+    if (exprT instanceof FunctionType) {
+        if (exprT.implicitFirstArg) {
+            /**
+             * Calls via using-for are not considered as external.
+             * Currently "implicitFirstArg" is used only for using-for.
+             */
+            return false;
+        }
+
+        if (exprT.visibility === FunctionVisibility.External) {
+            return true;
+        }
+
+        if (exprT.visibility === FunctionVisibility.Public) {
+            /**
+             * We have external calls when call expression have pattern "expr.fun()",
+             * where "expr" is an identifier, "this" or an expression of ContractType.
+             *
+             * Other expressions, that are invoked via an identifier or struct type
+             * are requiring function type to have non-public visibility,
+             * so they are handled by other cases.
+             */
+            return call.vExpression.getChildrenByType(MemberAccess, true).length > 0;
+        }
     }
 
     return false;
