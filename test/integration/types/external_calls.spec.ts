@@ -16,7 +16,7 @@ import {
 const samples: Array<[string, string, string[]]> = [
     [
         "case_a.sol",
-        `pragma solidity 0.6.0;
+        `pragma solidity 0.8.0;
 
 contract Foo {
     function a() public {}
@@ -30,7 +30,20 @@ library Lib {
     function z() external {}
 }
 
+library LibT {
+    function add(uint a, uint b) pure internal returns (uint) {
+        return a + b;
+    }
+}
+
 contract Main {
+    using LibT for uint;
+
+    struct Some {
+        function () internal intFn;
+        function () external extFn;
+    }
+
     function c() public {}
     function d() public {}
 
@@ -77,6 +90,15 @@ contract Main {
         Lib.z();
 
         this.v();
+
+        uint a = 5;
+
+        a.add(4);
+
+        Some memory s = Some(Lib.w, fExtPtr);
+
+        s.intFn();
+        s.extFn();
     }
 }`,
         [
@@ -92,7 +114,8 @@ contract Main {
             "(false ? Lib.y : Lib.z)",
             "Lib.y",
             "Lib.z",
-            "this.v"
+            "this.v",
+            "s.extFn"
         ]
     ]
 ];
@@ -126,9 +149,7 @@ describe("isFunctionCallExternal()", () => {
             );
 
             const actual = units[0]
-                .getChildrenBySelector<FunctionCall>(
-                    (node): node is FunctionCall => node instanceof FunctionCall
-                )
+                .getChildrenByType(FunctionCall)
                 .filter((node) => isFunctionCallExternal(node, inference))
                 .map((node) => writer.write(node.vExpression));
 

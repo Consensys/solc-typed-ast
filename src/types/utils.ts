@@ -332,11 +332,26 @@ export function isFunctionCallExternal(call: FunctionCall, inference: InferType)
     const exprT = inference.typeOf(call.vExpression);
 
     if (exprT instanceof FunctionType) {
+        if (exprT.implicitFirstArg) {
+            /**
+             * Calls for using-for are not considered as external.
+             * Currently "implicitFirstArg" is used only for using-for.
+             */
+            return false;
+        }
+
         if (exprT.visibility === FunctionVisibility.External) {
             return true;
         }
 
         if (exprT.visibility === FunctionVisibility.Public) {
+            /**
+             * We have external calls when we have call expression like "expr.fun()",
+             * where "expr" is an identifier, "this" or an expression of ContractType.
+             *
+             * Other expressions, that are invoked via an identifier are causing internal calls,
+             * so we exclude them.
+             */
             return call.vExpression.getChildrenByType(MemberAccess, true).length > 0;
         }
     }
