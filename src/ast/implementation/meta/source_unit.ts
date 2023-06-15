@@ -42,6 +42,11 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
      */
     exportedSymbols: Map<string, number>;
 
+    /**
+     * SPDX license identifier (if provided)
+     */
+    license?: string;
+
     constructor(
         id: number,
         src: string,
@@ -50,6 +55,7 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
         absolutePath: string,
         exportedSymbols: Map<string, number>,
         children?: Iterable<ASTNode>,
+        license?: string,
         raw?: any
     ) {
         super(id, src, raw);
@@ -58,6 +64,7 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
         this.sourceListIndex = sourceListIndex;
         this.absolutePath = absolutePath;
         this.exportedSymbols = exportedSymbols;
+        this.license = license;
 
         if (children) {
             for (const node of children) {

@@ -5,6 +5,7 @@ SourceUnit #56
     sourceListIndex: 0
     absolutePath: "./test/samples/solidity/issue_132_fun_kind.sol"
     exportedSymbols: Map(1) { "FBNoArgs" -> 55 }
+    license: undefined
     context: ASTContext #1000
     <getter> vPragmaDirectives: Array(1) [ PragmaDirective #29 ]
     <getter> vImportDirectives: Array(0)
