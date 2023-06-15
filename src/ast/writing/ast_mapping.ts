@@ -102,14 +102,14 @@ function descTrimRight(desc: SrcDesc): void {
     }
 }
 
-function isSpdxLicence(desc: SrcDesc): boolean {
+function hasSpdxLicence(desc: SrcDesc): boolean {
     const first = desc[0];
 
     if (typeof first === "string") {
         return first.includes("SPDX-License-Identifier");
     }
 
-    return isSpdxLicence(first[1]);
+    return hasSpdxLicence(first[1]);
 }
 
 /**
@@ -1474,12 +1474,13 @@ class SourceUnitWriter extends ASTNodeWriter {
 
         descTrimRight(result);
 
-        if (node.license && !isSpdxLicence(result)) {
+        if (node.license && !hasSpdxLicence(result)) {
             result.unshift(
                 StructuredDocumentationWriter.render(
                     "SPDX-License-Identifier: " + node.license,
                     writer.formatter
-                ) + wrap
+                ),
+                wrap
             );
         }
 
