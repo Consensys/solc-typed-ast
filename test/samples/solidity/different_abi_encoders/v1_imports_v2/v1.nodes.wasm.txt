@@ -5,6 +5,7 @@ SourceUnit #21
     sourceListIndex: 0
     absolutePath: "./test/samples/solidity/different_abi_encoders/v1_imports_v2/v1.sol"
     exportedSymbols: Map(2) { "A" -> 20, "B" -> 14 }
+    license: undefined
     context: ASTContext #1000
     <getter> vPragmaDirectives: Array(1) [ PragmaDirective #16 ]
     <getter> vImportDirectives: Array(1) [ ImportDirective #17 ]
@@ -148,6 +149,7 @@ SourceUnit #30
     sourceListIndex: 1
     absolutePath: "./test/samples/solidity/different_abi_encoders/v1_imports_v2/v2.sol"
     exportedSymbols: Map(1) { "B" -> 29 }
+    license: undefined
     context: ASTContext #1000
     <getter> vPragmaDirectives: Array(1) [ PragmaDirective #22 ]
     <getter> vImportDirectives: Array(0)

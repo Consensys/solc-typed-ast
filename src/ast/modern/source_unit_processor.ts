@@ -14,6 +14,7 @@ export class ModernSourceUnitProcessor extends ModernNodeProcessor<SourceUnit> {
         const sourceListIndex = parseInt(src.slice(src.lastIndexOf(":") + 1), 10);
         const absolutePath: string = raw.absolutePath;
         const exportedSymbols = raw.exportedSymbols;
+        const license: string | undefined = raw.license;
 
         const symbols = new Map<string, number>();
 
@@ -23,6 +24,16 @@ export class ModernSourceUnitProcessor extends ModernNodeProcessor<SourceUnit> {
 
         const children = reader.convertArray(raw.nodes, config);
 
-        return [id, src, sourceEntryKey, sourceListIndex, absolutePath, symbols, children, raw];
+        return [
+            id,
+            src,
+            sourceEntryKey,
+            sourceListIndex,
+            absolutePath,
+            symbols,
+            children,
+            license,
+            raw
+        ];
     }
 }

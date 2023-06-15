@@ -425,6 +425,7 @@ const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) =>
             node.absolutePath,
             node.exportedSymbols,
             node.children,
+            node.license,
             node.raw
         ]
     ],
