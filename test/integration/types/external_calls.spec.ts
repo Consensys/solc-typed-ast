@@ -9,7 +9,6 @@ import {
     detectCompileErrors,
     FunctionCall,
     InferType,
-    isFunctionCallExternal,
     PrettyFormatter
 } from "../../../src";
 
@@ -36,7 +35,13 @@ library LibT {
     }
 }
 
-contract Main {
+contract Baz {
+    function foo(uint a) internal {}
+    function foo(uint a, uint b) public {}
+    function foo(uint a, uint b, uint c) external {}
+}
+
+contract Main is Baz {
     using LibT for uint;
 
     struct Some {
@@ -51,6 +56,7 @@ contract Main {
 
     function main() public payable {
         Foo f =  new Foo();
+        Baz b = new Baz();
 
         c();
         this.c();
@@ -99,6 +105,14 @@ contract Main {
 
         s.intFn();
         s.extFn();
+
+        Baz.foo(1);
+        Baz.foo(2, 3);
+
+        b.foo(3, 4);
+        b.foo(3, 4, 5);
+
+        super.foo(1, 2);
     }
 }`,
         [
@@ -115,7 +129,9 @@ contract Main {
             "Lib.y",
             "Lib.z",
             "this.v",
-            "s.extFn"
+            "s.extFn",
+            "b.foo",
+            "b.foo"
         ]
     ]
 ];
@@ -150,7 +166,7 @@ describe("isFunctionCallExternal()", () => {
 
             const actual = units[0]
                 .getChildrenByType(FunctionCall)
-                .filter((node) => isFunctionCallExternal(node, inference))
+                .filter((node) => inference.isFunctionCallExternal(node))
                 .map((node) => writer.write(node.vExpression));
 
             expect(actual).toEqual(expected);

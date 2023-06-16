@@ -50,7 +50,7 @@ import {
     encodeFuncSignature,
     resolveAny
 } from "../ast";
-import { DataLocation } from "../ast/constants";
+import { DataLocation, ExternalReferenceType } from "../ast/constants";
 import { assert, eq, forAll, forAny, pp } from "../misc";
 import { ABIEncoderVersion, abiTypeToCanonicalName, abiTypeToLibraryCanonicalName } from "./abi";
 import {
@@ -98,6 +98,7 @@ import { TypeSubstituion, applySubstitution, buildSubstitutions } from "./polymo
 import { types } from "./reserved";
 import {
     BINARY_OPERATOR_GROUPS,
+    CALL_BUILTINS,
     SUBDENOMINATION_MULTIPLIERS,
     castable,
     decimalToRational,
@@ -2661,5 +2662,87 @@ export class InferType {
         const resolvedCalleeT = this.matchArguments(calleeT.defs, callsite);
 
         return resolvedCalleeT;
+    }
+
+    private isExternalCallContext(expr: Expression): boolean {
+        if (expr instanceof Identifier) {
+            const exprT = this.typeOf(expr);
+
+            if (exprT instanceof UserDefinedType) {
+                if (exprT.definition instanceof ContractDefinition) {
+                    return true;
+                }
+            }
+
+            if (exprT instanceof TypeNameType) {
+                return (
+                    exprT.type instanceof UserDefinedType &&
+                    exprT.type.definition instanceof ContractDefinition &&
+                    exprT.type.definition.kind === ContractKind.Library
+                );
+            }
+        }
+
+        if (expr instanceof MemberAccess) {
+            return this.isExternalCallContext(expr.vExpression);
+        }
+
+        if (expr instanceof Conditional) {
+            return (
+                this.isExternalCallContext(expr.vTrueExpression) ||
+                this.isExternalCallContext(expr.vFalseExpression)
+            );
+        }
+
+        if (expr instanceof TupleExpression && expr.vComponents.length === 1) {
+            return this.isExternalCallContext(expr.vComponents[0]);
+        }
+
+        return false;
+    }
+
+    isFunctionCallExternal(call: FunctionCall): boolean {
+        if (call.kind !== FunctionCallKind.FunctionCall) {
+            return false;
+        }
+
+        if (
+            call.vFunctionCallType === ExternalReferenceType.Builtin &&
+            CALL_BUILTINS.includes(call.vFunctionName)
+        ) {
+            return true;
+        }
+
+        let exprT = this.typeOf(call.vExpression);
+
+        if (exprT instanceof FunctionLikeSetType) {
+            const calleeT = this.typeOfCallee(call);
+
+            if (!(calleeT instanceof FunctionType)) {
+                return false;
+            }
+
+            exprT = calleeT;
+        }
+
+        if (exprT instanceof FunctionType) {
+            if (exprT.implicitFirstArg) {
+                /**
+                 * Calls via using-for are not considered as external.
+                 * Currently "implicitFirstArg" is used only for using-for.
+                 */
+                return false;
+            }
+
+            if (exprT.visibility === FunctionVisibility.External) {
+                return true;
+            }
+
+            if (exprT.visibility === FunctionVisibility.Public) {
+                return this.isExternalCallContext(call.vExpression);
+            }
+        }
+
+        return false;
     }
 }
