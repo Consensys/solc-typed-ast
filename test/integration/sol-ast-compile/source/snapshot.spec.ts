@@ -101,6 +101,16 @@ const cases: Array<[string, string, string]> = [
         "test/samples/solidity/dispatch_05.json",
         "test/samples/solidity/dispatch_05.sourced.sol",
         "0.5.17"
+    ],
+    [
+        "test/samples/solidity/spdx/sample00.sol",
+        "test/samples/solidity/spdx/sample00.sourced.sol",
+        "auto"
+    ],
+    [
+        "test/samples/solidity/spdx/sample01.sol",
+        "test/samples/solidity/spdx/sample01.sourced.sol",
+        "auto"
     ]
 ];
 
@@ -139,13 +149,14 @@ for (const [fileName, sample, compilerVersion] of cases) {
             });
 
             it("STDOUT is correct", () => {
-                const content = fse.readFileSync(sample, { encoding: "utf-8" });
                 const result = outData.replace(new RegExp(process.cwd(), "g"), "");
 
                 // Uncomment next line to update snapshots
                 // fse.writeFileSync(sample, result, { encoding: "utf-8" });
 
-                expect(result).toEqual(content);
+                const expected = fse.readFileSync(sample, { encoding: "utf-8" });
+
+                expect(result).toEqual(expected);
             });
         });
     }

@@ -8,6 +8,7 @@ import {
     DefaultASTWriterMapping,
     detectCompileErrors,
     FunctionCall,
+    InferType,
     isFunctionCallExternal,
     PrettyFormatter
 } from "../../../src";
@@ -15,16 +16,38 @@ import {
 const samples: Array<[string, string, string[]]> = [
     [
         "case_a.sol",
-        `pragma solidity 0.6.0;
+        `pragma solidity 0.8.0;
 
 contract Foo {
     function a() public {}
     function b() public {}
 }
 
+library Lib {
+    function w() internal {}
+    function x() internal {}
+    function y() public {}
+    function z() external {}
+}
+
+library LibT {
+    function add(uint a, uint b) pure internal returns (uint) {
+        return a + b;
+    }
+}
+
 contract Main {
+    using LibT for uint;
+
+    struct Some {
+        function () internal intFn;
+        function () external extFn;
+    }
+
     function c() public {}
     function d() public {}
+
+    uint public v;
 
     function main() public payable {
         Foo f =  new Foo();
@@ -56,10 +79,28 @@ contract Main {
         fExtPtr();
 
         (true ? this.c : this.d)();
+        (true ? fExtPtr : this.d)();
         (false ? f.a : f.b)();
+
+        (false ? Lib.w : Lib.x)();
+        (false ? Lib.y : Lib.z)();
+
+        Lib.x();
+        Lib.y();
+        Lib.z();
+
+        this.v();
+
+        uint a = 5;
+
+        a.add(4);
+
+        Some memory s = Some(Lib.w, fExtPtr);
+
+        s.intFn();
+        s.extFn();
     }
-}
-`,
+}`,
         [
             "this.c",
             "f.a",
@@ -68,7 +109,13 @@ contract Main {
             "fExtPtr",
             "fExtPtr",
             "(true ? this.c : this.d)",
-            "(false ? f.a : f.b)"
+            "(true ? fExtPtr : this.d)",
+            "(false ? f.a : f.b)",
+            "(false ? Lib.y : Lib.z)",
+            "Lib.y",
+            "Lib.z",
+            "this.v",
+            "s.extFn"
         ]
     ]
 ];
@@ -93,6 +140,8 @@ describe("isFunctionCallExternal()", () => {
 
             assert(compilerVersion !== undefined, "Expected compiler version to be defined");
 
+            const inference = new InferType(compilerVersion);
+
             const writer = new ASTWriter(
                 DefaultASTWriterMapping,
                 new PrettyFormatter(4, 0),
@@ -100,10 +149,8 @@ describe("isFunctionCallExternal()", () => {
             );
 
             const actual = units[0]
-                .getChildrenBySelector<FunctionCall>(
-                    (node): node is FunctionCall =>
-                        node instanceof FunctionCall && isFunctionCallExternal(node)
-                )
+                .getChildrenByType(FunctionCall)
+                .filter((node) => isFunctionCallExternal(node, inference))
                 .map((node) => writer.write(node.vExpression));
 
             expect(actual).toEqual(expected);
