@@ -29,9 +29,19 @@ library Lib {
     function z() external {}
 }
 
-library LibT {
+library LibInt {
     function add(uint a, uint b) pure internal returns (uint) {
         return a + b;
+    }
+}
+
+library LibAddr {
+    function some(address payable to) external {
+        to.transfer(1);
+    }
+
+    function other(address payable to) public {
+        to.send(1);
     }
 }
 
@@ -42,7 +52,8 @@ contract Baz {
 }
 
 contract Main is Baz {
-    using LibT for uint;
+    using LibInt for uint;
+    using LibAddr for address payable;
 
     struct Some {
         function () internal intFn;
@@ -101,6 +112,9 @@ contract Main is Baz {
 
         a.add(4);
 
+        payable(0).some();
+        payable(0).other();
+
         Some memory s = Some(Lib.w, fExtPtr);
 
         s.intFn();
@@ -116,6 +130,8 @@ contract Main is Baz {
     }
 }`,
         [
+            "to.transfer",
+            "to.send",
             "this.c",
             "f.a",
             "f.b",
