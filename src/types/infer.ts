@@ -2683,7 +2683,11 @@ export class InferType {
             }
         }
 
-        if (expr instanceof MemberAccess) {
+        if (
+            expr instanceof MemberAccess ||
+            expr instanceof FunctionCallOptions ||
+            expr instanceof FunctionCall
+        ) {
             return this.isExternalCallContext(expr.vExpression);
         }
 

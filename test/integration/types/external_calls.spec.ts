@@ -15,7 +15,7 @@ import {
 const samples: Array<[string, string, string[]]> = [
     [
         "case_a.sol",
-        `pragma solidity 0.8.0;
+        `pragma solidity 0.6.8;
 
 contract Foo {
     function a() public {}
@@ -71,6 +71,8 @@ contract Main is Baz {
 
         c();
         this.c();
+        this.c{gas: 5000}();
+        this.c.gas(5000)();
 
         function () internal fIntPtr = c;
 
@@ -133,6 +135,8 @@ contract Main is Baz {
             "to.transfer",
             "to.send",
             "this.c",
+            "this.c{gas: 5000}",
+            "this.c.gas(5000)",
             "f.a",
             "f.b",
             "fExtPtr",
