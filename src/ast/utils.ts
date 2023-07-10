@@ -1,4 +1,7 @@
-import coder from "web3-eth-abi";
+import {
+    encodeFunctionSignature as abiEncFun,
+    encodeEventSignature as abiEncEv
+} from "web3-eth-abi";
 import { FunctionKind } from "./constants";
 
 export type SourceLocation = { offset: number; length: number; sourceIndex: number };
@@ -70,13 +73,13 @@ export function split(
 }
 
 export function encodeFuncSignature(signature: string, hexPrefix = false): string {
-    const selector = coder.encodeFunctionSignature(signature);
+    const selector = abiEncFun(signature);
 
     return hexPrefix ? selector : selector.slice(2);
 }
 
 export function encodeEventSignature(signature: string, hexPrefix = false): string {
-    const selector = coder.encodeEventSignature(signature);
+    const selector = abiEncEv(signature);
 
     return hexPrefix ? selector : selector.slice(2);
 }
