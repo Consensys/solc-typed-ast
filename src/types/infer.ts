@@ -2665,7 +2665,12 @@ export class InferType {
     }
 
     private isExternalCallContext(expr: Expression): boolean {
-        if (expr instanceof Identifier) {
+        if (
+            expr instanceof Identifier ||
+            expr instanceof MemberAccess ||
+            expr instanceof FunctionCallOptions ||
+            expr instanceof FunctionCall
+        ) {
             const exprT = this.typeOf(expr);
 
             if (exprT instanceof UserDefinedType) {
