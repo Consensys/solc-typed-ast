@@ -4,105 +4,150 @@ import {
     ASTKind,
     ASTReader,
     ASTWriter,
-    compileSourceString,
+    compileJsonData,
     DefaultASTWriterMapping,
     detectCompileErrors,
     FunctionCall,
     InferType,
-    isFunctionCallExternal,
     PrettyFormatter
 } from "../../../src";
 
-const samples: Array<[string, string, string[]]> = [
+const samples: Array<[string, any, string[]]> = [
     [
-        "case_a.sol",
-        `pragma solidity 0.8.0;
+        "Various sample",
+        {
+            sources: {
+                "main.sol": {
+                    source: `
+                pragma solidity 0.6.8;
 
-contract Foo {
-    function a() public {}
-    function b() public {}
-}
+                contract Foo {
+                    function a() public {}
+                    function b() public {}
+                }
 
-library Lib {
-    function w() internal {}
-    function x() internal {}
-    function y() public {}
-    function z() external {}
-}
+                library Lib {
+                    function w() internal {}
+                    function x() internal {}
+                    function y() public {}
+                    function z() external {}
+                }
 
-library LibT {
-    function add(uint a, uint b) pure internal returns (uint) {
-        return a + b;
-    }
-}
+                library LibInt {
+                    function add(uint a, uint b) pure internal returns (uint) {
+                        return a + b;
+                    }
+                }
 
-contract Main {
-    using LibT for uint;
+                library LibAddr {
+                    function some(address payable to) external {
+                        to.transfer(1);
+                    }
 
-    struct Some {
-        function () internal intFn;
-        function () external extFn;
-    }
+                    function other(address payable to) public {
+                        to.send(1);
+                    }
+                }
 
-    function c() public {}
-    function d() public {}
+                contract Baz {
+                    function foo(uint a) internal {}
+                    function foo(uint a, uint b) public {}
+                    function foo(uint a, uint b, uint c) external {}
+                }
 
-    uint public v;
+                contract Main is Baz {
+                    using LibInt for uint;
+                    using LibAddr for address payable;
 
-    function main() public payable {
-        Foo f =  new Foo();
+                    struct Some {
+                        function () internal intFn;
+                        function () external extFn;
+                    }
 
-        c();
-        this.c();
+                    function c() public {}
+                    function d() public {}
 
-        function () internal fIntPtr = c;
+                    uint public v;
 
-        fIntPtr();
+                    function test() public payable {
+                        Foo f =  new Foo();
+                        Baz b = new Baz();
 
-        fIntPtr = d;
+                        c();
+                        this.c();
+                        this.c{gas: 5000}();
+                        this.c.gas(5000)();
 
-        fIntPtr();
+                        function () internal fIntPtr = c;
 
-        (true ? c : d)();
+                        fIntPtr();
 
-        f.a();
-        f.b();
+                        fIntPtr = d;
 
-        function () external fExtPtr = f.a;
+                        fIntPtr();
 
-        fExtPtr();
+                        (true ? c : d)();
 
-        fExtPtr = f.b;
-        fExtPtr();
+                        f.a();
+                        f.b();
 
-        fExtPtr = this.c;
-        fExtPtr();
+                        function () external fExtPtr = f.a;
 
-        (true ? this.c : this.d)();
-        (true ? fExtPtr : this.d)();
-        (false ? f.a : f.b)();
+                        fExtPtr();
 
-        (false ? Lib.w : Lib.x)();
-        (false ? Lib.y : Lib.z)();
+                        fExtPtr = f.b;
+                        fExtPtr();
 
-        Lib.x();
-        Lib.y();
-        Lib.z();
+                        fExtPtr = this.c;
+                        fExtPtr();
 
-        this.v();
+                        (true ? this.c : this.d)();
+                        (true ? fExtPtr : this.d)();
+                        (false ? f.a : f.b)();
 
-        uint a = 5;
+                        (false ? Lib.w : Lib.x)();
+                        (false ? Lib.y : Lib.z)();
 
-        a.add(4);
+                        Lib.x();
+                        Lib.y();
+                        Lib.z();
 
-        Some memory s = Some(Lib.w, fExtPtr);
+                        this.v();
 
-        s.intFn();
-        s.extFn();
-    }
-}`,
+                        uint a = 5;
+
+                        a.add(4);
+
+                        payable(0).some();
+                        payable(0).other();
+
+                        Some memory s = Some(Lib.w, fExtPtr);
+
+                        s.intFn();
+                        s.extFn();
+
+                        Baz.foo(1);
+                        Baz.foo(2, 3);
+
+                        b.foo(3, 4);
+                        b.foo(3, 4, 5);
+
+                        super.foo(1, 2);
+
+                        LibAddr.some(payable(0x0));
+                        LibAddr.other(payable(0x0));
+                    }
+                }
+                `
+                }
+            }
+        },
         [
+            "to.transfer",
+            "to.send",
             "this.c",
+            "this.c{gas: 5000}",
+            "this.c.gas(5000)",
             "f.a",
             "f.b",
             "fExtPtr",
@@ -115,19 +160,54 @@ contract Main {
             "Lib.y",
             "Lib.z",
             "this.v",
-            "s.extFn"
+            "s.extFn",
+            "b.foo",
+            "b.foo",
+            "LibAddr.some",
+            "LibAddr.other"
         ]
+    ],
+    [
+        "Main + Module",
+        {
+            sources: {
+                "main.sol": {
+                    source: `
+                pragma solidity 0.7.6;
+
+                import * as Mod from "mod.sol";
+
+                contract Main {
+                    function test() public payable {
+                        Mod.Lib.funInt();
+                        Mod.Lib.funExt();
+                        Mod.Lib.funPub();
+                    }
+                }
+                `
+                },
+
+                "mod.sol": {
+                    source: `
+                    pragma solidity 0.7.6;
+            
+                    library Lib {
+                        function funInt() internal {}
+                        function funExt() external {}
+                        function funPub() public {}
+                    }
+                    `
+                }
+            }
+        },
+        ["Mod.Lib.funExt", "Mod.Lib.funPub"]
     ]
 ];
 
 describe("isFunctionCallExternal()", () => {
     for (const [sample, content, expected] of samples) {
         it(`${sample} produces ${JSON.stringify(expected)}`, async () => {
-            const { data, compilerVersion } = await compileSourceString(
-                "sample.sol",
-                content,
-                "auto"
-            );
+            const { data, compilerVersion } = await compileJsonData("sample.sol", content, "auto");
 
             const errors = detectCompileErrors(data);
 
@@ -136,9 +216,14 @@ describe("isFunctionCallExternal()", () => {
             const reader = new ASTReader();
             const units = reader.read(data, ASTKind.Any);
 
-            expect(units).toHaveLength(1);
-
             assert(compilerVersion !== undefined, "Expected compiler version to be defined");
+
+            const mainUnit = units.find((unit) => unit.sourceEntryKey == "main.sol");
+
+            assert(
+                mainUnit !== undefined,
+                'Unable to detect source unit with entry key "main.sol"'
+            );
 
             const inference = new InferType(compilerVersion);
 
@@ -148,9 +233,9 @@ describe("isFunctionCallExternal()", () => {
                 compilerVersion
             );
 
-            const actual = units[0]
+            const actual = mainUnit
                 .getChildrenByType(FunctionCall)
-                .filter((node) => isFunctionCallExternal(node, inference))
+                .filter((node) => inference.isFunctionCallExternal(node))
                 .map((node) => writer.write(node.vExpression));
 
             expect(actual).toEqual(expected);
