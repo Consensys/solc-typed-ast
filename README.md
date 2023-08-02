@@ -66,7 +66,7 @@ try {
 console.log(result);
 ```
 
-The second argument with the `"auto"` value specifies a compiler selection strategy. If `"auto"` is specified and source code contains valid `pragma solidity` directive, then compiler version will be automatically picked from it. If compile process will not succedd, the execution will fall back to _"compiler guessing"_: trying to compile source with a few different versions of the new and old Solidity compilers. The other option would be to specify a concrete supported compiler version string, like `"0.7.0"` for example. There is also a support for various compiler selection strategies, including used-defined custom ones (`CompilerVersionSelectionStrategy` interface implementations).
+The second argument with the `"auto"` value specifies a compiler selection strategy. If `"auto"` is specified and source code contains valid `pragma solidity` directive, then compiler version will be automatically picked from it. If compile process will not succeed, the execution will fall back to _"compiler guessing"_: trying to compile source with a few different versions of the new and old Solidity compilers. The other option would be to specify a concrete supported compiler version string, like `"0.7.0"` for example. There is also a support for various compiler selection strategies, including used-defined custom ones (`CompilerVersionSelectionStrategy` interface implementations).
 
 ### Used compilers
 
@@ -84,7 +84,7 @@ export SOL_AST_COMPILER_CACHE=~/.compiler_cache
 sol-ast-compile sample.sol --compiler-kind native --tree
 ```
 
-#### Invalidation of downloaded compler cache
+#### Invalidation of downloaded compiler cache
 
 If there is a need to invalidate the downloaded compiler cache, then follow next steps:
 
@@ -153,7 +153,7 @@ Use `--help` to see all available features.
 
 ## Project overview
 
-The project have following directory structure:
+The project has following directory structure:
 
 ```
 ├── .compiler_cache             # Cache of downloaded compilers (by default, if not configured by SOL_AST_COMPILER_CACHE).
@@ -178,7 +178,7 @@ The project have following directory structure:
 │   └── types                   # Solc AST typeString parser and AST.
 └── test                        # Tests:
     ├── integration             #   - Integration test suites.
-    ├── samples                 #   - Solidity and compiler ourput JSON samples for the tests.
+    ├── samples                 #   - Solidity and compiler output JSON samples for the tests.
     └── unit                    #   - Unit test suites.
 ```
 
@@ -194,7 +194,7 @@ A key points for better understanding:
 
 ### Prerequisites
 
-We suggest to use latest NodeJS LTS release `lts/gallium` (v16.14.0) and associated version of NPM. If there is a need to run different NodeJS versions, consider using [NVM](https://github.com/nvm-sh/nvm) or similar tool, that is available for your platform.
+We suggest using latest NodeJS LTS release `lts/gallium` (v16.14.0) and associated version of NPM. If there is a need to run different NodeJS versions, consider using [NVM](https://github.com/nvm-sh/nvm) or similar tool, that is available for your platform.
 
 ### Clone and build
 
