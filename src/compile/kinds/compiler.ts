@@ -135,13 +135,18 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
             `Unable to find build metadata for ${prefix} compiler ${version} in "list.json"`
         );
 
-        const response = await axios.get<Buffer>(`${BINARIES_URL}/${prefix}/${compilerFileName}`, {
-            responseType: "arraybuffer"
-        });
+        const response = await axios.get<ArrayBuffer>(
+            `${BINARIES_URL}/${prefix}/${compilerFileName}`,
+            {
+                responseType: "arraybuffer"
+            }
+        );
+
+        const buf = Buffer.from(response.data);
 
         const hash = crypto.createHash("sha256");
 
-        hash.update(response.data);
+        hash.update(buf);
 
         const digest = "0x" + hash.digest("hex");
 
@@ -156,7 +161,7 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
          */
         const permissions = kind === CompilerKind.Native ? 0o555 : 0o444;
 
-        await fse.writeFile(compilerLocalPath, response.data, { mode: permissions });
+        await fse.writeFile(compilerLocalPath, buf, { mode: permissions });
     }
 
     if (kind === CompilerKind.Native) {
