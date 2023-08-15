@@ -16,7 +16,10 @@ import {
 } from "./md";
 
 export abstract class Compiler {
-    constructor(public readonly version: string, public readonly path: string) {}
+    constructor(
+        public readonly version: string,
+        public readonly path: string
+    ) {}
 
     abstract compile(inputJson: SolcInput): Promise<any>;
 }
