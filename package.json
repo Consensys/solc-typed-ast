@@ -27,7 +27,7 @@
         "prepare": "npm run build"
     },
     "dependencies": {
-        "axios": "^1.5.0",
+        "axios": "^1.5.1",
         "commander": "^11.0.0",
         "decimal.js": "^10.4.3",
         "findup-sync": "^5.0.0",
@@ -40,7 +40,7 @@
     },
     "devDependencies": {
         "@types/fs-extra": "^11.0.2",
-        "@types/mocha": "^10.0.1",
+        "@types/mocha": "^10.0.2",
         "@types/node": "^16.18.54",
         "@types/semver": "^7.5.3",
         "@typescript-eslint/eslint-plugin": "^6.7.3",
