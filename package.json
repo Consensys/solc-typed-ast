@@ -27,7 +27,7 @@
         "prepare": "npm run build"
     },
     "dependencies": {
-        "axios": "^1.4.0",
+        "axios": "^1.5.1",
         "commander": "^11.0.0",
         "decimal.js": "^10.4.3",
         "findup-sync": "^5.0.0",
@@ -36,27 +36,27 @@
         "semver": "^7.5.4",
         "solc": "^0.8.21",
         "src-location": "^1.1.0",
-        "web3-eth-abi": "^4.0.3"
+        "web3-eth-abi": "^4.1.2"
     },
     "devDependencies": {
-        "@types/fs-extra": "^11.0.1",
-        "@types/mocha": "^10.0.1",
-        "@types/node": "^16.18.40",
-        "@types/semver": "^7.5.0",
-        "@typescript-eslint/eslint-plugin": "^6.3.0",
-        "@typescript-eslint/parser": "^6.3.0",
-        "eslint": "^8.47.0",
+        "@types/fs-extra": "^11.0.2",
+        "@types/mocha": "^10.0.2",
+        "@types/node": "^16.18.55",
+        "@types/semver": "^7.5.3",
+        "@typescript-eslint/eslint-plugin": "^6.7.3",
+        "@typescript-eslint/parser": "^6.7.3",
+        "eslint": "^8.50.0",
         "eslint-config-prettier": "^9.0.0",
         "eslint-plugin-prettier": "^5.0.0",
-        "expect": "^29.6.2",
+        "expect": "^29.7.0",
         "mocha": "^10.2.0",
         "nyc": "^15.1.0",
         "peggy": "^2.0.1",
-        "prettier": "3.0.1",
+        "prettier": "3.0.3",
         "ts-node": "^10.9.1",
         "ts-pegjs": "^3.1.0",
-        "typedoc": "^0.24.8",
-        "typescript": "^5.1.6"
+        "typedoc": "^0.25.1",
+        "typescript": "^5.2.2"
     },
     "homepage": "https://consensys.github.io/solc-typed-ast",
     "bugs": "https://github.com/ConsenSys/solc-typed-ast/issues",
