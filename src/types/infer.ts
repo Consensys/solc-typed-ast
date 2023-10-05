@@ -2418,16 +2418,6 @@ export class InferType {
         if (type instanceof ArrayType) {
             const elT = this.toABIEncodedType(type.elementT, encoderVersion);
 
-            if (type.size !== undefined) {
-                const elements = [];
-
-                for (let i = 0; i < type.size; i++) {
-                    elements.push(elT);
-                }
-
-                return new TupleType(elements);
-            }
-
             return new ArrayType(elT, type.size);
         }
 
