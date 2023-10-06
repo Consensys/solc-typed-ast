@@ -18,21 +18,27 @@ const cases: Array<[string, Array<[string, Value]>]> = [
     [
         "test/samples/solidity/consts/consts.sol",
         [
-            ["//VariableDeclaration[@id=5]", 100n],
-            ["//VariableDeclaration[@id=8]", 15n],
-            ["//VariableDeclaration[@id=13]", 115n],
-            ["//VariableDeclaration[@id=18]", 158n],
-            ["//VariableDeclaration[@id=24]", 158n],
-            ["//VariableDeclaration[@id=31]", false],
-            ["//VariableDeclaration[@id=37]", 158n],
-            ["//VariableDeclaration[@id=44]", 85n],
-            ["//VariableDeclaration[@id=47]", "abcd"],
-            ["//VariableDeclaration[@id=53]", Buffer.from("abcd", "utf-8")],
-            ["//VariableDeclaration[@id=58]", 97n],
-            ["//VariableDeclaration[@id=64]", "abcd"],
-            ["//VariableDeclaration[@id=73]", 30841n],
-            ["//VariableDeclaration[@id=82]", 30841n],
-            ["//VariableDeclaration[@id=88]", 258n]
+            ["//VariableDeclaration[@name='SOME_CONST']", 100n],
+            ["//VariableDeclaration[@name='SOME_OTHER']", 15n],
+            ["//VariableDeclaration[@name='SOME_ELSE']", 115n],
+            ["//VariableDeclaration[@name='C2']", 158n],
+            ["//VariableDeclaration[@name='C3']", 158n],
+            [
+                "//VariableDeclaration[@name='C4']",
+                115792089237316195423570985008687907853269984665640564039457584007913129639836n
+            ],
+            ["//VariableDeclaration[@name='C5']", false],
+            ["//VariableDeclaration[@name='C6']", 158n],
+            ["//VariableDeclaration[@name='C7']", 85n],
+
+            ["//VariableDeclaration[@name='FOO']", "abcd"],
+            ["//VariableDeclaration[@name='BOO']", Buffer.from("abcd", "utf-8")],
+            ["//VariableDeclaration[@name='MOO']", 97n],
+            ["//VariableDeclaration[@name='WOO']", "abcd"],
+
+            ["//VariableDeclaration[@name='U16S']", 30841n],
+            ["//VariableDeclaration[@name='U16B']", 30841n],
+            ["//VariableDeclaration[@name='B2U']", 258n]
         ]
     ]
 ];
