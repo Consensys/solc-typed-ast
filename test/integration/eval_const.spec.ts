@@ -38,7 +38,8 @@ const cases: Array<[string, Array<[string, Value]>]> = [
 
             ["//VariableDeclaration[@name='U16S']", 30841n],
             ["//VariableDeclaration[@name='U16B']", 30841n],
-            ["//VariableDeclaration[@name='B2U']", 258n]
+            ["//VariableDeclaration[@name='B2U']", 258n],
+            ["//VariableDeclaration[@name='NON_UTF8_SEQ']", Buffer.from("7532eaac", "hex")]
         ]
     ]
 ];

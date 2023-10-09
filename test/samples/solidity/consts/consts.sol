@@ -20,3 +20,5 @@ string constant WOO = string(BOO);
 uint16 constant U16S = uint16(bytes2("xy"));
 uint16 constant U16B = uint16(bytes2(hex"7879"));
 bytes2 constant B2U = bytes2(0x0102);
+
+bytes4 constant NON_UTF8_SEQ = "\x75\x32\xea\xac";

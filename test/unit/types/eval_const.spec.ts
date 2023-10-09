@@ -25,7 +25,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             undefined
         ],
         [
-            "Literal (unknown)",
+            "Literal (invalid kind)",
             (factory: ASTNodeFactory) =>
                 factory.makeLiteral("<missing>", "unknown" as LiteralKind, "", "???"),
             true,
@@ -65,6 +65,13 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                 factory.makeLiteral("<missing>", LiteralKind.HexString, "888990", "xyz"),
             true,
             Buffer.from("888990", "hex")
+        ],
+        [
+            "Literal (invalid UTF-8 sequence edge case)",
+            (factory: ASTNodeFactory) =>
+                factory.makeLiteral("<missing>", LiteralKind.String, "7532eaac", null as any),
+            true,
+            Buffer.from("7532eaac", "hex")
         ],
         [
             "Literal (uint8)",

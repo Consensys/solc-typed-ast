@@ -362,12 +362,28 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
 }
 
 export function evalLiteral(node: Literal): Value {
+    let kind = node.kind;
+
+    /**
+     * An example:
+     *
+     * ```solidity
+     * contract Test {
+     *     bytes4 constant s = "\x75\x32\xea\xac";
+     * }
+     * ```
+     *
+     * Note that compiler leaves "null" as string value,
+     * so we have to rely on hexadecimal representation instead.
+     */
+    if ((kind === LiteralKind.String || kind === LiteralKind.UnicodeString) && node.value == null) {
+        kind = LiteralKind.HexString;
+    }
+
+    const value = kind === LiteralKind.HexString ? node.hexValue : node.value;
+
     try {
-        return evalLiteralImpl(
-            node.kind,
-            node.kind === LiteralKind.HexString ? node.hexValue : node.value,
-            node.subdenomination
-        );
+        return evalLiteralImpl(kind, value, node.subdenomination);
     } catch (e: unknown) {
         if (e instanceof EvalError) {
             e.expr = node;
