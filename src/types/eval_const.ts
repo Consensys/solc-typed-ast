@@ -463,6 +463,12 @@ export function evalIndexAccess(node: IndexAccess, inference: InferType): Value 
 
         const indexInHex = plainIndex * 2;
 
+        if (indexInHex >= baseHex.length) {
+            throw new EvalError(
+                `Out-of-bounds index access ${indexInHex} (originally ${plainIndex}) to "${baseHex}"`
+            );
+        }
+
         return BigInt("0x" + baseHex.slice(indexInHex, indexInHex + 2));
     }
 
@@ -505,7 +511,7 @@ export function evalFunctionCall(node: FunctionCall, inference: InferType): Valu
         }
 
         if (castT instanceof FixedBytesType) {
-            return val;
+            return clampIntToType(val, new IntType(castT.size * 8, false));
         }
     }
 

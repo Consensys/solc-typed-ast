@@ -1309,6 +1309,18 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             0n
         ],
         [
+            "Edge-case <0.5.0: bytes1(1000)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "bytes1",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("type(bytes1)", "bytes1"),
+                    [factory.makeLiteral("int_const 1000", LiteralKind.Number, "", "1000")]
+                ),
+            true,
+            BigInt("0xe8")
+        ],
+        [
             'Identifier & IndexAccess (const A = "abcdef" (string), a[2])',
             (factory: ASTNodeFactory) => {
                 const v = factory.makeVariableDeclaration(
@@ -1363,6 +1375,34 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             },
             true,
             BigInt("0xcd")
+        ],
+        [
+            "Identifier & IndexAccess (const A = 0xab_cd_ef (bytes3), a[3])",
+            (factory: ASTNodeFactory) => {
+                const v = factory.makeVariableDeclaration(
+                    true,
+                    false,
+                    "A",
+                    0,
+                    true,
+                    DataLocation.Default,
+                    StateVariableVisibility.Public,
+                    Mutability.Constant,
+                    "bytes3",
+                    undefined,
+                    factory.makeElementaryTypeName("bytes3", "bytes3"),
+                    undefined,
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "0xab_cd_ef")
+                );
+
+                return factory.makeIndexAccess(
+                    "string",
+                    factory.makeIdentifierFor(v),
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "3")
+                );
+            },
+            true,
+            undefined
         ]
     ];
 
