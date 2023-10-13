@@ -8,15 +8,17 @@ import {
     FunctionCall,
     FunctionCallKind,
     Identifier,
+    IndexAccess,
     Literal,
     LiteralKind,
+    MemberAccess,
     TimeUnit,
     TupleExpression,
     UnaryOperation,
     VariableDeclaration
 } from "../ast";
-import { assert, pp } from "../misc";
-import { IntType, NumericLiteralType } from "./ast";
+import { pp } from "../misc";
+import { BytesType, FixedBytesType, IntType, NumericLiteralType, StringType } from "./ast";
 import { InferType } from "./infer";
 import { BINARY_OPERATOR_GROUPS, SUBDENOMINATION_MULTIPLIERS, clampIntToType } from "./utils";
 /**
@@ -27,7 +29,7 @@ import { BINARY_OPERATOR_GROUPS, SUBDENOMINATION_MULTIPLIERS, clampIntToType } f
  */
 Decimal.set({ precision: 100 });
 
-export type Value = Decimal | boolean | string | bigint;
+export type Value = Decimal | boolean | string | bigint | Buffer;
 
 export class EvalError extends Error {
     expr?: Expression;
@@ -62,6 +64,10 @@ function promoteToDec(v: Value): Decimal {
         return new Decimal(v === "" ? 0 : "0x" + Buffer.from(v, "utf-8").toString("hex"));
     }
 
+    if (v instanceof Buffer) {
+        return new Decimal(v.length === 0 ? 0 : "0x" + v.toString("hex"));
+    }
+
     throw new Error(`Expected number not ${v}`);
 }
 
@@ -69,12 +75,21 @@ function demoteFromDec(d: Decimal): Decimal | bigint {
     return d.isInt() ? BigInt(d.toFixed()) : d;
 }
 
-export function isConstant(expr: Expression): boolean {
+export function isConstant(expr: Expression | VariableDeclaration): boolean {
     if (expr instanceof Literal) {
         return true;
     }
 
     if (expr instanceof UnaryOperation && isConstant(expr.vSubExpression)) {
+        return true;
+    }
+
+    if (
+        expr instanceof VariableDeclaration &&
+        expr.constant &&
+        expr.vValue &&
+        isConstant(expr.vValue)
+    ) {
         return true;
     }
 
@@ -108,17 +123,19 @@ export function isConstant(expr: Expression): boolean {
         return true;
     }
 
-    if (expr instanceof Identifier) {
-        const decl = expr.vReferencedDeclaration;
+    if (expr instanceof Identifier || expr instanceof MemberAccess) {
+        return (
+            expr.vReferencedDeclaration instanceof VariableDeclaration &&
+            isConstant(expr.vReferencedDeclaration)
+        );
+    }
 
-        if (
-            decl instanceof VariableDeclaration &&
-            decl.constant &&
-            decl.vValue &&
-            isConstant(decl.vValue)
-        ) {
-            return true;
-        }
+    if (expr instanceof IndexAccess) {
+        return (
+            isConstant(expr.vBaseExpression) &&
+            expr.vIndexExpression !== undefined &&
+            isConstant(expr.vIndexExpression)
+        );
     }
 
     if (
@@ -142,7 +159,7 @@ export function evalLiteralImpl(
     }
 
     if (kind === LiteralKind.HexString) {
-        return value === "" ? 0n : BigInt("0x" + value);
+        return Buffer.from(value, "hex");
     }
 
     if (kind === LiteralKind.String || kind === LiteralKind.UnicodeString) {
@@ -345,12 +362,28 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
 }
 
 export function evalLiteral(node: Literal): Value {
+    let kind = node.kind;
+
+    /**
+     * An example:
+     *
+     * ```solidity
+     * contract Test {
+     *     bytes4 constant s = "\x75\x32\xea\xac";
+     * }
+     * ```
+     *
+     * Note that compiler leaves "null" as string value,
+     * so we have to rely on hexadecimal representation instead.
+     */
+    if ((kind === LiteralKind.String || kind === LiteralKind.UnicodeString) && node.value == null) {
+        kind = LiteralKind.HexString;
+    }
+
+    const value = kind === LiteralKind.HexString ? node.hexValue : node.value;
+
     try {
-        return evalLiteralImpl(
-            node.kind,
-            node.kind === LiteralKind.HexString ? node.hexValue : node.value,
-            node.subdenomination
-        );
+        return evalLiteralImpl(kind, value, node.subdenomination);
     } catch (e: unknown) {
         if (e instanceof EvalError) {
             e.expr = node;
@@ -408,22 +441,99 @@ export function evalBinary(node: BinaryOperation, inference: InferType): Value {
     }
 }
 
+export function evalIndexAccess(node: IndexAccess, inference: InferType): Value {
+    const base = evalConstantExpr(node.vBaseExpression, inference);
+    const index = evalConstantExpr(node.vIndexExpression as Expression, inference);
+
+    if (!(typeof index === "bigint" || index instanceof Decimal)) {
+        throw new EvalError(
+            `Unexpected non-numeric index into base in expression ${pp(node)}`,
+            node
+        );
+    }
+
+    const plainIndex = index instanceof Decimal ? index.toNumber() : Number(index);
+
+    if (typeof base === "bigint" || base instanceof Decimal) {
+        let baseHex = base instanceof Decimal ? base.toHex().slice(2) : base.toString(16);
+
+        if (baseHex.length % 2 !== 0) {
+            baseHex = "0" + baseHex;
+        }
+
+        const indexInHex = plainIndex * 2;
+
+        if (indexInHex >= baseHex.length) {
+            throw new EvalError(
+                `Out-of-bounds index access ${indexInHex} (originally ${plainIndex}) to "${baseHex}"`
+            );
+        }
+
+        return BigInt("0x" + baseHex.slice(indexInHex, indexInHex + 2));
+    }
+
+    if (base instanceof Buffer) {
+        const res = base.at(plainIndex);
+
+        if (res === undefined) {
+            throw new EvalError(
+                `Out-of-bounds index access ${plainIndex} to ${base.toString("hex")}`
+            );
+        }
+
+        return BigInt(res);
+    }
+
+    throw new EvalError(`Unable to process ${pp(node)}`, node);
+}
+
 export function evalFunctionCall(node: FunctionCall, inference: InferType): Value {
-    assert(
-        node.kind === FunctionCallKind.TypeConversion,
-        'Expected constant call to be a "{0}", but got "{1}" instead',
-        FunctionCallKind.TypeConversion,
-        node.kind
-    );
+    if (node.kind !== FunctionCallKind.TypeConversion) {
+        throw new EvalError(
+            `Expected function call to have kind "${FunctionCallKind.TypeConversion}", but got "${node.kind}" instead`,
+            node
+        );
+    }
+
+    if (!(node.vExpression instanceof ElementaryTypeNameExpression)) {
+        throw new EvalError(
+            `Expected function call expression to be an ${ElementaryTypeNameExpression.name}, but got "${node.type}" instead`,
+            node
+        );
+    }
 
     const val = evalConstantExpr(node.vArguments[0], inference);
+    const castT = inference.typeOfElementaryTypeNameExpression(node.vExpression).type;
 
-    if (typeof val === "bigint" && node.vExpression instanceof ElementaryTypeNameExpression) {
-        const castT = inference.typeOfElementaryTypeNameExpression(node.vExpression);
-        const toT = castT.type;
+    if (typeof val === "bigint") {
+        if (castT instanceof IntType) {
+            return clampIntToType(val, castT);
+        }
 
-        if (toT instanceof IntType) {
-            return clampIntToType(val, toT);
+        if (castT instanceof FixedBytesType) {
+            return clampIntToType(val, new IntType(castT.size * 8, false));
+        }
+    }
+
+    if (typeof val === "string") {
+        if (castT instanceof BytesType) {
+            return Buffer.from(val, "utf-8");
+        }
+
+        if (castT instanceof FixedBytesType) {
+            const buf = Buffer.from(val, "utf-8");
+
+            return BigInt("0x" + buf.slice(0, castT.size).toString("hex"));
+        }
+    }
+
+    if (val instanceof Buffer) {
+        if (castT instanceof StringType) {
+            return val.toString("utf-8");
+        }
+
+        if (castT instanceof FixedBytesType) {
+            return BigInt("0x" + val.slice(0, castT.size).toString("hex"));
         }
     }
 
@@ -437,7 +547,10 @@ export function evalFunctionCall(node: FunctionCall, inference: InferType): Valu
  * @todo The order of some operations changed in some version.
  * Current implementation does not yet take it into an account.
  */
-export function evalConstantExpr(node: Expression, inference: InferType): Value {
+export function evalConstantExpr(
+    node: Expression | VariableDeclaration,
+    inference: InferType
+): Value {
     if (!isConstant(node)) {
         throw new NonConstantExpressionError(node);
     }
@@ -464,12 +577,19 @@ export function evalConstantExpr(node: Expression, inference: InferType): Value 
             : evalConstantExpr(node.vFalseExpression, inference);
     }
 
-    if (node instanceof Identifier) {
-        const decl = node.vReferencedDeclaration;
+    if (node instanceof VariableDeclaration) {
+        return evalConstantExpr(node.vValue as Expression, inference);
+    }
 
-        if (decl instanceof VariableDeclaration) {
-            return evalConstantExpr(decl.vValue as Expression, inference);
-        }
+    if (node instanceof Identifier || node instanceof MemberAccess) {
+        return evalConstantExpr(
+            node.vReferencedDeclaration as Expression | VariableDeclaration,
+            inference
+        );
+    }
+
+    if (node instanceof IndexAccess) {
+        return evalIndexAccess(node, inference);
     }
 
     if (node instanceof FunctionCall) {

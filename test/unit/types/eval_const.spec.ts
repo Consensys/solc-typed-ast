@@ -25,7 +25,7 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             undefined
         ],
         [
-            "Literal (unknown)",
+            "Literal (invalid kind)",
             (factory: ASTNodeFactory) =>
                 factory.makeLiteral("<missing>", "unknown" as LiteralKind, "", "???"),
             true,
@@ -62,9 +62,16 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
         [
             "Literal (hex string)",
             (factory: ASTNodeFactory) =>
-                factory.makeLiteral("<missing>", LiteralKind.HexString, "ffcc33", "abcdef"),
+                factory.makeLiteral("<missing>", LiteralKind.HexString, "888990", "xyz"),
             true,
-            BigInt("0xffcc33")
+            Buffer.from("888990", "hex")
+        ],
+        [
+            "Literal (invalid UTF-8 sequence edge case)",
+            (factory: ASTNodeFactory) =>
+                factory.makeLiteral("<missing>", LiteralKind.String, "7532eaac", null as any),
+            true,
+            Buffer.from("7532eaac", "hex")
         ],
         [
             "Literal (uint8)",
@@ -1300,6 +1307,102 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
                 ),
             true,
             0n
+        ],
+        [
+            "Edge-case <0.5.0: bytes1(1000)",
+            (factory: ASTNodeFactory) =>
+                factory.makeFunctionCall(
+                    "bytes1",
+                    FunctionCallKind.TypeConversion,
+                    factory.makeElementaryTypeNameExpression("type(bytes1)", "bytes1"),
+                    [factory.makeLiteral("int_const 1000", LiteralKind.Number, "", "1000")]
+                ),
+            true,
+            BigInt("0xe8")
+        ],
+        [
+            'Identifier & IndexAccess (const A = "abcdef" (string), a[2])',
+            (factory: ASTNodeFactory) => {
+                const v = factory.makeVariableDeclaration(
+                    true,
+                    false,
+                    "A",
+                    0,
+                    true,
+                    DataLocation.Default,
+                    StateVariableVisibility.Public,
+                    Mutability.Constant,
+                    "string",
+                    undefined,
+                    factory.makeElementaryTypeName("string", "string"),
+                    undefined,
+                    factory.makeLiteral("<missing>", LiteralKind.String, "", "abcdef")
+                );
+
+                return factory.makeIndexAccess(
+                    "string",
+                    factory.makeIdentifierFor(v),
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "2")
+                );
+            },
+            true,
+            undefined
+        ],
+        [
+            "Identifier & IndexAccess (const A = 0xab_cd_ef (bytes3), a[1])",
+            (factory: ASTNodeFactory) => {
+                const v = factory.makeVariableDeclaration(
+                    true,
+                    false,
+                    "A",
+                    0,
+                    true,
+                    DataLocation.Default,
+                    StateVariableVisibility.Public,
+                    Mutability.Constant,
+                    "bytes3",
+                    undefined,
+                    factory.makeElementaryTypeName("bytes3", "bytes3"),
+                    undefined,
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "0xab_cd_ef")
+                );
+
+                return factory.makeIndexAccess(
+                    "string",
+                    factory.makeIdentifierFor(v),
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "1")
+                );
+            },
+            true,
+            BigInt("0xcd")
+        ],
+        [
+            "Identifier & IndexAccess (const A = 0xab_cd_ef (bytes3), a[3])",
+            (factory: ASTNodeFactory) => {
+                const v = factory.makeVariableDeclaration(
+                    true,
+                    false,
+                    "A",
+                    0,
+                    true,
+                    DataLocation.Default,
+                    StateVariableVisibility.Public,
+                    Mutability.Constant,
+                    "bytes3",
+                    undefined,
+                    factory.makeElementaryTypeName("bytes3", "bytes3"),
+                    undefined,
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "0xab_cd_ef")
+                );
+
+                return factory.makeIndexAccess(
+                    "string",
+                    factory.makeIdentifierFor(v),
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "", "3")
+                );
+            },
+            true,
+            undefined
         ]
     ];
 
