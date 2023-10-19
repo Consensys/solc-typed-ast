@@ -1320,6 +1320,191 @@ const cases: Array<[string, (factory: ASTNodeFactory) => Expression, boolean, Va
             true,
             BigInt("0xe8")
         ],
+        /**
+         * @todo It seems that Solidity allows to skip right bytes on following two cases.
+         * This would need a standalone fix in castable(), InferType.inferCommonType(), also in evalBinary().
+         */
+        // [
+        //     "Edge-case <0.5.0: bytes2(0xff00) == byte(0xff)",
+        //     (factory: ASTNodeFactory) =>
+        //         factory.makeBinaryOperation(
+        //             "<missing>",
+        //             "==",
+        //             factory.makeFunctionCall(
+        //                 "bytes2",
+        //                 FunctionCallKind.TypeConversion,
+        //                 factory.makeElementaryTypeNameExpression("type(bytes2)", "bytes2"),
+        //                 [factory.makeLiteral("<missing>", LiteralKind.Number, "ff00", "0xff00")]
+        //             ),
+        //             factory.makeFunctionCall(
+        //                 "byte",
+        //                 FunctionCallKind.TypeConversion,
+        //                 factory.makeElementaryTypeNameExpression("type(byte)", "byte"),
+        //                 [factory.makeLiteral("<missing>", LiteralKind.Number, "ff", "0xff")]
+        //             )
+        //         ),
+        //     true,
+        //     true
+        // ],
+        // [
+        //     "Edge-case <0.5.0: bytes2(0xcc00) < byte(0xee)",
+        //     (factory: ASTNodeFactory) =>
+        //         factory.makeBinaryOperation(
+        //             "<missing>",
+        //             "<",
+        //             factory.makeFunctionCall(
+        //                 "bytes2",
+        //                 FunctionCallKind.TypeConversion,
+        //                 factory.makeElementaryTypeNameExpression("type(bytes2)", "bytes2"),
+        //                 [factory.makeLiteral("<missing>", LiteralKind.Number, "cc00", "0xcc00")]
+        //             ),
+        //             factory.makeFunctionCall(
+        //                 "byte",
+        //                 FunctionCallKind.TypeConversion,
+        //                 factory.makeElementaryTypeNameExpression("type(byte)", "byte"),
+        //                 [factory.makeLiteral("<missing>", LiteralKind.Number, "ee", "0xee")]
+        //             )
+        //         ),
+        //     true,
+        //     true
+        // ],
+        [
+            "Edge-case <0.5.0: (~bytes4(0xF0FF000F)) == 0x0f00fff0",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeTupleExpression("<missing>", false, [
+                        factory.makeUnaryOperation(
+                            "<missing>",
+                            true,
+                            "~",
+                            factory.makeFunctionCall(
+                                "bytes4",
+                                FunctionCallKind.TypeConversion,
+                                factory.makeElementaryTypeNameExpression("type(bytes4)", "bytes4"),
+                                [
+                                    factory.makeLiteral(
+                                        "<missing>",
+                                        LiteralKind.Number,
+                                        "F0FF000F",
+                                        "0xF0FF000F"
+                                    )
+                                ]
+                            )
+                        )
+                    ]),
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "0f00fff0", "0x0f00fff0")
+                ),
+            true,
+            true
+        ],
+        [
+            "Edge-case <0.5.0: (~bytes4(0xFFFFFFFF)) == 0",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeTupleExpression("<missing>", false, [
+                        factory.makeUnaryOperation(
+                            "<missing>",
+                            true,
+                            "~",
+                            factory.makeFunctionCall(
+                                "bytes4",
+                                FunctionCallKind.TypeConversion,
+                                factory.makeElementaryTypeNameExpression("type(bytes4)", "bytes4"),
+                                [
+                                    factory.makeLiteral(
+                                        "<missing>",
+                                        LiteralKind.Number,
+                                        "FFFFFFFF",
+                                        "0xFFFFFFFF"
+                                    )
+                                ]
+                            )
+                        )
+                    ]),
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "00", "0")
+                ),
+            true,
+            true
+        ],
+        [
+            "Edge-case <0.5.0: (~bytes4(0x00000000)) == 0xFFFFFFFF",
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeTupleExpression("<missing>", false, [
+                        factory.makeUnaryOperation(
+                            "<missing>",
+                            true,
+                            "~",
+                            factory.makeFunctionCall(
+                                "bytes4",
+                                FunctionCallKind.TypeConversion,
+                                factory.makeElementaryTypeNameExpression("type(bytes4)", "bytes4"),
+                                [
+                                    factory.makeLiteral(
+                                        "<missing>",
+                                        LiteralKind.Number,
+                                        "00000000",
+                                        "0x00000000"
+                                    )
+                                ]
+                            )
+                        )
+                    ]),
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "FFFFFFFF", "0xFFFFFFFF")
+                ),
+            true,
+            true
+        ],
+        [
+            'Edge-case: bytes1(0x01) | hex"02" == 0x03',
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeBinaryOperation(
+                        "<missing>",
+                        "|",
+                        factory.makeFunctionCall(
+                            "bytes1",
+                            FunctionCallKind.TypeConversion,
+                            factory.makeElementaryTypeNameExpression("type(bytes1)", "bytes1"),
+                            [factory.makeLiteral("<missing>", LiteralKind.Number, "01", "0x01")]
+                        ),
+                        factory.makeLiteral("<missing>", LiteralKind.HexString, "02", "0x02")
+                    ),
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "03", "0x03")
+                ),
+            true,
+            true
+        ],
+        [
+            'Edge-case: ~bytes1(hex"01") == 0xfe',
+            (factory: ASTNodeFactory) =>
+                factory.makeBinaryOperation(
+                    "<missing>",
+                    "==",
+                    factory.makeUnaryOperation(
+                        "<missing>",
+                        true,
+                        "~",
+                        factory.makeFunctionCall(
+                            "bytes1",
+                            FunctionCallKind.TypeConversion,
+                            factory.makeElementaryTypeNameExpression("type(bytes1)", "bytes1"),
+                            [factory.makeLiteral("<missing>", LiteralKind.Number, "01", "0x01")]
+                        )
+                    ),
+                    factory.makeLiteral("<missing>", LiteralKind.Number, "fe", "0xfe")
+                ),
+            true,
+            true
+        ],
         [
             'Identifier & IndexAccess (const A = "abcdef" (string), a[2])',
             (factory: ASTNodeFactory) => {

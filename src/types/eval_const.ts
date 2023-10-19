@@ -20,7 +20,12 @@ import {
 import { pp } from "../misc";
 import { BytesType, FixedBytesType, IntType, NumericLiteralType, StringType } from "./ast";
 import { InferType } from "./infer";
-import { BINARY_OPERATOR_GROUPS, SUBDENOMINATION_MULTIPLIERS, clampIntToType } from "./utils";
+import {
+    BINARY_OPERATOR_GROUPS,
+    SUBDENOMINATION_MULTIPLIERS,
+    clampIntToType,
+    fixedBytesTypeToIntType
+} from "./utils";
 /**
  * Tune up precision of decimal values to follow Solidity behavior.
  * Be careful with precision - setting it to large values causes NodeJS to crash.
@@ -51,7 +56,7 @@ function str(value: Value): string {
     return value instanceof Decimal ? value.toString() : pp(value);
 }
 
-function promoteToDec(v: Value): Decimal {
+function toDec(v: Value): Decimal {
     if (v instanceof Decimal) {
         return v;
     }
@@ -69,6 +74,26 @@ function promoteToDec(v: Value): Decimal {
     }
 
     throw new Error(`Expected number not ${v}`);
+}
+
+function toInt(v: Value): bigint {
+    if (typeof v === "bigint") {
+        return v;
+    }
+
+    if (v instanceof Decimal && v.isInt()) {
+        return BigInt(v.toHex());
+    }
+
+    if (typeof v === "string") {
+        return v === "" ? 0n : BigInt("0x" + Buffer.from(v, "utf-8").toString("hex"));
+    }
+
+    if (v instanceof Buffer) {
+        return v.length === 0 ? 0n : BigInt("0x" + v.toString("hex"));
+    }
+
+    throw new Error(`Expected integer not ${v}`);
 }
 
 function demoteFromDec(d: Decimal): Decimal | bigint {
@@ -259,8 +284,8 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
         if (typeof left === "boolean" || typeof right === "boolean") {
             isEqual = left === right;
         } else {
-            const leftDec = promoteToDec(left);
-            const rightDec = promoteToDec(right);
+            const leftDec = toDec(left);
+            const rightDec = toDec(right);
 
             isEqual = leftDec.equals(rightDec);
         }
@@ -283,8 +308,8 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
             );
         }
 
-        const leftDec = promoteToDec(left);
-        const rightDec = promoteToDec(right);
+        const leftDec = toDec(left);
+        const rightDec = toDec(right);
 
         if (operator === "<") {
             return leftDec.lessThan(rightDec);
@@ -306,8 +331,8 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
     }
 
     if (BINARY_OPERATOR_GROUPS.Arithmetic.includes(operator)) {
-        const leftDec = promoteToDec(left);
-        const rightDec = promoteToDec(right);
+        const leftDec = toDec(left);
+        const rightDec = toDec(right);
 
         let res: Decimal;
 
@@ -331,28 +356,27 @@ export function evalBinaryImpl(operator: string, left: Value, right: Value): Val
     }
 
     if (BINARY_OPERATOR_GROUPS.Bitwise.includes(operator)) {
-        if (!(typeof left === "bigint" && typeof right === "bigint")) {
-            throw new EvalError(`${operator} expects integers not ${str(left)} and ${str(right)}`);
-        }
+        const leftInt = toInt(left);
+        const rightInt = toInt(right);
 
         if (operator === "<<") {
-            return left << right;
+            return leftInt << rightInt;
         }
 
         if (operator === ">>") {
-            return left >> right;
+            return leftInt >> rightInt;
         }
 
         if (operator === "|") {
-            return left | right;
+            return leftInt | rightInt;
         }
 
         if (operator === "&") {
-            return left & right;
+            return leftInt & rightInt;
         }
 
         if (operator === "^") {
-            return left ^ right;
+            return leftInt ^ rightInt;
         }
 
         throw new EvalError(`Unknown bitwise operator ${operator}`);
@@ -395,8 +419,13 @@ export function evalLiteral(node: Literal): Value {
 
 export function evalUnary(node: UnaryOperation, inference: InferType): Value {
     try {
-        const subT = inference.typeOf(node.vSubExpression);
+        let subT = inference.typeOf(node.vSubExpression);
+
         const res = evalUnaryImpl(node.operator, evalConstantExpr(node.vSubExpression, inference));
+
+        if (subT instanceof FixedBytesType) {
+            subT = fixedBytesTypeToIntType(subT);
+        }
 
         if (subT instanceof IntType && typeof res === "bigint") {
             return clampIntToType(res, subT);
@@ -417,11 +446,10 @@ export function evalBinary(node: BinaryOperation, inference: InferType): Value {
         const leftT = inference.typeOf(node.vLeftExpression);
         const rightT = inference.typeOf(node.vRightExpression);
 
-        const res = evalBinaryImpl(
-            node.operator,
-            evalConstantExpr(node.vLeftExpression, inference),
-            evalConstantExpr(node.vRightExpression, inference)
-        );
+        const left = evalConstantExpr(node.vLeftExpression, inference);
+        const right = evalConstantExpr(node.vRightExpression, inference);
+
+        const res = evalBinaryImpl(node.operator, left, right);
 
         if (!(leftT instanceof NumericLiteralType && rightT instanceof NumericLiteralType)) {
             const resT = inference.typeOfBinaryOperation(node);
@@ -511,7 +539,7 @@ export function evalFunctionCall(node: FunctionCall, inference: InferType): Valu
         }
 
         if (castT instanceof FixedBytesType) {
-            return clampIntToType(val, new IntType(castT.size * 8, false));
+            return clampIntToType(val, fixedBytesTypeToIntType(castT));
         }
     }
 

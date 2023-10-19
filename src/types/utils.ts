@@ -303,6 +303,10 @@ export function enumToIntType(decl: EnumDefinition): IntType {
     return new IntType(size, false);
 }
 
+export function fixedBytesTypeToIntType(type: FixedBytesType): IntType {
+    return new IntType(type.size * 8, false, type.src);
+}
+
 export function getABIEncoderVersion(unit: SourceUnit, compilerVersion: string): ABIEncoderVersion {
     const predefined = unit.abiEncoderVersion;
 
