@@ -490,7 +490,7 @@ export function evalUnary(node: UnaryOperation, inference: InferType): Value {
         }
 
         const resT = inference.typeOfUnaryOperation(node);
-        const res = evalUnaryImpl(node.operator, evalConstantExpr(node.vSubExpression, inference));
+        const res = evalUnaryImpl(node.operator, sub);
 
         return castToType(res, undefined, resT);
     } catch (e: unknown) {
