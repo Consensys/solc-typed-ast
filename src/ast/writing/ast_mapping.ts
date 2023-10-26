@@ -1466,7 +1466,12 @@ class SourceUnitWriter extends ASTNodeWriter {
             result.push(...flatten(node.vVariables.map((n) => [...writeFn(n), ";", wrap])), wrap);
         }
 
-        const otherDefs = [...node.vErrors, ...node.vFunctions, ...node.vContracts];
+        const otherDefs = [
+            ...node.vErrors,
+            ...node.vEvents,
+            ...node.vFunctions,
+            ...node.vContracts
+        ];
 
         if (otherDefs.length > 0) {
             result.push(...flatJoin(otherDefs.map(writeLineFn), wrap));

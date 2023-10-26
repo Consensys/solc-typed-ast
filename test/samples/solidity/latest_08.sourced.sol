@@ -38,6 +38,8 @@ using { plusOne, minusOne, A_0813.add } for RestrictedNumber_0813 global;
 /// UnitLevelError error docstring
 error UnitLevelError084(uint code);
 
+event X(uint a);
+
 function plusOne(RestrictedNumber_0813 x) pure returns (RestrictedNumber_0813) {
     unchecked {
         return RestrictedNumber_0813.wrap(RestrictedNumber_0813.unwrap(x) + 1);
