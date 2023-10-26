@@ -385,3 +385,24 @@ contract Features_0819 {
         return a + b;
     }
 }
+
+interface IntEvents {
+    event X(uint a);
+}
+
+library LibEvents {
+    event X(uint a);
+}
+
+event X(uint a);
+
+contract Features_0822 {
+    event X(uint a);
+
+    function main() public {
+        emit IntEvents.X(1);
+        emit LibEvents.X(2);
+        emit X(3);
+        emit Features_0822.X(4);
+    }
+}

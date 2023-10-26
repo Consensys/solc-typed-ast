@@ -159,6 +159,7 @@ function* lookupInSourceUnit(
                 child instanceof ContractDefinition ||
                 child instanceof StructDefinition ||
                 child instanceof EnumDefinition ||
+                child instanceof EventDefinition ||
                 child instanceof ErrorDefinition ||
                 child instanceof UserDefinedValueTypeDefinition) &&
             child.name === name

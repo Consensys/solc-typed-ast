@@ -16,6 +16,7 @@ FileLevelDefinition =
     / FreeFunction
     / ContractDefinition
     / EnumDef
+    / EventDef
     / ErrorDef
     / StructDef
     / UserValueTypeDef
@@ -141,6 +142,18 @@ EnumDef = ENUM __ name: Identifier __ body: EnumDefBody {
         name,
         body
     } as FLEnumDefinition;
+}
+
+// ==== Event
+
+EventArgs = LPAREN __ ParenSoup __ RPAREN { return text(); }
+EventDef = EVENT __ name: Identifier __ args: EventArgs __ SEMICOLON {
+    return {
+        kind: FileLevelNodeKind.Event,
+        location: location(),
+        name,
+        args 
+    } as FLEventDefinition;
 }
 
 // ==== Error
@@ -323,6 +336,7 @@ TYPE = "type"
 RETURNS = "returns"
 PRAGMA = "pragma"
 ERROR = "error"
+EVENT = "event"
 USING = "using"
 FOR = "for"
 GLOBAL = "global"

@@ -1,5 +1,6 @@
 import { ABIEncoderVersion, ABIEncoderVersions } from "../../../types";
 import { ASTNode, ASTNodeWithChildren } from "../../ast_node";
+import { EventDefinition } from "../declaration";
 import { ContractDefinition } from "../declaration/contract_definition";
 import { EnumDefinition } from "../declaration/enum_definition";
 import { ErrorDefinition } from "../declaration/error_definition";
@@ -17,6 +18,7 @@ export type ExportedSymbol =
     | EnumDefinition
     | ErrorDefinition
     | FunctionDefinition
+    | EventDefinition
     | UserDefinedValueTypeDefinition
     | VariableDeclaration
     | ImportDirective;
@@ -78,8 +80,8 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
      */
     get vPragmaDirectives(): readonly PragmaDirective[] {
         return this.ownChildren.filter(
-            (node) => node instanceof PragmaDirective
-        ) as PragmaDirective[];
+            (node): node is PragmaDirective => node instanceof PragmaDirective
+        );
     }
 
     /**
@@ -87,8 +89,8 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
      */
     get vImportDirectives(): readonly ImportDirective[] {
         return this.ownChildren.filter(
-            (node) => node instanceof ImportDirective
-        ) as ImportDirective[];
+            (node): node is ImportDirective => node instanceof ImportDirective
+        );
     }
 
     /**
@@ -96,8 +98,8 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
      */
     get vContracts(): readonly ContractDefinition[] {
         return this.ownChildren.filter(
-            (node) => node instanceof ContractDefinition
-        ) as ContractDefinition[];
+            (node): node is ContractDefinition => node instanceof ContractDefinition
+        );
     }
 
     /**
@@ -105,8 +107,8 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
      */
     get vEnums(): readonly EnumDefinition[] {
         return this.ownChildren.filter(
-            (node) => node instanceof EnumDefinition
-        ) as EnumDefinition[];
+            (node): node is EnumDefinition => node instanceof EnumDefinition
+        );
     }
 
     /**
@@ -114,8 +116,8 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
      */
     get vErrors(): readonly ErrorDefinition[] {
         return this.ownChildren.filter(
-            (node) => node instanceof ErrorDefinition
-        ) as ErrorDefinition[];
+            (node): node is ErrorDefinition => node instanceof ErrorDefinition
+        );
     }
 
     /**
@@ -123,8 +125,8 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
      */
     get vStructs(): readonly StructDefinition[] {
         return this.ownChildren.filter(
-            (node) => node instanceof StructDefinition
-        ) as StructDefinition[];
+            (node): node is StructDefinition => node instanceof StructDefinition
+        );
     }
 
     /**
@@ -132,8 +134,17 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
      */
     get vFunctions(): readonly FunctionDefinition[] {
         return this.ownChildren.filter(
-            (node) => node instanceof FunctionDefinition
-        ) as FunctionDefinition[];
+            (node): node is FunctionDefinition => node instanceof FunctionDefinition
+        );
+    }
+
+    /**
+     * References to file-level event definitions
+     */
+    get vEvents(): readonly EventDefinition[] {
+        return this.ownChildren.filter(
+            (node): node is EventDefinition => node instanceof EventDefinition
+        );
     }
 
     /**
@@ -141,8 +152,8 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
      */
     get vVariables(): readonly VariableDeclaration[] {
         return this.ownChildren.filter(
-            (node) => node instanceof VariableDeclaration
-        ) as VariableDeclaration[];
+            (node): node is VariableDeclaration => node instanceof VariableDeclaration
+        );
     }
 
     /**
@@ -150,8 +161,9 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
      */
     get vUserDefinedValueTypes(): readonly UserDefinedValueTypeDefinition[] {
         return this.ownChildren.filter(
-            (node) => node instanceof UserDefinedValueTypeDefinition
-        ) as UserDefinedValueTypeDefinition[];
+            (node): node is UserDefinedValueTypeDefinition =>
+                node instanceof UserDefinedValueTypeDefinition
+        );
     }
 
     /**
@@ -159,8 +171,8 @@ export class SourceUnit extends ASTNodeWithChildren<ASTNode> {
      */
     get vUsingForDirectives(): readonly UsingForDirective[] {
         return this.ownChildren.filter(
-            (node) => node instanceof UsingForDirective
-        ) as UsingForDirective[];
+            (node): node is UsingForDirective => node instanceof UsingForDirective
+        );
     }
 
     /**
