@@ -9,6 +9,7 @@ export enum FileLevelNodeKind {
     Struct = "struct",
     Enum = "enum",
     Error = "error",
+    Event = "event",
     UserValueType = "userValueType",
     UsingForDirective = "usingForDirective"
 }
@@ -65,6 +66,12 @@ export interface FLEnumDefinition extends FileLevelNode<FileLevelNodeKind.Enum> 
     body: string;
 }
 
+export interface FLEventDefinition extends FileLevelNode<FileLevelNodeKind.Event> {
+    name: string;
+    args: string;
+    anonymous: boolean;
+}
+
 export interface FLErrorDefinition extends FileLevelNode<FileLevelNodeKind.Error> {
     name: string;
     args: string;
@@ -82,17 +89,19 @@ export interface FLCustomizableOperator {
 
 export interface FLUsingForDirective extends FileLevelNode<FileLevelNodeKind.UsingForDirective> {
     libraryName?: string;
-    functionList?:  Array<string | FLCustomizableOperator>;
+    functionList?: Array<string | FLCustomizableOperator>;
     typeName: string;
     isGlobal: boolean;
 }
 
-export type AnyFileLevelNode = FLPragma
+export type AnyFileLevelNode =
+    | FLPragma
     | FLImportDirective
     | FLConstant
     | FLFreeFunction
     | FLContractDefinition
     | FLStructDefinition
+    | FLEventDefinition
     | FLEnumDefinition
     | FLErrorDefinition
     | FLUserValueType

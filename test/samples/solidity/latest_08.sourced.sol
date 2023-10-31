@@ -38,6 +38,10 @@ using { plusOne, minusOne, A_0813.add } for RestrictedNumber_0813 global;
 /// UnitLevelError error docstring
 error UnitLevelError084(uint code);
 
+event X(uint a);
+
+event Y(uint a) anonymous;
+
 function plusOne(RestrictedNumber_0813 x) pure returns (RestrictedNumber_0813) {
     unchecked {
         return RestrictedNumber_0813.wrap(RestrictedNumber_0813.unwrap(x) + 1);
@@ -333,6 +337,28 @@ contract Features_0819 {
     function test(LI.Int a, LI.Int b) public pure returns (LI.Int) {
         -a;
         return a + b;
+    }
+}
+
+interface IntEvents {
+    event X(uint a);
+}
+
+library LibEvents {
+    event X(uint a);
+}
+
+contract Features_0822 {
+    event X(uint a);
+
+    function main() public {
+        emit IntEvents.X(1);
+        emit LibEvents.X(2);
+        /// Both following emits are referring to an event
+        /// that is defined by contract (due to shadowing).
+        emit X(3);
+        emit Features_0822.X(4);
+        emit Y(5);
     }
 }
 // ------------------------------------------------------------

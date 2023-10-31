@@ -1042,6 +1042,10 @@ export class InferType {
                         return this.funDefToType(originalSym);
                     }
 
+                    if (originalSym instanceof EventDefinition) {
+                        return this.eventDefToType(originalSym);
+                    }
+
                     return this.variableDeclarationToTypeNode(originalSym);
                 }
             }

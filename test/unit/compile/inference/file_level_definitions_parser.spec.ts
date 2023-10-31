@@ -576,6 +576,30 @@ is /*3*/ int24/*;*/;`,
                 ]
             }
         ]
+    ],
+    [
+        "event definition",
+        `event MyEvent(uint a indexed, address b);`,
+        [
+            {
+                kind: "event",
+                name: "MyEvent",
+                args: "(uint a indexed, address b)",
+                anonymous: false
+            }
+        ]
+    ],
+    [
+        "event definition (anonymous)",
+        `event MyAnonymousEvent(uint x indexed) anonymous;`,
+        [
+            {
+                kind: "event",
+                name: "MyAnonymousEvent",
+                args: "(uint x indexed)",
+                anonymous: true
+            }
+        ]
     ]
 ];
 
