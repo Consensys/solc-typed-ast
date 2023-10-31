@@ -395,6 +395,7 @@ library LibEvents {
 }
 
 event X(uint a);
+event Y(uint a) anonymous;
 
 contract Features_0822 {
     event X(uint a);
@@ -402,7 +403,13 @@ contract Features_0822 {
     function main() public {
         emit IntEvents.X(1);
         emit LibEvents.X(2);
+        /**
+         * Both following emits are referring to an event
+         * that is defined by contract (due to shadowing).
+         */
         emit X(3);
         emit Features_0822.X(4);
+
+        emit Y(5);
     }
 }

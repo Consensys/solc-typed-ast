@@ -69,6 +69,7 @@ export interface FLEnumDefinition extends FileLevelNode<FileLevelNodeKind.Enum> 
 export interface FLEventDefinition extends FileLevelNode<FileLevelNodeKind.Event> {
     name: string;
     args: string;
+    anonymous: boolean;
 }
 
 export interface FLErrorDefinition extends FileLevelNode<FileLevelNodeKind.Error> {
