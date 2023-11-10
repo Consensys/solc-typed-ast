@@ -14,6 +14,6 @@ export class ParameterList extends ASTNodeWithChildren<VariableDeclaration> {
      * An array of declared variables
      */
     get vParameters(): VariableDeclaration[] {
-        return this.ownChildren as VariableDeclaration[];
+        return this.ownChildren;
     }
 }

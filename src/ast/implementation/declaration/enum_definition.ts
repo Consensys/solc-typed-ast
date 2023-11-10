@@ -12,7 +12,7 @@ import { StructuredDocumentation } from "../meta/structured_documentation";
 import { ContractDefinition } from "./contract_definition";
 import { EnumValue } from "./enum_value";
 
-export class EnumDefinition extends ASTNodeWithChildren<EnumValue> {
+export class EnumDefinition extends ASTNodeWithChildren<StructuredDocumentation | EnumValue> {
     docString?: string;
     danglingDocString?: string;
 

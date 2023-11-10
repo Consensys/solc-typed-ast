@@ -215,7 +215,7 @@ type SupportedNode =
     | StructDefinition
     | ModifierDefinition
     | Statement
-    | StatementWithChildren<any>;
+    | StatementWithChildren<ASTNode>;
 
 export class StructuredDocumentationReconstructingPostprocessor
     implements ASTNodePostprocessor<SupportedNode>

@@ -19,7 +19,7 @@ export class OverrideSpecifier extends ASTNodeWithChildren<UserDefinedTypeName |
     /**
      * Reference to a user-defined types, whose functions are being overridden.
      */
-    get vOverrides(): UserDefinedTypeName[] {
-        return this.ownChildren as UserDefinedTypeName[];
+    get vOverrides(): Array<UserDefinedTypeName | IdentifierPath> {
+        return this.ownChildren;
     }
 }
