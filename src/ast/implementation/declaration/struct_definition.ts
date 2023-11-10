@@ -11,7 +11,9 @@ import { StructuredDocumentation } from "../meta/structured_documentation";
 import { ContractDefinition } from "./contract_definition";
 import { VariableDeclaration } from "./variable_declaration";
 
-export class StructDefinition extends ASTNodeWithChildren<VariableDeclaration> {
+export class StructDefinition extends ASTNodeWithChildren<
+    StructuredDocumentation | VariableDeclaration
+> {
     docString?: string;
     danglingDocString?: string;
 
