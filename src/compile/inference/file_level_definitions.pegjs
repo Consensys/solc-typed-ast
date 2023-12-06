@@ -194,10 +194,10 @@ CustomizableOperator =
     / '%'
     / '=='
     / '!='
-    / '<'
     / '<='
-    / '>'
-    / '>=';
+    / '>='
+    / '<'
+    / '>';
 
 UsingEntry =
     name: (IdentifierPath) operator: (__ AS __ CustomizableOperator)? {
