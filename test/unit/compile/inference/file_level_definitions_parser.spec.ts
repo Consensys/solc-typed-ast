@@ -552,7 +552,7 @@ is /*3*/ int24/*;*/;`,
     ],
     [
         "using-for custamizable operators",
-        `using {op.RedLib.toScore, op.RedLib.exp, op.addRed as +, op.mulRed as *, op.unsubRed as -} for Red global;`,
+        `using {op.RedLib.toScore, op.RedLib.exp, op.addRed as +, op.mulRed as *, op.unsubRed as -, op.lteRed as <=, op.gteRed as >=} for Red global;`,
         [
             {
                 kind: "usingForDirective",
@@ -572,6 +572,14 @@ is /*3*/ int24/*;*/;`,
                     {
                         operator: "-",
                         name: "op.unsubRed"
+                    },
+                    {
+                        operator: "<=",
+                        name: "op.lteRed"
+                    },
+                    {
+                        operator: ">=",
+                        name: "op.gteRed"
                     }
                 ]
             }
