@@ -10,7 +10,7 @@ export class ModernTypeNameProcessor<T extends TypeName> extends ModernNodeProce
     ): ConstructorParameters<TypeNameConstructor<T>> {
         const [id, src] = super.process(reader, config, raw);
 
-        const typeString: string = raw.typeDescriptions.typeString;
+        const typeString: string = raw.typeDescriptions?.typeString;
 
         return [id, src, typeString, undefined, raw];
     }

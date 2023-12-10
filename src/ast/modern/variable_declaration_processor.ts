@@ -21,7 +21,7 @@ export class ModernVariableDeclarationProcessor extends ModernNodeProcessor<Vari
         const scope: number = raw.scope;
         const stateVariable: boolean = raw.stateVariable;
         const visibility: StateVariableVisibility = raw.visibility;
-        const typeString: string = raw.typeDescriptions.typeString;
+        const typeString: string = raw.typeDescriptions?.typeString;
         const nameLocation: string | undefined = raw.nameLocation;
 
         const storageLocation: DataLocation =
