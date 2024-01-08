@@ -7,6 +7,7 @@ import {
     CompilerVersions07,
     CompilerVersions08,
     CompilerVersionSelectionStrategy,
+    fromUTF8,
     LatestAndFirstVersionInEachSeriesStrategy,
     LatestCompilerVersion,
     LatestVersionInEachSeriesStrategy,
@@ -179,7 +180,7 @@ describe("VersionDetectionStrategy", () => {
             it(`Returns ${JSON.stringify(range)} for ${JSON.stringify(source)} and ${
                 fallback.constructor.name
             } in constructor`, () => {
-                const strategy = new VersionDetectionStrategy([source], fallback);
+                const strategy = new VersionDetectionStrategy([fromUTF8(source)], fallback);
 
                 expect(strategy.select()).toEqual(range);
             });

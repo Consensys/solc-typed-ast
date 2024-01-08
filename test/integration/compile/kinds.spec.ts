@@ -165,7 +165,7 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
         }
 
         it(fileName, async () => {
-            const source = fse.readFileSync(sample, { encoding: "utf8" });
+            const source = fse.readFileSync(sample);
             const args = additionalArgs.get(fileName);
             const versionStrategy = new VersionDetectionStrategy(
                 [source],

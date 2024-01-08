@@ -32,6 +32,7 @@ import {
     PrettyFormatter,
     SourceUnit,
     StateVariableVisibility,
+    toUTF8,
     VariableDeclaration,
     XPath
 } from "..";
@@ -325,7 +326,7 @@ function error(message: string): never {
                     data.sources[key] = {};
                 }
 
-                data.sources[key].source = value;
+                data.sources[key].source = toUTF8(value);
             }
         }
 

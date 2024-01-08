@@ -1,3 +1,5 @@
+import { FileMap } from "../ast";
+import { toUTF8 } from "../misc";
 import { CompilationOutput } from "./constants";
 
 export interface PartialSolcInput {
@@ -41,7 +43,7 @@ function mergeCompilerSettings<T extends SolcInput>(input: T, settings: any): T 
  * This handles the differences in the JSON input between different compiler versions.
  */
 export function createCompilerInput(
-    files: Map<string, string>,
+    files: FileMap,
     remappings: string[],
     output: CompilationOutput[],
     compilerSettings: any
@@ -79,7 +81,7 @@ export function createCompilerInput(
     partialInp.sources = {};
 
     for (const [fileName, content] of files.entries()) {
-        partialInp.sources[fileName] = { content };
+        partialInp.sources[fileName] = { content: toUTF8(content) };
     }
 
     const input = partialInp as SolcInput;

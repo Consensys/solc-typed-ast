@@ -1,7 +1,7 @@
 import fse from "fs-extra";
 import { dirname, normalize } from "path";
 import { CompileInferenceError, ImportResolver, Remapping } from "..";
-import { assert } from "../..";
+import { FileMap, assert, toUTF8 } from "../..";
 import {
     AnyFileLevelNode,
     FileLevelNodeKind,
@@ -95,12 +95,12 @@ function computeSourceUnitName(
 async function resolveSourceUnitName(
     sourceUnitName: string,
     resolvers: ImportResolver[]
-): Promise<[string, string] | undefined> {
+): Promise<[Uint8Array, string] | undefined> {
     for (const resolver of resolvers) {
         const resolvedPath = resolver.resolve(sourceUnitName);
 
         if (resolvedPath !== undefined) {
-            const contents = await fse.readFile(resolvedPath, "utf-8");
+            const contents = await fse.readFile(resolvedPath);
 
             return [contents, resolvedPath];
         }
@@ -117,7 +117,7 @@ async function resolveSourceUnitName(
  * add a mapping from its source unit name to the actual file name in `fileNames`.
  */
 export async function findAllFiles(
-    files: Map<string, string>,
+    files: FileMap,
     fileNames: Map<string, string>,
     remappings: Remapping[],
     resolvers: ImportResolver[],
@@ -161,7 +161,7 @@ export async function findAllFiles(
         let flds: AnyFileLevelNode[];
 
         try {
-            flds = parseFileLevelDefinitions(content);
+            flds = parseFileLevelDefinitions(toUTF8(content));
         } catch (e: any) {
             if (e instanceof PeggySyntaxError) {
                 const start = e.location.start.offset;

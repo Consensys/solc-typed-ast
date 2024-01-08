@@ -1,5 +1,6 @@
+import { toUTF8 } from "../../misc";
 import { ASTNode } from "../ast_node";
-import { ASTContext, ASTNodePostprocessor } from "../ast_reader";
+import { ASTContext, ASTNodePostprocessor, FileMap } from "../ast_reader";
 import {
     ContractDefinition,
     EnumDefinition,
@@ -25,10 +26,10 @@ export class StructuredDocumentationReconstructor {
      */
     fragmentCoordsToStructDoc(
         coords: FragmentCoordinates,
-        source: string
+        source: Uint8Array
     ): StructuredDocumentation | undefined {
         const [from, to, sourceIndex] = coords;
-        const fragment = source.slice(from, to);
+        const fragment = toUTF8(source.slice(from, to));
         const comments = this.extractComments(fragment);
         const docBlock = comments.length > 0 ? this.detectDocumentationBlock(comments) : undefined;
 
@@ -222,7 +223,7 @@ export class StructuredDocumentationReconstructingPostprocessor
 {
     private reconstructor = new StructuredDocumentationReconstructor();
 
-    process(node: SupportedNode, context: ASTContext, sources?: Map<string, string>): void {
+    process(node: SupportedNode, context: ASTContext, sources?: FileMap): void {
         if (sources === undefined) {
             return;
         }
