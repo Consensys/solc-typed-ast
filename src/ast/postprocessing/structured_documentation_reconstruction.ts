@@ -17,7 +17,29 @@ import { Statement, StatementWithChildren } from "../implementation/statement/st
 
 type FragmentCoordinates = [number, number, number];
 
+const skip = [
+    /^\s*;/, // skip ____;
+    /^\s*{/, // skip ____{
+    /^\s*\)/, // skip ____ )
+    /^\s*for\s*\(\s*/, // skip for __ ( __
+    /^\s*else\s*/, // skip else ___
+    /^\s*catch\s*/ // skip else ___
+];
+
 export class StructuredDocumentationReconstructor {
+    // Skip any ), ; or { at the begining of a fragment
+    computeSkip(s: string): number {
+        for (const rx of skip) {
+            const m = s.match(rx);
+
+            if (m) {
+                return m[0].length;
+            }
+        }
+
+        return 0;
+    }
+
     /**
      * Extracts fragment at provided source location,
      * then tries to find documentation and construct dummy `StructuredDocumentation`.
@@ -37,8 +59,10 @@ export class StructuredDocumentationReconstructor {
             return undefined;
         }
 
-        const offset = from + fragment.indexOf(docBlock);
-        const length = docBlock.length;
+        // This may include some unnecessary white space, but its still better
+        const skipFirst = this.computeSkip(fragment);
+        const offset = from + skipFirst;
+        const length = to - from - skipFirst;
         const src = `${offset}:${length}:${sourceIndex}`;
         const text = this.extractText(docBlock);
 
@@ -77,7 +101,8 @@ export class StructuredDocumentationReconstructor {
     getDanglingGapCoordinates(node: ASTNode): FragmentCoordinates {
         const curInfo = node.sourceInfo;
 
-        const to = curInfo.offset + curInfo.length;
+        // Skip final }
+        const to = curInfo.offset + curInfo.length - 1;
         const sourceIndex = curInfo.sourceIndex;
 
         const lastChild = node.lastChild;
@@ -95,6 +120,10 @@ export class StructuredDocumentationReconstructor {
         return [from, to, sourceIndex];
     }
 
+    /**
+     * Extract any consecutive sets of comments from a string.
+     * This will include all the //, *, \\* and * / in the output
+     */
     private extractComments(fragment: string): string[] {
         const rx = /(\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|([^\n\r]*\/\/.*[\n\r]+)|[\n\r]/g;
         const result: string[] = [];
@@ -110,6 +139,9 @@ export class StructuredDocumentationReconstructor {
         return result;
     }
 
+    /**
+     * Combine multiple lines from comments into a single comment block
+     */
     private detectDocumentationBlock(comments: string[]): string | undefined {
         const buffer: string[] = [];
 
