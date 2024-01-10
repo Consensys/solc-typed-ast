@@ -281,7 +281,7 @@ export async function compileSol(
     const remapping = pathOptions.remapping || [];
     const parsedRemapping = parsePathRemapping(remapping);
 
-    const files: FileMap = new Map<string, Buffer>();
+    const files: FileMap = new Map();
     const resolvedFileNames = new Map<string, string>();
     const visited = new Set<string>();
 
