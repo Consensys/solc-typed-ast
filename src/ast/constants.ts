@@ -89,6 +89,13 @@ export enum TimeUnit {
     Years = "years"
 }
 
+export enum RawCommentKind {
+    SingleLineComment = "single_line",
+    BlockComment = "block_comment",
+    LineGroupNatSpec = "line_group_natspec",
+    BlockNatSpec = "block_natspec"
+}
+
 export const PossibleDataLocations = new Set<string>(Object.values(DataLocation));
 
 export const PossibleFunctionVisibilities = new Set<string>(Object.values(FunctionVisibility));

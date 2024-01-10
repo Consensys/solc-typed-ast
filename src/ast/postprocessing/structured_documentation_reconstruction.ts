@@ -1,6 +1,8 @@
-import { toUTF8 } from "../../misc";
+import { strByteLen, toUTF8 } from "../../misc";
 import { ASTNode } from "../ast_node";
 import { ASTContext, ASTNodePostprocessor, FileMap } from "../ast_reader";
+import { parseComments } from "../comments";
+import { RawCommentKind } from "../constants";
 import {
     ContractDefinition,
     EnumDefinition,
@@ -17,13 +19,26 @@ import { Statement, StatementWithChildren } from "../implementation/statement/st
 
 type FragmentCoordinates = [number, number, number];
 
+/**
+ * When we are looking at a fragment between the start of a parent node and its
+ * first child, there may be some non-empty garbage at the start from the opening text
+ * of the parent. We use these regexes to remove those
+ */
 const skip = [
-    /^\s*;/, // skip ____;
+    /^\s*;\s*else\s*/, // skip ; else ___ (due to a bug in 0.4.x compilers)
+    /^\s*}\s*else\s*/, // skip } else ___ (due to a bug in 0.4.x compilers)
+    /^\s*;\s*;\s*\)/, // skip __;__;__)
+    /^\s*;\s*\)/, // skip __;__)
+    /^\s*;\s*;/, // skip __;
+    /^\s*;/, // skip __;
+    /^\s*for\s*\(\s*;\s*;\s*\)/, // skip ____;
+    /^\s*for\s*\(\s*;\s*;/, // skip ____;
     /^\s*{/, // skip ____{
     /^\s*\)/, // skip ____ )
     /^\s*for\s*\(\s*/, // skip for __ ( __
     /^\s*else\s*/, // skip else ___
-    /^\s*catch\s*/ // skip else ___
+    /^\s*catch\s*/, // skip else ___
+    /^[^{]*{/ // skip contract/interfae/struct/unchecked/library ... {
 ];
 
 export class StructuredDocumentationReconstructor {
@@ -52,21 +67,32 @@ export class StructuredDocumentationReconstructor {
     ): StructuredDocumentation | undefined {
         const [from, to, sourceIndex] = coords;
         const fragment = toUTF8(source.slice(from, to));
-        const comments = this.extractComments(fragment);
-        const docBlock = comments.length > 0 ? this.detectDocumentationBlock(comments) : undefined;
 
-        if (docBlock === undefined) {
+        const skip = this.computeSkip(fragment);
+        const skippedFragment = fragment.slice(skip);
+        const parsedComments = parseComments(skippedFragment);
+
+        // No comments found in the game
+        if (parsedComments.length === 0) {
             return undefined;
         }
 
-        // This may include some unnecessary white space, but its still better
-        const skipFirst = this.computeSkip(fragment);
-        const offset = from + skipFirst;
-        const length = to - from - skipFirst;
-        const src = `${offset}:${length}:${sourceIndex}`;
-        const text = this.extractText(docBlock);
+        const lastComment = parsedComments[parsedComments.length - 1];
 
-        return new StructuredDocumentation(0, src, text);
+        // The last comment in the gap is not a docstring
+        if (
+            lastComment.kind !== RawCommentKind.BlockNatSpec &&
+            lastComment.kind !== RawCommentKind.LineGroupNatSpec
+        ) {
+            return undefined;
+        }
+
+        const byteOffsetFromFragment = strByteLen(fragment.slice(0, skip + lastComment.loc.start));
+        const offset = from + byteOffsetFromFragment;
+        const length = strByteLen(lastComment.text);
+        const src = `${offset}:${length}:${sourceIndex}`;
+
+        return new StructuredDocumentation(0, src, lastComment.internalText.trim());
     }
 
     getPrecedingGapCoordinates(node: ASTNode): FragmentCoordinates {
@@ -118,123 +144,6 @@ export class StructuredDocumentationReconstructor {
         }
 
         return [from, to, sourceIndex];
-    }
-
-    /**
-     * Extract any consecutive sets of comments from a string.
-     * This will include all the //, *, \\* and * / in the output
-     */
-    private extractComments(fragment: string): string[] {
-        const rx = /(\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|([^\n\r]*\/\/.*[\n\r]+)|[\n\r]/g;
-        const result: string[] = [];
-
-        let match = rx.exec(fragment);
-
-        while (match !== null) {
-            result.push(match[0]);
-
-            match = rx.exec(fragment);
-        }
-
-        return result;
-    }
-
-    /**
-     * Combine multiple lines from comments into a single comment block
-     */
-    private detectDocumentationBlock(comments: string[]): string | undefined {
-        const buffer: string[] = [];
-
-        comments.reverse();
-
-        let stopOnNextGap = false;
-
-        const rxCleanBeforeSlash = /^[^/]+/;
-
-        for (const comment of comments) {
-            /**
-             * Remove ANY leading characters before first `/` character.
-             *
-             * This is mostly actual for dangling documentation candidates,
-             * as their source range starts from very beginnig of parent node.
-             * This leads to an effect that part of parent source symbols are
-             * preceding the `///` or `/**`. Skip them for detection reasons.
-             *
-             * Consider following example:
-             * ```
-             * unchecked {
-             *     /// dangling
-             * }
-             * ```
-             * Source range would include the `unchecked {` part,
-             * however interesting part for us starts only since `///`.
-             */
-            const cleanComment = comment.replace(rxCleanBeforeSlash, "");
-
-            /**
-             * Consider if comment is valid single-line or multi-line DocBlock
-             */
-            if (cleanComment.startsWith("/**")) {
-                buffer.push(comment);
-
-                break;
-            } else if (cleanComment.startsWith("///")) {
-                buffer.push(comment);
-
-                stopOnNextGap = true;
-            } else if (stopOnNextGap) {
-                break;
-            }
-        }
-
-        if (buffer.length === 0) {
-            return undefined;
-        }
-
-        if (buffer.length > 1) {
-            buffer.reverse();
-        }
-
-        /**
-         * When joining back DocBlock, remove leading garbage characters again,
-         * but only before first `/` (not in each line, like before).
-         *
-         * Need to preserve whitespace charactes in multiline comments like
-         * ```
-         * {
-         *      /// A
-         *          /// B
-         *              /// C
-         * }
-         * ```
-         * to have following result
-         * ```
-         * /// A
-         *          /// B
-         *              /// C
-         * ```
-         * NOTE that this is affecting documentation node source range.
-         */
-        return buffer.join("").trim().replace(rxCleanBeforeSlash, "");
-    }
-
-    private extractText(docBlock: string): string {
-        const result: string[] = [];
-
-        const replacers = docBlock.startsWith("///") ? ["/// ", "///"] : ["/**", "*/", "* ", "*"];
-        const lines = docBlock.split("\n");
-
-        for (let line of lines) {
-            line = line.trimStart();
-
-            for (const replacer of replacers) {
-                line = line.replace(replacer, "");
-            }
-
-            result.push(line);
-        }
-
-        return result.join("\n").trim();
     }
 }
 
