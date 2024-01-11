@@ -75,8 +75,8 @@ import { UserDefinedTypeName } from "./implementation/type/user_defined_type_nam
 type Specific<Args extends any[]> = Args["length"] extends 0
     ? undefined
     : ((...args: Args) => void) extends (id: number, src: string, ...rest: infer Rest) => void
-    ? Rest
-    : [];
+      ? Rest
+      : [];
 
 type IDMap = Map<number, number>;
 
