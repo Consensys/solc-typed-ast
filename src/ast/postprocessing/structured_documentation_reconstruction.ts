@@ -1,7 +1,7 @@
 import { strByteLen, toUTF8 } from "../../misc";
 import { ASTNode } from "../ast_node";
 import { ASTContext, ASTNodePostprocessor, FileMap } from "../ast_reader";
-import { parseComments } from "../comments";
+import { RawComment, parseComments } from "../comments";
 import { RawCommentKind } from "../constants";
 import {
     ContractDefinition,
@@ -19,42 +19,7 @@ import { Statement, StatementWithChildren } from "../implementation/statement/st
 
 type FragmentCoordinates = [number, number, number];
 
-/**
- * When we are looking at a fragment between the start of a parent node and its
- * first child, there may be some non-empty garbage at the start from the opening text
- * of the parent. We use these regexes to remove those
- */
-const skip = [
-    /^\s*;\s*else\s*/, // skip ; else ___ (due to a bug in 0.4.x compilers)
-    /^\s*}\s*else\s*/, // skip } else ___ (due to a bug in 0.4.x compilers)
-    /^\s*;\s*;\s*\)/, // skip __;__;__)
-    /^\s*;\s*\)/, // skip __;__)
-    /^\s*;\s*;/, // skip __;
-    /^\s*;/, // skip __;
-    /^\s*for\s*\(\s*;\s*;\s*\)/, // skip ____;
-    /^\s*for\s*\(\s*;\s*;/, // skip ____;
-    /^\s*{/, // skip ____{
-    /^\s*\)/, // skip ____ )
-    /^\s*for\s*\(\s*/, // skip for __ ( __
-    /^\s*else\s*/, // skip else ___
-    /^\s*catch\s*/, // skip else ___
-    /^[^{]*{/ // skip contract/interfae/struct/unchecked/library ... {
-];
-
 export class StructuredDocumentationReconstructor {
-    // Skip any ), ; or { at the begining of a fragment
-    computeSkip(s: string): number {
-        for (const rx of skip) {
-            const m = s.match(rx);
-
-            if (m) {
-                return m[0].length;
-            }
-        }
-
-        return 0;
-    }
-
     /**
      * Extracts fragment at provided source location,
      * then tries to find documentation and construct dummy `StructuredDocumentation`.
@@ -68,9 +33,23 @@ export class StructuredDocumentationReconstructor {
         const [from, to, sourceIndex] = coords;
         const fragment = toUTF8(source.slice(from, to));
 
-        const skip = this.computeSkip(fragment);
-        const skippedFragment = fragment.slice(skip);
-        const parsedComments = parseComments(skippedFragment);
+        const parsedCommentsSoup = parseComments(fragment);
+
+        // The parser gives us a soup of "strings" (corresponding to non-comment
+        // tokens) and comments.
+        // Find the suffix of the parse output that contains only comments
+        let commentsStartIdx = parsedCommentsSoup.length - 1;
+        for (; commentsStartIdx >= 0; commentsStartIdx--) {
+            if (!(parsedCommentsSoup[commentsStartIdx] instanceof RawComment)) {
+                commentsStartIdx++;
+                break;
+            }
+        }
+
+        const parsedComments = parsedCommentsSoup.slice(
+            commentsStartIdx,
+            parsedCommentsSoup.length
+        ) as RawComment[];
 
         // No comments found in the game
         if (parsedComments.length === 0) {
@@ -87,7 +66,7 @@ export class StructuredDocumentationReconstructor {
             return undefined;
         }
 
-        const byteOffsetFromFragment = strByteLen(fragment.slice(0, skip + lastComment.loc.start));
+        const byteOffsetFromFragment = strByteLen(fragment.slice(0, lastComment.loc.start));
         const offset = from + byteOffsetFromFragment;
         const length = strByteLen(lastComment.text);
         const src = `${offset}:${length}:${sourceIndex}`;

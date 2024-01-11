@@ -2,12 +2,15 @@
     expected;
     error;
     peg$anyExpectation;
+    peg$parse__;
 }
 
-Comments
-    = __ comments: (c: Comment __ { return c; })* {
-        return comments;
-    }
+CommentSoup =
+    t: (
+        ([^"'/]+ (!("//" / "///" / "/*") "/")?) { return text(); } // non-comment, non-string-literal anything
+        / StringLiteral { return text(); } // string literal
+        / (c: Comment __ { return c; }) // comment
+    )* { return t; }
 
 Comment
     = BlockComment
@@ -89,3 +92,77 @@ LineTerminator =
 
 __ =
     (PrimitiveWhiteSpace / LineTerminator)*
+
+StringLiteral =
+    "'" chars: SingleStringChar* "'" { return chars.join(""); }
+    / '"' chars: DoubleStringChar* '"' { return chars.join(""); }
+
+AnyChar =
+    .
+
+DoubleStringChar =
+    !('"' / "\\" / LineTerminator) AnyChar { return text(); }
+    / "\\" sequence: EscapeSequence { return sequence; }
+    / LineContinuation
+
+SingleStringChar =
+    !("'" / "\\" / LineTerminator) AnyChar { return text(); }
+    / "\\" sequence: EscapeSequence { return sequence; }
+    / LineContinuation
+
+LineContinuation =
+    "\\" LineTerminatorSequence { return ""; }
+
+EscapeSequence =
+    CharEscapeSequence
+    / "0" !DecDigit { return "\0"; }
+    / HexEscapeSequence
+    / UnicodeEscapeSequence
+    / AnyChar // Allow invalid hex sequences as a fallback
+
+CharEscapeSequence =
+    SingleEscapeChar
+    / NonEscapeChar
+
+SingleEscapeChar =
+    "'"
+    / '"'
+    / "\\"
+    / "b"  { return "\b"; }
+    / "f"  { return "\f"; }
+    / "n"  { return "\n"; }
+    / "r"  { return "\r"; }
+    / "t"  { return "\t"; }
+    / "v"  { return "\v"; }
+
+NonEscapeChar =
+    !(EscapeChar / LineTerminator) AnyChar { return text(); }
+
+HexDigit =
+    [0-9a-f]i
+
+DecDigit =
+    [0-9]
+
+EscapeChar =
+    SingleEscapeChar
+    / DecDigit
+    / "x"
+    / "u"
+
+HexEscapeSequence =
+    "x" digits:$(HexDigit HexDigit) {
+        return String.fromCharCode(parseInt(digits, 16));
+    }
+
+UnicodeEscapeSequence =
+    "u" digits:$(HexDigit HexDigit HexDigit HexDigit) {
+        return String.fromCharCode(parseInt(digits, 16));
+    }
+
+LineTerminatorSequence =
+    "\n"
+    / "\r\n"
+    / "\r"
+    / "\u2028"
+    / "\u2029"
