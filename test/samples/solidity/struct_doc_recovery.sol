@@ -1,7 +1,7 @@
     /// X
         /// Y
             /// Z
-contract Test {
+contract /** random */ Test /** garbage */ {
     /// A
         // B
     /// C
@@ -107,5 +107,18 @@ contract Test {
     /*
      * /// A
      */
-    function fG() external {}
+    function fG() external {
+        uint x;
+        if /** silly */ ( (x = 1) < 0) /** goose */ {
+            /** comment */
+        }
+
+        for /** haha"" 'asdfsad' */ (
+            /** this is a docstring */ x = 0 ;
+            x > 0;
+            /* fml /// "asd" */)
+            /** this is also a docstring  */ {
+
+        }
+    }
 }

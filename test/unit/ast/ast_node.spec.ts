@@ -5,13 +5,14 @@ import {
     ASTReader,
     Block,
     compileJson,
+    fromUTF8,
     FunctionDefinition,
     Literal,
     SourceUnit
 } from "../../../src";
 
 describe("ASTNode", () => {
-    const source = fse.readFileSync("test/samples/solidity/node.sol", { encoding: "utf-8" });
+    const source = new Uint8Array(fse.readFileSync("test/samples/solidity/node.sol"));
     const samples = new Map([
         ["0.4.13", "test/samples/solidity/node_0413.json"],
         ["0.5.0", "test/samples/solidity/node_050.json"]
@@ -101,7 +102,7 @@ describe("ASTNode", () => {
             it("extractSourceFragment()", () => {
                 const increment = nodes[nodes.length - 2];
 
-                expect(increment.extractSourceFragment(source)).toEqual("a++");
+                expect(increment.extractSourceFragment(source)).toEqual(fromUTF8("a++"));
             });
         });
     }

@@ -625,7 +625,7 @@ class VariableDeclarationStatementWriter extends SimpleStatementWriter<VariableD
 
 /**
  * Compound statemetns don't have their own semicolons. However if a
- * child has a semi-colon, we must make sure to exclude it from our soruce map.
+ * child has a semi-colon, we must make sure to exclude it from our source map.
  */
 abstract class CompoundStatementWriter<
     T extends CompoundStatement

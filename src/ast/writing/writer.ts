@@ -1,3 +1,4 @@
+import { strByteLen } from "../../misc";
 import { ASTNode, ASTNodeConstructor } from "../ast_node";
 import { YulNode } from "../implementation/statement/inline_assembly";
 import { SourceFormatter } from "./formatter";
@@ -110,19 +111,20 @@ export class ASTWriter {
      */
     descToSourceString(desc: SrcDesc, sourceMap: SrcRangeMap): string {
         let source = "";
+        let size = 0;
 
         const helper = (current: SrcDesc): void => {
             for (const element of current) {
                 if (typeof element === "string") {
                     source += element;
+                    size += strByteLen(element);
                 } else {
                     const [node, nodeDesc] = element;
-                    const start = source.length;
+                    const start = size;
 
                     helper(nodeDesc);
 
-                    const length = source.length - start;
-
+                    const length = size - start;
                     sourceMap.set(node, [start, length]);
                 }
             }

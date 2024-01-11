@@ -5,6 +5,10 @@ import { ModernConfiguration } from "./modern";
 import { DefaultNodePostprocessorList } from "./postprocessing";
 import { sequence } from "./utils";
 
+// We store source files as byte arrays since AST src maps are byte-offset
+// based.
+export type FileMap = Map<string, Uint8Array>;
+
 export interface ASTNodeProcessor<T extends ASTNode> {
     process(
         reader: ASTReader,
@@ -14,7 +18,7 @@ export interface ASTNodeProcessor<T extends ASTNode> {
 }
 
 export interface ASTNodePostprocessor<T extends ASTNode> {
-    process(node: T, context: ASTContext, sources?: Map<string, string>): void;
+    process(node: T, context: ASTContext, sources?: FileMap): void;
     isSupportedNode(node: ASTNode): node is T;
 }
 
@@ -133,7 +137,7 @@ export class ASTPostprocessor {
         );
     }
 
-    processNode(node: ASTNode, context: ASTContext, sources?: Map<string, string>): void {
+    processNode(node: ASTNode, context: ASTContext, sources?: FileMap): void {
         const postprocessors = this.getPostprocessorsForNode(node);
 
         for (const postprocessor of postprocessors) {
@@ -141,7 +145,7 @@ export class ASTPostprocessor {
         }
     }
 
-    processContext(context: ASTContext, sources?: Map<string, string>): void {
+    processContext(context: ASTContext, sources?: FileMap): void {
         for (const postprocessor of this.nodePostprocessors) {
             for (const node of context.nodes) {
                 if (postprocessor.isSupportedNode(node)) {
@@ -185,7 +189,7 @@ export class ASTReader {
      *
      * @returns An array of `SourceUnit`s for each of the source entries in the input.
      */
-    read(data: any, kind = ASTKind.Any, sources?: Map<string, string>): SourceUnit[] {
+    read(data: any, kind = ASTKind.Any, sources?: FileMap): SourceUnit[] {
         const entries: Array<[string, any]> = Object.entries(data.sources);
         const rootNodeTypeName = "SourceUnit";
         const result: SourceUnit[] = [];

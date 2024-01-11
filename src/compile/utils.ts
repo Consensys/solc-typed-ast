@@ -1,7 +1,7 @@
 import fse from "fs-extra";
 import path from "path";
 import { FileSystemResolver, getCompilerForVersion, LocalNpmResolver } from ".";
-import { assert } from "../misc";
+import { assert, fromUTF8 } from "../misc";
 import {
     CompilerVersionSelectionStrategy,
     LatestVersionInEachSeriesStrategy,
@@ -12,6 +12,7 @@ import { CompilationOutput, CompilerKind } from "./constants";
 import { Remapping } from "./import_resolver";
 import { findAllFiles } from "./inference";
 import { createCompilerInput } from "./input";
+import { FileMap } from "../ast";
 
 export interface PathOptions {
     remapping?: string[];
@@ -40,7 +41,7 @@ export interface CompileResult {
      * Map from file-names (either passed in by caller, or source unit names of imported files)
      * to the contents of the respective files.
      */
-    files: Map<string, string>;
+    files: FileMap;
 
     /**
      * Map from file-names appearing in the `files` map, to the
@@ -110,19 +111,16 @@ export function parsePathRemapping(remapping: string[]): Remapping[] {
     return result;
 }
 
-function fillFilesFromSources(
-    files: Map<string, string>,
-    sources: { [fileName: string]: any }
-): void {
+function fillFilesFromSources(files: FileMap, sources: { [fileName: string]: any }): void {
     for (const [fileName, section] of Object.entries(sources)) {
         if (section && typeof section.source === "string") {
-            files.set(fileName, section.source);
+            files.set(fileName, fromUTF8(section.source));
         }
     }
 }
 
 function getCompilerVersionStrategy(
-    sources: string[],
+    sources: Uint8Array[],
     versionOrStrategy: string | CompilerVersionSelectionStrategy
 ): CompilerVersionSelectionStrategy {
     if (versionOrStrategy === "auto") {
@@ -137,7 +135,7 @@ function getCompilerVersionStrategy(
 }
 
 export async function compile(
-    files: Map<string, string>,
+    files: FileMap,
     remapping: string[],
     version: string,
     compilationOutput: CompilationOutput[] = [CompilationOutput.ALL],
@@ -211,7 +209,7 @@ export async function compileSourceString(
     const resolvers = [fsResolver, npmResolver];
 
     const parsedRemapping = parsePathRemapping(remapping);
-    const files = new Map([[fileName, sourceCode]]);
+    const files = new Map([[fileName, fromUTF8(sourceCode)]]);
     const resolvedFileNames = new Map([[fileName, fileName]]);
 
     await findAllFiles(files, resolvedFileNames, parsedRemapping, resolvers);
@@ -283,7 +281,7 @@ export async function compileSol(
     const remapping = pathOptions.remapping || [];
     const parsedRemapping = parsePathRemapping(remapping);
 
-    const files = new Map<string, string>();
+    const files: FileMap = new Map();
     const resolvedFileNames = new Map<string, string>();
     const visited = new Set<string>();
 
@@ -294,7 +292,7 @@ export async function compileSol(
 
         assert(resolvedFileName !== undefined, `Unable to find "${fileName}"`);
 
-        const sourceCode = await fse.readFile(resolvedFileName, "utf-8");
+        const sourceCode = await fse.readFile(resolvedFileName);
 
         if (isDynamicBasePath) {
             const basePath = path.dirname(resolvedFileName);
@@ -358,7 +356,7 @@ export async function compileJsonData(
     compilerSettings?: any,
     kind?: CompilerKind
 ): Promise<CompileResult> {
-    const files = new Map<string, string>();
+    const files: FileMap = new Map();
 
     if (!(data instanceof Object && data.sources instanceof Object)) {
         throw new Error(`Unable to find required properties in "${fileName}"`);
@@ -388,7 +386,7 @@ export async function compileJsonData(
 
     if (consistentlyContainsOneOf(sources, "source")) {
         for (const [fileName, fileData] of Object.entries<{ source: string }>(sources)) {
-            files.set(fileName, fileData.source);
+            files.set(fileName, fromUTF8(fileData.source));
         }
 
         const compilerVersionStrategy = getCompilerVersionStrategy([...files.values()], version);

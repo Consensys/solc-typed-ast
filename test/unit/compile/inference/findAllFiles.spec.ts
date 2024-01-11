@@ -1,7 +1,7 @@
 import expect from "expect";
 import fse from "fs-extra";
 import { join } from "path";
-import { FileSystemResolver, findAllFiles } from "../../../../src";
+import { FileMap, FileSystemResolver, findAllFiles, fromUTF8 } from "../../../../src";
 
 const SAMPLES_DIR = join("test", "samples", "solidity");
 
@@ -48,8 +48,8 @@ const samples: Array<[string, string[]]> = [
 describe("findAllFiles() find all needed imports", () => {
     for (const [fileName, expectedAllFiles] of samples) {
         it(`All imports for ${fileName} should be ${expectedAllFiles.join(", ")}`, async () => {
-            const contents = fse.readFileSync(fileName).toString();
-            const files = new Map<string, string>([[fileName, contents]]);
+            const contents = fse.readFileSync(fileName);
+            const files: FileMap = new Map([[fileName, contents]]);
 
             await findAllFiles(files, new Map(), [], [new FileSystemResolver()]);
 
@@ -60,13 +60,13 @@ describe("findAllFiles() find all needed imports", () => {
 
 describe("findAllFiles() throws proper errors", () => {
     it("Parsing error", async () => {
-        const files = new Map<string, string>([
+        const files: FileMap = new Map([
             [
                 "foo.sol",
-                `import a
+                fromUTF8(`import a
 contract Foo {
 }
-`
+`)
             ]
         ]);
 
@@ -76,13 +76,13 @@ contract Foo {
     });
 
     it("Missing file error", async () => {
-        const files = new Map<string, string>([
+        const files: FileMap = new Map([
             [
                 "foo.sol",
-                `import "a.sol";
+                fromUTF8(`import "a.sol";
 contract Foo {
 }
-`
+`)
             ]
         ]);
 

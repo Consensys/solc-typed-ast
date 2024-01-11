@@ -25,5 +25,6 @@
         "resolveJsonModule": true
     },
 
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "exclude": ["src/ast/comments/comments_parser_header.ts"]
 }

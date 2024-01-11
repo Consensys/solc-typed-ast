@@ -10,8 +10,6 @@ contract StmtDocs04 {
         X,
         Y,
         Z
-        /// Enum
-        /// 
         /// Dangling
         /// Docstring
     }
@@ -22,8 +20,6 @@ contract StmtDocs04 {
     /// Docstring
     struct StructABC {
         uint a;
-        /// Struct
-        /// 
         /// Dangling
         /// Docstring
     }
@@ -78,8 +74,6 @@ contract StmtDocs04 {
         return;
         /// Function body docstring
     }
-    /// Contract
-    /// 
     /// Dangling
     /// Docstring
 }

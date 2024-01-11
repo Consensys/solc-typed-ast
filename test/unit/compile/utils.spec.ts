@@ -4,6 +4,8 @@ import {
     compileJson,
     CompilerKind,
     detectCompileErrors,
+    FileMap,
+    fromUTF8,
     getCompilerForVersion,
     LatestAndFirstVersionInEachSeriesStrategy,
     LatestCompilerVersion,
@@ -97,12 +99,12 @@ describe("Compile general utils", () => {
     });
 
     describe("compileJson()", () => {
-        const expectedFiles = new Map([
+        const expectedFiles: FileMap = new Map([
             [
                 "./test/sol_files/json_code/B.sol",
-                "import './A.sol';\n\ncontract B {\n    int16 test;\n}\n"
+                fromUTF8("import './A.sol';\n\ncontract B {\n    int16 test;\n}\n")
             ],
-            ["./test/sol_files/json_code/A.sol", "contract A {\n    uint8 test;\n}\n"]
+            ["./test/sol_files/json_code/A.sol", fromUTF8("contract A {\n    uint8 test;\n}\n")]
         ]);
 
         const cases: Array<[string, string | undefined, RegExp | undefined]> = [

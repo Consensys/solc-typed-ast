@@ -1,5 +1,8 @@
+import { strByteLen, toUTF8 } from "../../misc";
 import { ASTNode } from "../ast_node";
-import { ASTContext, ASTNodePostprocessor } from "../ast_reader";
+import { ASTContext, ASTNodePostprocessor, FileMap } from "../ast_reader";
+import { RawComment, parseComments } from "../comments";
+import { RawCommentKind } from "../constants";
 import {
     ContractDefinition,
     EnumDefinition,
@@ -25,23 +28,50 @@ export class StructuredDocumentationReconstructor {
      */
     fragmentCoordsToStructDoc(
         coords: FragmentCoordinates,
-        source: string
+        source: Uint8Array
     ): StructuredDocumentation | undefined {
         const [from, to, sourceIndex] = coords;
-        const fragment = source.slice(from, to);
-        const comments = this.extractComments(fragment);
-        const docBlock = comments.length > 0 ? this.detectDocumentationBlock(comments) : undefined;
+        const fragment = toUTF8(source.slice(from, to));
 
-        if (docBlock === undefined) {
+        const parsedCommentsSoup = parseComments(fragment);
+
+        // The parser gives us a soup of "strings" (corresponding to non-comment
+        // tokens) and comments.
+        // Find the suffix of the parse output that contains only comments
+        let commentsStartIdx = parsedCommentsSoup.length - 1;
+        for (; commentsStartIdx >= 0; commentsStartIdx--) {
+            if (!(parsedCommentsSoup[commentsStartIdx] instanceof RawComment)) {
+                commentsStartIdx++;
+                break;
+            }
+        }
+
+        const parsedComments = parsedCommentsSoup.slice(
+            commentsStartIdx,
+            parsedCommentsSoup.length
+        ) as RawComment[];
+
+        // No comments found in the game
+        if (parsedComments.length === 0) {
             return undefined;
         }
 
-        const offset = from + fragment.indexOf(docBlock);
-        const length = docBlock.length;
-        const src = `${offset}:${length}:${sourceIndex}`;
-        const text = this.extractText(docBlock);
+        const lastComment = parsedComments[parsedComments.length - 1];
 
-        return new StructuredDocumentation(0, src, text);
+        // The last comment in the gap is not a docstring
+        if (
+            lastComment.kind !== RawCommentKind.BlockNatSpec &&
+            lastComment.kind !== RawCommentKind.LineGroupNatSpec
+        ) {
+            return undefined;
+        }
+
+        const byteOffsetFromFragment = strByteLen(fragment.slice(0, lastComment.loc.start));
+        const offset = from + byteOffsetFromFragment;
+        const length = strByteLen(lastComment.text);
+        const src = `${offset}:${length}:${sourceIndex}`;
+
+        return new StructuredDocumentation(0, src, lastComment.internalText.trim());
     }
 
     getPrecedingGapCoordinates(node: ASTNode): FragmentCoordinates {
@@ -76,7 +106,8 @@ export class StructuredDocumentationReconstructor {
     getDanglingGapCoordinates(node: ASTNode): FragmentCoordinates {
         const curInfo = node.sourceInfo;
 
-        const to = curInfo.offset + curInfo.length;
+        // Skip final }
+        const to = curInfo.offset + curInfo.length - 1;
         const sourceIndex = curInfo.sourceIndex;
 
         const lastChild = node.lastChild;
@@ -92,116 +123,6 @@ export class StructuredDocumentationReconstructor {
         }
 
         return [from, to, sourceIndex];
-    }
-
-    private extractComments(fragment: string): string[] {
-        const rx = /(\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/)|([^\n\r]*\/\/.*[\n\r]+)|[\n\r]/g;
-        const result: string[] = [];
-
-        let match = rx.exec(fragment);
-
-        while (match !== null) {
-            result.push(match[0]);
-
-            match = rx.exec(fragment);
-        }
-
-        return result;
-    }
-
-    private detectDocumentationBlock(comments: string[]): string | undefined {
-        const buffer: string[] = [];
-
-        comments.reverse();
-
-        let stopOnNextGap = false;
-
-        const rxCleanBeforeSlash = /^[^/]+/;
-
-        for (const comment of comments) {
-            /**
-             * Remove ANY leading characters before first `/` character.
-             *
-             * This is mostly actual for dangling documentation candidates,
-             * as their source range starts from very beginnig of parent node.
-             * This leads to an effect that part of parent source symbols are
-             * preceding the `///` or `/**`. Skip them for detection reasons.
-             *
-             * Consider following example:
-             * ```
-             * unchecked {
-             *     /// dangling
-             * }
-             * ```
-             * Source range would include the `unchecked {` part,
-             * however interesting part for us starts only since `///`.
-             */
-            const cleanComment = comment.replace(rxCleanBeforeSlash, "");
-
-            /**
-             * Consider if comment is valid single-line or multi-line DocBlock
-             */
-            if (cleanComment.startsWith("/**")) {
-                buffer.push(comment);
-
-                break;
-            } else if (cleanComment.startsWith("///")) {
-                buffer.push(comment);
-
-                stopOnNextGap = true;
-            } else if (stopOnNextGap) {
-                break;
-            }
-        }
-
-        if (buffer.length === 0) {
-            return undefined;
-        }
-
-        if (buffer.length > 1) {
-            buffer.reverse();
-        }
-
-        /**
-         * When joining back DocBlock, remove leading garbage characters again,
-         * but only before first `/` (not in each line, like before).
-         *
-         * Need to preserve whitespace charactes in multiline comments like
-         * ```
-         * {
-         *      /// A
-         *          /// B
-         *              /// C
-         * }
-         * ```
-         * to have following result
-         * ```
-         * /// A
-         *          /// B
-         *              /// C
-         * ```
-         * NOTE that this is affecting documentation node source range.
-         */
-        return buffer.join("").trim().replace(rxCleanBeforeSlash, "");
-    }
-
-    private extractText(docBlock: string): string {
-        const result: string[] = [];
-
-        const replacers = docBlock.startsWith("///") ? ["/// ", "///"] : ["/**", "*/", "* ", "*"];
-        const lines = docBlock.split("\n");
-
-        for (let line of lines) {
-            line = line.trimStart();
-
-            for (const replacer of replacers) {
-                line = line.replace(replacer, "");
-            }
-
-            result.push(line);
-        }
-
-        return result.join("\n").trim();
     }
 }
 
@@ -222,7 +143,7 @@ export class StructuredDocumentationReconstructingPostprocessor
 {
     private reconstructor = new StructuredDocumentationReconstructor();
 
-    process(node: SupportedNode, context: ASTContext, sources?: Map<string, string>): void {
+    process(node: SupportedNode, context: ASTContext, sources?: FileMap): void {
         if (sources === undefined) {
             return;
         }

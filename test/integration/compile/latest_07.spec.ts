@@ -7,14 +7,15 @@ import {
     CompilerVersions07,
     compileSol,
     detectCompileErrors,
+    FileMap,
     PossibleCompilerKinds,
     SourceUnit
 } from "../../../src";
 import { createImprint } from "./common";
 
 const sample = "./test/samples/solidity/latest_07.sol";
-const content = fse.readFileSync(sample).toString();
-const expectedFiles = new Map<string, string>([[sample, content]]);
+const content = fse.readFileSync(sample);
+const expectedFiles: FileMap = new Map([[sample, content]]);
 const compilerVersion = CompilerVersions07[CompilerVersions07.length - 1];
 
 const encounters = new Map<string, number>([
