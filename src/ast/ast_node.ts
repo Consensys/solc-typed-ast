@@ -1,6 +1,6 @@
 import { ASTNodeFormatter } from "./ast_node_formatter";
 import { ASTContext } from "./ast_reader";
-import { parseSourceLocation, SourceLocation } from "./utils";
+import { SourceLocation, parseSourceLocation } from "./utils";
 
 export type ASTNodeCallback = (node: ASTNode) => void;
 export type ASTNodeSelector = (node: ASTNode) => boolean;
@@ -328,10 +328,10 @@ export class ASTNode {
      *
      * In other words, returns corresponding code fragment substring.
      */
-    extractSourceFragment(source: string): string {
+    extractSourceFragment(source: Uint8Array): Uint8Array {
         const { offset, length } = this.sourceInfo;
 
-        return source.substr(offset, length);
+        return source.slice(offset, offset + length);
     }
 
     private createWalker(callback: ASTNodeCallback): ASTNodeCallback {
