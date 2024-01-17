@@ -18,7 +18,7 @@
         "file_level_definitions_parser*.ts",
         "comments_parser*.ts"
     ],
-    "coverageReporters": ["text-summary", "lcov"],
+    "coverageReporters": ["text", "text-summary", "lcov"],
     "coverageThreshold": {
         "global": {
             "statements": 90,
