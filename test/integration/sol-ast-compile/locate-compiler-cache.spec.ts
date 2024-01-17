@@ -10,7 +10,7 @@ describe(command, () => {
     let outData: string;
     let errData: string;
 
-    before(() => {
+    beforeAll(() => {
         const env: { [key: string]: string | undefined } = {};
 
         Object.entries(process.env)

@@ -23,7 +23,7 @@ describe("Assignment", () => {
                 ["^=", 44, "1", 43]
             ];
 
-            before(async () => {
+            beforeAll(async () => {
                 const reader = new ASTReader();
                 const { data } = await compileJson(sample, version);
                 const [mainUnit] = reader.read(data);

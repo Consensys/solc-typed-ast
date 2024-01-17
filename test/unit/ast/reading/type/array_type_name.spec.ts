@@ -17,7 +17,7 @@ describe("ArrayTypeName", () => {
         describe(`Solc ${version}: ${sample}`, () => {
             let nodes: ArrayTypeName[];
 
-            before(async () => {
+            beforeAll(async () => {
                 const reader = new ASTReader();
                 const { data } = await compileJson(sample, version);
                 const [mainUnit] = reader.read(data);

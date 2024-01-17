@@ -11,7 +11,7 @@ describe("ImportDirective", () => {
         describe(`Solc ${version}: ${sample}`, () => {
             let contracts: readonly ContractDefinition[];
 
-            before(async () => {
+            beforeAll(async () => {
                 const reader = new ASTReader();
                 const { data } = await compileJson(sample, version);
                 const units = reader.read(data);

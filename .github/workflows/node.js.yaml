@@ -47,9 +47,7 @@ jobs:
           find $SOL_AST_COMPILER_CACHE -name '*v0.5.17*' -delete
 
       - name: Test and generate coverage report
-        run: |
-          npm test
-          npm run coverage
+        run: npm test
 
       - name: Upload coverage to CodeCov
         uses: codecov/codecov-action@v3

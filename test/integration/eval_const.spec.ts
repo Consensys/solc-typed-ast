@@ -50,7 +50,7 @@ describe("Constant expression evaluator integration test", () => {
             let units: SourceUnit[];
             let inference: InferType;
 
-            before(async () => {
+            beforeAll(async () => {
                 const result = await compileSol(sample, "auto");
 
                 const data = result.data;

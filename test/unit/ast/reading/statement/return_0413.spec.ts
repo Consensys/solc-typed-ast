@@ -20,7 +20,7 @@ describe("Return (Solc 0.4.13)", () => {
     let mainUnit: SourceUnit;
     let funcs: FunctionDefinition[];
 
-    before(async () => {
+    beforeAll(async () => {
         const reader = new ASTReader();
         const { data } = await compileJson(sample, "0.4.13");
         const units = reader.read(data);

@@ -87,7 +87,7 @@ for (const [sample, version] of samples) {
             let writtenSource: string;
             let sourceMap: Map<ASTNode, [number, number]>;
 
-            before(async () => {
+            beforeAll(async () => {
                 const units = await readAST(sample, version, kind as CompilerKind);
 
                 /**

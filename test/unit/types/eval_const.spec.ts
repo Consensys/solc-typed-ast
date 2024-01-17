@@ -1686,7 +1686,7 @@ describe("Constant expression evaluator unit test (isConstant() + evalConstantEx
     let factory: ASTNodeFactory;
     let inference: InferType;
 
-    before(() => {
+    beforeAll(() => {
         factory = new ASTNodeFactory();
         inference = new InferType(LatestCompilerVersion);
     });

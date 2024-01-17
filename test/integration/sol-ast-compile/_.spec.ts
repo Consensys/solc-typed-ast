@@ -8,7 +8,7 @@ describe(command, () => {
     let outData: string;
     let errData: string;
 
-    before(() => {
+    beforeAll(() => {
         const result = SolAstCompileExec();
 
         outData = result.stdout;

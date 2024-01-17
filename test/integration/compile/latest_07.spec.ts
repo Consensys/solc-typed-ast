@@ -59,7 +59,7 @@ for (const compilerKind of PossibleCompilerKinds) {
         let data: any = {};
         let sourceUnits: SourceUnit[];
 
-        before("Compile", async () => {
+        beforeAll(async () => {
             const result = await compileSol(
                 sample,
                 "auto",

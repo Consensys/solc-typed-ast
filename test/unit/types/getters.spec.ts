@@ -384,7 +384,7 @@ describe("getterFunType()", () => {
                 let unit: SourceUnit;
                 let inference: InferType;
 
-                before(async () => {
+                beforeAll(async () => {
                     const result = await compileSol(
                         sample,
                         "auto",

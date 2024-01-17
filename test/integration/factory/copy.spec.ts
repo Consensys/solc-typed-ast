@@ -69,7 +69,7 @@ describe(`ASTNodeFactory.copy() validation`, () => {
             describe(`[${kind}] ${sample} -> ${snapshot}`, () => {
                 let data: any = {};
 
-                before("Compile", async () => {
+                beforeAll(async () => {
                     const result = await (sample.endsWith(".sol")
                         ? compileSol(sample, "auto", undefined, undefined, undefined, kind)
                         : compileJson(sample, "auto", undefined, undefined, kind));
