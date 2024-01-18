@@ -7,6 +7,7 @@ import {
     ASTNodeFormatter,
     ASTReader,
     ASTWriter,
+    bytesToString,
     CACHE_DIR,
     CompilationOutput,
     CompileFailedError,
@@ -32,7 +33,6 @@ import {
     PrettyFormatter,
     SourceUnit,
     StateVariableVisibility,
-    toUTF8,
     VariableDeclaration,
     XPath
 } from "..";
@@ -326,7 +326,7 @@ function error(message: string): never {
                     data.sources[key] = {};
                 }
 
-                data.sources[key].source = toUTF8(value);
+                data.sources[key].source = bytesToString(value);
             }
         }
 

@@ -1,4 +1,4 @@
-import { strByteLen, toUTF8 } from "../../misc";
+import { bytesToString, strUTF8Len } from "../../misc";
 import { ASTNode } from "../ast_node";
 import { ASTContext, ASTNodePostprocessor, FileMap } from "../ast_reader";
 import { RawComment, parseComments } from "../comments";
@@ -31,7 +31,7 @@ export class StructuredDocumentationReconstructor {
         source: Uint8Array
     ): StructuredDocumentation | undefined {
         const [from, to, sourceIndex] = coords;
-        const fragment = toUTF8(source.slice(from, to));
+        const fragment = bytesToString(source.slice(from, to));
 
         const parsedCommentsSoup = parseComments(fragment);
 
@@ -66,9 +66,9 @@ export class StructuredDocumentationReconstructor {
             return undefined;
         }
 
-        const byteOffsetFromFragment = strByteLen(fragment.slice(0, lastComment.loc.start));
+        const byteOffsetFromFragment = strUTF8Len(fragment.slice(0, lastComment.loc.start));
         const offset = from + byteOffsetFromFragment;
-        const length = strByteLen(lastComment.text);
+        const length = strUTF8Len(lastComment.text);
         const src = `${offset}:${length}:${sourceIndex}`;
 
         return new StructuredDocumentation(0, src, lastComment.internalText.trim());

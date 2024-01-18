@@ -1,7 +1,7 @@
 import fse from "fs-extra";
 import path from "path";
 import { FileSystemResolver, getCompilerForVersion, LocalNpmResolver } from ".";
-import { assert, fromUTF8 } from "../misc";
+import { assert, stringToBytes } from "../misc";
 import {
     CompilerVersionSelectionStrategy,
     LatestVersionInEachSeriesStrategy,
@@ -114,7 +114,7 @@ export function parsePathRemapping(remapping: string[]): Remapping[] {
 function fillFilesFromSources(files: FileMap, sources: { [fileName: string]: any }): void {
     for (const [fileName, section] of Object.entries(sources)) {
         if (section && typeof section.source === "string") {
-            files.set(fileName, fromUTF8(section.source));
+            files.set(fileName, stringToBytes(section.source));
         }
     }
 }
@@ -209,7 +209,7 @@ export async function compileSourceString(
     const resolvers = [fsResolver, npmResolver];
 
     const parsedRemapping = parsePathRemapping(remapping);
-    const files = new Map([[fileName, fromUTF8(sourceCode)]]);
+    const files = new Map([[fileName, stringToBytes(sourceCode)]]);
     const resolvedFileNames = new Map([[fileName, fileName]]);
 
     await findAllFiles(files, resolvedFileNames, parsedRemapping, resolvers);
@@ -386,7 +386,7 @@ export async function compileJsonData(
 
     if (consistentlyContainsOneOf(sources, "source")) {
         for (const [fileName, fileData] of Object.entries<{ source: string }>(sources)) {
-            files.set(fileName, fromUTF8(fileData.source));
+            files.set(fileName, stringToBytes(fileData.source));
         }
 
         const compilerVersionStrategy = getCompilerVersionStrategy([...files.values()], version);

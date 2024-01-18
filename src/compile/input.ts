@@ -1,5 +1,5 @@
 import { FileMap } from "../ast";
-import { toUTF8 } from "../misc";
+import { bytesToString } from "../misc";
 import { CompilationOutput } from "./constants";
 
 export interface PartialSolcInput {
@@ -81,7 +81,7 @@ export function createCompilerInput(
     partialInp.sources = {};
 
     for (const [fileName, content] of files.entries()) {
-        partialInp.sources[fileName] = { content: toUTF8(content) };
+        partialInp.sources[fileName] = { content: bytesToString(content) };
     }
 
     const input = partialInp as SolcInput;

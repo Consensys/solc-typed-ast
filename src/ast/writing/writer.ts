@@ -1,4 +1,4 @@
-import { strByteLen } from "../../misc";
+import { strUTF8Len } from "../../misc";
 import { ASTNode, ASTNodeConstructor } from "../ast_node";
 import { YulNode } from "../implementation/statement/inline_assembly";
 import { SourceFormatter } from "./formatter";
@@ -117,7 +117,7 @@ export class ASTWriter {
             for (const element of current) {
                 if (typeof element === "string") {
                     source += element;
-                    size += strByteLen(element);
+                    size += strUTF8Len(element);
                 } else {
                     const [node, nodeDesc] = element;
                     const start = size;
