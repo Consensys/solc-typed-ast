@@ -1,7 +1,7 @@
 import expect from "expect";
 import fse from "fs-extra";
 import { join } from "path";
-import { FileMap, FileSystemResolver, findAllFiles, fromUTF8 } from "../../../../src";
+import { FileMap, FileSystemResolver, findAllFiles, stringToBytes } from "../../../../src";
 
 const SAMPLES_DIR = join("test", "samples", "solidity");
 
@@ -63,7 +63,7 @@ describe("findAllFiles() throws proper errors", () => {
         const files: FileMap = new Map([
             [
                 "foo.sol",
-                fromUTF8(`import a
+                stringToBytes(`import a
 contract Foo {
 }
 `)
@@ -79,7 +79,7 @@ contract Foo {
         const files: FileMap = new Map([
             [
                 "foo.sol",
-                fromUTF8(`import "a.sol";
+                stringToBytes(`import "a.sol";
 contract Foo {
 }
 `)

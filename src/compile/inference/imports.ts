@@ -1,7 +1,7 @@
 import fse from "fs-extra";
 import { dirname, normalize } from "path";
 import { CompileInferenceError, ImportResolver, Remapping } from "..";
-import { FileMap, assert, toUTF8 } from "../..";
+import { FileMap, assert, bytesToString } from "../..";
 import {
     AnyFileLevelNode,
     FileLevelNodeKind,
@@ -161,7 +161,7 @@ export async function findAllFiles(
         let flds: AnyFileLevelNode[];
 
         try {
-            flds = parseFileLevelDefinitions(toUTF8(content));
+            flds = parseFileLevelDefinitions(bytesToString(content));
         } catch (e: any) {
             if (e instanceof PeggySyntaxError) {
                 const start = e.location.start.offset;

@@ -1,4 +1,4 @@
-import { toUTF8 } from "../misc";
+import { bytesToString } from "../misc";
 import { CompilerSeries, CompilerVersions } from "./constants";
 import { extractSpecifiersFromSource, getCompilerVersionsBySpecifiers } from "./version";
 
@@ -80,7 +80,7 @@ export class VersionDetectionStrategy implements CompilerVersionSelectionStrateg
         fallback: CompilerVersionSelectionStrategy,
         descending = true
     ) {
-        this.sources = sources.map(toUTF8);
+        this.sources = sources.map(bytesToString);
         this.fallback = fallback;
         this.descending = descending;
     }

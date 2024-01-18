@@ -5,12 +5,12 @@ import {
     CompilerKind,
     detectCompileErrors,
     FileMap,
-    fromUTF8,
     getCompilerForVersion,
     LatestAndFirstVersionInEachSeriesStrategy,
     LatestCompilerVersion,
     NativeCompiler,
     parsePathRemapping,
+    stringToBytes,
     WasmCompiler
 } from "../../../src";
 
@@ -102,9 +102,12 @@ describe("Compile general utils", () => {
         const expectedFiles: FileMap = new Map([
             [
                 "./test/sol_files/json_code/B.sol",
-                fromUTF8("import './A.sol';\n\ncontract B {\n    int16 test;\n}\n")
+                stringToBytes("import './A.sol';\n\ncontract B {\n    int16 test;\n}\n")
             ],
-            ["./test/sol_files/json_code/A.sol", fromUTF8("contract A {\n    uint8 test;\n}\n")]
+            [
+                "./test/sol_files/json_code/A.sol",
+                stringToBytes("contract A {\n    uint8 test;\n}\n")
+            ]
         ]);
 
         const cases: Array<[string, string | undefined, RegExp | undefined]> = [

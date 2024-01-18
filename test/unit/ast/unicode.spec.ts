@@ -13,11 +13,11 @@ import {
     SrcRangeMap,
     StructuredDocumentation,
     assert,
+    bytesToString,
     compileSol,
     compileSourceString,
     detectCompileErrors,
-    fromUTF8,
-    toUTF8
+    stringToBytes
 } from "../../../src";
 
 const samples: string[] = [
@@ -30,7 +30,7 @@ async function strToAst(
     contents: string,
     version: string
 ): Promise<[SourceUnit, ASTReader]> {
-    const sources: FileMap = new Map([[name, fromUTF8(contents)]]);
+    const sources: FileMap = new Map([[name, stringToBytes(contents)]]);
     const canonicalResult = await compileSourceString(name, contents, version);
 
     const errors = detectCompileErrors(canonicalResult.data);
@@ -85,7 +85,7 @@ describe("Unicode tests", () => {
 
                 for (const doc of docs) {
                     const coords = doc.sourceInfo;
-                    const actual = toUTF8(
+                    const actual = bytesToString(
                         contents.slice(coords.offset, coords.offset + coords.length)
                     ).trim();
 
