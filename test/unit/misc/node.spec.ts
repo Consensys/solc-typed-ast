@@ -44,7 +44,7 @@ describe("Node unit tests", () => {
         end: { offset: 3, line: -1, column: -1 }
     };
 
-    before(() => {
+    beforeAll(() => {
         a = new TestNode(1, "a");
         b = new TestNode(1, "a");
         c = new TestNode(2, "a");

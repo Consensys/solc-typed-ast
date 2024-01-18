@@ -17,7 +17,7 @@ describe("Conditional (Solc 0.5.0)", () => {
     let mainUnit: SourceUnit;
     let funcs: FunctionDefinition[];
 
-    before(async () => {
+    beforeAll(async () => {
         const reader = new ASTReader();
         const { data } = await compileJson(sample, "0.5.0");
         const units = reader.read(data);

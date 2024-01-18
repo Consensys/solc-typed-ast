@@ -62,7 +62,7 @@ for (const [samples, pathOptions, snapshot] of cases) {
             let outData: string;
             let errData: string;
 
-            before(() => {
+            beforeAll(() => {
                 const result = SolAstCompileExec(...args);
 
                 outData = result.stdout;

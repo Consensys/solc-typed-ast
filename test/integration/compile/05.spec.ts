@@ -58,7 +58,7 @@ describe(`Compile ${sample} with any available 0.5.x compiler`, () => {
                 let data: any = {};
                 let sourceUnits: SourceUnit[];
 
-                before("Compile", async () => {
+                beforeAll(async () => {
                     const result = await compileSol(
                         sample,
                         version,

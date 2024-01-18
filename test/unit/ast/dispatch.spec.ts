@@ -1,8 +1,8 @@
 import expect from "expect";
+import fse from "fs-extra";
 import {
     ASTNodeConstructor,
     ASTReader,
-    compileJson,
     CompilerVersions05,
     ContractDefinition,
     EmitStatement,
@@ -19,15 +19,19 @@ import {
 
 type Resolvable = EventDefinition | FunctionDefinition | ModifierDefinition | VariableDeclaration;
 
-describe("Dynamic dispatch AST utils", async () => {
+describe("Dynamic dispatch AST utils", () => {
+    const sample = "test/samples/solidity/dispatch_05.json";
     const reader = new ASTReader();
-    const { data } = await compileJson("test/samples/solidity/dispatch_05.json", "auto");
 
     const compilerVersion = CompilerVersions05[CompilerVersions05.length - 1];
-    const [mainUnit] = reader.read(data);
-    const [a, b, c, d, i] = mainUnit.vContracts;
 
     const inference = new InferType(compilerVersion);
+
+    const data = fse.readJsonSync(sample);
+
+    const [mainUnit] = reader.read(data);
+
+    const [a, b, c, d, i] = mainUnit.vContracts;
 
     describe("resolve()", () => {
         const cases: Array<

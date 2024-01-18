@@ -13,7 +13,7 @@ for (const kind of PossibleCompilerKinds) {
         let outData = "";
         let errData = "";
 
-        before(() => {
+        beforeAll(() => {
             const result = SolAstCompileExec(...args);
 
             outData = result.stdout;

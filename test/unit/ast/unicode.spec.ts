@@ -61,7 +61,7 @@ describe("Unicode tests", () => {
             let contents: Uint8Array;
             let sources: FileMap;
 
-            before(async () => {
+            beforeAll(async () => {
                 contents = fse.readFileSync(sample);
                 sources = new Map([[sample, contents]]);
 

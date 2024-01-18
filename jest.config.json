@@ -1,0 +1,30 @@
+{
+    "roots": [""],
+    "testMatch": ["**/test/**/*.spec.ts"],
+    "moduleDirectories": ["node_modules"],
+    "transform": {
+        "^.+\\.ts$": "ts-jest"
+    },
+
+    "testTimeout": 200000,
+    "verbose": true,
+
+    "coveragePathIgnorePatterns": [
+        "/node_modules/",
+        "/test/",
+        "/coverage/",
+        "/docs/",
+        "/.compiler_cache/",
+        "file_level_definitions_parser*.ts",
+        "comments_parser*.ts"
+    ],
+    "coverageReporters": ["text", "text-summary", "lcov"],
+    "coverageThreshold": {
+        "global": {
+            "statements": 90,
+            "branches": 85,
+            "functions": 90,
+            "lines": 94
+        }
+    }
+}

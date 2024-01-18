@@ -422,10 +422,10 @@ const unitSamples: Array<
 
 describe("resolveAny() unit tests", () => {
     for (const [sample, compilerVersion, astKind, sampleTests] of unitSamples) {
-        describe(sample, async () => {
+        describe(sample, () => {
             const reader = new ASTReader();
 
-            before(async () => {
+            beforeAll(async () => {
                 const result = await compileSol(sample, "auto");
 
                 expect(result.compilerVersion).toEqual(compilerVersion);
@@ -455,7 +455,7 @@ describe("resolveAny() unit tests", () => {
     }
 });
 
-describe("resolveAny() correctly handles visibility", async () => {
+describe("resolveAny() correctly handles visibility", () => {
     const compilerVersion = "0.8.13";
     const reader = new ASTReader();
 
@@ -488,7 +488,7 @@ contract Child is Base {
     let foo: ASTNode;
     let inference: InferType;
 
-    before(async () => {
+    beforeAll(async () => {
         const compResult = await compileSourceString("sample.sol", sample, compilerVersion);
 
         [unit] = reader.read(compResult.data);

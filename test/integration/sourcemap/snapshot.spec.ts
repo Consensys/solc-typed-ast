@@ -31,7 +31,7 @@ describe("Source map snapshot tests", () => {
                 let units: SourceUnit[];
                 let compilerVersion: string;
 
-                before(async () => {
+                beforeAll(async () => {
                     const reader = new ASTReader();
                     const result = await compileSol(
                         fileName,

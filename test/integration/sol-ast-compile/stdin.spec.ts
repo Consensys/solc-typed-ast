@@ -25,7 +25,7 @@ for (const [fileName, mode, expectedExitCode, stdErr, stdOut] of cases) {
             let outData: string;
             let errData: string;
 
-            before(() => {
+            beforeAll(() => {
                 const result = spawnSync("sol-ast-compile", args, {
                     input: fse.readFileSync(fileName),
                     encoding: "utf8"

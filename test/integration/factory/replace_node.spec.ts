@@ -75,7 +75,7 @@ describe(`replaceNode() validation`, () => {
             describe(`[${kind}] Validate replaceNode on ${sample}`, () => {
                 let data: any = {};
 
-                before("Compile", async () => {
+                beforeAll(async () => {
                     const result = await (sample.endsWith(".sol")
                         ? compileSol(sample, "auto", {}, undefined, undefined, kind as CompilerKind)
                         : compileJson(sample, "auto", undefined, undefined, kind as CompilerKind));
