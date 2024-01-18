@@ -5,10 +5,10 @@ import {
     ASTReader,
     Block,
     compileJson,
-    fromUTF8,
     FunctionDefinition,
     Literal,
-    SourceUnit
+    SourceUnit,
+    stringToBytes
 } from "../../../src";
 
 describe("ASTNode", () => {
@@ -102,7 +102,7 @@ describe("ASTNode", () => {
             it("extractSourceFragment()", () => {
                 const increment = nodes[nodes.length - 2];
 
-                expect(increment.extractSourceFragment(source)).toEqual(fromUTF8("a++"));
+                expect(increment.extractSourceFragment(source)).toEqual(stringToBytes("a++"));
             });
         });
     }
