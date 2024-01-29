@@ -50,6 +50,13 @@ describe("ASTNode", () => {
                 expect(byTypeString.map(mapperFn)).toEqual(byType.map(mapperFn));
             });
 
+            it("getParents()", () => {
+                const deepest = nodes[nodes.length - 1];
+                const parents = deepest.getParents();
+
+                expect(parents.map((node) => node.id)).toEqual([10, 11, 12, 13, 14, 15, 16, 17]);
+            });
+
             it("getClosestParentBySelector()", () => {
                 const deepest = nodes[nodes.length - 1];
                 const closest = deepest.getClosestParentBySelector(
