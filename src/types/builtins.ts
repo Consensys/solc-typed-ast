@@ -155,6 +155,7 @@ export const block = new BuiltinStructType(
             ]
         ],
         ["basefee", [[types.uint256, ">=0.8.7"]]],
+        ["blobbasefee", [[types.uint256, ">=0.8.24"]]],
         ["difficulty", [[types.uint256, ">=0.4.13"]]],
         ["gaslimit", [[types.uint256, ">=0.4.13"]]],
         ["number", [[types.uint256, ">=0.4.13"]]],
@@ -262,6 +263,10 @@ export const globalBuiltins = new BuiltinStructType(
         [
             "blockhash",
             [[new BuiltinFunctionType("blockhash", [types.uint256], [types.bytes32]), ">=0.4.22"]]
+        ],
+        [
+            "blobhash",
+            [[new BuiltinFunctionType("blobhash", [types.uint256], [types.bytes32]), ">=0.8.24"]]
         ],
         ["assert", [[new BuiltinFunctionType("assert", [types.bool], []), ">=0.4.13"]]],
         ["now", [[types.uint256, "<0.7.0"]]],
