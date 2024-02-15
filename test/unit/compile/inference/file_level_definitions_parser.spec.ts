@@ -608,6 +608,29 @@ is /*3*/ int24/*;*/;`,
                 anonymous: true
             }
         ]
+    ],
+    [
+        "address payable",
+        `address payable constant MY_CONST = payable(0x0);
+        event MyEvent(address payable indexed addr);
+        error MyError(address payable addr);`,
+        [
+            {
+                kind: "constant",
+                name: "MY_CONST",
+                value: "payable(0x0)"
+            },
+            {
+                kind: "event",
+                name: "MyEvent",
+                args: "(address payable indexed addr)"
+            },
+            {
+                kind: "error",
+                name: "MyError",
+                args: "(address payable addr)"
+            }
+        ]
     ]
 ];
 
