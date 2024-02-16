@@ -68,9 +68,10 @@ ImportDirective =
 
 // ==== Global Constants
 
-// global constants don't support reference types I think?
+// Global constants don't support reference types.
+// Only other multi-word case is "address payable".
 ConstantType =
-    Identifier (__ LBRACKET Number? RBRACKET)*  { return text(); }
+    (ADDRESS (__ PAYABLE)?) / (Identifier (__ LBRACKET Number? RBRACKET)*) { return text(); }
 
 Constant = ConstantType __ CONSTANT  __ name: Identifier __ EQUAL __ value: NonSemicolonSoup __  SEMICOLON {
     return { kind: FileLevelNodeKind.Constant, location: location(), name, value } as FLConstant;
@@ -324,6 +325,8 @@ LBRACKET = "["
 RBRACKET = "]"
 COMMA = ","
 EQUAL = "="
+ADDRESS = "address"
+PAYABLE = "payable"
 ABSTRACT = "abstract"
 CONTRACT = "contract"
 LIBRARY = "library"
