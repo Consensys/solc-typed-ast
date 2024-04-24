@@ -1431,9 +1431,14 @@ export class InferType {
                         argTs.push(...node.parent.vArguments.map((arg) => this.typeOf(arg)));
 
                         for (const argT of argTs) {
-                            if (!(argT instanceof PointerType && eq(argT.to, baseT.type))) {
+                            if (
+                                !(
+                                    (argT instanceof PointerType && eq(argT.to, baseT.type)) ||
+                                    argT instanceof FixedBytesType
+                                )
+                            ) {
                                 throw new SolTypeError(
-                                    `Unexpected arguments to concat in ${pp(node.parent)}`
+                                    `Unexpected argument type ${argT.pp()} to builtin function bytes.concat in ${pp(node.parent)}.`
                                 );
                             }
                         }
