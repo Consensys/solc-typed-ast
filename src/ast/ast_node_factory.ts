@@ -1074,7 +1074,7 @@ export class ASTNodeFactory {
         return node;
     }
 
-    copy<T extends ASTNode>(node: T, remappings: IDMap | undefined): T {
+    copy<T extends ASTNode>(node: T, remappings?: IDMap): T {
         const cache = new Map<number, number>(remappings ? remappings.entries() : []);
         const clone = this.copyHelper(node, cache);
         const context = this.context;
