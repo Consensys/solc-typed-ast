@@ -2484,6 +2484,29 @@ export class InferType {
         let name: string;
         let args: string[];
 
+        const getArgABITypeStr = (arg: VariableDeclaration, isLib: boolean): string => {
+            const typeName = arg.vType;
+
+            // Small hack to allow some signatures for functions in the presence of incomplete ASTs
+            if (
+                typeName instanceof UserDefinedTypeName &&
+                typeName.referencedDeclaration < 0 &&
+                typeName.typeString.startsWith("contract ")
+            ) {
+                return "address";
+            }
+
+            if (isLib) {
+                const type = this.variableDeclarationToTypeNode(arg);
+                return abiTypeToLibraryCanonicalName(type);
+            }
+
+            const type = this.variableDeclarationToTypeNode(arg);
+            const abiType = this.toABIEncodedType(type, encoderVersion);
+
+            return abiTypeToCanonicalName(generalizeType(abiType)[0]);
+        };
+
         const encoderVersion = this.getUnitLevelAbiEncoderVersion(node);
 
         if (node instanceof VariableDeclaration) {
@@ -2502,12 +2525,7 @@ export class InferType {
             name = node.errorName;
 
             args = node.vParameters
-                ? node.vParameters.vParameters.map((arg) => {
-                      const type = this.variableDeclarationToTypeNode(arg);
-                      const abiType = this.toABIEncodedType(type, encoderVersion);
-
-                      return abiTypeToCanonicalName(generalizeType(abiType)[0]);
-                  })
+                ? node.vParameters.vParameters.map((arg) => getArgABITypeStr(arg, false))
                 : [];
         } else {
             if (node instanceof FunctionDefinition && (node.name === "" || node.isConstructor)) {
@@ -2524,18 +2542,9 @@ export class InferType {
                     (node instanceof FunctionDefinition &&
                         !isVisiblityExternallyCallable(node.visibility)))
             ) {
-                args = node.vParameters.vParameters.map((arg) => {
-                    const type = this.variableDeclarationToTypeNode(arg);
-
-                    return abiTypeToLibraryCanonicalName(type);
-                });
+                args = node.vParameters.vParameters.map((arg) => getArgABITypeStr(arg, true));
             } else {
-                args = node.vParameters.vParameters.map((arg) => {
-                    const type = this.variableDeclarationToTypeNode(arg);
-                    const abiType = this.toABIEncodedType(type, encoderVersion);
-
-                    return abiTypeToCanonicalName(generalizeType(abiType)[0]);
-                });
+                args = node.vParameters.vParameters.map((arg) => getArgABITypeStr(arg, false));
             }
         }
 
