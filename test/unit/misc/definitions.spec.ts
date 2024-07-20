@@ -29,73 +29,85 @@ import {
     VariableDeclaration
 } from "../../../src";
 
-const samples: Array<[string, string, ASTKind]> = [
+const samples: Array<[string, string, ASTKind, any]> = [
     [
         "./test/samples/solidity/compile_04.sol",
         CompilerVersions04[CompilerVersions04.length - 1],
-        ASTKind.Legacy
+        ASTKind.Legacy,
+        undefined
     ],
     [
         "./test/samples/solidity/compile_05.sol",
         CompilerVersions05[CompilerVersions05.length - 1],
-        ASTKind.Modern
+        ASTKind.Modern,
+        undefined
     ],
     [
         "./test/samples/solidity/latest_06.sol",
         CompilerVersions06[CompilerVersions06.length - 1],
-        ASTKind.Modern
+        ASTKind.Modern,
+        undefined
     ],
     [
         "./test/samples/solidity/latest_07.sol",
         CompilerVersions07[CompilerVersions07.length - 1],
-        ASTKind.Modern
+        ASTKind.Modern,
+        undefined
     ],
     [
         "./test/samples/solidity/latest_08.sol",
         CompilerVersions08[CompilerVersions08.length - 1],
-        ASTKind.Modern
+        ASTKind.Modern,
+        { viaIR: true }
     ],
     [
         "./test/samples/solidity/resolving/resolving_08.sol",
         CompilerVersions08[CompilerVersions08.length - 1],
-        ASTKind.Modern
+        ASTKind.Modern,
+        undefined
     ],
     [
         "./test/samples/solidity/resolving/block_04.sol",
         CompilerVersions04[CompilerVersions04.length - 1],
-        ASTKind.Legacy
+        ASTKind.Legacy,
+        undefined
     ],
     [
         "./test/samples/solidity/resolving/block_05.sol",
         CompilerVersions05[CompilerVersions05.length - 1],
-        ASTKind.Modern
+        ASTKind.Modern,
+        undefined
     ],
     [
         "./test/samples/solidity/resolving/imports_and_source_unit_function_overloading.sol",
         CompilerVersions08[CompilerVersions08.length - 1],
-        ASTKind.Modern
+        ASTKind.Modern,
+        undefined
     ],
     [
         "./test/samples/solidity/resolving/inheritance_and_shadowing.sol",
         CompilerVersions08[CompilerVersions08.length - 1],
-        ASTKind.Modern
+        ASTKind.Modern,
+        undefined
     ],
     [
         "./test/samples/solidity/resolving/shadowing_overloading_and_overriding.sol",
         CompilerVersions08[CompilerVersions08.length - 1],
-        ASTKind.Modern
+        ASTKind.Modern,
+        undefined
     ],
     [
         "./test/samples/solidity/resolving/simple_shadowing.sol",
         CompilerVersions08[CompilerVersions08.length - 1],
-        ASTKind.Modern
+        ASTKind.Modern,
+        undefined
     ]
 ];
 
 describe("resolveAny() correctly resolves all Identifiers/UserDefinedTypeNames/FunctionCalls", () => {
-    for (const [sample, compilerVersion, astKind] of samples) {
+    for (const [sample, compilerVersion, astKind, compilerSettings] of samples) {
         it(`All definitions in ${sample} resolve correctly`, async () => {
-            const result = await compileSol(sample, "auto");
+            const result = await compileSol(sample, "auto", undefined, undefined, compilerSettings);
 
             expect(result.compilerVersion).toEqual(compilerVersion);
 

@@ -413,3 +413,23 @@ contract Features_0822 {
         emit Y(5);
     }
 }
+
+/// Insufficient balance for transfer. Needed `required` but only
+/// `available` available.
+/// @param available balance available.
+/// @param required requested amount to transfer.
+error InsufficientBalance(uint256 available, uint256 required);
+
+// This will only compile via IR
+contract Features_0826 {
+    mapping(address => uint) balance;
+    function transferWithRequireError(address to, uint256 amount) public {
+        require(
+            balance[msg.sender] >= amount,
+            InsufficientBalance(balance[msg.sender], amount)
+        );
+        balance[msg.sender] -= amount;
+        balance[to] += amount;
+    }
+    // ...
+}

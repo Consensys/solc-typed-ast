@@ -37,6 +37,7 @@ OLD = "old"
 LET = "let"
 IN = "in"
 BOOL = "bool"
+ERROR = "error"
 ADDRESS = "address"
 PAYABLE = "payable"
 BYTES = "bytes"
@@ -217,6 +218,7 @@ InaccessibleDynamicType =
 
 SimpleType =
     BoolType
+    / BuiltinError
     / InaccessibleDynamicType
     / AddressType
     / IntLiteralType
@@ -254,6 +256,9 @@ RationalLiteralType =
 
 BoolType =
     BOOL { return new BoolType(); }
+
+BuiltinError =
+    ERROR { return new BuiltinErrorType(); }
 
 AddressType =
     ADDRESS __ payable: (PAYABLE?) {

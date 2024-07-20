@@ -74,7 +74,7 @@ export class ContractDefinition
     usedErrors: number[];
 
     /**
-     * Used error definition ids (including external definition ids)
+     * Used events definition ids (including external definition ids)
      */
     usedEvents: number[];
 
