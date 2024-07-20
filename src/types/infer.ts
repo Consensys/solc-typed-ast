@@ -135,8 +135,19 @@ export const builtinTypes: { [key: string]: (arg: ASTNode) => TypeNode } = {
     },
 
     require: (arg: ASTNode) => {
-        const hasMsg = arg.parent instanceof FunctionCall && arg.parent.vArguments.length === 2;
-        const argTs = hasMsg ? [types.bool, types.stringMemory] : [types.bool];
+        let argTs: TypeNode[];
+
+        if (arg.parent instanceof FunctionCall && arg.parent.vArguments.length === 2) {
+            const secondArg = arg.parent.vArguments[1];
+
+            if (secondArg.typeString === "error") {
+                argTs = [types.bool, types.error];
+            } else {
+                argTs = [types.bool, types.stringMemory];
+            }
+        } else {
+            argTs = [types.bool];
+        }
 
         return new BuiltinFunctionType("require", argTs, []);
     },
@@ -817,8 +828,10 @@ export class InferType {
             }
         } else if (resolvedCalleeT instanceof BuiltinFunctionType) {
             rets = resolvedCalleeT.returns;
-        } else if (resolvedCalleeT instanceof EventType || resolvedCalleeT instanceof ErrorType) {
+        } else if (resolvedCalleeT instanceof EventType) {
             rets = [];
+        } else if (resolvedCalleeT instanceof ErrorType) {
+            rets = [types.error];
         } else {
             throw new SolTypeError(
                 `Unexpected unresolved calele type in function call ${pp(node)}`

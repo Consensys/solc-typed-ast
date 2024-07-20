@@ -10,22 +10,35 @@ import {
     detectCompileErrors
 } from "../../../src";
 
-const cases: Array<[string, Array<[CompilerKind, string]>]> = [
+const cases: Array<[string, Array<[CompilerKind, string, any]>]> = [
     [
         "./test/samples/solidity/declarations/contract_050.json",
         [
-            [CompilerKind.WASM, "./test/samples/solidity/declarations/contract_050.nodes.wasm.txt"],
+            [
+                CompilerKind.WASM,
+                "./test/samples/solidity/declarations/contract_050.nodes.wasm.txt",
+                undefined
+            ],
             [
                 CompilerKind.Native,
-                "./test/samples/solidity/declarations/contract_050.nodes.native.txt"
+                "./test/samples/solidity/declarations/contract_050.nodes.native.txt",
+                undefined
             ]
         ]
     ],
     [
         "./test/samples/solidity/issue_132_fun_kind.sol",
         [
-            [CompilerKind.WASM, "./test/samples/solidity/issue_132_fun_kind.nodes.wasm.txt"],
-            [CompilerKind.Native, "./test/samples/solidity/issue_132_fun_kind.nodes.native.txt"]
+            [
+                CompilerKind.WASM,
+                "./test/samples/solidity/issue_132_fun_kind.nodes.wasm.txt",
+                undefined
+            ],
+            [
+                CompilerKind.Native,
+                "./test/samples/solidity/issue_132_fun_kind.nodes.native.txt",
+                undefined
+            ]
         ]
     ],
     [
@@ -33,11 +46,13 @@ const cases: Array<[string, Array<[CompilerKind, string]>]> = [
         [
             [
                 CompilerKind.WASM,
-                "./test/samples/solidity/different_abi_encoders/v1_imports_v2/v1.nodes.wasm.txt"
+                "./test/samples/solidity/different_abi_encoders/v1_imports_v2/v1.nodes.wasm.txt",
+                undefined
             ],
             [
                 CompilerKind.Native,
-                "./test/samples/solidity/different_abi_encoders/v1_imports_v2/v1.nodes.native.txt"
+                "./test/samples/solidity/different_abi_encoders/v1_imports_v2/v1.nodes.native.txt",
+                undefined
             ]
         ]
     ],
@@ -46,33 +61,43 @@ const cases: Array<[string, Array<[CompilerKind, string]>]> = [
         [
             [
                 CompilerKind.WASM,
-                "./test/samples/solidity/different_abi_encoders/v2_imports_v1/v2.nodes.wasm.txt"
+                "./test/samples/solidity/different_abi_encoders/v2_imports_v1/v2.nodes.wasm.txt",
+                undefined
             ],
             [
                 CompilerKind.Native,
-                "./test/samples/solidity/different_abi_encoders/v2_imports_v1/v2.nodes.native.txt"
+                "./test/samples/solidity/different_abi_encoders/v2_imports_v1/v2.nodes.native.txt",
+                undefined
             ]
         ]
     ],
     [
         "./test/samples/solidity/latest_08.sol",
         [
-            [CompilerKind.WASM, "./test/samples/solidity/latest_08.nodes.wasm.txt"],
-            [CompilerKind.Native, "./test/samples/solidity/latest_08.nodes.native.txt"]
+            [
+                CompilerKind.WASM,
+                "./test/samples/solidity/latest_08.nodes.wasm.txt",
+                { viaIR: true }
+            ],
+            [
+                CompilerKind.Native,
+                "./test/samples/solidity/latest_08.nodes.native.txt",
+                { viaIR: true }
+            ]
         ]
     ]
 ];
 
 describe(`ASTNodeFactory.copy() validation`, () => {
     for (const [sample, setups] of cases) {
-        for (const [kind, snapshot] of setups) {
+        for (const [kind, snapshot, compilerSettings] of setups) {
             describe(`[${kind}] ${sample} -> ${snapshot}`, () => {
                 let data: any = {};
 
                 beforeAll(async () => {
                     const result = await (sample.endsWith(".sol")
-                        ? compileSol(sample, "auto", undefined, undefined, undefined, kind)
-                        : compileJson(sample, "auto", undefined, undefined, kind));
+                        ? compileSol(sample, "auto", undefined, undefined, compilerSettings, kind)
+                        : compileJson(sample, "auto", undefined, compilerSettings, kind));
 
                     const errors = detectCompileErrors(result.data);
 

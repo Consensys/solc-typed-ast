@@ -38,6 +38,12 @@ using { plusOne, minusOne, A_0813.add } for RestrictedNumber_0813 global;
 /// UnitLevelError error docstring
 error UnitLevelError084(uint code);
 
+/// Insufficient balance for transfer. Needed `required` but only
+///  `available` available.
+///  @param available balance available.
+///  @param required requested amount to transfer.
+error InsufficientBalance(uint256 available, uint256 required);
+
 event X(uint a);
 
 event Y(uint a) anonymous;
@@ -359,6 +365,16 @@ contract Features_0822 {
         emit X(3);
         emit Features_0822.X(4);
         emit Y(5);
+    }
+}
+
+contract Features_0826 {
+    mapping(address => uint) internal balance;
+
+    function transferWithRequireError(address to, uint256 amount) public {
+        require(balance[msg.sender] >= amount, InsufficientBalance(balance[msg.sender], amount));
+        balance[msg.sender] -= amount;
+        balance[to] += amount;
     }
 }
 // ------------------------------------------------------------

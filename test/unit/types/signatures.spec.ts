@@ -23,17 +23,25 @@ import {
     VariableDeclaration
 } from "../../../src";
 
-const samples: Array<[string, string]> = [
-    ["test/samples/solidity/getters_08.sol", CompilerVersions08[CompilerVersions08.length - 1]],
-    ["test/samples/solidity/getters_07.sol", "0.7.6"],
-    ["test/samples/solidity/getters_07_abiv1.sol", "0.7.6"],
-    ["test/samples/solidity/latest_06.sol", "0.6.12"],
-    ["test/samples/solidity/latest_07.sol", "0.7.6"],
-    ["test/samples/solidity/latest_08.sol", CompilerVersions08[CompilerVersions08.length - 1]],
-    ["test/samples/solidity/compile_04.sol", "0.4.26"],
-    ["test/samples/solidity/compile_05.sol", "0.5.17"],
-    ["test/samples/solidity/compile_06.sol", "0.6.12"],
-    ["test/samples/solidity/signatures.sol", "0.8.7"]
+const samples: Array<[string, string, any]> = [
+    [
+        "test/samples/solidity/getters_08.sol",
+        CompilerVersions08[CompilerVersions08.length - 1],
+        undefined
+    ],
+    ["test/samples/solidity/getters_07.sol", "0.7.6", undefined],
+    ["test/samples/solidity/getters_07_abiv1.sol", "0.7.6", undefined],
+    ["test/samples/solidity/latest_06.sol", "0.6.12", undefined],
+    ["test/samples/solidity/latest_07.sol", "0.7.6", undefined],
+    [
+        "test/samples/solidity/latest_08.sol",
+        CompilerVersions08[CompilerVersions08.length - 1],
+        { viaIR: true }
+    ],
+    ["test/samples/solidity/compile_04.sol", "0.4.26", undefined],
+    ["test/samples/solidity/compile_05.sol", "0.5.17", undefined],
+    ["test/samples/solidity/compile_06.sol", "0.6.12", undefined],
+    ["test/samples/solidity/signatures.sol", "0.8.7", undefined]
 ];
 
 function resolveOne(
@@ -66,7 +74,7 @@ function resolveOne(
 }
 
 describe("Check canonical signatures are generated correctly", () => {
-    for (const [sample, compilerVersion] of samples) {
+    for (const [sample, compilerVersion, compilerSettings] of samples) {
         for (const kind of PossibleCompilerKinds) {
             it(`[${kind}] ${sample}`, async () => {
                 const result = await compileSol(
@@ -74,7 +82,7 @@ describe("Check canonical signatures are generated correctly", () => {
                     "auto",
                     undefined,
                     undefined,
-                    undefined,
+                    compilerSettings,
                     kind as CompilerKind
                 );
 

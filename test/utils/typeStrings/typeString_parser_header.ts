@@ -35,7 +35,8 @@ import {
     UserDefinedType,
     assert,
     pp,
-    InferType
+    InferType,
+    BuiltinErrorType
 } from "../../../src";
 import { InaccessibleDynamicType } from "./ast/inaccessible_dynamic_type";
 import { ModuleType } from "./ast/module_type";

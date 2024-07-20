@@ -154,7 +154,8 @@ describe(`Native and WASM compilers produce the same results for all files`, () 
                 defaultCompilationOutput,
                 defaultCompilerSettings
             ]
-        ]
+        ],
+        ["test/samples/solidity/latest_08.sol", [{}, defaultCompilationOutput, { viaIR: true }]]
     ]);
 
     for (const sample of samples) {
