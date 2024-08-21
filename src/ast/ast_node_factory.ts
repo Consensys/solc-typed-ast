@@ -78,7 +78,7 @@ type Specific<Args extends any[]> = Args["length"] extends 0
       ? Rest
       : [];
 
-type IDMap = Map<number, number>;
+export type IDMap = Map<number, number>;
 
 const argExtractionMapping = new Map<ASTNodeConstructor<ASTNode>, (node: any) => any[]>([
     [ASTNode, (node: ASTNode): Specific<ConstructorParameters<typeof ASTNode>> => [node.raw]],
@@ -1075,6 +1075,10 @@ export class ASTNodeFactory {
     }
 
     copy<T extends ASTNode>(node: T, remappings?: IDMap): T {
+        return this.copyWithMapping(node, remappings)[0];
+    }
+
+    copyWithMapping<T extends ASTNode>(node: T, remappings?: IDMap): [T, IDMap] {
         const cache = new Map<number, number>(remappings ? remappings.entries() : []);
         const clone = this.copyHelper(node, cache);
         const context = this.context;
@@ -1086,7 +1090,7 @@ export class ASTNodeFactory {
             postprocessor.processNode(child, context);
         }
 
-        return clone;
+        return [clone, cache];
     }
 
     private patchIds(node: ASTNode, cache: IDMap): void {
