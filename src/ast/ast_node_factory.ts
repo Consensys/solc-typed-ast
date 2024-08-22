@@ -1074,10 +1074,24 @@ export class ASTNodeFactory {
         return node;
     }
 
+    /**
+     * Return a copy of the given `node`, along with all its children.
+     * Optionally pass in a `remapping` from ids in the old context, to ids of
+     * the old context of any sibling nodes that may be referred in node (e.g.
+     * by `referencedDeclaration` fields).
+     */
     copy<T extends ASTNode>(node: T, remappings?: IDMap): T {
         return this.copyWithMapping(node, remappings)[0];
     }
 
+    /**
+     * Return a tuple containing a copy of the given `node` and all its
+     * children, and a mapping of ids between the old nodes and the new nodes.
+     *
+     * Optionally pass in a `remapping` from ids in the old context, to ids of
+     * the old context of any sibling nodes that may be referred in node (e.g.
+     * by `referencedDeclaration` fields).
+     */
     copyWithMapping<T extends ASTNode>(node: T, remappings?: IDMap): [T, IDMap] {
         const cache = new Map<number, number>(remappings ? remappings.entries() : []);
         const clone = this.copyHelper(node, cache);
@@ -1164,6 +1178,21 @@ export class ASTNodeFactory {
         cache.set(node.id, clone.id);
 
         return clone;
+    }
+
+    /**
+     * Return the list of arguments (after `id` and `src`) that need to be
+     * passed to `node`'s constructor to recreate `node`.
+     */
+    getNodeConstructorArgs<T extends ASTNode>(node: T): any[] {
+        const ctor = node.constructor as ASTNodeConstructor<T>;
+        const extractor = argExtractionMapping.get(ctor);
+
+        if (extractor === undefined) {
+            throw new Error(`Unable to find extractor for node constructor ${ctor.name}`);
+        }
+
+        return extractor(node);
     }
 
     private copyValue(value: any, cache: IDMap): any {
