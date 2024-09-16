@@ -2284,7 +2284,9 @@ export class InferType {
                 return new UserDefinedType(getFQDefName(def), def);
             }
 
-            throw new Error(`NYI converting user-defined AST type ${def.print()} to TypeNode`);
+            throw new Error(
+                `NYI converting user-defined AST type ${def != undefined ? def.print() : undefined} to TypeNode`
+            );
         }
 
         if (node instanceof FunctionTypeName) {

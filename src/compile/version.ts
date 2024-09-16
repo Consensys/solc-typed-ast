@@ -1,4 +1,5 @@
 import semver from "semver";
+import { assert } from "../misc";
 
 const rx = {
     comments: /\/\*[\s\S]*?\*\/|\/\/.*$/gm,
@@ -9,7 +10,8 @@ const rx = {
     spaceDash: /( -)/g,
 
     fixed: /^=?\d+\.\d+\.\d+$/,
-    exact: /^\d+.\d+.\d+$/
+    exact: /^\d+.\d+.\d+$/,
+    custom: /^custom:(.*)/
 };
 
 export function isFixed(version: string): boolean {
@@ -22,6 +24,17 @@ export function isFloating(version: string): boolean {
 
 export function isExact(version: string): boolean {
     return rx.exact.test(version);
+}
+
+export function isCustom(version: string): boolean {
+    return rx.custom.test(version);
+}
+
+export function getCustomPath(version: string): string {
+    const m = version.match(rx.custom);
+    assert(m !== null, `Bad custom version {0}`, version);
+
+    return m[1];
 }
 
 export function getCompilerVersionsBySpecifiers(
