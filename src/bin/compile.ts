@@ -26,6 +26,7 @@ import {
     FunctionDefinition,
     FunctionVisibility,
     InferType,
+    isCustom,
     isExact,
     LatestCompilerVersion,
     PathOptions,
@@ -193,7 +194,7 @@ function error(message: string): never {
 
     const compilerVersion: string = options.compilerVersion;
 
-    if (!(compilerVersion === "auto" || isExact(compilerVersion))) {
+    if (!(compilerVersion === "auto" || isExact(compilerVersion) || isCustom(compilerVersion))) {
         const message = [
             `Invalid compiler version "${compilerVersion}".`,
             'Possible values: "auto" or exact version string.'

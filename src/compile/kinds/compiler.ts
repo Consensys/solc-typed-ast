@@ -6,7 +6,7 @@ import path from "path";
 import { CompilerKind, CompilerVersions } from "..";
 import { assert } from "../../misc";
 import { SolcInput } from "../input";
-import { isExact } from "../version";
+import { getCustomPath, isCustom, isExact } from "../version";
 import {
     BINARIES_URL,
     CACHE_DIR,
@@ -97,71 +97,80 @@ export async function getCompilerForVersion<T extends CompilerMapping>(
     version: string,
     kind: T[0]
 ): Promise<T[1] | undefined> {
-    assert(
-        isExact(version),
-        "Version string must contain exact SemVer-formatted version without any operators"
-    );
+    let compilerLocalPath: string;
 
-    let prefix: string | undefined;
-
-    if (kind === CompilerKind.Native) {
-        prefix = getCompilerPrefixForOs();
-    } else if (kind === CompilerKind.WASM) {
-        prefix = "wasm";
+    if (isCustom(version)) {
+        compilerLocalPath = getCustomPath(version);
     } else {
-        throw new Error(`Unsupported compiler kind "${kind}"`);
-    }
+        assert(
+            isExact(version),
+            "Version string must contain exact SemVer-formatted version without any operators"
+        );
 
-    assert(CompilerVersions.includes(version), `Unsupported ${kind} compiler version ${version}`);
+        let prefix: string | undefined;
 
-    if (prefix === undefined) {
-        return undefined;
-    }
-
-    const md = await getCompilerMDForPlatform(prefix, version);
-    const compilerFileName = md.releases[version];
-
-    if (compilerFileName === undefined) {
-        return undefined;
-    }
-
-    const compilerLocalPath = getCompilerLocalPath(prefix, compilerFileName);
-
-    if (!fse.existsSync(compilerLocalPath)) {
-        const build = md.builds.find((b) => b.version === version);
+        if (kind === CompilerKind.Native) {
+            prefix = getCompilerPrefixForOs();
+        } else if (kind === CompilerKind.WASM) {
+            prefix = "wasm";
+        } else {
+            throw new Error(`Unsupported compiler kind "${kind}"`);
+        }
 
         assert(
-            build !== undefined,
-            `Unable to find build metadata for ${prefix} compiler ${version} in "list.json"`
+            CompilerVersions.includes(version),
+            `Unsupported ${kind} compiler version ${version}`
         );
 
-        const response = await axios.get<ArrayBuffer>(
-            `${BINARIES_URL}/${prefix}/${compilerFileName}`,
-            {
-                responseType: "arraybuffer"
-            }
-        );
+        if (prefix === undefined) {
+            return undefined;
+        }
 
-        const buf = Buffer.from(response.data);
+        const md = await getCompilerMDForPlatform(prefix, version);
+        const compilerFileName = md.releases[version];
 
-        const hash = crypto.createHash("sha256");
+        if (compilerFileName === undefined) {
+            return undefined;
+        }
 
-        hash.update(buf);
+        compilerLocalPath = getCompilerLocalPath(prefix, compilerFileName);
 
-        const digest = "0x" + hash.digest("hex");
+        if (!fse.existsSync(compilerLocalPath)) {
+            const build = md.builds.find((b) => b.version === version);
 
-        assert(
-            digest === build.sha256,
-            `Downloaded ${prefix} compiler ${version} hash ${digest} does not match hash ${build.sha256} from "list.json"`
-        );
+            assert(
+                build !== undefined,
+                `Unable to find build metadata for ${prefix} compiler ${version} in "list.json"`
+            );
 
-        /**
-         * Native compilers are exeсutable files, so give them proper permissions.
-         * WASM compilers are loaded by NodeJS, so write them as readonly common files.
-         */
-        const permissions = kind === CompilerKind.Native ? 0o555 : 0o444;
+            const response = await axios.get<ArrayBuffer>(
+                `${BINARIES_URL}/${prefix}/${compilerFileName}`,
+                {
+                    responseType: "arraybuffer"
+                }
+            );
 
-        await fse.writeFile(compilerLocalPath, buf, { mode: permissions });
+            const buf = Buffer.from(response.data);
+
+            const hash = crypto.createHash("sha256");
+
+            hash.update(buf);
+
+            const digest = "0x" + hash.digest("hex");
+
+            assert(
+                digest === build.sha256,
+                `Downloaded ${prefix} compiler ${version} hash ${digest} does not match hash ${build.sha256} from "list.json"`
+            );
+
+            /**
+             * Native compilers are exeсutable files, so give them proper permissions.
+             * WASM compilers are loaded by NodeJS, so write them as readonly common files.
+             */
+            const permissions = kind === CompilerKind.Native ? 0o555 : 0o444;
+
+            await fse.writeFile(compilerLocalPath, buf, { mode: permissions });
+        }
     }
 
     if (kind === CompilerKind.Native) {
