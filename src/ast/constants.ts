@@ -7,6 +7,7 @@ export enum DataLocation {
     Storage = "storage",
     Memory = "memory",
     CallData = "calldata",
+    Transient = "transient",
     Default = "default"
 }
 

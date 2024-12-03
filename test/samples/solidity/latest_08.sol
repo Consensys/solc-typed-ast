@@ -433,3 +433,7 @@ contract Features_0826 {
     }
     // ...
 }
+
+contract Features_0828 {
+    uint transient foo;
+}

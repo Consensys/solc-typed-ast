@@ -853,6 +853,10 @@ class VariableDeclarationWriter extends ASTNodeWriter {
             elements.push(" ", node.vOverrideSpecifier);
         }
 
+        if (node.storageLocation === DataLocation.Transient) {
+            elements.push(" ", node.storageLocation);
+        }
+
         elements.push(" ", node.name);
 
         if (node.vValue) {

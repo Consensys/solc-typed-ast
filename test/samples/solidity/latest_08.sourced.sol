@@ -377,6 +377,10 @@ contract Features_0826 {
         balance[to] += amount;
     }
 }
+
+contract Features_0828 {
+    uint internal transient foo;
+}
 // ------------------------------------------------------------
 // test/samples/solidity/latest_imports_08.sol
 // ------------------------------------------------------------

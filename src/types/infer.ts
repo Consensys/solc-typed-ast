@@ -1979,7 +1979,11 @@ export class InferType {
      */
     inferVariableDeclLocation(decl: VariableDeclaration): DataLocation {
         if (decl.stateVariable) {
-            return decl.constant ? DataLocation.Memory : DataLocation.Storage;
+            return decl.constant
+                ? DataLocation.Memory
+                : decl.storageLocation === DataLocation.Default
+                  ? DataLocation.Storage
+                  : decl.storageLocation;
         }
 
         if (decl.storageLocation !== DataLocation.Default) {

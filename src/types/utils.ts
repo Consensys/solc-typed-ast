@@ -203,9 +203,9 @@ export function specializeType(type: TypeNode, loc: DataLocation): TypeNode {
         // Always treat map keys as in-memory copies
         const concreteKeyT = specializeType(type.keyType, DataLocation.Memory);
         // The result of map indexing is always a pointer to a value that lives in storage
-        const concreteValueT = specializeType(type.valueType, DataLocation.Storage);
+        const concreteValueT = specializeType(type.valueType, DataLocation.Storage); // @todo update when maps supported in transient
         // Maps always live in storage
-        return new PointerType(new MappingType(concreteKeyT, concreteValueT), DataLocation.Storage);
+        return new PointerType(new MappingType(concreteKeyT, concreteValueT), DataLocation.Storage); // @todo update when maps supported in transient
     }
 
     // TODO: What to do about string literals?
@@ -362,7 +362,7 @@ export function castable(fromT: TypeNode, toT: TypeNode, compilerVersion: string
         toT.to instanceof ArrayType &&
         fromT.to.size !== undefined &&
         toT.to.size === undefined &&
-        toT.location === DataLocation.Storage &&
+        toT.location === DataLocation.Storage && // @todo (dimo) Update this when arrays are supported in transient
         eq(fromT.to.elementT, toT.to.elementT)
     ) {
         return true;
